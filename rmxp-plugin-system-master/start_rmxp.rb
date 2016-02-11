@@ -19,9 +19,9 @@ end
 
 $DATA_TYPE = "rxdata"
 
-require 'rmxp/rgss'
-require 'common'
-require 'plugin_base'
+require './rmxp/rgss'
+require './common'
+require './plugin_base'
 
 #######################################
 #        LOCAL METHODS
