@@ -30,11 +30,12 @@ module PBEvolution
   LevelDarkInParty  = 28
   LevelRain         = 29
   HappinessMoveType = 30
-  Custom1           = 31
-  Custom2           = 32
-  Custom3           = 33
-  Custom4           = 34
-  Custom5           = 35
+  HighestHP         = 31
+  HighestAtk        = 32
+  HighestDef        = 33
+  HighestSpAtk      = 34
+  HighestSpDef      = 35
+  HighestSpeed      = 36
 
   EVONAMES=["Unknown",
      "Happiness","HappinessDay","HappinessNight","Level","Trade",
@@ -43,7 +44,8 @@ module PBEvolution
      "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
      "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
      "LevelDay","LevelNight","LevelDarkInParty","LevelRain","HappinessMoveType",
-     "Custom1","Custom2","Custom3","Custom4","Custom5"
+     "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
+     "HighestSpeed"
   ]
 
   # 0 = no parameter
@@ -59,7 +61,8 @@ module PBEvolution
      2,2,2,2,3,   # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
      4,1,1,1,4,   # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
      1,1,1,1,5,   # LevelDay, LevelNight, LevelDarkInParty, LevelRain, HappinessMoveType
-     1,1,1,1,1    # Custom 1-5
+     1,1,1,1,1,   # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
+     1            # HighestSpeed
   ]
 end
 
@@ -172,6 +175,9 @@ def pbGetMinimumLevel(species)
            PBEvolution::Silcoon,PBEvolution::Cascoon,
            PBEvolution::Ninjask,PBEvolution::Shedinja,
            PBEvolution::LevelDay,PBEvolution::LevelNight,
+           PBEvolution::HighestHP,PBEvolution::HighestAtk,
+           PBEvolution::HighestDef,PBEvolution::HighestSpAtk,
+           PBEvolution::HighestSpDef,PBEvolution::HighestSpeed,
            PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
           ret=(ret==-1) ? level : [ret,level].min
           break
@@ -893,6 +899,30 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level && pokemon.attack==pokemon.defense
   when PBEvolution::DefenseGreater # Hitmonchan
     return poke if pokemon.level>=level && pokemon.attack<pokemon.defense
+  when PBEvolution::HighestHP # Torling HP
+    return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
+    pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
+    pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
+  when PBEvolution::HighestAttack # Torling Atk
+    return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
+    pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
+    pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
+  when PBEvolution::HighestDefense # Torling Def
+    return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
+    pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
+    pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
+  when PBEvolution::HighestSpAttack # Torling SpAtk
+    return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
+    pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
+    pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
+  when PBEvolution::HighestSpDefense # Torling SpDef
+    return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
+    pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
+    pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
+  when PBEvolution::HighestSpeed # Torling Speed
+    return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
+    pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
+    pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
   when PBEvolution::Silcoon
     return poke if pokemon.level>=level && (((pokemon.personalID>>16)&0xFFFF)%10)<5
   when PBEvolution::Cascoon
