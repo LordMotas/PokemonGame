@@ -11,6 +11,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(2,1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - !binary |-
             XGJPYWs6IFlvdSBzaG91bGQgYmF0dGxlIHdpdGggeW91ciBQb2vDqW1vbiB0
             byBtYWtlIA==

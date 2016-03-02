@@ -10,6 +10,8 @@ module MessageConfig
   LIGHTTEXTSHADOW = Color.new(72,80,88)
   DARKTEXTBASE    = Color.new(88,88,80)
   DARKTEXTSHADOW  = Color.new(168,184,184)
+  BUBBLETEXTBASE = Color.new(22,22,22)
+  BUBBLETEXTSHADOW = Color.new(166,160,151)
   # 0 = Pause cursor is displayed at end of text
   # 1 = Pause cursor is displayed at bottom right
   # 2 = Pause cursor is displayed at lower middle side
