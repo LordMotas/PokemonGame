@@ -2621,12 +2621,12 @@ def Kernel.pbCreateMessageWindow(viewport=nil,skin=nil)
       @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
       @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
       @Arrow.z = 999999
-      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4test")
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
       @Arrow.zoom_x = 2
       @Arrow.zoom_y = 2
       if @Arrow.x<-230
         @Arrow.x = $game_map.events[$talkingEvent].screen_x
-        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3test")
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
       end
     else # Player facing left, down, right, message window bottom.
       @Restriction = Viewport.new(0, 0, Graphics.width, 280)
@@ -2635,20 +2635,20 @@ def Kernel.pbCreateMessageWindow(viewport=nil,skin=nil)
       @Arrow.x = $game_map.events[$talkingEvent].screen_x
       @Arrow.y = $game_map.events[$talkingEvent].screen_y
       @Arrow.z = 999999
-      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow1test")
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow1")
       if @Arrow.y>=Graphics.height-120 # Change arrow direction. 
         @Outofrange=true
         @Restriction.rect.y+=104
         @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
-        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4test")
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
         @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
         if @Arrow.x<-250
           @Arrow.x = $game_map.events[$talkingEvent].screen_x
-          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3test")
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
         end
         if @Arrow.x>=256
           @Arrow.x-=15# = $game_map.events[$talkingEvent].screen_x-Graphics.width
-          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3test")
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
         end
       else
         @Outofrange=false
@@ -2773,7 +2773,7 @@ def pbRepositionMessageWindow(msgwindow, linecount=2)
         @OpposedValue = 0
         @NegativeValue = 0
        if $Bubble==1
-         msgwindow.setSkin("Graphics/windowskins/frlgtextskintest")
+         msgwindow.setSkin("Graphics/windowskins/frlgtextskin")
          msgwindow.height = 100
          msgwindow.width = 400
          msgwindow.resizeToFit2(msgwindow.text,400,100)
@@ -2791,7 +2791,7 @@ def pbRepositionMessageWindow(msgwindow, linecount=2)
          end
          $Bubble = 0
        elsif $Bubble==2
-         msgwindow.setSkin("Graphics/windowskins/frlgtextskintest")
+         msgwindow.setSkin("Graphics/windowskins/frlgtextskin")
          msgwindow.height = 102
          msgwindow.width = Graphics.width
          if $game_player.direction==8

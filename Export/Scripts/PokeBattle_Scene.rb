@@ -497,6 +497,7 @@ end
 #===============================================================================
 # Data box for regular battles (both single and double)
 #===============================================================================
+=begin
 class PokemonDataBox < SpriteWrapper
   attr_reader :battler
   attr_accessor :selected
@@ -579,7 +580,7 @@ class PokemonDataBox < SpriteWrapper
       growthrate=@battler.pokemon.growthrate
       startexp=PBExperience.pbGetStartExperience(@battler.pokemon.level,growthrate)
       endexp=PBExperience.pbGetStartExperience(@battler.pokemon.level+1,growthrate)
-      if startexp==endexp
+      if startexp==end=beginexp
         @explevel=0
       else
         @explevel=(@battler.pokemon.exp-startexp)*PokeBattle_SceneConstants::EXPGAUGESIZE/(endexp-startexp)
@@ -785,8 +786,321 @@ class PokemonDataBox < SpriteWrapper
     end
   end
 end
+=end
 
+class PokemonDataBox < SpriteWrapper
+  attr_reader :battler
+  attr_accessor :selected
+  attr_accessor :appearing
+  attr_reader :animatingHP
+  attr_reader :animatingEXP
 
+  def initialize(battler,doublebattle,viewport=nil)
+    super(viewport)
+    @explevel=0
+    @battler=battler
+    @selected=0
+    @frame=0
+    @showhp=false
+    @showexp=false
+    @appearing=false
+    @animatingHP=false
+    @starthp=0
+    @currenthp=0
+    @endhp=0
+    @expflash=0
+    @side="Player"
+    if (@battler.index&1)==0 # if player's Pokémon
+      @side="Player"
+      @spritebaseX=34
+      @spritebaseY=0
+      @spritebaseHPY=0
+      @spritebaseHPX=0
+      @offsetHPbar=28
+    else
+      @side="Foe"
+      @spritebaseX=18
+      @spritebaseY=0
+      @spritebaseHPY=0
+      @spritebaseHPX=-16
+      @offsetHPbar=24
+    end
+    if doublebattle
+      case @battler.index
+      when 0
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battlePlayerBoxS")
+        @expbox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleEXPbar")
+        @spriteX=PokeBattle_SceneConstants::PLAYERBOXD1_X
+        @spriteY=PokeBattle_SceneConstants::PLAYERBOXD1_Y
+        @showhp=true
+        @showexp=true
+      when 1 
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleFoeBoxS")
+        @spriteX=PokeBattle_SceneConstants::FOEBOXD1_X
+        @spriteY=PokeBattle_SceneConstants::FOEBOXD1_Y
+        @spritebaseY=1
+      when 2 
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battlePlayerBoxS")
+        @expbox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleEXPbar")
+        @spriteX=PokeBattle_SceneConstants::PLAYERBOXD2_X
+        @spriteY=PokeBattle_SceneConstants::PLAYERBOXD2_Y
+        @showhp=true
+        @showexp=true
+      when 3 
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleFoeBoxS")
+        @spriteX=PokeBattle_SceneConstants::FOEBOXD2_X
+        @spriteY=PokeBattle_SceneConstants::FOEBOXD2_Y
+        @spritebaseY=1
+      end
+    else
+      case @battler.index
+      when 0
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battlePlayerBoxS")
+        @expbox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleEXPbar")
+        @spriteX=PokeBattle_SceneConstants::PLAYERBOX_X
+        @spriteY=PokeBattle_SceneConstants::PLAYERBOX_Y
+        @showhp=true
+        @showexp=true
+      when 1 
+        @databox=AnimatedBitmap.new("Graphics/Pictures/BATTLE/battleFoeBoxS")
+        @spriteX=PokeBattle_SceneConstants::FOEBOX_X
+        @spriteY=PokeBattle_SceneConstants::FOEBOX_Y
+      end
+    end
+    @statuses=AnimatedBitmap.new(_INTL("Graphics/Pictures/battleStatuses"))
+    @contents=BitmapWrapper.new(@databox.width,@databox.height)
+    self.bitmap=@contents
+    self.visible=false
+    self.z=50
+    refreshExpLevel
+    refresh
+  end
+
+  def dispose
+    @statuses.dispose
+    @databox.dispose
+    @contents.dispose
+    super
+  end
+
+  def refreshExpLevel
+    if !@battler.pokemon
+      @explevel=0
+    else
+      growthrate=@battler.pokemon.growthrate
+      startexp=PBExperience.pbGetStartExperience(@battler.pokemon.level,growthrate)
+      endexp=PBExperience.pbGetStartExperience(@battler.pokemon.level+1,growthrate)
+      if startexp==endexp #jv
+        @explevel=0
+      else
+        @explevel=(@battler.pokemon.exp-startexp)*PokeBattle_SceneConstants::EXPGAUGESIZE/(endexp-startexp)
+      end
+    end
+  end
+
+  def exp
+    return @animatingEXP ? @currentexp : @explevel
+  end
+
+  def hp
+    return @animatingHP ? @currenthp : @battler.hp
+  end
+
+  def animateHP(oldhp,newhp)
+    @starthp=oldhp
+    @currenthp=oldhp
+    @endhp=newhp
+    @animatingHP=true
+  end
+
+  def animateEXP(oldexp,newexp)
+    @currentexp=oldexp
+    @endexp=newexp
+    @animatingEXP=true
+  end
+
+  def appear
+    refreshExpLevel
+    refresh
+    self.visible=true
+    self.opacity=255
+    if (@battler.index&1)==0 # if player's Pokémon
+      self.x=@spriteX+320
+    else
+      self.x=@spriteX-320
+    end
+    self.y=@spriteY
+    @appearing=true
+  end
+
+  def refresh
+    self.bitmap.clear
+    return if !@battler.pokemon
+    self.bitmap.blt(0,0,@databox.bitmap,Rect.new(0,0,@databox.width,@databox.height))
+    base=PokeBattle_SceneConstants::BOXTEXTBASECOLOR
+    shadow=PokeBattle_SceneConstants::BOXTEXTSHADOWCOLOR
+    pokename=@battler.name
+    if @battler.name.split('').last=="♂" || @battler.name.split('').last=="♀"
+      pokename=@battler.name[0..-2]
+    end
+    pbSetSystemFont(self.bitmap)
+    textpos=[
+       [pokename,@spritebaseX+104,@spritebaseY+2,true,base,shadow,1]
+    ]
+    #genderX=self.bitmap.text_size(pokename).width
+    genderX=@spritebaseX+108
+    genderA=@battler.gender #ILLUSION
+    if @battlers.respond_to?('effects') && @battler.effects[PBEffects::Illusion] != nil #ILLUSION
+      genderA=@battler.effects[PBEffects::Illusion].gender #ILLUSION
+    end #ILLUSION
+    
+    hpbar   = AnimatedBitmap.new("Graphics/Pictures/BATTLE/battle#{@side}HPbar")#  if hpzone==0
+    hpbar2  = AnimatedBitmap.new("Graphics/Pictures/BATTLE/battle#{@side}HPbar2")# if hpzone==1
+    hpbar3  = AnimatedBitmap.new("Graphics/Pictures/BATTLE/battle#{@side}HPbar3")# if hpzone==2
+    hpGaugeSize=174
+    hpgauge=@battler.totalhp==0 ? 0 : (self.hp*hpGaugeSize/@battler.totalhp)    
+    opacity=@battler.totalhp==0 ? 0 : (self.hp*510/@battler.totalhp)
+    opacity=510-opacity    
+    hpgauge=1 if hpgauge==0 && self.hp>0
+    hpzone=0
+    hpzone=1 if self.hp<=(@battler.totalhp/2).floor
+    hpzone=2 if self.hp<=(@battler.totalhp/4).floor
+    op_hpbar = [[(255-opacity)/2,0].max,255].min #max when 1
+    op_hpbar2=255
+    op_hpbar2= [[255-(opacity-255).abs,0].max,255].min #if opacity>=255 #max when 1/2
+    op_hpbar3=255
+    op_hpbar3= [[(opacity-255),0].max,255].min #if opacity>=510 #max when 1/4
+    self.bitmap.blt(@offsetHPbar,0,hpbar3.bitmap,Rect.new(@offsetHPbar,0,hpgauge,hpbar.height),op_hpbar3)
+    self.bitmap.blt(@offsetHPbar,0,hpbar2.bitmap,Rect.new(@offsetHPbar,0,hpgauge,hpbar2.height),op_hpbar2) #<----- RETARDED
+    self.bitmap.blt(@offsetHPbar,0,hpbar.bitmap,Rect.new(@offsetHPbar,0,hpgauge,hpbar3.height),op_hpbar)
+    
+    if genderA==0 # Male
+      textpos.push([_INTL("♂"),genderX,@spritebaseY+2,false,Color.new(48,96,216),shadow,1])
+    elsif genderA==1 # Female
+      textpos.push([_INTL("♀"),genderX,@spritebaseY+2,false,Color.new(248,88,40),shadow,1])
+    end
+    pbDrawTextPositions(self.bitmap,textpos)
+    pbSetSmallFont(self.bitmap)
+    textpos=[
+       [_INTL("{1}",@battler.level),@spritebaseX+178,@spritebaseY+6,true,base,shadow,1]
+    ]
+    pbDrawTextPositions(self.bitmap,textpos)
+    imagepos=[]
+    if @battler.pokemon.isShiny?
+      shinyX=208
+      shinyX=-12 if (@battler.index&1)==0 # If player's Pokémon
+      imagepos.push(["Graphics/Pictures/shiny.png",@spritebaseX+shinyX,10,0,0,-1,-1])
+    end
+    if @battler.isMega?
+      path="Graphics/Pictures/battleMegaEvoBox.png"
+      imagepos.push([path,@spritebaseX+146,34,0,0,-1,-1])
+    elsif @battler.isPrimal?
+      path="Graphics/Pictures/battlePrimalAlphaBox.png" if @battler.species==PBSpecies::KYOGRE
+      path="Graphics/Pictures/battlePrimalOmegaBox.png" if @battler.species==PBSpecies::GROUDON
+      imagepos.push([path,@spritebaseX+8,34,0,0,-1,-1])
+    end
+    if @battler.owned && (@battler.index&1)==1
+      imagepos.push(["Graphics/Pictures/battleBoxOwned.png",@spritebaseX+27,40,0,0,-1,-1])
+    end
+    pbDrawImagePositions(self.bitmap,imagepos)
+    if @battler.status>0
+      self.bitmap.blt(@spritebaseX+96,39,@statuses.bitmap,
+         Rect.new(0,(@battler.status-1)*16,44,16))
+    end
+    if @showhp
+      hpstring=_ISPRINTF("{1: 2d}/{2: 2d}",self.hp,@battler.totalhp)
+      textpos=[[hpstring,@spritebaseX+18,34,false,base,shadow]]
+    end
+    if @showexp
+      #fill with EXP color
+      self.bitmap.blt(36,60,@expbox.bitmap,Rect.new(0,0,self.exp,@expbox.height))
+    end
+    pbDrawTextPositions(self.bitmap,textpos)
+  end
+
+  def update
+    super
+    @frame+=1
+    if @animatingHP
+      if @currenthp<@endhp
+        @currenthp+=[1,(@battler.totalhp/PokeBattle_SceneConstants::HPGAUGESIZE).floor].max
+        @currenthp=@endhp if @currenthp>@endhp
+      elsif @currenthp>@endhp
+        @currenthp-=[1,(@battler.totalhp/PokeBattle_SceneConstants::HPGAUGESIZE).floor].max
+        @currenthp=@endhp if @currenthp<@endhp
+      end
+      @animatingHP=false if @currenthp==@endhp
+      refresh
+    end
+    if @animatingEXP
+      Audio.bgs_play("Audio/ME/expgoing.ogg", 120, 100)#JV
+      if !@showexp
+        @currentexp=@endexp
+      elsif @currentexp<@endexp   # Gaining Exp
+        if @endexp>=PokeBattle_SceneConstants::EXPGAUGESIZE ||
+           @endexp-@currentexp>=PokeBattle_SceneConstants::EXPGAUGESIZE/4
+          @currentexp+=2
+        else
+          @currentexp+=1
+        end
+        @currentexp=@endexp if @currentexp>@endexp
+      elsif @currentexp>@endexp   # Losing Exp
+        if @endexp==0 ||
+           @currentexp-@endexp>=PokeBattle_SceneConstants::EXPGAUGESIZE/4
+          @currentexp-=2
+        elsif @currentexp>@endexp
+          @currentexp-=1
+        end
+        @currentexp=@endexp if @currentexp<@endexp
+      end
+      refresh
+      if @currentexp==@endexp
+        Audio.bgs_stop #JV
+        if @currentexp==PokeBattle_SceneConstants::EXPGAUGESIZE
+          if @expflash==0
+            pbSEPlay("expfull")
+            self.flash(Color.new(64,200,248),8)
+            @expflash=8
+          else
+            @expflash-=1
+            if @expflash==0
+              @animatingEXP=false
+              refreshExpLevel
+            end
+          end
+        else
+          @animatingEXP=false
+        end
+      end
+    end
+    if @appearing
+      if (@battler.index&1)==0 # if player's Pokémon
+        self.x-=10
+        self.x=@spriteX if self.x<@spriteX
+        @appearing=false if self.x<=@spriteX
+      else
+        self.x+=10
+        self.x=@spriteX if self.x>@spriteX
+        @appearing=false if self.x>=@spriteX
+      end
+      self.y=@spriteY
+      return
+    end
+    self.x=@spriteX
+    self.y=@spriteY
+    # Data box bobbing while Pokémon is selected
+    if ((@frame/10).floor&1)==1 && @selected==1   # Choosing commands for this Pokémon
+      self.y=@spriteY+2
+    elsif ((@frame/5).floor&1)==1 && @selected==2   # When targeted or damaged
+      self.y=@spriteY+2
+    end
+  end
+end
+
+def showShadow?(species)
+  metrics=load_data("Data/metrics.dat")
+  return metrics[2][species]>0
+end
 
 #===============================================================================
 # Shows the enemy trainer(s)'s Pokémon being thrown out.  It appears at coords

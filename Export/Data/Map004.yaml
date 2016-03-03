@@ -2240,6 +2240,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(2,14)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - pbSet(2,Kernel.pbGetStorageCreator)
           indent: 0
           code: 355
