@@ -7,8 +7,10 @@ module PokeBattle_SceneConstants
   MESSAGESHADOWCOLOR      = Color.new(160,160,168)
   MENUBASECOLOR           = MESSAGEBASECOLOR
   MENUSHADOWCOLOR         = MESSAGESHADOWCOLOR
-  BOXTEXTBASECOLOR        = Color.new(72,72,72)
-  BOXTEXTSHADOWCOLOR      = Color.new(184,184,184)
+  #BOXTEXTBASECOLOR        = Color.new(72,72,72)
+  #BOXTEXTSHADOWCOLOR      = Color.new(184,184,184)
+  BOXTEXTBASECOLOR        = Color.new(255,255,255)
+  BOXTEXTSHADOWCOLOR      = Color.new(0,0,0)
   PPTEXTBASECOLOR         = MESSAGEBASECOLOR        # More than 1/2 of total PP
   PPTEXTSHADOWCOLOR       = MESSAGESHADOWCOLOR
   PPTEXTBASECOLORYELLOW   = Color.new(248,192,0)    # 1/2 of total PP or less
