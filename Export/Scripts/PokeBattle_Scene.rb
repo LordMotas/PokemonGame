@@ -1033,7 +1033,7 @@ class PokemonDataBox < SpriteWrapper
       refresh
     end
     if @animatingEXP
-      Audio.bgs_play("Audio/ME/expgoing.ogg", 120, 100)#JV
+      #Audio.bgs_play("Audio/ME/expgoing.ogg", 120, 100)
       if !@showexp
         @currentexp=@endexp
       elsif @currentexp<@endexp   # Gaining Exp
