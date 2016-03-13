@@ -580,7 +580,11 @@ class PokeBattle_Move
       type=-1 # Will be treated as physical
     end
     if (options&NOCRITICAL)==0
-      opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
+      if($PokemonGlobal.nuzlocke)
+        opponent.damagestate.critical=false
+      else
+        opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
+      end
     end
     ##### Calcuate base power of move #####
     basedmg=@basedamage # Fron PBS file
