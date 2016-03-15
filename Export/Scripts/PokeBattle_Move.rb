@@ -524,6 +524,7 @@ class PokeBattle_Move
   end
 
   def pbIsCritical?(attacker,opponent)
+    return false if $PokemonGlobal.nuzlocke
     if !attacker.hasMoldBreaker
       if opponent.hasWorkingAbility(:BATTLEARMOR) ||
          opponent.hasWorkingAbility(:SHELLARMOR)
@@ -580,11 +581,7 @@ class PokeBattle_Move
       type=-1 # Will be treated as physical
     end
     if (options&NOCRITICAL)==0
-      if($PokemonGlobal.nuzlocke)
-        opponent.damagestate.critical=false
-      else
-        opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
-      end
+      opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
     end
     ##### Calcuate base power of move #####
     basedmg=@basedamage # Fron PBS file
