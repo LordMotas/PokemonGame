@@ -13,6 +13,7 @@
 # * Map view mode (0=original, 1=custom, 2=perspective).
 #===============================================================================
 $Bubble = 0
+$islandCount = 0
 DEFAULTSCREENWIDTH   = 512
 DEFAULTSCREENHEIGHT  = 384
 DEFAULTSCREENZOOM    = 1.0
