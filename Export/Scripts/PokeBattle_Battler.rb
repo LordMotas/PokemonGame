@@ -1447,6 +1447,12 @@ class PokeBattle_Battler
             PBDebug.log("[Ability triggered] #{target.pbThis}'s Weak Armor (raise Speed)")
           end
         end
+        #Voltaic Touch
+        if user.hasWorkingAbility(:VOLTAICTOUCH,true) && @battle.pbRandom(10)<3 &&
+           target.pbCanParalyze?(nil,false) && move.pbIsPhysical?(movetype)
+          target.pbParalyze(user,_INTL("{1}'s {2} paralyzed {3}! It may be unable to move!",
+             user.pbThis,PBAbilities.getName(user.ability),target.pbThis(true)))
+        end
         if target.hasWorkingItem(:AIRBALLOON,true)
           PBDebug.log("[Item triggered] #{target.pbThis}'s Air Balloon popped")
           @battle.pbDisplay(_INTL("{1}'s Air Balloon popped!",target.pbThis))
