@@ -1078,6 +1078,10 @@ class PokeBattle_Move
     if attacker.hasWorkingAbility(:TINTEDLENS) && opponent.damagestate.typemod<8
       finaldamagemult=(finaldamagemult*2.0).round
     end
+    #Impenetrable
+    if opponent.hasWorkingAbility(:IMPENETRABLE) && isContactMove?
+      finaldamagemult=(finaldamagemult*0.75).round
+    end
     if attacker.hasWorkingAbility(:SNIPER) && opponent.damagestate.critical
       finaldamagemult=(finaldamagemult*1.5).round
     end
