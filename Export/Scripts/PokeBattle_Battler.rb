@@ -1351,13 +1351,20 @@ class PokeBattle_Battler
           user.pbBurn(target,_INTL("{1}'s {2} burned {3}!",target.pbThis,
              PBAbilities.getName(target.ability),user.pbThis(true)))
         end
-        #Freezing Body
-        if target.hasWorkingAbility(:FREEZINGBODY,true) && @battle.pbRandom(10)<2 &&
+        #Icy Hot part 1
+        if target.hasWorkingAbility(:ICYHOT,true) && @battle.pbRandom(10)<1 &&
+           user.pbCanBurn?(nil,false)
+         PBDebug.log("[Ability triggered] #{target.pbThis}'s Icy Hot")
+          user.pbBurn(target,_INTL("{1}'s {2} burned {3}!",target.pbThis,
+             PBAbilities.getName(target.ability),user.pbThis(true)))
+        end
+        #Icy Hot part 2
+        if target.hasWorkingAbility(:ICYHOT,true) && @battle.pbRandom(10)<1 &&
            user.pbCanFreeze?(nil,false,self)
-          PBDebug.log("[Ability triggered] #{target.pbThis}'s Freezing Body")
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Icy Hot")
           user.pbFreeze(_INTL("{1}'s {2} froze {3}!",target.pbThis,
              PBAbilities.getName(target.ability),user.pbThis(true)))
-        end  
+        end
         if target.hasWorkingAbility(:MUMMY,true) && !user.isFainted?
           if !isConst?(user.ability,PBAbilities,:MULTITYPE) &&
              !isConst?(user.ability,PBAbilities,:STANCECHANGE) &&
