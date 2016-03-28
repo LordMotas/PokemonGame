@@ -1,68 +1,74 @@
 module PBEvolution
-  Unknown           = 0 # Do not use
-  Happiness         = 1
+  Unknown          = 0 # Do not use
+  Happiness        = 1
   HappinessDay      = 2
   HappinessNight    = 3
-  Level             = 4
-  Trade             = 5
-  TradeItem         = 6
+  Level            = 4
+  Trade            = 5
+  TradeItem        = 6
   Item              = 7
-  AttackGreater     = 8
-  AtkDefEqual       = 9
+  AttackGreater    = 8
+  AtkDefEqual      = 9
   DefenseGreater    = 10
-  Silcoon           = 11
-  Cascoon           = 12
-  Ninjask           = 13
+  Silcoon          = 11
+  Cascoon          = 12
+  Ninjask          = 13
   Shedinja          = 14
   Beauty            = 15
   ItemMale          = 16
   ItemFemale        = 17
-  DayHoldItem       = 18
-  NightHoldItem     = 19
-  HasMove           = 20
+  DayHoldItem      = 18
+  NightHoldItem    = 19
+  HasMove          = 20
   HasInParty        = 21
-  LevelMale         = 22
-  LevelFemale       = 23
+  LevelMale        = 22
+  LevelFemale      = 23
   Location          = 24
   TradeSpecies      = 25
-  LevelDay          = 26
-  LevelNight        = 27
-  LevelDarkInParty  = 28
-  LevelRain         = 29
-  HappinessMoveType = 30
-  HighestHP         = 31
-  HighestAtk        = 32
-  HighestDef        = 33
-  HighestSpAtk      = 34
-  HighestSpDef      = 35
-  HighestSpeed      = 36
+  HappinessMoveType = 26
+  TypeDark          = 27
+  LevelRain        = 28
+  LevelDay          = 29
+  LevelNight        = 30
+  UpsideDownLevel  = 31
+  HappinessMale    = 32
+  HappinessFemale  = 33
+  Custom7           = 34
+  HighestHP         = 35
+  HighestAtk        = 36
+  HighestDef        = 37
+  HighestSpAtk      = 38
+  HighestSpDef      = 39
+  HighestSpeed      = 40
 
   EVONAMES=["Unknown",
-     "Happiness","HappinessDay","HappinessNight","Level","Trade",
-     "TradeItem","Item","AttackGreater","AtkDefEqual","DefenseGreater",
-     "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
-     "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
-     "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
-     "LevelDay","LevelNight","LevelDarkInParty","LevelRain","HappinessMoveType",
-     "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
+    "Happiness","HappinessDay","HappinessNight","Level","Trade",
+    "TradeItem","Item","AttackGreater","AtkDefEqual","DefenseGreater",
+    "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
+    "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
+    "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
+    "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
+    "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
+		"HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
      "HighestSpeed"
   ]
 
-  # 0 = no parameter
+# 0 = no parameter
   # 1 = Positive integer
   # 2 = Item internal name
   # 3 = Move internal name
   # 4 = Species internal name
   # 5 = Type internal name
   EVOPARAM=[0,    # Unknown (do not use)
-     0,0,0,1,0,   # Happiness, HappinessDay, HappinessNight, Level, Trade
-     2,2,1,1,1,   # TradeItem, Item, AttackGreater, AtkDefEqual, DefenseGreater
-     1,1,1,1,1,   # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
-     2,2,2,2,3,   # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
-     4,1,1,1,4,   # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
-     1,1,1,1,5,   # LevelDay, LevelNight, LevelDarkInParty, LevelRain, HappinessMoveType
-     1,1,1,1,1,   # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
-     1            # HighestSpeed
+    0,0,0,1,0,    # Happiness, HappinessDay, HappinessNight, Level, Trade
+    2,2,1,1,1,    # TradeItem, Item, AttackGreater, AtkDefEqual, DefenseGreater
+    1,1,1,1,1,    # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
+    2,2,2,2,3,    # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
+    4,1,1,1,4,    # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
+    3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
+    0,0,0,          # HappinessMale, HappinessFemale,
+    1,1,1,1,1,   # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
+    1            # HighestSpeed
   ]
 end
 
@@ -899,7 +905,7 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level && pokemon.attack==pokemon.defense
   when PBEvolution::DefenseGreater # Hitmonchan
     return poke if pokemon.level>=level && pokemon.attack<pokemon.defense
-  when PBEvolution::HighestHP # Torling HP
+	when PBEvolution::HighestHP # Torling HP
     return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
     pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
     pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
@@ -963,16 +969,44 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.beauty>=level
   when PBEvolution::Trade, PBEvolution::TradeItem, PBEvolution::TradeSpecies
     return -1
-  when PBEvolution::Custom1
-    # Add code for custom evolution type 1
-  when PBEvolution::Custom2
-    # Add code for custom evolution type 2
-  when PBEvolution::Custom3
-    # Add code for custom evolution type 3
-  when PBEvolution::Custom4
-    # Add code for custom evolution type 4
-  when PBEvolution::Custom5
-    # Add code for custom evolution type 5
+  when PBEvolution::DayHoldItem
+    return poke if pokemon.item==level && PBDayNight.isDay?(pbGetTimeNow)
+  when PBEvolution::NightHoldItem
+    return poke if pokemon.item==level && PBDayNight.isNight?(pbGetTimeNow)
+  when PBEvolution::HasMove
+    for i in 0...4
+      return poke if pokemon.moves[i].id==level
+    end
+  when PBEvolution::HasInParty
+    for i in $Trainer.party
+      return poke if !i.isEgg? && i.species==level
+    end
+  when PBEvolution::LevelMale
+    return poke if pokemon.level>=level && pokemon.isMale?
+  when PBEvolution::LevelFemale
+    return poke if pokemon.level>=level && pokemon.isFemale?
+  when PBEvolution::Location
+    return poke if $game_map.map_id==level
+  when PBEvolution::TradeSpecies
+    return -1
+  when PBEvolution::HappinessMoveType
+    for i in 0...4
+      return poke if pokemon.happiness>=220 && pokemon.moves[i].type==level
+    end
+  when PBEvolution::TypeDark
+    for i in $Trainer.party
+      return poke if  pokemon.level>=level && !i.egg? && (i.type1==17 || i.type2==17)
+    end 
+  when PBEvolution::LevelRain
+    return poke if  pokemon.level>=level && $game_screen && ($game_screen.weather==1 || $game_screen.weather==2)
+  when PBEvolution::LevelDay
+    return poke if pokemon.level>=level&& PBDayNight.isDay?(pbGetTimeNow)
+  when PBEvolution::LevelNight
+    return poke if pokemon.level>=level && PBDayNight.isNight?(pbGetTimeNow)
+  when PBEvolution::UpsideDownLevel
+    return poke if pokemon.level>=level
+  when PBEvolution::Custom7
+    # Add code for custom evolution type 7
   end
   return -1
 end
