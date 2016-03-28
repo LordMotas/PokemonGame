@@ -59,13 +59,17 @@ class Hangup < Exception; end
 
 
 
-
-$TEST=true if $DEBUG
-$DEBUG=true if $TEST
+if $DEBUG
+  $TEST=true
+end
+if $TEST
+  $DEBUG=true
+end
 $scene=nil
-Font.default_shadow=false if Font.respond_to?(:default_shadow)
+if Font.respond_to?(:default_shadow)
+  Font.default_shadow=false
+end
 Graphics.frame_rate=40
-
 if false
   p (Tilemap.instance_methods-Kernel.instance_methods-Object.instance_methods).sort
 # no changes

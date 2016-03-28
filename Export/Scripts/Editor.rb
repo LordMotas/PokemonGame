@@ -77,24 +77,6 @@ def pbGetEvolutionConst(i)
   return ret[i]
 end
 
-def pbGetEggGroupConst(i)
-  ret=["Undiscovered",
-     "Monster","Water1","Bug","Flying","Field",
-     "Fairy","Grass","Humanlike","Water3","Mineral",
-     "Amorphous","Water2","Ditto","Dragon","Undiscovered"
-  ]
-  i=0 if i>=ret.length || i<0
-  return ret[i]
-end
-
-def pbGetColorConst(i)
-  ret=["Red","Blue","Yellow","Green","Black",
-       "Brown","Purple","Gray","White","Pink"
-  ]
-  i=0 if i>=ret.length || i<0
-  return ret[i]
-end
-
 def pbGetAbilityConst(i)
   return MakeshiftConsts.get(MessageTypes::Abilities,i,PBAbilities)
 end
@@ -175,7 +157,6 @@ def pbSavePokemonData
     item1=dexdata.fgetw
     item2=dexdata.fgetw
     item3=dexdata.fgetw
-    incense=dexdata.fgetw
     pokedata.write("[#{i}]\r\nName=#{speciesname}\r\n")
     pokedata.write("InternalName=#{cname}\r\n")
     ctype1=getConstantName(PBTypes,type1) rescue pbGetTypeConst(type1) || pbGetTypeConst(0) || "NORMAL"
@@ -272,8 +253,10 @@ def pbSavePokemonData
       end
       pokedata.write("\r\n")
     end
-    comp1=getConstantName(PBEggGroups,compat1) rescue pbGetEggGroupConst(compat1)
-    comp2=getConstantName(PBEggGroups,compat2) rescue pbGetEggGroupConst(compat2)
+    compatarray=["","Monster","Water1","Bug","Flying","Field","Fairy","Grass","Humanlike",
+                 "Water3","Mineral","Amorphous","Water2","Ditto","Dragon","Undiscovered"]
+    comp1=compatarray[compat1]
+    comp2=compatarray[compat2]
     if compat1==compat2
       pokedata.write("Compatibility=#{comp1}\r\n")
     else
@@ -286,8 +269,7 @@ def pbSavePokemonData
     pokedata.write("Weight=")
     pokedata.write(sprintf("%.1f",weight/10.0)) if weight
     pokedata.write("\r\n")
-    colorname=getConstantName(PBColors,color) rescue pbGetColorConst(color)
-    pokedata.write("Color=#{colorname}\r\n")
+    pokedata.write("Color="+["Red","Blue","Yellow","Green","Black","Brown","Purple","Gray","White","Pink"][color]+"\r\n")
     pokedata.write("Habitat="+["","Grassland","Forest","WatersEdge","Sea","Cave","Mountain","RoughTerrain","Urban","Rare"][habitat]+"\r\n") if habitat>0
     regionallist=[]
     for region in 0...numRegions
@@ -359,10 +341,6 @@ def pbSavePokemonData
       count+=1
     end
     pokedata.write("\r\n")
-    if incense>0
-      initem=getConstantName(PBItems,incense) rescue pbGetItemConst(incense)
-      pokedata.write("Incense=#{initem}\r\n")
-    end
     if i%20==0
       Graphics.update
       Win32API.SetWindowText(_INTL("Processing species {1}...",i))
@@ -558,15 +536,14 @@ def pbSaveTrainerTypes()
      for i in 0...data.length
        record=data[i]
        if record
-         dataline=sprintf("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s\r\n",
+         dataline=sprintf("%d,%s,%s,%d,%s,%s,%s,%s,%s\r\n",
             i,record[1],record[2],
             record[3],
             record[4] ? record[4] : "",
             record[5] ? record[5] : "",
             record[6] ? record[6] : "",
             record[7] ? ["Male","Female","Mixed"][record[7]] : "Mixed",
-            (record[8]!=record[3]) ? record[8] : "",
-            record[9] ? record[9] : ""
+            record[8]!=record[3] ? record[8] : ""
          )
          f.write(dataline)
        end
@@ -1442,14 +1419,8 @@ class MusicFileLister
     Dir.chdir(folder){
        Dir.glob("*.mp3"){|f| @commands.push(f) }
        Dir.glob("*.MP3"){|f| @commands.push(f) }
-       Dir.glob("*.ogg"){|f| @commands.push(f) }
-       Dir.glob("*.OGG"){|f| @commands.push(f) }
-       Dir.glob("*.wav"){|f| @commands.push(f) }
-       Dir.glob("*.WAV"){|f| @commands.push(f) }
        Dir.glob("*.mid"){|f| @commands.push(f) }
        Dir.glob("*.MID"){|f| @commands.push(f) }
-       Dir.glob("*.midi"){|f| @commands.push(f) }
-       Dir.glob("*.MIDI"){|f| @commands.push(f) }
     }
     @commands.sort!
     @commands.length.times do |i|
@@ -2418,7 +2389,7 @@ def pbTrainerTypeEditorNew(trconst)
       end
     end
     if hasConst?(PBTrainers,cname)
-      Kernel.pbMessage(_INTL("Failed to create the trainer type. Choose a different name."))
+      Kernel.pbMessage(_INTL("Failed to create the trainer type.  Choose a different name."))
       return -1
     end
     record=[]
@@ -2433,7 +2404,6 @@ def pbTrainerTypeEditorNew(trconst)
     record[3]=Kernel.pbMessageChooseNumber(
        _INTL("Set the money per level won for defeating the Trainer."),params)
     record[8]=record[3]
-    record[9]=""
     PBTrainers.const_set(cname,record[0])
     data[record[0]]=record
     save_data(data,"Data/trainertypes.dat")
@@ -2478,8 +2448,6 @@ def pbTrainerTypeEditor
         _INTL("Gender of this Trainer type.")],
     [_INTL("Skill"),LimitProperty.new(255),
         _INTL("Skill level of this Trainer type.")],
-    [_INTL("Skill Codes"),StringProperty,
-        _INTL("Letters/phrases representing AI modifications of trainers of this type.")],
   ]
   pbListScreenBlock(_INTL("Trainer Types"),TrainerTypeLister.new(selection,true)){|button,trtype|
      if trtype
@@ -2751,9 +2719,9 @@ def pbTrainerBattleEditor
                   data[2]
                ]
                if trainerdata[3].length==0
-                 Kernel.pbMessage(_INTL("Can't save. The Pokémon list is empty."))
+                 Kernel.pbMessage(_INTL("Can't save.  The Pokémon list is empty."))
                elsif !trainerdata[1] || trainerdata[1].length==0
-                 Kernel.pbMessage(_INTL("Can't save. No name was entered."))
+                 Kernel.pbMessage(_INTL("Can't save.  No name was entered."))
                else
                  save=true
                  break
@@ -2790,13 +2758,13 @@ module TrainerPokemonProperty
        [_INTL("Held item"),ItemProperty,
            _INTL("Item held by the Pokémon.")],
        [_INTL("Move 1"),MoveProperty2.new(oldsetting),
-           _INTL("First move. Leave all moves blank (use Z key) to give it a wild move set.")],
+           _INTL("First move.  Leave all moves blank (use Z key) to give it a wild move set.")],
        [_INTL("Move 2"),MoveProperty2.new(oldsetting),
-           _INTL("Second move. Leave all moves blank (use Z key) to give it a wild move set.")],
+           _INTL("Second move.  Leave all moves blank (use Z key) to give it a wild move set.")],
        [_INTL("Move 3"),MoveProperty2.new(oldsetting),
-           _INTL("Third move. Leave all moves blank (use Z key) to give it a wild move set.")],
+           _INTL("Third move.  Leave all moves blank (use Z key) to give it a wild move set.")],
        [_INTL("Move 4"),MoveProperty2.new(oldsetting),
-           _INTL("Fourth move. Leave all moves blank (use Z key) to give it a wild move set.")],
+           _INTL("Fourth move.  Leave all moves blank (use Z key) to give it a wild move set.")],
        [_INTL("Ability"),LimitProperty.new(5),
            _INTL("Ability flag. 0=first ability, 1=second ability, 2-5=hidden ability.")],
        [_INTL("Gender"),LimitProperty.new(1),
@@ -3149,11 +3117,16 @@ end
 
 module WeatherEffectProperty
   def self.set(settingname,oldsetting)
-    options=[]
-    for i in 0..PBFieldWeather.maxValue
-      options.push(getConstantName(PBFieldWeather,i) || "ERROR")
-    end
-    cmd=Kernel.pbMessage(_INTL("Choose a weather effect."),options,1)
+    cmd=Kernel.pbMessage(_INTL("Choose a weather effect."),[
+       _INTL("No weather"),
+       _INTL("Rain"),
+       _INTL("Storm"),
+       _INTL("Snow"),
+       _INTL("Sandstorm"),
+       _INTL("Sunny"),
+       _INTL("HeavyRain"),
+       _INTL("Blizzard")
+    ],1)
     if cmd==0
       return nil
     else
@@ -3477,11 +3450,11 @@ LOCALMAPS=[
    ["MapPosition",RegionMapCoordsProperty,
        _INTL("Identifies the point on the regional map for this map.")],
    ["DiveMap",MapProperty,
-       _INTL("Specifies the underwater layer of this map. Use only if this map has deep water.")],
+       _INTL("Specifies the underwater layer of this map.  Use only if this map has deep water.")],
    ["DarkMap",BooleanProperty,
        _INTL("If true, this map is dark and a circle of light appears around the player. Flash can be used to expand the circle.")],
    ["SafariMap",BooleanProperty,
-       _INTL("If true, this map is part of the Safari Zone (both indoor and outdoor). Not to be used in the reception desk.")],
+       _INTL("If true, this map is part of the Safari Zone (both indoor and outdoor).  Not to be used in the reception desk.")],
    ["SnapEdges",BooleanProperty,
        _INTL("If true, when the player goes near this map's edge, the game doesn't center the player as usual.")],
    ["Dungeon",BooleanProperty,

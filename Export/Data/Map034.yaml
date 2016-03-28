@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: Dkc2cave
     pitch: 100
+  tileset_id: 6
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -309,6 +310,21 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - fall through to another map.
+          indent: 0
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'In this case, you will "fall down" to a different part of '
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'this same map.  There''s no difference to warrant the '
+          indent: 0
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - two levels of this cave to be on different maps.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -1069,7 +1085,6 @@ root: !ruby/object:RPG::Map
       y: 29
       x: 21
       id: 11
-  tileset_id: 6
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''
@@ -3156,8 +3171,8 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1367
     - 0
+    - 1367
     - 1304
     - 1305
     - 1305

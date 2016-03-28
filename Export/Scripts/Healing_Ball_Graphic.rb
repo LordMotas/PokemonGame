@@ -1,7 +1,3 @@
-#============================================================================
-# Healing Ball Graphics
-# by Mej71
-#============================================================================
 class MakeHealingBallGraphics
 
   def initialize
@@ -63,3 +59,4 @@ class MakeHealingBallGraphics
     bitmap2.dispose
   end
 end
+

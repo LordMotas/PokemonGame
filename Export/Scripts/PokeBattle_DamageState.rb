@@ -4,11 +4,12 @@ class PokeBattle_DamageState
   attr_accessor :calcdamage    # Calculated damage
   attr_accessor :typemod       # Type effectiveness
   attr_accessor :substitute    # A substitute took the damage
-  attr_accessor :focusband     # Focus Band used
-  attr_accessor :focussash     # Focus Sash used
+  attr_accessor :focusband     # Focus Band possible
+  attr_accessor :focusbandused # Focus Band actually used
+  attr_accessor :focussash     # Focus Sash possible
+  attr_accessor :focussashused # Focus Sash used
   attr_accessor :sturdy        # Sturdy ability used
   attr_accessor :endured       # Damage was endured
-  attr_accessor :berryweakened # A type-resisting berry was used
 
   def reset
     @hplost        = 0
@@ -17,10 +18,11 @@ class PokeBattle_DamageState
     @typemod       = 0
     @substitute    = false
     @focusband     = false
+    @focusbandused = false
     @focussash     = false
+    @focussashused = false
     @sturdy        = false
     @endured       = false
-    @berryweakened = false
   end
 
   def initialize

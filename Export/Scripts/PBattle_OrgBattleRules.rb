@@ -414,9 +414,9 @@ class StandardRestriction
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
-    pbDexDataOffset(dexdata,pokemon.species,2)
-    ability1=dexdata.fgetw
-    ability2=dexdata.fgetw
+    pbDexDataOffset(dexdata,pokemon.species,29)
+    ability1=dexdata.fgetb
+    ability2=dexdata.fgetb
     dexdata.close()
     # Species with disadvantageous abilities are not banned
     if isConst?(ability1,PBAbilities,:TRUANT) ||

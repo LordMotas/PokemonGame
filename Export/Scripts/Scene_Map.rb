@@ -122,7 +122,8 @@ class Scene_Map
       if $game_temp.transition_name == ""
         Graphics.transition(20)
       else
-        Graphics.transition(40, "Graphics/Transitions/" + $game_temp.transition_name)
+        Graphics.transition(40, "Graphics/Transitions/" +
+           $game_temp.transition_name)
       end
     end
     if $game_temp.message_window_showing
@@ -142,11 +143,6 @@ class Scene_Map
     if Input.trigger?(Input::F5)
       unless pbMapInterpreterRunning? or $game_player.moving?
         $PokemonTemp.keyItemCalling = true if $PokemonTemp
-      end
-    end
-    if Input.trigger?(Input::A)
-      if !pbMapInterpreterRunning? && $PokemonGlobal && $PokemonSystem && $PokemonSystem.runstyle==1
-        $PokemonGlobal.runtoggle=!$PokemonGlobal.runtoggle
       end
     end
     if $DEBUG and Input.press?(Input::F9)
@@ -187,23 +183,10 @@ class Scene_Map
     $game_temp.menu_calling = false
     $game_player.straighten
     $game_map.update
-    sscene=Menu.new #JV
-    sscreen=MenuScreen.new(sscene) 
-    sscreen.pbNewMenu
-  end
-
-=begin
-  def call_menu
-    $game_temp.menu_calling = false
-    $game_temp.in_menu = true
-    $game_player.straighten
-    $game_map.update
     sscene=PokemonMenu_Scene.new
     sscreen=PokemonMenu.new(sscene) 
     sscreen.pbStartPokemonMenu
-    $game_temp.in_menu = false
   end
-=end
 
   def call_debug
     $game_temp.debug_calling = false
@@ -218,7 +201,7 @@ class Scene_Map
     return if !playingBGM && !playingBGS
     map=pbLoadRxData(sprintf("Data/Map%03d", mapid))
     if playingBGM && map.autoplay_bgm
-      if (PBDayNight.isNight? rescue false)
+      if (PBDayNight.isNight?(pbGetTimeNow) rescue false)
         if playingBGM.name!=map.bgm.name && playingBGM.name!=map.bgm.name+"n"
           pbBGMFade(0.8)
         end

@@ -223,10 +223,8 @@ class NonlegendaryRestriction
     compat11=dexdata.fgetb
     pbDexDataOffset(dexdata,pkmn.species,18)
     genderbyte=dexdata.fgetb
-    dexdata.close
-    return (!isConst?(compat10,PBEggGroups,:Undiscovered) &&
-           !isConst?(compat11,PBEggGroups,:Undiscovered)) ||
-           genderbyte!=255
+    dexdata.close()
+    return ((compat10!=15 && compat11!=15) || genderbyte!=255)
   end
 end
 

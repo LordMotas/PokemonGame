@@ -37,7 +37,6 @@ class Game_Temp
   attr_accessor :name_max_char            # name input: max character count
   attr_accessor :menu_calling             # menu calling flag
   attr_accessor :menu_beep                # menu: play sound effect flag
-  attr_accessor :in_menu                  # menu is open
   attr_accessor :save_calling             # save calling flag
   attr_accessor :debug_calling            # debug calling flag
   attr_accessor :player_transferring      # player place movement flag
@@ -86,7 +85,6 @@ class Game_Temp
     @name_max_char = 0
     @menu_calling = false
     @menu_beep = false
-    @in_menu = false
     @save_calling = false
     @debug_calling = false
     @player_transferring = false

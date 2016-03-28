@@ -1133,7 +1133,7 @@ def pbBuyTriads
            _INTL("The {1} card?  Certainly.\r\nHow many would you like?",itemname),params)
         if quantity>0
           price*=quantity
-          if !Kernel.pbConfirmMessage(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,price))
+          if !Kernel.pbConfirmMessage(_INTL("{1}, and you want {2}.\r\nThat will be ${3}.  OK?",itemname,quantity,price))
             break
           end
           if $Trainer.money<price
@@ -1222,7 +1222,7 @@ def pbSellTriads
         if quantity>0
           price/=4
           price*=quantity
-          if Kernel.pbConfirmMessage(_INTL("I can pay ${1}. Would that be OK?",price))
+          if Kernel.pbConfirmMessage(_INTL("I can pay ${1}.  Would that be OK?",price))
             $Trainer.money+=price
             moneyString=_INTL("${1}",$Trainer.money)
             goldwindow.text=_INTL("Money:\n{1}",moneyString)

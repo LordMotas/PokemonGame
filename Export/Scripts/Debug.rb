@@ -259,6 +259,7 @@ def pbDebugMenu
   commands.add("togglepokegear",_INTL("Toggle Pokégear Ownership"))
   commands.add("togglepokedex",_INTL("Toggle Pokédex Ownership"))
   commands.add("dexlists",_INTL("Dex List Accessibility"))
+  commands.add("togglemegaring",_INTL("Toggle Mega Ring Ownership"))
   commands.add("readyrematches",_INTL("Ready Phone Rematches"))
   commands.add("mysterygift",_INTL("Manage Mystery Gifts"))
   commands.add("daycare",_INTL("Day Care Options..."))
@@ -541,6 +542,10 @@ def pbDebugMenu
           pbUnlockDex(dexindex)
         end
       end
+    elsif cmd=="togglemegaring"
+      $PokemonGlobal.megaRing=!$PokemonGlobal.megaRing
+      Kernel.pbMessage(_INTL("Gave Mega Ring.")) if $PokemonGlobal.megaRing
+      Kernel.pbMessage(_INTL("Lost Mega Ring.")) if !$PokemonGlobal.megaRing
     elsif cmd=="readyrematches"
       if !$PokemonGlobal.phoneNumbers || $PokemonGlobal.phoneNumbers.length==0
         Kernel.pbMessage(_INTL("There are no trainers in the Phone."))

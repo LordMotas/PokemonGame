@@ -931,7 +931,7 @@ class PokemonEntryScene
     end
     if minlength==0
       @sprites["helpwindow"]=Window_UnformattedTextPokemon.newWithSize(
-         _INTL("Enter text using the keyboard. Press\nESC to cancel, or ENTER to confirm."),
+         _INTL("Enter text using the keyboard.  Press\nESC to cancel, or ENTER to confirm."),
          32,Graphics.height-96,Graphics.width-64,96,@viewport
       )
     else
@@ -1596,16 +1596,16 @@ end
 
 
 
-def pbEnterText(helptext,minlength,maxlength,initialText="",mode=0,pokemon=nil,nofadeout=false)
+def pbEnterText(helptext,minlength,maxlength,initialText="",mode=0,pokemon=nil)
   ret=""
   if USEKEYBOARDTEXTENTRY
-    pbFadeOutIn(99999,nofadeout){
+    pbFadeOutIn(99999){
        sscene=PokemonEntryScene.new
        sscreen=PokemonEntry.new(sscene)
        ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
     }
   else
-    pbFadeOutIn(99999,nofadeout){
+    pbFadeOutIn(99999){
        sscene=PokemonEntryScene2.new
        sscreen=PokemonEntry.new(sscene)
        ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
@@ -1614,20 +1614,20 @@ def pbEnterText(helptext,minlength,maxlength,initialText="",mode=0,pokemon=nil,n
   return ret
 end
 
-def pbEnterPlayerName(helptext,minlength,maxlength,initialText="",nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,1,nil,nofadeout)
+def pbEnterPlayerName(helptext,minlength,maxlength,initialText="")
+  return pbEnterText(helptext,minlength,maxlength,initialText,1)
 end
 
-def pbEnterPokemonName(helptext,minlength,maxlength,initialText="",pokemon=nil,nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,2,pokemon,nofadeout)
+def pbEnterPokemonName(helptext,minlength,maxlength,initialText="",pokemon=nil)
+  return pbEnterText(helptext,minlength,maxlength,initialText,2,pokemon)
 end
 
-def pbEnterBoxName(helptext,minlength,maxlength,initialText="",nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,3,nil,nofadeout)
+def pbEnterBoxName(helptext,minlength,maxlength,initialText="")
+  return pbEnterText(helptext,minlength,maxlength,initialText,3)
 end
 
-def pbEnterNPCName(helptext,minlength,maxlength,initialText="",id=0,nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,4,id,nofadeout)
+def pbEnterNPCName(helptext,minlength,maxlength,initialText="",id=0)
+  return pbEnterText(helptext,minlength,maxlength,initialText,4,id)
 end
 
 
@@ -1635,7 +1635,8 @@ end
 class Interpreter
   def command_303
     if $Trainer
-      $Trainer.name=pbEnterPlayerName(_INTL("Your name?"),1,@parameters[1],$Trainer.name)
+       $Trainer.name=pbEnterPlayerName(_INTL("Your name?"),1,
+          @parameters[1],$Trainer.name)
       return true
     end
     if $game_actors && $data_actors && $data_actors[@parameters[0]] != nil

@@ -372,8 +372,7 @@ module BitmapCache
     path=canonicalize(path)
     objPath=fromCache(path)
     if !objPath
-      @cleancounter = ((@cleancounter || 0) + 1)%10
-      if @cleancounter == 0
+      if rand(10) == 0
         for i in @cache.keys
           obj=fromCache(i)
           if !obj

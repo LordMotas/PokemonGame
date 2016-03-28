@@ -197,55 +197,72 @@ end
 ################################################################################
 class PokedexFormScene
   def pbStartScene(species)
+    @viewportlower=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewportlower.z=99999-50
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
+    @viewport2=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport2.z=99999+50
     @species=species
     @gender=$Trainer.formlastseen[species][0]
     @form=$Trainer.formlastseen[species][1]
     @available=pbGetAvailable # [name, gender, form]
     @sprites={}
+    @sprites["background0"]=addBackgroundOrColoredPlane(@sprites,"background0",nil,Color.new(255,255,255),@viewportlower)
     @sprites["background"]=IconSprite.new(0,0,@viewport)
     @sprites["background"].setBitmap(_INTL("Graphics/Pictures/pokedexForm"))
-    @sprites["info"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
-    pbSetSystemFont(@sprites["info"].bitmap)
-    @sprites["front"]=PokemonSprite.new(@viewport)
-    @sprites["back"]=PokemonSprite.new(@viewport)
+    @sprites["front"]=PokemonBattlerSprite.new(false,0,@viewport)
+    @sprites["front"].visible=true
+    @sprites["front"].zoom_x=2
+    @sprites["front"].zoom_y=2
+    @sprites["back"]=PokemonBattlerSprite.new(false,0,@viewport)
+    @sprites["back"].visible=true
     @sprites["icon"]=PokemonSpeciesIconSprite.new(@species,@viewport)
-    @sprites["icon"].pbSetParams(@species,@gender,@form)
+    @sprites["icon"].gender=@gender
+    @sprites["icon"].form=@form
     @sprites["icon"].x=52
     @sprites["icon"].y=290
-    pbRefresh
+    @sprites["background2"]=IconSprite.new(0,0,@viewport2)
+    @sprites["background2"].setBitmap(_INTL("Graphics/Pictures/pokedexForm"))
+    @sprites["info"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport2)
+    pbUpdate
     return true
   end
 
   def pbUpdate
-    pbUpdateSpriteHash(@sprites)
-  end
-
-  def pbRefresh
     @sprites["info"].bitmap.clear
+    pbSetSystemFont(@sprites["info"].bitmap)
     name=""
     for i in @available
       if i[1]==@gender && i[2]==@form
-        name=i[0]; break
+        name=i[0]
+        break
       end
     end
     text=[
-       [sprintf("%s",PBSpecies.getName(@species)),
+       [_INTL("{1}",PBSpecies.getName(@species)),
           (Graphics.width+72)/2,Graphics.height-86,2,
           Color.new(88,88,80),Color.new(168,184,184)],
-       [sprintf("%s",name),
+       [_INTL("{1}",name),
           (Graphics.width+72)/2,Graphics.height-54,2,
           Color.new(88,88,80),Color.new(168,184,184)],
     ]
     pbDrawTextPositions(@sprites["info"].bitmap,text)
-    @sprites["front"].setSpeciesBitmap(@species,(@gender==1),@form,false,false,false)
-    pbPositionPokemonSprite(@sprites["front"],74,96)
-    @sprites["back"].setSpeciesBitmap(@species,(@gender==1),@form,false,false,true)
+    frontBitmap=pbCheckPokemonBitmapFiles([@species,false,(@gender==1),false,@form,false])
+    if frontBitmap
+      frontSprite=AnimatedBitmapWrapper.new(frontBitmap)
+      @sprites["front"].bitmap=frontSprite.bitmap
+    end
+    backBitmap=pbCheckPokemonBitmapFiles([@species,true,(@gender==1),false,@form,false])
+    if backBitmap
+      backSprite=AnimatedBitmapWrapper.new(backBitmap)
+      @sprites["back"].bitmap=backSprite.bitmap
+    end
     metrics=load_data("Data/metrics.dat")
     backMetric=metrics[0][@species]
-    pbPositionPokemonSprite(@sprites["back"],310,98+16+backMetric*2)
-    @sprites["icon"].pbSetParams(@species,@gender,@form)
+    pbPositionPokemonSprite(@sprites["front"],40,62)
+    pbPositionPokemonSprite(@sprites["back"],279,62+backMetric)
+#    @sprites["icon"].update
   end
 
   def pbGetAvailable
@@ -305,8 +322,7 @@ class PokedexFormScene
             available.push([_INTL("{1} Male",formnames[i]),j,i]) if j==0
             available.push([_INTL("{1} Female",formnames[i]),j,i]) if j==1
           else
-            gendertopush=(genderbyte==254) ? 1 : 0
-            available.push([formnames[i],gendertopush,i])
+            available.push([formnames[i],j,i])
             break
           end
         end
@@ -329,7 +345,7 @@ class PokedexFormScene
     commands=pbGetCommands
     using(cmdwindow=Window_CommandPokemon.new(commands)) {
        cmdwindow.height=128 if cmdwindow.height>128
-       cmdwindow.z=@viewport.z+1
+       cmdwindow.z=@viewport2.z+1
        pbBottomRight(cmdwindow)
        for i in 0...@available.length
          if @available[i][1]==@gender && @available[i][2]==@form
@@ -342,17 +358,16 @@ class PokedexFormScene
          Graphics.update
          Input.update
          cmdwindow.update
-         pbUpdate
+         @sprites["icon"].update
          if cmdwindow.index!=oldindex
-           @gender=@available[cmdwindow.index][1]
-           @form=@available[cmdwindow.index][2]
-           pbRefresh
+           @gender=@sprites["icon"].gender=@available[cmdwindow.index][1]
+           @form=@sprites["icon"].form=@available[cmdwindow.index][2]
+           pbUpdate
          end
          if Input.trigger?(Input::B)
            pbPlayCancelSE()
-           @gender=oldgender
-           @form=oldform
-           pbRefresh
+           @gender=@sprites["icon"].gender=oldgender
+           @form=@sprites["icon"].form=oldform
            break
          end
          if Input.trigger?(Input::C)
@@ -369,7 +384,7 @@ class PokedexFormScene
     loop do
       Graphics.update
       Input.update
-      pbUpdate
+      @sprites["icon"].update
       if Input.trigger?(Input::C)
         pbChooseForm
       elsif Input.trigger?(Input::LEFT)
@@ -384,7 +399,7 @@ class PokedexFormScene
       elsif Input.trigger?(Input::B)
         ret=1
         pbPlayCancelSE()
-        pbFadeOutAndHide(@sprites) { pbUpdate }
+        pbFadeOutAndHide(@sprites)
         break
       end
     end
@@ -396,6 +411,8 @@ class PokedexFormScene
   def pbEndScene
     pbDisposeSpriteHash(@sprites)
     @viewport.dispose
+    @viewportlower.dispose
+    @viewport2.dispose
   end
 end
 

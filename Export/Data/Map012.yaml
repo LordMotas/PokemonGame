@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 021-Field04
     pitch: 100
+  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -184,7 +185,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbGetPokemon(1).isEgg?
+          - pbGetPokemon(1).egg?
           indent: 2
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -237,7 +238,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbGetPokemon(1).numMoves==1
+          - pbNumMoves(pbGetPokemon(1))==1
           indent: 2
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -322,12 +323,12 @@ root: !ruby/object:RPG::Map
           code: 106
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbGetPokemon(1).pbDeleteMoveAtIndex(
+          - pbDeleteMove(pbGetPokemon(1),
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "   pbGet(2))"
+          - pbGet(2))
           indent: 4
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -512,7 +513,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(:HEARTSCALE)>0"
+          - "$PokemonBag.pbQuantity(PBItems::HEARTSCALE)>0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -618,7 +619,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbGetPokemon(1).isEgg?
+          - pbGetPokemon(1).egg?
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -721,7 +722,7 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbDeleteItem(:HEARTSCALE)"
+          - "$PokemonBag.pbDeleteItem(PBItems::HEARTSCALE)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -975,7 +976,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbGetPokemon(1).isEgg?
+          - pbGetPokemon(1).egg?
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1120,16 +1121,9 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbGet(5)=="" || pbGet(5)==pbGet(3)
+          - $game_variables[5]=="" || $game_variables[5]==pbGet(3)
           indent: 2
           code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !binary |-
-            UmVzZXRzIHRoZSBQb2vDqW1vbidzIG5pY2tuYW1lIHRvIHRoZSBzcGVjaWVz
-            IG5hbWUu
-          indent: 3
-          code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
           - pkmn=pbGetPokemon(1)
@@ -1142,12 +1136,12 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "                        pkmn.species)"
+          - pkmn.species)
           indent: 3
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbSet(3,pkmn.name)
+          - "$game_variables[3]=pkmn.name"
           indent: 3
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -1373,7 +1367,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbMoveTutorChoose(:FRENZYPLANT)
+          - pbMoveTutorChoose(PBMoves::FRENZYPLANT)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1458,7 +1452,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbMoveTutorChoose(:BLASTBURN)
+          - pbMoveTutorChoose(PBMoves::BLASTBURN)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1543,7 +1537,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbMoveTutorChoose(:HYDROCANNON)
+          - pbMoveTutorChoose(PBMoves::HYDROCANNON)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1680,7 +1674,6 @@ root: !ruby/object:RPG::Map
       y: 7
       x: 2
       id: 5
-  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''
