@@ -135,7 +135,7 @@ class PokemonBag_Scene
     @sprites["leftarrow"].play
     @sprites["rightarrow"].play
     @sprites["bag"]=IconSprite.new(30,20,@viewport)
-    @sprites["icon"]=ItemIconSprite.new(48,Graphics.height-48,-1,@viewport)
+    @sprites["icon"]=IconSprite.new(24,Graphics.height-72,@viewport)
     @sprites["itemwindow"]=Window_PokemonBag.new(@bag,lastpocket,168,-8,314,40+32+ITEMSVISIBLE*32)
     @sprites["itemwindow"].viewport=@viewport
     @sprites["itemwindow"].pocket=lastpocket
@@ -225,7 +225,8 @@ class PokemonBag_Scene
     end
     @sprites["slider"].y=ycoord
     # Set the icon for the currently selected item
-    @sprites["icon"].item=itemwindow.item
+    filename=pbItemIconFile(itemwindow.item)
+    @sprites["icon"].setBitmap(filename)
     # Display the item's description
     @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Close bag.") : 
        pbGetMessage(MessageTypes::ItemDescriptions,itemwindow.item)
@@ -256,7 +257,8 @@ class PokemonBag_Scene
            end
            @sprites["slider"].y=ycoord
            # Update item icon and description
-           @sprites["icon"].item=itemwindow.item
+           filename=pbItemIconFile(itemwindow.item)
+           @sprites["icon"].setBitmap(filename)
            @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Close bag.") :
               pbGetMessage(MessageTypes::ItemDescriptions,itemwindow.item)
          end
@@ -360,21 +362,24 @@ class PokemonBagScreen
     @scene.pbEndScene
     return item
   end
-
-# UI logic for the item screen when an item is used on a Pokémon from the party screen.
-  def pbUseItemScreen(pokemon)
+  
+#For use on item on Pokémon from Party screen
+  def pbUseItemScreen(pokemon)  
     @scene.pbStartScene(@bag)
     item=0
     loop do
       item=@scene.pbChooseItem
       break if item==0
       itemname=PBItems.getName(item)
-      # Can't use certain items on Pokémon
-      if !ItemHandlers.hasUseOnPokemon(item) && !pbIsMachine?(item)
-        @scene.pbDisplay(_INTL("The {1} can't be used on {2}.",itemname,pokemon.name))
+      # Key items and hidden machines can't be held
+      if !ItemHandlers.hasUseOnPokemonHandler(item) && !pbIsMachine?(item) 
+        @scene.pbDisplay(_INTL("The {1} can't be used on {2}.",itemname, pokemon.name))
         next
       else
-        break
+        ret=pbCheckUseOnPokemonQuick(item,pokemon,@scene)
+        break if ret==true # End screen, not actually used
+        @scene.pbRefresh
+        next
       end
     end
     @scene.pbEndScene
@@ -429,17 +434,15 @@ class PokemonBagScreen
       end
       qty=storage.pbQuantity(item)
       itemname=PBItems.getName(item)
-      itemnameplural=PBItems.getNamePlural(item)
       if qty>1
-        qty=@scene.pbChooseNumber(_INTL("Toss out how many {1}?",itemnameplural),qty)
+        qty=@scene.pbChooseNumber(_INTL("Toss out how many {1}(s)?",itemname),qty)
       end
       if qty>0
-        itemname=itemnameplural if qty>1
-        if pbConfirm(_INTL("Is it OK to throw away {1} {2}?",qty,itemname))
+        if pbConfirm(_INTL("Is it OK to throw away {1} {2}(s)?",qty,itemname))
           if !storage.pbDeleteItem(item,qty)
             raise "Can't delete items from storage"
           end
-          pbDisplay(_INTL("Threw away {1} {2}.",qty,itemname))
+          pbDisplay(_INTL("Threw away {1} {2}(s).",qty,itemname))
         end
       end
     end
@@ -458,20 +461,17 @@ class PokemonBagScreen
       break if item==0
       commands=[_INTL("Withdraw"),_INTL("Give"),_INTL("Cancel")]
       itemname=PBItems.getName(item)
-      
       command=@scene.pbShowCommands(_INTL("{1} is selected.",itemname),commands)
       if command==0
         qty=storage.pbQuantity(item)
-        if qty>1 && !pbIsImportantItem?(item)
+        if qty>1
           qty=@scene.pbChooseNumber(_INTL("How many do you want to withdraw?"),qty)
         end
         if qty>0
-          dispqty=(pbIsImportantItem?(item)) ? 1 : qty
-          itemname=PBItems.getNamePlural(item) if dispqty>1
           if !@bag.pbCanStore?(item,qty)
             pbDisplay(_INTL("There's no more room in the Bag."))
           else
-            pbDisplay(_INTL("Withdrew {1} {2}.",dispqty,itemname))
+            pbDisplay(_INTL("Withdrew {1} {2}(s).",qty,itemname))
             if !storage.pbDeleteItem(item,qty)
               raise "Can't delete items from storage"
             end
@@ -516,16 +516,15 @@ class PokemonBagScreen
       item=@scene.pbChooseItem
       break if item==0
       qty=@bag.pbQuantity(item)
-      if qty>1 && !pbIsImportantItem?(item)
+      if qty>1
         qty=@scene.pbChooseNumber(_INTL("How many do you want to deposit?"),qty)
       end
       if qty>0
+        itemname=PBItems.getName(item)
         if !storage.pbCanStore?(item,qty)
           pbDisplay(_INTL("There's no room to store items."))
         else
-          dispqty=(pbIsImportantItem?(item)) ? 1 : qty
-          itemname=(dispqty>1) ? PBItems.getNamePlural(item) : PBItems.getName(item)
-          pbDisplay(_INTL("Deposited {1} {2}.",dispqty,itemname))
+          pbDisplay(_INTL("Deposited {1} {2}(s).",qty,itemname))
           if !@bag.pbDeleteItem(item,qty)
             raise "Can't delete items from bag"
           end
@@ -554,7 +553,7 @@ class PokemonBagScreen
       # Generate command list
       commands[cmdRead=commands.length]=_INTL("Read") if pbIsMail?(item)
       commands[cmdUse=commands.length]=_INTL("Use") if ItemHandlers.hasOutHandler(item) || (pbIsMachine?(item) && $Trainer.party.length>0)
-      commands[cmdGive=commands.length]=_INTL("Give") if $Trainer.pokemonParty.length>0 && !pbIsImportantItem?(item)
+      commands[cmdGive=commands.length]=_INTL("Give") if $Trainer.party.length>0 && !pbIsImportantItem?(item)
       commands[cmdToss=commands.length]=_INTL("Toss") if !pbIsImportantItem?(item) || $DEBUG
       if @bag.registeredItem==item
         commands[cmdRegister=commands.length]=_INTL("Deselect")
@@ -595,14 +594,11 @@ class PokemonBagScreen
         end
       elsif cmdToss>=0 && command==cmdToss # Toss item
         qty=@bag.pbQuantity(item)
-        if qty>1
-          helptext=_INTL("Toss out how many {1}?",PBItems.getNamePlural(item))
-          qty=@scene.pbChooseNumber(helptext,qty)
-        end
+        helptext=_INTL("Toss out how many {1}(s)?",itemname)
+        qty=@scene.pbChooseNumber(helptext,qty)
         if qty>0
-          itemname=PBItems.getNamePlural(item) if qty>1
-          if pbConfirm(_INTL("Is it OK to throw away {1} {2}?",qty,itemname))
-            pbDisplay(_INTL("Threw away {1} {2}.",qty,itemname))
+          if pbConfirm(_INTL("Is it OK to throw away {1} {2}(s)?",qty,itemname))
+            pbDisplay(_INTL("Threw away {1} {2}(s).",qty,itemname))
             qty.times { @bag.pbDeleteItem(item) }      
           end
         end   
@@ -699,7 +695,7 @@ class PokemonBag
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return
     end
     @registeredItem=(item!=@registeredItem) ? item : 0
@@ -716,7 +712,7 @@ class PokemonBag
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return 0
     end
     pocket=pbGetPocket(item)
@@ -724,17 +720,13 @@ class PokemonBag
     maxsize=@pockets[pocket].length if maxsize<0
     return ItemStorageHelper.pbQuantity(@pockets[pocket],maxsize,item)
   end
-
-  def pbHasItem?(item)
-    return pbQuantity(item)>0
-  end
-
+    
   def pbDeleteItem(item,qty=1)
     if item.is_a?(String) || item.is_a?(Symbol)
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return false
     end
     pocket=pbGetPocket(item)
@@ -742,7 +734,7 @@ class PokemonBag
     maxsize=@pockets[pocket].length if maxsize<0
     ret=ItemStorageHelper.pbDeleteItem(@pockets[pocket],maxsize,item,qty)
     if ret
-      @registeredItem=0 if @registeredItem==item && !pbHasItem?(item)
+      @registeredItem=0 if @registeredItem==item && pbQuantity(item)<=0
     end
     return ret
   end
@@ -752,7 +744,7 @@ class PokemonBag
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return false
     end
     pocket=pbGetPocket(item)
@@ -767,7 +759,7 @@ class PokemonBag
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return false
     end
     pocket=pbGetPocket(item)
@@ -782,7 +774,7 @@ class PokemonBag
       item=getID(PBItems,item)
     end
     if !item || item<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
+      raise ArgumentError.new(_INTL("The item number is invalid.",item))
       return false
     end
     pocket=pbGetPocket(item)
@@ -790,31 +782,6 @@ class PokemonBag
     maxsize=@pockets[pocket].length+1 if maxsize<0
     return ItemStorageHelper.pbStoreItem(
        @pockets[pocket],maxsize,BAGMAXPERSLOT,item,qty,true)
-  end
-
-  def pbChangeItem(olditem,newitem)
-    if olditem.is_a?(String) || olditem.is_a?(Symbol)
-      olditem=getID(PBItems,olditem)
-    end
-    if newitem.is_a?(String) || newitem.is_a?(Symbol)
-      newitem=getID(PBItems,newitem)
-    end
-    if !olditem || olditem<1 || !newitem || newitem<1
-      raise ArgumentError.new(_INTL("The item number is invalid."))
-      return false
-    end
-    pocket=pbGetPocket(olditem)
-    maxsize=maxPocketSize(pocket)
-    maxsize=@pockets[pocket].length if maxsize<0
-    ret=false
-    for i in 0...maxsize
-      itemslot=@pockets[pocket][i]
-      if itemslot && itemslot[0]==olditem
-        itemslot[0]=newitem
-        ret=true
-      end
-    end
-    return ret
   end
 end
 
@@ -900,7 +867,7 @@ class ItemStorageScene
     @sprites={}
     @sprites["background"]=IconSprite.new(0,0,@viewport)
     @sprites["background"].setBitmap("Graphics/Pictures/pcItembg")
-    @sprites["icon"]=ItemIconSprite.new(50,334,-1,@viewport)
+    @sprites["icon"]=IconSprite.new(26,310,@viewport)
     # Item list
     @sprites["itemwindow"]=Window_PokemonItemStorage.new(@bag,98,14,334,32+ITEMSVISIBLE*32)
     @sprites["itemwindow"].viewport=@viewport
@@ -943,7 +910,8 @@ class ItemStorageScene
     drawTextEx(bm,0,0,bm.width,2,@title,TITLEBASECOLOR,TITLESHADOWCOLOR)
     itemwindow=@sprites["itemwindow"]
     # Draw item icon
-    @sprites["icon"].item=itemwindow.item
+    filename=pbItemIconFile(itemwindow.item)
+    @sprites["icon"].setBitmap(filename)
     # Get item description
     @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Close storage.") : 
        pbGetMessage(MessageTypes::ItemDescriptions,itemwindow.item)

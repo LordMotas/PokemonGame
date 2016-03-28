@@ -118,7 +118,7 @@ def pbSafariBattle(species,level)
   Input.update
   if pbSafariState.ballcount<=0
     if decision!=2 && decision!=5
-      Kernel.pbMessage(_INTL("Announcer:  You're out of Safari Balls! Game over!")) 
+      Kernel.pbMessage(_INTL("Announcer:  You're out of Safari Balls!  Game over!")) 
     end
     pbSafariState.decision=1
     pbSafariState.pbGoToStart

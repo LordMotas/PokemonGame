@@ -17,6 +17,11 @@ class Game_Event < Game_Character
     @through = true
     @tempSwitches={}
     moveto(@event.x, @event.y) if map
+    @event.pages.each {|page| page.list.each {|command|
+      if [108, 408].include?(command.code)
+        command.parameters.each {|p| check_custom_switch(page, p) }
+      end
+    }}
     refresh
   end
 

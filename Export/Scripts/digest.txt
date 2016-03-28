@@ -25,8 +25,8 @@
 39105595    Sprite_Character                             Sprite_Character.rb
 74493566    Sprite_Picture                               Sprite_Picture.rb
 92723589    Sprite_Timer                                 Sprite_Timer.rb
+76981045    Sprite_Resizer                               Sprite_Resizer.rb
 78836369    ================                             EMPTY
-538414      Sprite_Resizer                               Sprite_Resizer.rb
 94944591    Spriteset_Map                                Spriteset_Map.rb
 35627057    Tilemap_XP                                   Tilemap_XP.rb
 98550604    Tilemap_Perspective                          Tilemap_Perspective.rb
@@ -43,7 +43,6 @@
 71359307    PBDebug                                      PBDebug.rb
 83068051    ================                             EMPTY
 81118607    Audio                                        Audio.rb
-82922566    AudioPlay                                    AudioPlay.rb
 23773314    AudioUtilities                               AudioUtilities.rb
 4971563     ================                             EMPTY
 82335198    BitmapCache                                  BitmapCache.rb
@@ -61,7 +60,6 @@
 68340238    Scene_Credits                                Scene_Credits.rb
 99031337    Transitions                                  Transitions.rb
 36377771    ================                             EMPTY
-30205337    MiscData                                     MiscData.rb
 87446417    PBMove                                       PBMove.rb
 56495368    PBStatuses                                   PBStatuses.rb
 51698776    PBTypes_Extra                                PBTypes_Extra.rb
@@ -69,8 +67,6 @@
 99993693    PBExperience                                 PBExperience.rb
 48438576    PBStats                                      PBStats.rb
 212145      PBRibbons                                    PBRibbons.rb
-97865779    PBEggGroups                                  PBEggGroups.rb
-7466226     PBColors                                     PBColors.rb
 30475794    PBEnvironment                                PBEnvironment.rb
 80850057    ================                             EMPTY
 82042322    PBEffects                                    PBEffects.rb
@@ -98,12 +94,11 @@
 35681012    PBTerrain                                    PBTerrain.rb
 13862471    PField_Field                                 PField_Field.rb
 34036101    PField_FieldWeather                          PField_FieldWeather.rb
-7433173     PField_Metadata                              PField_Metadata.rb
-44189734    PField_MapFactory                            PField_MapFactory.rb
 83521781    PField_HiddenMoves                           PField_HiddenMoves.rb
 99166834    PField_Encounters                            PField_Encounters.rb
 59741688    PField_EncounterModifiers                    PField_EncounterModifiers.rb
 36720388    PField_RoamingPokemon                        PField_RoamingPokemon.rb
+40379466    PField_Map                                   PField_Map.rb
 1874171     PField_RandomDungeons                        PField_RandomDungeons.rb
 99370154    PField_BerryPlants                           PField_BerryPlants.rb
 85485371    PField_DayCare                               PField_DayCare.rb
@@ -117,14 +112,12 @@
 98118426    PItem_ItemEffects                            PItem_ItemEffects.rb
 71716027    PItem_PokeBalls                              PItem_PokeBalls.rb
 26789106    PItem_PokeRadar                              PItem_PokeRadar.rb
-13650551    PItem_Mail                                   PItem_Mail.rb
-58714349    PItem_Sprites                                PItem_Sprites.rb
 7164315     ================                             EMPTY
 12627955    PokeBattle_Pokemon                           PokeBattle_Pokemon.rb
 38169587    Pokemon_MultipleForms                        Pokemon_MultipleForms.rb
-99154456    Pokemon_MegaEvolution                        Pokemon_MegaEvolution.rb
 59631760    Pokemon_ShadowPokemon                        Pokemon_ShadowPokemon.rb
 24965382    Pokemon_Evolution                            Pokemon_Evolution.rb
+3366286     PokemonEvolutionHelper                       PokemonEvolutionHelper.rb
 76534435    Pokemon_Chatter                              Pokemon_Chatter.rb
 55826030    Pokemon_Sprites                              Pokemon_Sprites.rb
 61191450    ================                             EMPTY
@@ -175,19 +168,12 @@
 44515027    BattleAnimationEditor                        BattleAnimationEditor.rb
 35205096    Editor                                       Editor.rb
 66443344    Compiler                                     Compiler.rb
-30913346    ===CUSTOM SCRIPTS===                         EMPTY
-85156739    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
-85596521    ItemCrafter                                  ItemCrafter.rb
-33756233    UraniumCustomMenu                            UraniumCustomMenu.rb
-24216588    SkyInverseBattle                             SkyInverseBattle.rb
-51398100    ChallengeModes                               ChallengeModes.rb
-28946912    ChallengeSelection                           ChallengeSelection.rb
-23982061    Challenge_Selection                          Challenge_Selection.rb
-99152027    ChallengeSelectionAbility                    ChallengeSelectionAbility.rb
-26541381    ChallengeSelectionMoves                      ChallengeSelectionMoves.rb
-21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
-7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
-56201428    Errassus_BWBag                               Errassus_BWBag.rb
-66124780    AdvancedTitleScreen                          AdvancedTitleScreen.rb
 27847358    ================                             EMPTY
+33615988    Custom Utilities                             Custom_Utilities.rb
+187318      Trade From PC                                Trade_From_PC.rb
+924438      Healing Ball Graphic                         Healing_Ball_Graphic.rb
+49085414    Animated Bitmap Wrapper                      Animated_Bitmap_Wrapper.rb
+34265224    More Self Switches                           More_Self_Switches.rb
+99782591    Title Screen                                 Title_Screen.rb
+60001346    ================                             EMPTY
 76067044    Main                                         Main.rb

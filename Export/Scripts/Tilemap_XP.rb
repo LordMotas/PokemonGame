@@ -83,7 +83,7 @@ class CustomTilemap
     @tileHeight = Game_Map::TILEHEIGHT rescue 32
     @tileSrcWidth = 32
     @tileSrcHeight = 32
-    @diffsizes=(@tileWidth!=@tileSrcWidth) || (@tileHeight!=@tileSrcHeight)
+    @diffsizes=(@tileWidth!=@tileSrcWidth)||(@tileHeight!=@tileSrcHeight)
     @tone=Tone.new(0,0,0,0)
     @color=Color.new(0,0,0,0)
     @oldtone=Tone.new(0,0,0,0)
@@ -402,8 +402,7 @@ class CustomTilemap
       sprite.tone=@tone
       sprite.color=@color
       getRegularTile(sprite,id)
-      spriteZ=(!@priorities[id] || @priorities[id]==0) ? 0 : ypos+@priorities[id]*32+32
-      spriteZ=1 if @priorities[id]==4 && $PokemonGlobal && $PokemonGlobal.bridge>0
+      spriteZ=(@priorities[id]==0 || !@priorities[id]) ? 0 : ypos+@priorities[id]*32+32
       sprite.z=spriteZ
       count+=2
     else
@@ -420,8 +419,7 @@ class CustomTilemap
       sprite.tone=@tone
       sprite.color=@color
       getAutotile(sprite,id)
-      spriteZ=(!@priorities[id] || @priorities[id]==0) ? 0 : ypos+@priorities[id]*32+32
-      spriteZ=1 if @priorities[id]==4 && $PokemonGlobal && $PokemonGlobal.bridge>0
+      spriteZ=(@priorities[id]==0 || !@priorities[id]) ? 0 : ypos+@priorities[id]*32+32
       sprite.z=spriteZ
       count+=2
     end
@@ -661,7 +659,7 @@ class CustomTilemap
               id = mapdata[x,y,z]
               next if !id || id<48
               prioid=@priorities[id]
-              next if !prioid || prioid!=0
+              next if prioid!=0 || !prioid
               if overallcount>2000
                 xpos=(x*twidth)-@oxLayer0
                 ypos=(y*theight)-@oyLayer0
@@ -703,7 +701,7 @@ class CustomTilemap
              x=tile[0]
              y=tile[1]
              # "next" means "return" here
-             next !(x<xStart || x>xEnd || y<yStart || y>yEnd)
+             next !(x<xStart||x>xEnd||y<yStart||y>yEnd)
           }
           @priorect=[xStart,yStart,xEnd,yEnd]
         end

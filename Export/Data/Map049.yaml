@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: Cave
     pitch: 100
+  tileset_id: 6
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -216,11 +217,6 @@ root: !ruby/object:RPG::Map
           - 6
           indent: 0
           code: 223
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Kernel.pbAutoFlash
-          indent: 0
-          code: 355
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
@@ -1679,7 +1675,7 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - is in the script section PField_EncounterModifiers.
+          - is in the script section PokemonEncounterModifiers.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -2128,7 +2124,6 @@ root: !ruby/object:RPG::Map
       y: 8
       x: 24
       id: 15
-  tileset_id: 6
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

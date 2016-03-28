@@ -59,32 +59,23 @@ Poccil (Peter O.)
 Maruno
 
 With contributions from:
-AvatarMonkeyKirby<s>Luka S.J.
-Boushy<s>MiDas Mike
-Brother1440<s>Near Fantastica
-FL.<s>PinkMan
-Genzai Kawakami<s>Popper
-Harshboy<s>Rataime
-help-14<s>SoundSpawn
-IceGod64<s>the__end
-Jacob O. Wobbrock<s>Venom12
-KitsuneKouta<s>Wachunga
-Lisa Anthony<s>xLeD
+AvatarMonkeyKirby<s>MiDas Mike
+Boushy<s>Near Fantastica
+Brother1440<s>PinkMan
+FL.<s>Popper
+Genzai Kawakami<s>Rataime
+Harshboy<s>SoundSpawn
+help-14<s>the__end
+IceGod64<s>Venom12
+Jacob O. Wobbrock<s>Wachunga
+KitsuneKouta<s>xLeD
+Lisa Anthony<s>
 and everyone else who helped out
 
 
 
 "RPG Maker XP" by:
 Enterbrain
-
-Pokémon is owned by:
-The Pokémon Company
-Nintendo
-Affiliated with Game Freak
-
-This is a non-profit fan-made game.
-No copyright infringements intended.
-Please support the official games!
 
 _END_
 #Stop Editing
@@ -148,7 +139,7 @@ _END_
 # Setup
 #--------
     #Stops all audio but background music.
-    previousBGM = $game_system.getPlayingBGM
+    @PreviousBGM = $game_system.getPlayingBGM
     pbMEStop()
     pbBGSStop()
     pbSEStop()
@@ -167,7 +158,7 @@ _END_
     @sprite.dispose
     @credit_sprite.dispose
     $PokemonGlobal.creditsPlayed=true
-    pbBGMPlay(previousBGM)
+    pbBGMPlay(@PreviousBGM)
   end
 
 ##Checks if credits bitmap has reached it's ending point

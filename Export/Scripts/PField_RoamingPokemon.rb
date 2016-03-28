@@ -67,7 +67,6 @@ def pbRoamPokemon(ignoretrail=false)
       currentArea=$PokemonGlobal.roamPosition[i]
       if !currentArea
         $PokemonGlobal.roamPosition[i]=keys[rand(keys.length)]
-        currentArea=$PokemonGlobal.roamPosition[i]
       end
       newAreas=pbRoamingAreas(i)[currentArea]
       next if !newAreas
@@ -129,7 +128,7 @@ def pbRoamingPokemonBattle(species,level)
      $PokemonGlobal.roamPokemon[index].is_a?(PokeBattle_Pokemon)
     genwildpoke=$PokemonGlobal.roamPokemon[index]
   else
-    genwildpoke=pbGenerateWildPokemon(species,level,true)
+    genwildpoke=pbGenerateWildPokemon(species,level)
   end
   Events.onStartBattle.trigger(nil,genwildpoke)
   scene=pbNewBattleScene
@@ -143,21 +142,20 @@ def pbRoamingPokemonBattle(species,level)
      pbSceneStandby {
         decision=battle.pbStartBattle
      }
-     for i in $Trainer.party; (i.makeUnmega rescue nil); (i.makeUnprimal rescue nil); end
+     for i in $Trainer.party; (i.makeUnmega rescue nil); end
      if $PokemonGlobal.partner
        pbHealAll
        for i in $PokemonGlobal.partner[3]
          i.heal
          i.makeUnmega rescue nil
-         i.makeUnprimal rescue nil
        end
      end
-#     if decision==2 || decision==5
-#       $game_system.bgm_unpause
-#       $game_system.bgs_unpause
-#       Kernel.pbStartOver
-#     end
-     Events.onEndBattle.trigger(nil,decision,false)
+     if decision==2 || decision==5
+       $game_system.bgm_unpause
+       $game_system.bgs_unpause
+       Kernel.pbStartOver
+     end
+     Events.onEndBattle.trigger(nil,decision)
   }
   Input.update
   if decision==1 || decision==4   # Defeated or caught
@@ -187,10 +185,6 @@ EncounterModifier.register(proc {|encounter|
     next if !species || species<=0
     if $game_switches[poke[2]] && $PokemonGlobal.roamPokemon[i]!=true
       currentArea=$PokemonGlobal.roamPosition[i]
-      if !currentArea
-        $PokemonGlobal.roamPosition[i]=keys[rand(keys.length)]
-        currentArea=$PokemonGlobal.roamPosition[i]
-      end
       roamermeta=pbGetMetadata(currentArea,MetadataMapPosition)
       possiblemaps=[]
       mapinfos=$RPGVX ? load_data("Data/MapInfos.rvdata") : load_data("Data/MapInfos.rxdata")

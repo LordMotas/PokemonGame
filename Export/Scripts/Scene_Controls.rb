@@ -11,7 +11,7 @@ class ButtonEventScene < EventScene
     Graphics.freeze
     addImage(0,0,"Graphics/Pictures/helpbg")
     @labels=[
-       addLabel(52*2,13*2,Graphics.width*3/4,_INTL("Moves the main character. Also used to scroll through list entries.")),
+       addLabel(52*2,13*2,Graphics.width*3/4,_INTL("Moves the main character.  Also used to scroll through list entries.")),
        addLabel(52*2,53*2,Graphics.width*3/4,_INTL("Used to confirm a choice, check things, and talk to people.")),
        addLabel(52*2,93*2,Graphics.width*3/4,_INTL("Used to exit, cancel a choice or mode, and open the pause menu.")),
        addLabel(52*2,133*2,Graphics.width*3/4,_INTL("Hold down while walking to run.")),

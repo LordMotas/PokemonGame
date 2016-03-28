@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: gym
     pitch: 100
+  tileset_id: 12
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -1271,7 +1272,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:MASTERBALL)
+          - Kernel.pbReceiveItem(PBItems::MASTERBALL)
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1356,7 +1357,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:MAXREVIVE)
+          - Kernel.pbReceiveItem(PBItems::MAXREVIVE)
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1441,7 +1442,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:EXPSHARE)
+          - Kernel.pbReceiveItem(PBItems::EXPSHARE)
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1526,7 +1527,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:PPUP)
+          - Kernel.pbReceiveItem(PBItems::PPUP)
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1606,7 +1607,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:ULTRABALL)
+          - Kernel.pbReceiveItem(PBItems::ULTRABALL)
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -2053,7 +2054,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(:COINCASE)<=0"
+          - "$PokemonBag.pbQuantity(PBItems::COINCASE)<=0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -2431,7 +2432,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(:COINCASE)<=0"
+          - "$PokemonBag.pbQuantity(PBItems::COINCASE)<=0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -2442,7 +2443,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(:COINCASE)
+          - Kernel.pbReceiveItem(PBItems::COINCASE)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -2996,17 +2997,7 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'opponent respectively. Each number can be between '
-          indent: 0
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - '0 and 9 inclusive, and the max level must be higher '
-          indent: 0
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - than or equal to the min level.
+          - opponent respectively (between 0 and 9 inclusive).
           indent: 0
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -3067,7 +3058,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'This duel includes certain battle rules. See the wiki '
+          - 'This duel includes certain battle rules.  See the wiki '
           indent: 0
           code: 108
         - !ruby/object:RPG::EventCommand
@@ -3158,7 +3149,7 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'opponent''s deck. The level numbers are unused, but '
+          - 'opponent''s deck.  The level numbers are unused, but '
           indent: 0
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -4104,7 +4095,6 @@ root: !ruby/object:RPG::Map
       y: 30
       x: 4
       id: 31
-  tileset_id: 12
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

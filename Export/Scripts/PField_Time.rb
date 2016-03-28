@@ -1,6 +1,6 @@
-#===============================================================================
-# Day and night system
-#===============================================================================
+################################################################################
+# * Day and night system
+################################################################################
 def pbGetTimeNow
   return Time.now
 end
@@ -36,35 +36,29 @@ module PBDayNight
   ]
   @cachedTone=nil
   @dayNightToneLastUpdate=nil
-  @oneOverSixty=1/60.0
 
 # Returns true if it's day.
-  def self.isDay?(time=nil)
-    time=pbGetTimeNow if !time
+  def self.isDay?(time)
     return (time.hour>=6 && time.hour<20)
   end
 
 # Returns true if it's night.
-  def self.isNight?(time=nil)
-    time=pbGetTimeNow if !time
+  def self.isNight?(time)
     return (time.hour>=20 || time.hour<6)
   end
 
 # Returns true if it's morning.
-  def self.isMorning?(time=nil)
-    time=pbGetTimeNow if !time
+  def self.isMorning?(time)
     return (time.hour>=6 && time.hour<12)
   end
 
 # Returns true if it's the afternoon.
-  def self.isAfternoon?(time=nil)
-    time=pbGetTimeNow if !time
+  def self.isAfternoon?(time)
     return (time.hour>=12 && time.hour<20)
   end
 
 # Returns true if it's the evening.
-  def self.isEvening?(time=nil)
-    time=pbGetTimeNow if !time
+  def self.isEvening?(time)
     return (time.hour>=17 && time.hour<20)
   end
 
@@ -78,10 +72,12 @@ module PBDayNight
 # Gets a Tone object representing a suggested shading
 # tone for the current time of day.
   def self.getTone()
-    @cachedTone=Tone.new(0,0,0) if !@cachedTone
-    return @cachedTone if !ENABLESHADING
+    return Tone.new(0,0,0) if !ENABLESHADING
+    if !@cachedTone
+      @cachedTone=Tone.new(0,0,0)
+    end
     if !@dayNightToneLastUpdate || @dayNightToneLastUpdate!=Graphics.frame_count       
-      getToneInternal()
+      @cachedTone=getToneInternal()
       @dayNightToneLastUpdate=Graphics.frame_count
     end
     return @cachedTone
@@ -105,10 +101,12 @@ module PBDayNight
     nexthourtone=PBDayNight::HourlyTones[(hour+1)%24]
     # Calculate current tint according to current and next hour's tint and
     # depending on current minute
-    @cachedTone.red=((nexthourtone.red-tone.red)*minute*@oneOverSixty)+tone.red
-    @cachedTone.green=((nexthourtone.green-tone.green)*minute*@oneOverSixty)+tone.green
-    @cachedTone.blue=((nexthourtone.blue-tone.blue)*minute*@oneOverSixty)+tone.blue
-    @cachedTone.gray=((nexthourtone.gray-tone.gray)*minute*@oneOverSixty)+tone.gray
+    return Tone.new(
+       ((nexthourtone.red-tone.red)*minute/60.0)+tone.red,
+       ((nexthourtone.green-tone.green)*minute/60.0)+tone.green,
+       ((nexthourtone.blue-tone.blue)*minute/60.0)+tone.blue,
+       ((nexthourtone.gray-tone.gray)*minute/60.0)+tone.gray
+    )
   end
 end
 
@@ -129,9 +127,9 @@ end
 
 
 
-#===============================================================================
-# Moon phases and Zodiac
-#===============================================================================
+################################################################################
+# * Zodiac and day/month checks
+################################################################################
 # Calculates the phase of the moon.
 # 0 - New Moon
 # 1 - Waxing Crescent
@@ -141,8 +139,7 @@ end
 # 5 - Waning Gibbous
 # 6 - Last Quarter
 # 7 - Waning Crescent
-def moonphase(time=nil) # in UTC
-  time=pbGetTimeNow if !time
+def moonphase(time) # in UTC
   transitions=[
      1.8456618033125,
      5.5369854099375,
@@ -205,9 +202,6 @@ def zodiacComplements(sign)
   return [(sign+1)%12,(sign+11)%12]
 end
 
-#===============================================================================
-# Days of the week
-#===============================================================================
 def pbIsWeekday(wdayVariable,*arg)
   timenow=pbGetTimeNow
   wday=timenow.wday
@@ -223,24 +217,22 @@ def pbIsWeekday(wdayVariable,*arg)
        _INTL("Wednesday"),
        _INTL("Thursday"),
        _INTL("Friday"),
-       _INTL("Saturday")][wday] 
+       _INTL("Saturday")
+    ][wday] 
     $game_map.need_refresh = true if $game_map
   end
   return ret
 end
 
-#===============================================================================
-# Months
-#===============================================================================
-def pbIsMonth(monVariable,*arg)
+def pbIsMonth(wdayVariable,*arg)
   timenow=pbGetTimeNow
-  thismon=timenow.mon
+  wday=timenow.mon
   ret=false
   for wd in arg
-    ret=true if wd==thismon
+    ret=true if wd==wday
   end
-  if monVariable>0
-    $game_variables[monVariable]=[ 
+  if wdayVariable>0
+    $game_variables[wdayVariable]=[ 
        _INTL("January"),
        _INTL("February"),
        _INTL("March"),
@@ -252,14 +244,15 @@ def pbIsMonth(monVariable,*arg)
        _INTL("September"),
        _INTL("October"),
        _INTL("November"),
-       _INTL("December")][thismon-1] 
+       _INTL("December")
+    ][wday-1] 
     $game_map.need_refresh = true if $game_map
   end
   return ret
 end
 
 def pbGetAbbrevMonthName(month)
-  return ["",
+  return [_INTL(""),
           _INTL("Jan."),
           _INTL("Feb."),
           _INTL("Mar."),
@@ -272,41 +265,4 @@ def pbGetAbbrevMonthName(month)
           _INTL("Oct."),
           _INTL("Nov."),
           _INTL("Dec.")][month]
-end
-
-#===============================================================================
-# Seasons
-#===============================================================================
-def pbGetSeason
-  return (pbGetTimeNow.mon-1)%4
-end
-
-def pbIsSeason(seasonVariable,*arg)
-  thisseason=pbGetSeason
-  ret=false
-  for wd in arg
-    ret=true if wd==thisseason
-  end
-  if seasonVariable>0
-    $game_variables[seasonVariable]=[ 
-       _INTL("Spring"),
-       _INTL("Summer"),
-       _INTL("Autumn"),
-       _INTL("Winter")][thisseason] 
-    $game_map.need_refresh = true if $game_map
-  end
-  return ret
-end
-
-def pbIsSpring; return pbIsSeason(0,0); end # Jan, May, Sep
-def pbIsSummer; return pbIsSeason(0,1); end # Feb, Jun, Oct
-def pbIsAutumn; return pbIsSeason(0,2); end # Mar, Jul, Nov
-def pbIsFall; return pbIsAutumn; end
-def pbIsWinter; return pbIsSeason(0,3); end # Apr, Aug, Dec
-
-def pbGetSeasonName(season)
-  return [_INTL("Spring"),
-          _INTL("Summer"),
-          _INTL("Autumn"),
-          _INTL("Winter")][season]
 end

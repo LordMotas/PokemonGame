@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 018-Field01
     pitch: 115
+  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -132,7 +133,6 @@ root: !ruby/object:RPG::Map
       y: 11
       x: 14
       id: 1
-  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

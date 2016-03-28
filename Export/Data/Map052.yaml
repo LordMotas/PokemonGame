@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: PkmRS-BTower
     pitch: 100
+  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -1908,7 +1909,6 @@ root: !ruby/object:RPG::Map
       y: 24
       x: 28
       id: 6
-  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

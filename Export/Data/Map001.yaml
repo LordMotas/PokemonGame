@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 100
     name: ''
     pitch: 100
+  tileset_id: 4
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -15,6 +16,17 @@ root: !ruby/object:RPG::Map
           - 1
           indent: 0
           code: 104
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !binary |-
+            PGFjPlxjWzhdXGxbM10oUGxlYXNlIHJlZmVyIHRvIHRoZVxuUG9rw6ltb24g
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Essentials Wiki\nfor documentation.)
+          indent: 0
+          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - 2
@@ -870,6 +882,16 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
+          - "\\bEnjoy the Starter Kit.  You should give credit when "
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - using it.
+          indent: 0
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 4
           indent: 0
           code: 242
@@ -904,11 +926,6 @@ root: !ruby/object:RPG::Map
           - 3
           indent: 0
           code: 235
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - ChallengeSelection.new
-          indent: 0
-          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
@@ -952,7 +969,7 @@ root: !ruby/object:RPG::Map
             code: 0
           skippable: false
           repeat: true
-        trigger: 3
+        trigger: 0
         step_anime: false
         move_frequency: 3
         always_on_top: false
@@ -1084,7 +1101,7 @@ root: !ruby/object:RPG::Map
             code: 0
           skippable: false
           repeat: true
-        trigger: 0
+        trigger: 3
         step_anime: false
         move_frequency: 3
         always_on_top: false
@@ -1143,7 +1160,6 @@ root: !ruby/object:RPG::Map
       y: 14
       x: 0
       id: 2
-  tileset_id: 4
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

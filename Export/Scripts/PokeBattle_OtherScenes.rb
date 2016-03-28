@@ -495,9 +495,9 @@ class PokeBattle_DebugScene
     hpchange=pkmn.hp-oldhp
     if hpchange<0
       hpchange=-hpchange
-      PBDebug.log("[HP change] #{pkmn.pbThis} lost #{hpchange} HP (#{oldhp}=>#{pkmn.hp})")
+      PBDebug.log("[#{pkmn.pbThis} lost #{hpchange} HP, now has #{pkmn.hp} HP]")
     else
-      PBDebug.log("[HP change] #{pkmn.pbThis} gained #{hpchange} HP (#{oldhp}=>#{pkmn.hp})")
+      PBDebug.log("[#{pkmn.pbThis} gained #{hpchange} HP, now has #{pkmn.hp} HP]")
     end
     pbRefresh
   end
@@ -548,9 +548,9 @@ class PokeBattle_DebugScene
   def pbAnimation(moveid,attacker,opponent,hitnum=0)
     if attacker
       if opponent
-        PBDebug.log("[pbAnimation] #{attacker.pbThis}, #{opponent.pbThis}")
+        PBDebug.log("[pbAnimation (#{attacker.pbThis}, #{opponent.pbThis}]")
       else
-        PBDebug.log("[pbAnimation] #{attacker.pbThis}")
+        PBDebug.log("[pbAnimation (#{attacker.pbThis}]")
       end
     else
       PBDebug.log("[pbAnimation]")
@@ -788,7 +788,7 @@ class PokeBattle_DebugSceneNoLogging
   def pbAnimation(moveid,attacker,opponent,hitnum=0)
   end
 end
-
+
 
 class PokeBattle_DebugSceneNoGraphics
   def initialize
@@ -910,11 +910,11 @@ class PokeBattle_DebugSceneNoGraphics
     hpchange=pkmn.hp-oldhp
     if hpchange<0
       hpchange=-hpchange
-      PBDebug.log("[HP change] #{pkmn.pbThis} lost #{hpchange} HP (#{oldhp}=>#{pkmn.hp})")
+      PBDebug.log("[#{pkmn.pbThis} lost #{hpchange} HP, now has #{pkmn.hp} HP]")
     else
-      PBDebug.log("[HP change] #{pkmn.pbThis} gained #{hpchange} HP (#{oldhp}=>#{pkmn.hp})")
+      PBDebug.log("[#{pkmn.pbThis} gained #{hpchange} HP, now has #{pkmn.hp} HP]")
     end
-    pbRefresh
+     pbRefresh
   end
 
 # This method is called whenever a Pokémon faints
@@ -968,7 +968,7 @@ class PokeBattle_DebugSceneNoGraphics
   end
 
   def pbBattleArenaJudgment(b1,b2,r1,r2)
-    PBDebug.log("[Judgment] #{b1.pbThis}:#{r1.inspect}, #{b2.pbThis}:#{r2.inspect}")
+    PBDebug.log("[Judgment - #{b1.pbThis}:#{r1.inspect}, #{b2.pbThis}:#{r2.inspect}]")
   end
 
   def pbBattleArenaBattlers(b1,b2)
@@ -978,21 +978,21 @@ class PokeBattle_DebugSceneNoGraphics
   def pbCommonAnimation(moveid,attacker,opponent,hitnum=0)
     if attacker
       if opponent
-        PBDebug.log("[pbCommonAnimation] #{moveid}, #{attacker.pbThis}, #{opponent.pbThis}")
+        PBDebug.log("[pbCommonAnimation #{moveid} (#{attacker.pbThis}, #{opponent.pbThis}]")
       else
-        PBDebug.log("[pbCommonAnimation] #{moveid}, #{attacker.pbThis}")
+        PBDebug.log("[pbCommonAnimation #{moveid} (#{attacker.pbThis}]")
       end
     else
-      PBDebug.log("[pbCommonAnimation] #{moveid}")
+      PBDebug.log("[pbCommonAnimation #{moveid}]")
     end
   end
 
   def pbAnimation(moveid,attacker,opponent,hitnum=0)
     if attacker
       if opponent
-        PBDebug.log("[pbAnimation] #{attacker.pbThis}, #{opponent.pbThis}")
+        PBDebug.log("[pbAnimation (#{attacker.pbThis}, #{opponent.pbThis}]")
       else
-        PBDebug.log("[pbAnimation] #{attacker.pbThis}")
+        PBDebug.log("[pbAnimation (#{attacker.pbThis}]")
       end
     else
       PBDebug.log("[pbAnimation]")
