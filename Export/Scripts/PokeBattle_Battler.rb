@@ -1383,36 +1383,45 @@ class PokeBattle_Battler
           end
         end
 				#Burst
-        if target.hasWorkingAbility(:BURST,true) && target.isFainted? &&
-           !user.isFainted?
-          if !@battle.pbCheckGlobalAbility(:DAMP) &&
-             !user.hasMoldBreaker && !user.hasWorkingAbility(:MAGICGUARD)
-            PBDebug.log("[Ability triggered] #{target.pbThis}'s Burst")
+        if target.hasWorkingAbility(:BURST,true) && !user.isFainted?
+          if !(@battle.pbCheckGlobalAbility(:DAMP)) && !(@battle.pbCheckGlobalBypassingAbility) #Moldbreaker
+            @battle.pbDisplayEffect(target)
+            PBDebug.log("[#{user.pbThis} hurt by Burst]")
             @battle.scene.pbDamageAnimation(user,0)
             user.pbReduceHP((user.totalhp/6).floor)
-            @battle.pbDisplay(_INTL("{1} was caught in the burst!",user.pbThis))
+            if EFFECTMESSAGES
+              @battle.pbDisplay(_INTL("{1} was hurt!",user.pbThis))
+            else
+              @battle.pbDisplay(_INTL("{1} was caught in the burst!",user.pbThis))
+            end
           end
         end
         #Detonate
-        if target.hasWorkingAbility(:DETONATE,true) && target.isFainted? &&
-           !user.isFainted?
-          if !@battle.pbCheckGlobalAbility(:DAMP) &&
-             !user.hasMoldBreaker && !user.hasWorkingAbility(:MAGICGUARD)
-            PBDebug.log("[Ability triggered] #{target.pbThis}'s Detonate")
+        if target.hasWorkingAbility(:DETONATE,true) && !user.isFainted?
+          if !(@battle.pbCheckGlobalAbility(:DAMP)) && !(@battle.pbCheckGlobalBypassingAbility) #Moldbreaker
+            @battle.pbDisplayEffect(target)
+            PBDebug.log("[#{user.pbThis} hurt by Detonate]")
             @battle.scene.pbDamageAnimation(user,0)
             user.pbReduceHP((user.totalhp/5).floor)
-            @battle.pbDisplay(_INTL("{1} was caught in the detonation!",user.pbThis))
+            if EFFECTMESSAGES
+              @battle.pbDisplay(_INTL("{1} was hurt!",user.pbThis))
+            else
+              @battle.pbDisplay(_INTL("{1} was caught in the detonation!",user.pbThis))
+            end
           end
         end
         #Explode
-        if target.hasWorkingAbility(:EXPLODE,true) && target.isFainted? &&
-           !user.isFainted?
-          if !@battle.pbCheckGlobalAbility(:DAMP) &&
-             !user.hasMoldBreaker && !user.hasWorkingAbility(:MAGICGUARD)
-            PBDebug.log("[Ability triggered] #{target.pbThis}'s Explode")
+        if target.hasWorkingAbility(:EXPLODE,true) && !user.isFainted?
+          if !(@battle.pbCheckGlobalAbility(:DAMP)) && !(@battle.pbCheckGlobalBypassingAbility) #Moldbreaker
+            @battle.pbDisplayEffect(target)
+            PBDebug.log("[#{user.pbThis} hurt by Explode]")
             @battle.scene.pbDamageAnimation(user,0)
             user.pbReduceHP((user.totalhp/4).floor)
-            @battle.pbDisplay(_INTL("{1} was caught in the explosion!",user.pbThis))
+            if EFFECTMESSAGES
+              @battle.pbDisplay(_INTL("{1} was hurt!",user.pbThis))
+            else
+              @battle.pbDisplay(_INTL("{1} was caught in the explosion!",user.pbThis))
+            end
           end
         end
         if target.hasWorkingAbility(:CUTECHARM) && @battle.pbRandom(10)<3
@@ -1485,18 +1494,30 @@ class PokeBattle_Battler
           end
         end
 				#Icy Hot part 1
-        if target.hasWorkingAbility(:ICYHOT,true) && @battle.pbRandom(10)<1 &&
-           user.pbCanBurn?(nil,false)
-         PBDebug.log("[Ability triggered] #{target.pbThis}'s Icy Hot")
-          user.pbBurn(target,_INTL("{1}'s {2} burned {3}!",target.pbThis,
-             PBAbilities.getName(target.ability),user.pbThis(true)))
+        if target.hasWorkingAbility(:ICYHOT,true) &&
+           @battle.pbRandom(10)<3 && user.pbCanBurn?(false)
+          PBDebug.log("[#{target.pbThis}'s Icy Hot triggered]")
+          @battle.pbDisplayEffect(target)
+          user.pbBurn(target)
+          if EFFECTMESSAGES
+            @battle.pbDisplay(_INTL("{1} was burned!",user.pbThis(true)))
+          else
+            @battle.pbDisplay(_INTL("{1}'s {2} burned {3}!",target.pbThis,
+               PBAbilities.getName(target.ability),user.pbThis(true)))
+          end
         end
         #Icy Hot part 2
-        if target.hasWorkingAbility(:ICYHOT,true) && @battle.pbRandom(10)<1 &&
-           user.pbCanFreeze?(nil,false,self)
-          PBDebug.log("[Ability triggered] #{target.pbThis}'s Icy Hot")
-          user.pbFreeze(_INTL("{1}'s {2} froze {3}!",target.pbThis,
-             PBAbilities.getName(target.ability),user.pbThis(true)))
+        if target.hasWorkingAbility(:ICYHOT,true) &&
+           @battle.pbRandom(10)<3 && user.pbCanFreeze?(false)
+          PBDebug.log("[#{target.pbThis}'s Icy Hot triggered]")
+          @battle.pbDisplayEffect(target)
+          user.pbFreeze
+          if EFFECTMESSAGES
+            @battle.pbDisplay(_INTL("{1} is frozen!",user.pbThis(true)))
+          else
+            @battle.pbDisplay(_INTL("{1}'s {2} froze {3}!",target.pbThis,
+               PBAbilities.getName(target.ability),user.pbThis(true)))
+          end
         end
         if target.hasWorkingAbility(:IRONBARBS,true) && !user.isFainted?
           PBDebug.log("[#{target.pbThis}'s Iron Barbs triggered]")
@@ -1566,14 +1587,30 @@ class PokeBattle_Battler
 				#Smoke Vents   
         if target.hasWorkingAbility(:SMOKEVENTS,true) && @battle.pbRandom(10)<2 &&
            user.pbCanReduceStatStage?(PBStats::ACCURACY)
-           PBDebug.log("[Ability triggered] #{target.pbThis}'s Smoke Vents")
-           user.pbReduceStatWithCause(PBStats::ACCURACY,1,target,PBAbilities.getName(target.ability))
+           @battle.pbDisplayEffect(target)
+           PBDebug.log("[#{target.pbThis}'s Smoke Vents triggered]")
+          if EFFECTMESSAGES
+            user.pbReduceStat(PBStats::ACCURACY,1,true,true,false,user)
+          else
+            user.pbReduceStat(PBStats::ACCURACY,1,true,true,false,user)
+            @battle.pbDisplay(_INTL("{1}'s {2} lowered {3}'s Accuracy!",target.pbThis,
+            PBAbilities.getName(target.ability),user.pbThis(true)))
+          end
         end
         #Decorate   
-        if target.hasWorkingAbility(:DECORATE,true) && @battle.pbRandom(10)<2 &&
-           target.pbCanIncreaseStatStage?(PBStats::EVASION)
-           PBDebug.log("[Ability triggered] #{target.pbThis}'s Descorate")
-           target.pbIncreaseStatWithCause(PBStats::EVASION,1,user,PBAbilities.getName(target.ability))
+        if target.hasWorkingAbility(:DECORATE,true) && @battle.pbRandom(10)<2
+           PBDebug.log("[#{target.pbThis}'s Decorate triggered]")
+          if target.pbCanIncreaseStatStage?(PBStats::EVASION)
+            @battle.pbDisplayEffect(target)
+            target.pbIncreaseStatBasic(PBStats::EVASION,1)
+            @battle.pbCommonAnimation("StatUp",target,nil)
+            if EFFECTMESSAGES
+              @battle.pbDisplay(_INTL("{1}'s Evasion rose!",target.pbThis(true)))
+            else
+              @battle.pbDisplay(_INTL("{1}'s {2} raised its Evasion!",
+               target.pbThis,PBAbilities.getName(target.ability)))
+            end
+          end
         end
         if target.hasWorkingAbility(:PICKPOCKET)
           if target.item==0 && user.item>0 &&
@@ -1628,10 +1665,17 @@ class PokeBattle_Battler
         end
       end
 			#Voltaic Touch
-      if user.hasWorkingAbility(:VOLTAICTOUCH,true) && @battle.pbRandom(10)<3 &&
-				 target.pbCanParalyze?(nil,false) && move.pbIsPhysical?(movetype)
-        target.pbParalyze(user,_INTL("{1}'s {2} paralyzed {3}! It may be unable to move!",
-        user.pbThis,PBAbilities.getName(user.ability),target.pbThis(true)))
+      if user.hasWorkingAbility(:VOLTAICTOUCH,true) && 
+         @battle.pbRandom(10)<3 && target.pbCanParalyze?(false)
+        PBDebug.log("[#{user.pbThis}'s Voltaic Touch triggered]")
+        @battle.pbDisplayEffect(user)
+        target.pbParalyze(user)
+        if EFFECTMESSAGES
+            @battle.pbDisplay(_INTL("It paralyzed {1}!",target.pbThis(true)))
+        else
+          @battle.pbDisplay(_INTL("{1}'s {2} paralyzed {3}!",user.pbThis,
+             PBAbilities.getName(user.ability),target.pbThis(true)))
+        end
       end
     end
     if damage>0
