@@ -23,9 +23,10 @@ def _pbNextComb(comb,length)
 end
 
 # Bubble speech messages function
-def pbCallBub(status=0, value=0)
+def pbCallBub(status=0, value=0, times=0)
   $talkingEvent=get_character(value).id
   $Bubble=status
+  $Numbubbles=times
 end
 
 # Iterates through the array and yields each combination of _num_ elements in

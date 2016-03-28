@@ -1053,6 +1053,50 @@ def Kernel.pbCreateStatusWindow(viewport=nil)
 end
 
 def Kernel.pbCreateMessageWindow(viewport=nil,skin=nil)
+  if $Bubble==2 # Message window set to floating bubble.
+    if $game_player.direction==8 # Player facing up, message window top. 
+      @Restriction = Viewport.new(0, 104, Graphics.width, 280)
+      @Restriction.z = 999999
+      @Arrow = Sprite.new(@Restriction)
+      @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
+      @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
+      @Arrow.z = 999999
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
+      @Arrow.zoom_x = 2
+      @Arrow.zoom_y = 2
+      if @Arrow.x<-230
+        @Arrow.x = $game_map.events[$talkingEvent].screen_x
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+      end
+    else # Player facing left, down, right, message window bottom.
+      @Restriction = Viewport.new(0, 0, Graphics.width, 280)
+      @Restriction.z = 999999
+      @Arrow = Sprite.new(@Restriction)
+      @Arrow.x = $game_map.events[$talkingEvent].screen_x
+      @Arrow.y = $game_map.events[$talkingEvent].screen_y
+      @Arrow.z = 999999
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow1")
+      if @Arrow.y>=Graphics.height-120 # Change arrow direction. 
+        @Outofrange=true
+        @Restriction.rect.y+=104
+        @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
+        @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
+        if @Arrow.x<-250
+          @Arrow.x = $game_map.events[$talkingEvent].screen_x
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+        end
+        if @Arrow.x>=256
+          @Arrow.x-=15# = $game_map.events[$talkingEvent].screen_x-Graphics.width
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+        end
+      else
+        @Outofrange=false
+      end
+      @Arrow.zoom_x = 2
+      @Arrow.zoom_y = 2
+    end
+  end
   msgwindow=Window_AdvancedTextPokemon.new("")
   if !viewport
     msgwindow.z=99999
@@ -1074,6 +1118,8 @@ def Kernel.pbDisposeMessageWindow(msgwindow)
   $game_temp.message_window_showing=false if $game_temp
   $game_message.visible=false if $game_message
   msgwindow.dispose
+  @Arrow.dispose if @Arrow
+  @Restriction.dispose if @Restriction
 end
 
 
@@ -1165,7 +1211,54 @@ def pbRepositionMessageWindow(msgwindow, linecount=2)
       when 1  # middle
         msgwindow.y=(Graphics.height/2)-(msgwindow.height/2)
       when 2
-       msgwindow.y=(Graphics.height)-(msgwindow.height)
+
+        @OpposedValue = 0
+        @NegativeValue = 0
+       if $Bubble==1
+         msgwindow.setSkin("Graphics/windowskins/frlgtextskin")
+         msgwindow.height = 100
+         msgwindow.width = 400
+         msgwindow.resizeToFit2(msgwindow.text,400,100)
+         msgwindow.x = $game_map.events[$talkingEvent].screen_x
+         msgwindow.y = $game_map.events[$talkingEvent].screen_y - (32 + msgwindow.height)
+         if msgwindow.y>(Graphics.height-msgwindow.height)
+           msgwindow.y = (Graphics.height-msgwindow.height)
+         elsif msgwindow.y<0
+           msgwindow.y+=msgwindow.height
+         end
+         if msgwindow.x>(Graphics.width-msgwindow.width)
+           msgwindow.x = ($game_map.events[$talkingEvent].screen_x-msgwindow.width)
+         elsif msgwindow.x<0
+           msgwindow.x+=(msgwindow.width)
+         end
+         if $Numbubbles <= 1  #JV
+           $Bubble = 0
+         else
+           $Numbubbles -= 1
+         end
+       elsif $Bubble==2
+         msgwindow.setSkin("Graphics/windowskins/frlgtextskin")
+         msgwindow.height = 102
+         msgwindow.width = Graphics.width
+         if $game_player.direction==8
+           @Restriction = Viewport.new(0, 0, Graphics.width, 280)
+           msgwindow.y = 6
+         else
+           @Restriction = Viewport.new(0, 6 + msgwindow.height, Graphics.width, 280)
+           msgwindow.y = (Graphics.height - msgwindow.height) - 6
+           if @Outofrange==true
+             msgwindow.y = 6
+           end
+         end
+         if $Numbubbles <= 1  #JV
+           $Bubble = 0
+         else
+           $Numbubbles -= 1
+         end
+       else
+         msgwindow.height = 102
+         msgwindow.y = Graphics.height - msgwindow.height - 6
+       end
     end
   end
   if $game_system && $game_system.respond_to?("message_frame")
@@ -1226,7 +1319,7 @@ end
 def pbDisplayGoldWindow(msgwindow)
   moneyString=pbGetGoldString()
   goldwindow=Window_AdvancedTextPokemon.new(_INTL("Money:\n<ar>{1}</ar>",moneyString))
-  goldwindow.setSkin("Graphics/Windowskins/goldskin")
+  goldwindow.setSkin("Graphics/Windowskins/frlgtextskin")
   goldwindow.resizeToFit(goldwindow.text,Graphics.width)
   goldwindow.width=160 if goldwindow.width<=160
   if msgwindow.y==0

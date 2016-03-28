@@ -183,9 +183,9 @@ class Scene_Map
     $game_temp.menu_calling = false
     $game_player.straighten
     $game_map.update
-    sscene=PokemonMenu_Scene.new
-    sscreen=PokemonMenu.new(sscene) 
-    sscreen.pbStartPokemonMenu
+    sscene=Menu.new #Uranium
+    sscreen=MenuScreen.new(sscene) 
+    sscreen.pbNewMenu
   end
 
   def call_debug
