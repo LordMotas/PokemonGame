@@ -1,8 +1,7 @@
 #===============================================================================
-# Overriding Sprite, Viewport, and Plane to support resizing
-# By Peter O.
-# Modified by Luka S.J. and Maruno to support fullscreen and more sizes.
-# -- This is a stand-alone RGSS script. --
+#  Overriding Sprite, Viewport, and Plane to support resizing
+#  By Peter O.
+#  -- This is a stand-alone RGSS script. --
 #===============================================================================
 $ResizeFactor     = 1.0
 $ResizeFactorMul  = 100
@@ -11,18 +10,8 @@ $ResizeOffsetY    = 0
 $ResizeFactorSet  = false
 $HaveResizeBorder = false
 
-if true   # Disables using Alt+Enter to go fullscreen
-  regHotKey = Win32API.new('user32', 'RegisterHotKey', 'LIII', 'I')
-  regHotKey.call(0, 1, 1, 0x0D)
-end
-
-def pbSetResizeFactor(factor=1,norecalc=false)
-  factor=[0.5,1.0,1.5,2.0,-1][factor] if !norecalc
-  (factor<0) ? pbConfigureFullScreen : pbConfigureWindowedScreen(factor)
-end
-
-def pbSetResizeFactor2(factor,force=false)
-  if $ResizeFactor!=factor || force
+def pbSetResizeFactor(factor)
+  if $ResizeFactor!=factor
     $ResizeFactor=factor
     $ResizeFactorMul=(factor*100).to_i
     if $ResizeFactorSet!=false
@@ -67,42 +56,6 @@ def pbSetResizeFactor2(factor,force=false)
     )
   rescue
   end
-end
-
-def pbConfigureFullScreen
-  params = Win32API.fillScreen
-  fullgamew = gamew = DEFAULTSCREENWIDTH
-  fullgameh = gameh = DEFAULTSCREENHEIGHT
-  if !FULLSCREENBORDERCROP && $PokemonSystem && $PokemonSystem.border==1
-    fullgamew += BORDERWIDTH * 2
-    fullgameh += BORDERHEIGHT * 2
-  end
-  factor_x = ((2*params[0])/fullgamew).floor
-  factor_y = ((2*params[1])/fullgameh).floor
-  factor = [factor_x,factor_y].min/2.0
-  offset_x = (params[0]-gamew*factor)/(2*factor)
-  offset_y = (params[1]-gameh*factor)/(2*factor)
-  $ResizeOffsetX = offset_x
-  $ResizeOffsetY = offset_y
-  ObjectSpace.each_object(Viewport){|o|
-     begin
-       next if o.rect.nil?
-       ox = o.rect.x-$ResizeOffsetX
-       oy = o.rect.y-$ResizeOffsetY
-       o.rect.x = ox+offset_x
-       o.rect.y = oy+offset_y
-     rescue RGSSError
-     end
-  }
-  pbSetResizeFactor2(factor,true)
-end
-
-def pbConfigureWindowedScreen(value)
-  border=$PokemonSystem ? $PokemonSystem.border : 0
-  $ResizeOffsetX=[0,BORDERWIDTH][border]
-  $ResizeOffsetY=[0,BORDERHEIGHT][border]
-  pbSetResizeFactor2(value,true)
-  Win32API.restoreScreen
 end
 
 def setScreenBorderName(border)
@@ -195,7 +148,7 @@ module Graphics
   def self.resize_screen(w,h)
     @@width=w
     @@height=h
-    pbSetResizeFactor($ResizeFactor,true)
+    pbSetResizeFactor($ResizeFactor)
   end
 
   @@deletefailed=false
@@ -228,10 +181,12 @@ module Graphics
     if bm && bm.get_pixel(0,0).alpha==0
       bm.asOpaque
     end
-    if bm && $ResizeOffsetX && $ResizeOffsetY && ($ResizeOffsetX!=0 || $ResizeOffsetY!=0)
-      tmpbitmap=Bitmap.new(Graphics.width*$ResizeFactor,Graphics.height*$ResizeFactor)
-      tmpbitmap.blt(0,0,bm,Rect.new(
-         $ResizeOffsetX*$ResizeFactor,$ResizeOffsetY*$ResizeFactor,tmpbitmap.width,tmpbitmap.height))
+    if bm && $ResizeOffsetX && $ResizeOffsetY &&
+       $ResizeOffsetX!=0 || $ResizeOffsetY!=0
+      tmpbitmap=Bitmap.new(Graphics.width*$ResizeFactor,
+         Graphics.height*$ResizeFactor)
+      tmpbitmap.blt(0,0,bm,Rect.new($ResizeOffsetX*$ResizeFactor,
+         $ResizeOffsetY*$ResizeFactor,tmpbitmap.width,tmpbitmap.height))
       bm.dispose
       bm=tmpbitmap
     end
@@ -589,7 +544,7 @@ end
 
 
 
-
+###################
 class ScreenBorder
   def initialize
     initializeInternal
@@ -625,9 +580,9 @@ class ScreenBorder
 
   def refresh
     @sprite.z=@maximumZ
-    @sprite.x=-BORDERWIDTH
-    @sprite.y=-BORDERHEIGHT
-    @sprite.visible=($PokemonSystem && $PokemonSystem.border==1)
+    @sprite.x=-$ResizeOffsetX
+    @sprite.y=-$ResizeOffsetY
+    @sprite.visible=($ResizeOffsetX>0 && $ResizeOffsetY>0)
     @sprite.bitmap=nil
     if @sprite.visible
       if @bordername!=nil && @bordername!=""
@@ -639,12 +594,11 @@ class ScreenBorder
     end
     @defaultbitmap.clear
     @defaultbitmap.fill_rect(0,0,@defaultwidth,$ResizeOffsetY,Color.new(0,0,0))
-    @defaultbitmap.fill_rect(0,$ResizeOffsetY,
-       $ResizeOffsetX,@defaultheight-$ResizeOffsetY,Color.new(0,0,0))
-    @defaultbitmap.fill_rect(@defaultwidth-$ResizeOffsetX,$ResizeOffsetY,
-       $ResizeOffsetX,@defaultheight-$ResizeOffsetY,Color.new(0,0,0))
-    @defaultbitmap.fill_rect($ResizeOffsetX,@defaultheight-$ResizeOffsetY,
-       @defaultwidth-$ResizeOffsetX*2,$ResizeOffsetY,Color.new(0,0,0))
+    @defaultbitmap.fill_rect(0,0,$ResizeOffsetX,@defaultheight,Color.new(0,0,0))
+    @defaultbitmap.fill_rect(@defaultwidth-$ResizeOffsetX,0,
+       $ResizeOffsetX,@defaultheight,Color.new(0,0,0))
+    @defaultbitmap.fill_rect(0,@defaultheight-$ResizeOffsetY,
+       @defaultwidth,$ResizeOffsetY,Color.new(0,0,0))
   end
 
   private

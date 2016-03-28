@@ -1,6 +1,4 @@
-#===============================================================================
 # Abstraction layer for Pokemon Essentials
-#===============================================================================
 class PokemonMartAdapter
   def getMoney
     return $Trainer.money
@@ -79,10 +77,7 @@ end
 
 
 
-#===============================================================================
 # Abstraction layer for RPG Maker XP/VX
-# Won't be used if $PokemonBag exists
-#===============================================================================
 class RpgxpMartAdapter
   def getMoney
     return $game_party.gold
@@ -216,9 +211,50 @@ class RpgxpMartAdapter
 end
 
 
-#===============================================================================
-# Buy and Sell adapters
-#===============================================================================
+###################
+
+
+class Window_PokemonMart < Window_DrawableCommand
+  def initialize(stock,adapter,x,y,width,height,viewport=nil)
+    @stock=stock
+    @adapter=adapter
+    super(x,y,width,height,viewport)
+    @selarrow=AnimatedBitmap.new("Graphics/Pictures/martSel")
+    @baseColor=Color.new(88,88,80)
+    @shadowColor=Color.new(168,184,184)
+    self.windowskin=nil
+  end
+
+  def itemCount
+    return @stock.length+1
+  end
+
+  def item
+    return self.index>=@stock.length ? 0 : @stock[self.index]
+  end
+
+  def drawItem(index,count,rect)
+    textpos=[]
+    rect=drawCursor(index,rect)
+    ypos=rect.y
+    if index==count-1
+      textpos.push([_INTL("CANCEL"),rect.x,ypos+2,false,
+         self.baseColor,self.shadowColor])
+    else
+      item=@stock[index]
+      itemname=@adapter.getDisplayName(item)
+      qty=@adapter.getDisplayPrice(item)
+      sizeQty=self.contents.text_size(qty).width
+      xQty=rect.x+rect.width-sizeQty-2-16
+      textpos.push([itemname,rect.x,ypos+2,false,self.baseColor,self.shadowColor])
+      textpos.push([qty,xQty,ypos+2,false,self.baseColor,self.shadowColor])
+    end
+    pbDrawTextPositions(self.contents,textpos)
+  end
+end
+
+
+
 class BuyAdapter # :nodoc:
   def initialize(adapter)
     @adapter=adapter
@@ -263,65 +299,86 @@ end
 
 
 
-#===============================================================================
-# Pokémon Mart
-#===============================================================================
-class Window_PokemonMart < Window_DrawableCommand
-  def initialize(stock,adapter,x,y,width,height,viewport=nil)
-    @stock=stock
-    @adapter=adapter
-    super(x,y,width,height,viewport)
-    @selarrow=AnimatedBitmap.new("Graphics/Pictures/martSel")
-    @baseColor=Color.new(88,88,80)
-    @shadowColor=Color.new(168,184,184)
-    self.windowskin=nil
-  end
-
-  def itemCount
-    return @stock.length+1
-  end
-
-  def item
-    return self.index>=@stock.length ? 0 : @stock[self.index]
-  end
-
-  def drawItem(index,count,rect)
-    textpos=[]
-    rect=drawCursor(index,rect)
-    ypos=rect.y
-    if index==count-1
-      textpos.push([_INTL("CANCEL"),rect.x,ypos+2,false,
-         self.baseColor,self.shadowColor])
-    else
-      item=@stock[index]
-      itemname=@adapter.getDisplayName(item)
-      qty=@adapter.getDisplayPrice(item)
-      sizeQty=self.contents.text_size(qty).width
-      xQty=rect.x+rect.width-sizeQty-2-16
-      textpos.push([itemname,rect.x,ypos+2,false,self.baseColor,self.shadowColor])
-      textpos.push([qty,xQty,ypos+2,false,self.baseColor,self.shadowColor])
-    end
-    pbDrawTextPositions(self.contents,textpos)
-  end
-end
-
-
-
 class PokemonMartScene
   def update
     pbUpdateSpriteHash(@sprites)
     @subscene.update if @subscene
   end
 
-  def pbRefresh
-    if !@subscene
-      itemwindow=@sprites["itemwindow"]
-      @sprites["icon"].item=itemwindow.item
-      @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Quit shopping.") :
-         @adapter.getDescription(itemwindow.item)
-      itemwindow.refresh
-    end
-    @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",@adapter.getMoney())
+  def pbChooseNumber(helptext,item,maximum)
+    curnumber=1
+    ret=0
+    helpwindow=@sprites["helpwindow"]
+    itemprice=@adapter.getPrice(item,!@buying)
+    itemprice/=2 if !@buying
+    pbDisplay(helptext,true)
+    using(numwindow=Window_AdvancedTextPokemon.new("")){ # Showing number of items
+       qty=@adapter.getQuantity(item)
+       using(inbagwindow=Window_AdvancedTextPokemon.new("")){ # Showing quantity in bag
+          pbPrepareWindow(numwindow)
+          pbPrepareWindow(inbagwindow)
+          numwindow.viewport=@viewport
+          numwindow.width=224
+          numwindow.height=64
+          numwindow.baseColor=Color.new(88,88,80)
+          numwindow.shadowColor=Color.new(168,184,184)
+          inbagwindow.visible=@buying
+          inbagwindow.viewport=@viewport
+          inbagwindow.width=190
+          inbagwindow.height=64
+          inbagwindow.baseColor=Color.new(88,88,80)
+          inbagwindow.shadowColor=Color.new(168,184,184)
+          inbagwindow.text=_ISPRINTF("In Bag:<r>{1:d}  ",qty)
+          numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+          pbBottomRight(numwindow)
+          numwindow.y-=helpwindow.height
+          pbBottomLeft(inbagwindow)
+          inbagwindow.y-=helpwindow.height
+          loop do
+            Graphics.update
+            Input.update
+            numwindow.update
+            inbagwindow.update
+            self.update
+            if Input.repeat?(Input::LEFT)
+              pbPlayCursorSE()
+              curnumber-=10
+              curnumber=1 if curnumber<1
+              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+            elsif Input.repeat?(Input::RIGHT)
+              pbPlayCursorSE()
+              curnumber+=10
+              curnumber=maximum if curnumber>maximum
+              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+            elsif Input.repeat?(Input::UP)
+              pbPlayCursorSE()
+              curnumber+=1
+              curnumber=1 if curnumber>maximum
+              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+            elsif Input.repeat?(Input::DOWN)
+              pbPlayCursorSE()
+              curnumber-=1
+              curnumber=maximum if curnumber<1
+              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+            elsif Input.trigger?(Input::C)
+              pbPlayDecisionSE()
+              ret=curnumber
+              break
+            elsif Input.trigger?(Input::B)
+              pbPlayCancelSE()
+              ret=0
+              break
+            end     
+          end
+       }
+    }
+    helpwindow.visible=false
+    return ret
+  end
+
+  def pbPrepareWindow(window)
+    window.visible=true
+    window.letterbyletter=false
   end
 
   def pbStartBuyOrSellScene(buying,stock,adapter)
@@ -334,7 +391,7 @@ class PokemonMartScene
     @sprites={}
     @sprites["background"]=IconSprite.new(0,0,@viewport)
     @sprites["background"].setBitmap("Graphics/Pictures/martScreen")
-    @sprites["icon"]=ItemIconSprite.new(36,Graphics.height-50,-1,@viewport)
+    @sprites["icon"]=IconSprite.new(12,Graphics.height-74,@viewport)
     winAdapter=buying ? BuyAdapter.new(adapter) : SellAdapter.new(adapter)
     @sprites["itemwindow"]=Window_PokemonMart.new(stock,winAdapter,
        Graphics.width-316-16,12,330+16,Graphics.height-126)
@@ -422,6 +479,16 @@ class PokemonMartScene
     pbRefresh
   end
 
+  def pbShowMoney
+    pbRefresh
+    @sprites["moneywindow"].visible=true
+  end
+
+  def pbHideMoney
+    pbRefresh
+    @sprites["moneywindow"].visible=false
+  end
+
   def pbEndBuyScene
     pbDisposeSpriteHash(@sprites)
     @viewport.dispose
@@ -447,21 +514,6 @@ class PokemonMartScene
     if !@subscene
       pbScrollMap(4,5,5)
     end
-  end
-
-  def pbPrepareWindow(window)
-    window.visible=true
-    window.letterbyletter=false
-  end
-
-  def pbShowMoney
-    pbRefresh
-    @sprites["moneywindow"].visible=true
-  end
-
-  def pbHideMoney
-    pbRefresh
-    @sprites["moneywindow"].visible=false
   end
 
   def pbDisplay(msg,brief=false)
@@ -547,75 +599,17 @@ class PokemonMartScene
     end
   end
 
-  def pbChooseNumber(helptext,item,maximum)
-    curnumber=1
-    ret=0
-    helpwindow=@sprites["helpwindow"]
-    itemprice=@adapter.getPrice(item,!@buying)
-    itemprice/=2 if !@buying
-    pbDisplay(helptext,true)
-    using(numwindow=Window_AdvancedTextPokemon.new("")){ # Showing number of items
-       qty=@adapter.getQuantity(item)
-       using(inbagwindow=Window_AdvancedTextPokemon.new("")){ # Showing quantity in bag
-          pbPrepareWindow(numwindow)
-          pbPrepareWindow(inbagwindow)
-          numwindow.viewport=@viewport
-          numwindow.width=224
-          numwindow.height=64
-          numwindow.baseColor=Color.new(88,88,80)
-          numwindow.shadowColor=Color.new(168,184,184)
-          inbagwindow.visible=@buying
-          inbagwindow.viewport=@viewport
-          inbagwindow.width=190
-          inbagwindow.height=64
-          inbagwindow.baseColor=Color.new(88,88,80)
-          inbagwindow.shadowColor=Color.new(168,184,184)
-          inbagwindow.text=_ISPRINTF("In Bag:<r>{1:d}  ",qty)
-          numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
-          pbBottomRight(numwindow)
-          numwindow.y-=helpwindow.height
-          pbBottomLeft(inbagwindow)
-          inbagwindow.y-=helpwindow.height
-          loop do
-            Graphics.update
-            Input.update
-            numwindow.update
-            inbagwindow.update
-            self.update
-            if Input.repeat?(Input::LEFT)
-              pbPlayCursorSE()
-              curnumber-=10
-              curnumber=1 if curnumber<1
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
-            elsif Input.repeat?(Input::RIGHT)
-              pbPlayCursorSE()
-              curnumber+=10
-              curnumber=maximum if curnumber>maximum
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
-            elsif Input.repeat?(Input::UP)
-              pbPlayCursorSE()
-              curnumber+=1
-              curnumber=1 if curnumber>maximum
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
-            elsif Input.repeat?(Input::DOWN)
-              pbPlayCursorSE()
-              curnumber-=1
-              curnumber=maximum if curnumber<1
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
-            elsif Input.trigger?(Input::C)
-              pbPlayDecisionSE()
-              ret=curnumber
-              break
-            elsif Input.trigger?(Input::B)
-              pbPlayCancelSE()
-              ret=0
-              break
-            end     
-          end
-       }
-    }
-    helpwindow.visible=false
-    return ret
+  def pbRefresh
+    if !@subscene
+      itemwindow=@sprites["itemwindow"]
+      filename=@adapter.getItemIcon(itemwindow.item)
+      @sprites["icon"].setBitmap(filename)
+      @sprites["icon"].src_rect=@adapter.getItemIconRect(itemwindow.item)   
+      @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Quit shopping.") :
+         @adapter.getDescription(itemwindow.item)
+      itemwindow.refresh
+    end
+    @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",@adapter.getMoney())
   end
 
   def pbChooseBuyItem
@@ -629,7 +623,9 @@ class PokemonMartScene
          olditem=itemwindow.item
          self.update
          if itemwindow.item!=olditem
-           @sprites["icon"].item=itemwindow.item
+           filename=@adapter.getItemIcon(itemwindow.item)
+           @sprites["icon"].setBitmap(filename)
+           @sprites["icon"].src_rect=@adapter.getItemIconRect(itemwindow.item)   
            @sprites["itemtextwindow"].text=(itemwindow.item==0) ? _INTL("Quit shopping.") :
               @adapter.getDescription(itemwindow.item)
          end
@@ -694,7 +690,7 @@ class PokemonMartScreen
         next
       end
       if pbIsImportantItem?(item)
-        if !pbConfirm(_INTL("Certainly. You want {1}.\r\nThat will be ${2}. OK?",itemname,price))
+        if !pbConfirm(_INTL("Certainly.  You want {1}.\r\nThat will be ${2}.  OK?",itemname,price))
           next
         end
         quantity=1
@@ -707,7 +703,7 @@ class PokemonMartScreen
           next
         end
         price*=quantity
-        if !pbConfirm(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,price))
+        if !pbConfirm(_INTL("{1}, and you want {2}.\r\nThat will be ${3}.  OK?",itemname,quantity,price))
           next
         end
       end
@@ -739,7 +735,8 @@ class PokemonMartScreen
         @stock.compact!
         pbDisplayPaused(_INTL("Here you are!\r\nThank you!"))
         if $PokemonBag
-          if quantity>=10 && pbIsPokeBall?(item) &&  hasConst?(PBItems,:PREMIERBALL)
+          if quantity>=10 && isConst?(item,PBItems,:POKEBALL) && 
+             hasConst?(PBItems,:PREMIERBALL)
             if @adapter.addItem(getConst(PBItems,:PREMIERBALL))
               pbDisplayPaused(_INTL("I'll throw in a Premier Ball, too.")) 
             end

@@ -73,23 +73,23 @@ class PokeBattle_Battler
     return (count>0)
   end
 
-  def pbCanSleepYawn?()
+  def pbCanSleepYawn?(attacker=nil,showMessages=false)
     if (@battle.rules["sleepclause"] || @battle.rules["modifiedsleepclause"]) && 
        pbHasStatusPokemon?(PBStatuses::SLEEP)
       return false
     end
-    return __clauses__pbCanSleepYawn?()
+    return __clauses__pbCanSleepYawn?(attacker,showMessages)
   end
 
   def pbCanFreeze?(*arg)
-    if @battle.rules["freezeclause"] && pbHasStatusPokemon?(PBStatuses::FROZEN)
+    if @battle.rules["freezeclause"] && 
+       pbHasStatusPokemon?(PBStatuses::FROZEN)
       return false
     end
     return __clauses__pbCanFreeze?(*arg)
   end
 
-  def pbCanSleep?(attacker,showMessages,move=nil,ignorestatus=false)
-    selfsleep=(attacker && attacker.index==self.index)
+  def pbCanSleep?(showMessages,selfsleep=false,ignorestatus=false,move=nil,attacker=nil)
     if ((@battle.rules["modifiedsleepclause"]) || (!selfsleep && @battle.rules["sleepclause"])) && 
        pbHasStatusPokemon?(PBStatuses::SLEEP) 
       if showMessages
@@ -97,7 +97,7 @@ class PokeBattle_Battler
       end
       return false
     end
-    return __clauses__pbCanSleep?(attacker,showMessages,move,ignorestatus)
+    return __clauses__pbCanSleep?(showMessages,selfsleep,ignorestatus,move,attacker)
   end
 end
 

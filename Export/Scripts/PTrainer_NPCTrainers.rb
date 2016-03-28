@@ -47,7 +47,7 @@ def pbLoadTrainer(trainerid,trainername,partyid=0)
       species=poke[TPSPECIES]
       level=poke[TPLEVEL]
       pokemon=PokeBattle_Pokemon.new(species,level,opponent)
-      pokemon.formNoCall=poke[TPFORM]
+      pokemon.form=poke[TPFORM]
       pokemon.resetMoves
       pokemon.setItem(poke[TPITEM])
       if poke[TPMOVE1]>0 || poke[TPMOVE2]>0 || poke[TPMOVE3]>0 || poke[TPMOVE4]>0
@@ -221,11 +221,141 @@ def pbMissingTrainer(trainerid, trainername, trainerparty)
   end
 end
 
+def pbDoubleTrainerBattle(trainerid1, trainername1, trainerparty1, endspeech1,
+                          trainerid2, trainername2, trainerparty2, endspeech2, 
+                          canlose=false,variable=nil,skybattle=false,inverse=false)
+   # Sky battle eligibility for player
+  if skybattle
+    count=0
+    for poke in $Trainer.party
+      count+=1 if pbCanSkyBattle?(poke)
+    end
+    if count==0
+      Kernel.pbMessage(_INTL("You don't have any eligible pokemon for a sky battle"))
+      return false
+    end
+  end
+  trainer1=pbLoadTrainer(trainerid1,trainername1,trainerparty1)
+  Events.onTrainerPartyLoad.trigger(nil,trainer1)
+  if !trainer1
+    pbMissingTrainer(trainerid1,trainername1,trainerparty1)
+  end
+  trainer2=pbLoadTrainer(trainerid2,trainername2,trainerparty2)
+  Events.onTrainerPartyLoad.trigger(nil,trainer2)
+  if !trainer2
+    pbMissingTrainer(trainerid2,trainername2,trainerparty2)
+  end
+  if !trainer1 || !trainer2
+    return false
+  end
+  if $PokemonGlobal.partner
+    othertrainer=PokeBattle_Trainer.new($PokemonGlobal.partner[1],
+                                        $PokemonGlobal.partner[0])
+    othertrainer.id=$PokemonGlobal.partner[2]
+    othertrainer.party=$PokemonGlobal.partner[3]
+    playerparty=[]
+    for i in 0...$Trainer.party.length
+      playerparty[i]=$Trainer.party[i]
+    end
+    for i in 0...othertrainer.party.length
+      playerparty[6+i]=othertrainer.party[i]
+    end
+    fullparty1=true
+    playertrainer=[$Trainer,othertrainer]
+  else
+    playerparty=$Trainer.party
+    playertrainer=$Trainer
+    fullparty1=false
+  end
+  combinedParty=[]
+  for i in 0...trainer1[2].length
+    combinedParty[i]=trainer1[2][i]
+  end
+  for i in 0...trainer2[2].length
+    combinedParty[6+i]=trainer2[2][i]
+  end
+  #Sky battle eligibility for opponent
+  if skybattle
+    count=0
+    for poke in combinedParty
+      count+=1 if pbCanSkyBattle?(poke)
+    end
+    if count==0
+      Kernel.pbMessage(_INTL("The opponents don't have any eligible pokemon for a sky battle"))
+      return false
+    end
+  end
+  scene=pbNewBattleScene
+  battle=PokeBattle_Battle.new(scene,
+     playerparty,combinedParty,playertrainer,[trainer1[0],trainer2[0]],skybattle,inverse)
+  trainerbgm=pbGetTrainerBattleBGM([trainer1[0],trainer2[0]])
+  battle.fullparty1=fullparty1
+  battle.fullparty2=true
+  battle.doublebattle=battle.pbDoubleBattleAllowed?()
+  battle.endspeech=endspeech1
+  battle.endspeech2=endspeech2
+  battle.items=[trainer1[1],trainer2[1]]
+  if Input.press?(Input::CTRL) && $DEBUG
+    Kernel.pbMessage(_INTL("SKIPPING BATTLE..."))
+    Kernel.pbMessage(_INTL("AFTER LOSING..."))
+    Kernel.pbMessage(battle.endspeech)
+    Kernel.pbMessage(battle.endspeech2) if battle.endspeech2 && battle.endspeech2!=""
+    return true
+  end
+  Events.onStartBattle.trigger(nil,nil)
+  battle.internalbattle=true
+  pbPrepareBattle(battle)
+  restorebgm=true
+  decision=0
+  pbBattleAnimation(trainerbgm) { 
+     pbSceneStandby {
+        decision=battle.pbStartBattle(canlose)
+     }
+     for i in $Trainer.party; (i.makeUnmega rescue nil); end
+     if $PokemonGlobal.partner
+       pbHealAll
+       for i in $PokemonGlobal.partner[3]
+         i.heal
+         i.makeUnmega rescue nil
+       end
+     end
+     if decision==2 || decision==5
+       if canlose
+         for i in $Trainer.party; i.heal; end
+         for i in 0...10
+           Graphics.update
+         end
+       else
+         $game_system.bgm_unpause
+         $game_system.bgs_unpause
+         Kernel.pbStartOver
+       end
+     end
+     Events.onEndBattle.trigger(nil,decision)
+  }
+  Input.update
+  pbSet(variable,decision)
+  return (decision==1)
+end
+
+
 def pbTrainerBattle(trainerid,trainername,endspeech,
-                    doublebattle=false,trainerparty=0,canlose=false,variable=nil)
+                    doublebattle=false,trainerparty=0,canlose=false,variable=nil,
+                    skybattle=false,inverse=false)
   if $Trainer.pokemonCount==0
     Kernel.pbMessage(_INTL("SKIPPING BATTLE...")) if $DEBUG
     return false
+  end
+  # Sky battle eligibility for player
+  if skybattle
+    count=0
+    for poke in $Trainer.party
+      count+=1 if pbCanSkyBattle?(poke)
+    end
+    if count==0
+      Kernel.pbMessage(_INTL("You don't have any eligible pokemon for a sky battle"))
+      return false
+    end
   end
   if !$PokemonTemp.waitingTrainer && $Trainer.ablePokemonCount>1 &&
      pbMapInterpreterRunning?
@@ -276,6 +406,27 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
     playertrainer=$Trainer
     fullparty1=false
   end
+  #Sky battle eligibility for opponent
+  if skybattle
+    if $PokemonTemp.waitingTrainer
+      count=0
+      for poke in $PokemonTemp.waitingTrainer[0][2]
+        count+=1 if pbCanSkyBattle?(poke)
+      end
+    end
+    if count==0
+      Kernel.pbMessage(_INTL("Opponent 1 doesn't have any eligible pokemon for a sky battle"))
+      return false
+    end
+    count=0
+    for poke in trainer[2]
+      count+=1 if pbCanSkyBattle?(poke)
+    end
+    if count==0
+      Kernel.pbMessage(_INTL("Opponent 2 doesn't have any eligible pokemon for a sky battle"))
+      return false
+    end
+  end
   if $PokemonTemp.waitingTrainer
     combinedParty=[]
     fullparty2=false
@@ -305,7 +456,7 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
     end
     scene=pbNewBattleScene
     battle=PokeBattle_Battle.new(scene,playerparty,combinedParty,playertrainer,
-       [$PokemonTemp.waitingTrainer[0][0],trainer[0]])
+       [$PokemonTemp.waitingTrainer[0][0],trainer[0]],skybattle,inverse)
     trainerbgm=pbGetTrainerBattleBGM(
        [$PokemonTemp.waitingTrainer[0][0],trainer[0]])
     battle.fullparty1=fullparty1
@@ -316,7 +467,7 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
     battle.items=[$PokemonTemp.waitingTrainer[0][1],trainer[1]]
   else
     scene=pbNewBattleScene
-    battle=PokeBattle_Battle.new(scene,playerparty,trainer[2],playertrainer,trainer[0])
+    battle=PokeBattle_Battle.new(scene,playerparty,trainer[2],playertrainer,trainer[0],skybattle,inverse)
     battle.fullparty1=fullparty1
     battle.doublebattle=doublebattle ? battle.pbDoubleBattleAllowed?() : false
     battle.endspeech=endspeech
@@ -344,13 +495,12 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
      pbSceneStandby {
         decision=battle.pbStartBattle(canlose)
      }
-     for i in $Trainer.party; (i.makeUnmega rescue nil); (i.makeUnprimal rescue nil); end
+     for i in $Trainer.party; (i.makeUnmega rescue nil); end
      if $PokemonGlobal.partner
        pbHealAll
        for i in $PokemonGlobal.partner[3]
          i.heal
          i.makeUnmega rescue nil
-         i.makeUnprimal rescue nil
        end
      end
      if decision==2 || decision==5
@@ -359,16 +509,17 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
          for i in 0...10
            Graphics.update
          end
-#       else
-#         $game_system.bgm_unpause
-#         $game_system.bgs_unpause
-#         Kernel.pbStartOver
+       else
+         $game_system.bgm_unpause
+         $game_system.bgs_unpause
+         Kernel.pbStartOver
        end
-     end
-     Events.onEndBattle.trigger(nil,decision,canlose)
-     if decision==1
-       if $PokemonTemp.waitingTrainer
-         pbMapInterpreter.pbSetSelfSwitch($PokemonTemp.waitingTrainer[1],"A",true)
+     else
+       Events.onEndBattle.trigger(nil,decision)
+       if decision==1
+         if $PokemonTemp.waitingTrainer
+           pbMapInterpreter.pbSetSelfSwitch($PokemonTemp.waitingTrainer[1],"A",true)
+         end
        end
      end
   }
@@ -376,166 +527,4 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
   pbSet(variable,decision)
   $PokemonTemp.waitingTrainer=nil
   return (decision==1)
-end
-
-def pbDoubleTrainerBattle(trainerid1, trainername1, trainerparty1, endspeech1,
-                          trainerid2, trainername2, trainerparty2, endspeech2, 
-                          canlose=false,variable=nil)
-  trainer1=pbLoadTrainer(trainerid1,trainername1,trainerparty1)
-  Events.onTrainerPartyLoad.trigger(nil,trainer1)
-  if !trainer1
-    pbMissingTrainer(trainerid1,trainername1,trainerparty1)
-  end
-  trainer2=pbLoadTrainer(trainerid2,trainername2,trainerparty2)
-  Events.onTrainerPartyLoad.trigger(nil,trainer2)
-  if !trainer2
-    pbMissingTrainer(trainerid2,trainername2,trainerparty2)
-  end
-  if !trainer1 || !trainer2
-    return false
-  end
-  if $PokemonGlobal.partner
-    othertrainer=PokeBattle_Trainer.new($PokemonGlobal.partner[1],
-                                        $PokemonGlobal.partner[0])
-    othertrainer.id=$PokemonGlobal.partner[2]
-    othertrainer.party=$PokemonGlobal.partner[3]
-    playerparty=[]
-    for i in 0...$Trainer.party.length
-      playerparty[i]=$Trainer.party[i]
-    end
-    for i in 0...othertrainer.party.length
-      playerparty[6+i]=othertrainer.party[i]
-    end
-    fullparty1=true
-    playertrainer=[$Trainer,othertrainer]
-  else
-    playerparty=$Trainer.party
-    playertrainer=$Trainer
-    fullparty1=false
-  end
-  combinedParty=[]
-  for i in 0...trainer1[2].length
-    combinedParty[i]=trainer1[2][i]
-  end
-  for i in 0...trainer2[2].length
-    combinedParty[6+i]=trainer2[2][i]
-  end
-  scene=pbNewBattleScene
-  battle=PokeBattle_Battle.new(scene,
-     playerparty,combinedParty,playertrainer,[trainer1[0],trainer2[0]])
-  trainerbgm=pbGetTrainerBattleBGM([trainer1[0],trainer2[0]])
-  battle.fullparty1=fullparty1
-  battle.fullparty2=true
-  battle.doublebattle=battle.pbDoubleBattleAllowed?()
-  battle.endspeech=endspeech1
-  battle.endspeech2=endspeech2
-  battle.items=[trainer1[1],trainer2[1]]
-  if Input.press?(Input::CTRL) && $DEBUG
-    Kernel.pbMessage(_INTL("SKIPPING BATTLE..."))
-    Kernel.pbMessage(_INTL("AFTER LOSING..."))
-    Kernel.pbMessage(battle.endspeech)
-    Kernel.pbMessage(battle.endspeech2) if battle.endspeech2 && battle.endspeech2!=""
-    return true
-  end
-  Events.onStartBattle.trigger(nil,nil)
-  battle.internalbattle=true
-  pbPrepareBattle(battle)
-  restorebgm=true
-  decision=0
-  pbBattleAnimation(trainerbgm) { 
-     pbSceneStandby {
-        decision=battle.pbStartBattle(canlose)
-     }
-     for i in $Trainer.party; (i.makeUnmega rescue nil); (i.makeUnprimal rescue nil); end
-     if $PokemonGlobal.partner
-       pbHealAll
-       for i in $PokemonGlobal.partner[3]
-         i.heal
-         i.makeUnmega rescue nil
-         i.makeUnprimal rescue nil
-       end
-     end
-     if decision==2 || decision==5
-       if canlose
-         for i in $Trainer.party; i.heal; end
-         for i in 0...10
-           Graphics.update
-         end
-#       else
-#         $game_system.bgm_unpause
-#         $game_system.bgs_unpause
-#         Kernel.pbStartOver
-       end
-     end
-     Events.onEndBattle.trigger(nil,decision,canlose)
-  }
-  Input.update
-  pbSet(variable,decision)
-  return (decision==1)
-end
-
-
-
-class TrainerWalkingCharSprite < SpriteWrapper
-  def initialize(charset,viewport=nil)
-    super(viewport)
-    @animbitmap=nil
-    self.charset=charset
-    @animframe=0   # Current frame
-    @frame=0       # Counter
-    @frameskip=6   # Animation speed
-  end
-
-  def charset=(value)
-    @animbitmap.dispose if @animbitmap
-    @animbitmap=nil
-    bitmapFileName=sprintf("Graphics/Characters/%s",value)
-    @charset=pbResolveBitmap(bitmapFileName)
-    if @charset
-      @animbitmap=AnimatedBitmap.new(@charset)
-      self.bitmap=@animbitmap.bitmap
-      self.src_rect.set(0,0,self.bitmap.width/4,self.bitmap.height/4)
-    else
-      self.bitmap=nil
-    end
-  end
-
-  def altcharset=(value)   # Used for box icon in the naming screen
-    @animbitmap.dispose if @animbitmap
-    @animbitmap=nil
-    @charset=pbResolveBitmap(value)
-    if @charset
-      @animbitmap=AnimatedBitmap.new(@charset)
-      self.bitmap=@animbitmap.bitmap
-      self.src_rect.set(0,0,self.bitmap.width/4,self.bitmap.height)
-    else
-      self.bitmap=nil
-    end
-  end
-
-  def animspeed=(value)
-    @frameskip=value
-  end
-
-  def dispose
-    @animbitmap.dispose if @animbitmap
-    super
-  end
-
-  def update
-    @updating=true
-    super
-    if @animbitmap
-      @animbitmap.update
-      self.bitmap=@animbitmap.bitmap 
-    end
-    @frame+=1
-    @frame=0 if @frame>100
-    if @frame>=@frameskip
-      @animframe=(@animframe+1)%4
-      self.src_rect.x=@animframe*@animbitmap.bitmap.width/4
-      @frame=0
-    end
-    @updating=false
-  end
 end

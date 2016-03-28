@@ -98,8 +98,9 @@ class Scene_Pokegear
       @sprites["background"].setBitmap("Graphics/Pictures/pokegearbg")
     end
     @sprites["command_window"] = Window_CommandPokemon.new(commands,160)
-    @sprites["command_window"].visible = false
     @sprites["command_window"].index = @menu_index
+    @sprites["command_window"].x = Graphics.width
+    @sprites["command_window"].y = 0
     for i in 0...commands.length
       x=118
       y=196 - (commands.length*24) + (i*48)

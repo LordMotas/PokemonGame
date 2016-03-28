@@ -1,13 +1,12 @@
 ITEMID        = 0
 ITEMNAME      = 1
-ITEMPLURAL    = 2
-ITEMPOCKET    = 3
-ITEMPRICE     = 4
-ITEMDESC      = 5
-ITEMUSE       = 6
-ITEMBATTLEUSE = 7
-ITEMTYPE      = 8
-ITEMMACHINE   = 9
+ITEMPOCKET    = 2
+ITEMPRICE     = 3
+ITEMDESC      = 4
+ITEMUSE       = 5
+ITEMBATTLEUSE = 6
+ITEMTYPE      = 7
+ITEMMACHINE   = 8
 
 def pbIsHiddenMove?(move)
   return false if !$ItemData
@@ -29,9 +28,9 @@ end
 
 # Important items can't be sold, given to hold, or tossed.
 def pbIsImportantItem?(item)
-  return $ItemData[item] && (pbIsKeyItem?(item) ||
-                             pbIsHiddenMachine?(item) ||
-                             (INFINITETMS && pbIsTechnicalMachine?(item)))
+  return $ItemData[item] && (pbIsKeyItem?(item) || pbIsHiddenMachine?(item) ||
+                             (INFINITETMS && pbIsTechnicalMachine?(item))
+                            )
 end
 
 def pbIsMachine?(item)
@@ -63,52 +62,40 @@ def pbIsBerry?(item)
   return $ItemData[item] && ($ItemData[item][ITEMTYPE]==5)
 end
 
+def pbIsGem?(item)
+  gems=[PBItems::NORMALGEM,PBItems::FIREGEM,PBItems::WATERGEM,PBItems::GRASSGEM,PBItems::ELECTRICGEM,
+          PBItems::GROUNDGEM,PBItems::ROCKGEM,PBItems::GHOSTGEM,PBItems::POISONGEM,PBItems::DARKGEM,
+          PBItems::STEELGEM,PBItems::FIGHTINGGEM,PBItems::FAIRYGEM,PBItems::PSYCHICGEM,PBItems::BUGGEM,
+          PBItems::ICEGEM,PBItems::FLYINGGEM,PBItems::DRAGONGEM]
+  return gems.include?(item)
+end
+
 def pbIsKeyItem?(item)
   return $ItemData[item] && ($ItemData[item][ITEMTYPE]==6)
 end
 
-def pbIsGem?(item)
-  gems=[:FIREGEM,:WATERGEM,:ELECTRICGEM,:GRASSGEM,:ICEGEM,
-        :FIGHTINGGEM,:POISONGEM,:GROUNDGEM,:FLYINGGEM,:PSYCHICGEM,
-        :BUGGEM,:ROCKGEM,:GHOSTGEM,:DRAGONGEM,:DARKGEM,
-        :STEELGEM,:NORMALGEM,:FAIRYGEM]
-  for i in gems
-    return true if isConst?(item,PBItems,i)
-  end
+def pbIsBattleEndingItem?(item)
   return false
 end
 
 def pbIsEvolutionStone?(item)
-  stones=[:FIRESTONE,:THUNDERSTONE,:WATERSTONE,:LEAFSTONE,:MOONSTONE,
-          :SUNSTONE,:DUSKSTONE,:DAWNSTONE,:SHINYSTONE]
-  for i in stones
-    return true if isConst?(item,PBItems,i)
-  end
-  return false
-end
-
-def pbIsMegaStone?(item)   # Does NOT include Red Orb/Blue Orb
-  stones=[:ABOMASITE,:ABSOLITE,:AERODACTYLITE,:AGGRONITE,:ALAKAZITE,
-          :ALTARIANITE,:AMPHAROSITE,:AUDINITE,:BANETTITE,:BEEDRILLITE,
-          :BLASTOISINITE,:BLAZIKENITE,:CAMERUPTITE,:CHARIZARDITEX,:CHARIZARDITEY,
-          :DIANCITE,:GALLADITE,:GARCHOMPITE,:GARDEVOIRITE,:GENGARITE,
-          :GLALITITE,:GYARADOSITE,:HERACRONITE,:HOUNDOOMINITE,:KANGASKHANITE,
-          :LATIASITE,:LATIOSITE,:LOPUNNITE,:LUCARIONITE,:MANECTITE,
-          :MAWILITE,:MEDICHAMITE,:METAGROSSITE,:MEWTWONITEX,:MEWTWONITEY,
-          :PIDGEOTITE,:PINSIRITE,:SABLENITE,:SALAMENCITE,:SCEPTILITE,
-          :SCIZORITE,:SHARPEDONITE,:SLOWBRONITE,:STEELIXITE,:SWAMPERTITE,
-          :TYRANITARITE,:VENUSAURITE]
-  for i in stones
-    return true if isConst?(item,PBItems,i)
-  end
+  return true if isConst?(item,PBItems,:FIRESTONE) ||
+                 isConst?(item,PBItems,:THUNDERSTONE) ||
+                 isConst?(item,PBItems,:WATERSTONE) ||
+                 isConst?(item,PBItems,:LEAFSTONE) ||
+                 isConst?(item,PBItems,:MOONSTONE) ||
+                 isConst?(item,PBItems,:SUNSTONE) ||
+                 isConst?(item,PBItems,:DUSKSTONE) ||
+                 isConst?(item,PBItems,:DAWNSTONE) ||
+                 isConst?(item,PBItems,:SHINYSTONE)
   return false
 end
 
 def pbIsMulch?(item)
-  mulches=[:GROWTHMULCH,:DAMPMULCH,:STABLEMULCH,:GOOEYMULCH]
-  for i in mulches
-    return true if isConst?(item,PBItems,i)
-  end
+  return true if isConst?(item,PBItems,:GROWTHMULCH) ||
+                 isConst?(item,PBItems,:DAMPMULCH) ||
+                 isConst?(item,PBItems,:STABLEMULCH) ||
+                 isConst?(item,PBItems,:GOOEYMULCH)
   return false
 end
 
@@ -171,13 +158,13 @@ module ItemHandlers
   def self.hasOutHandler(item)                       # Shows "Use" option in Bag
     return UseFromBag[item]!=nil || UseOnPokemon[item]!=nil
   end
+  
+  def self.hasUseOnPokemonHandler(item)  # Shows "Use" option in Party screen
+    return UseOnPokemon[item]!=nil
+  end
 
   def self.hasKeyItemHandler(item)              # Shows "Register" option in Bag
     return UseInField[item]!=nil
-  end
-
-  def self.hasUseOnPokemon(item)
-    return UseOnPokemon[item]!=nil
   end
 
   def self.hasBattleUseOnBattler(item)
@@ -365,13 +352,13 @@ def pbJustRaiseEffortValues(pokemon,ev,evgain)
   for i in 0...6
     totalev+=pokemon.ev[i]
   end
-  if totalev+evgain>PokeBattle_Pokemon::EVLIMIT
+  if totalev+evgain>510
     # Bug Fix: must use "-=" instead of "="
-    evgain-=totalev+evgain-PokeBattle_Pokemon::EVLIMIT
+    evgain-=totalev+evgain-510
   end
-  if pokemon.ev[ev]+evgain>PokeBattle_Pokemon::EVSTATLIMIT
+  if pokemon.ev[ev]+evgain>255
     # Bug Fix: must use "-=" instead of "="
-    evgain-=pokemon.ev[ev]+evgain-PokeBattle_Pokemon::EVSTATLIMIT
+    evgain-=pokemon.ev[ev]+evgain-255
   end
   if evgain>0
     pokemon.ev[ev]+=evgain
@@ -388,11 +375,11 @@ def pbRaiseEffortValues(pokemon,ev,evgain=10,evlimit=true)
   for i in 0...6
     totalev+=pokemon.ev[i]
   end
-  if totalev+evgain>PokeBattle_Pokemon::EVLIMIT
-    evgain=PokeBattle_Pokemon::EVLIMIT-totalev
+  if totalev+evgain>510
+    evgain=510-totalev
   end
-  if pokemon.ev[ev]+evgain>PokeBattle_Pokemon::EVSTATLIMIT
-    evgain=PokeBattle_Pokemon::EVSTATLIMIT-pokemon.ev[ev]
+  if pokemon.ev[ev]+evgain>255
+    evgain=255-pokemon.ev[ev]
   end
   if evlimit && pokemon.ev[ev]+evgain>100
     evgain=100-pokemon.ev[ev]
@@ -405,23 +392,30 @@ def pbRaiseEffortValues(pokemon,ev,evgain=10,evlimit=true)
 end
 
 def pbRaiseHappinessAndLowerEV(pokemon,scene,ev,messages)
-  h=(pokemon.happiness<255)
-  e=(pokemon.ev[ev]>0)
-  if !h && !e
+  if pokemon.happiness==255 && pokemon.ev[ev]==0
     scene.pbDisplay(_INTL("It won't have any effect."))
     return false
-  end
-  if h
-    pokemon.changeHappiness("EV berry")
-  end
-  if e
+  elsif pokemon.happiness==255
     pokemon.ev[ev]-=10
     pokemon.ev[ev]=0 if pokemon.ev[ev]<0
     pokemon.calcStats
+    scene.pbRefresh
+    scene.pbDisplay(messages[0])
+    return true
+  elsif pokemon.ev[ev]==0
+    pokemon.changeHappiness("EV berry")
+    scene.pbRefresh
+    scene.pbDisplay(messages[1])
+    return true
+  else
+    pokemon.changeHappiness("EV berry")
+    pokemon.ev[ev]-=10
+    pokemon.ev[ev]=0 if pokemon.ev[ev]<0
+    pokemon.calcStats
+    scene.pbRefresh
+    scene.pbDisplay(messages[2])
+    return true
   end
-  scene.pbRefresh
-  scene.pbDisplay(messages[2-(h ? 0 : 1)-(e ? 0 : 2)])
-  return true
 end
 
 def pbRestorePP(pokemon,move,pp)
@@ -446,7 +440,7 @@ end
 
 def pbBikeCheck
   if $PokemonGlobal.surfing ||
-     (!$PokemonGlobal.bicycle && PBTerrain.onlyWalk?(pbGetTerrainTag))
+     (!$PokemonGlobal.bicycle && pbGetTerrainTag==PBTerrain::TallGrass)
     Kernel.pbMessage(_INTL("Can't use that here."))
     return false
   end
@@ -519,49 +513,51 @@ def pbForgetMove(pokemon,moveToLearn)
   return ret
 end
 
-def pbLearnMove(pokemon,move,ignoreifknown=false,bymachine=false,&block)
+def pbLearnMove(pokemon,move,ignoreifknown=false,bymachine=false)
   return false if !pokemon
   movename=PBMoves.getName(move)
   if pokemon.isEgg? && !$DEBUG
-    Kernel.pbMessage(_INTL("{1} can't be taught to an Egg.",movename),&block)
+    Kernel.pbMessage(_INTL("{1} can't be taught to an Egg.",movename))
     return false
   end
   if pokemon.respond_to?("isShadow?") && pokemon.isShadow?
-    Kernel.pbMessage(_INTL("{1} can't be taught to this Pokémon.",movename),&block)
+    Kernel.pbMessage(_INTL("{1} can't be taught to this Pokémon.",movename))
     return false
   end
   pkmnname=pokemon.name
   for i in 0...4
     if pokemon.moves[i].id==move
-      Kernel.pbMessage(_INTL("{1} already knows {2}.",pkmnname,movename),&block) if !ignoreifknown
+      Kernel.pbMessage(_INTL("{1} already knows\r\n{2}.",pkmnname,movename)) if !ignoreifknown
       return false
     end
     if pokemon.moves[i].id==0
       pokemon.moves[i]=PBMove.new(move)
-      Kernel.pbMessage(_INTL("\\se[]{1} learned {2}!\\se[MoveLearnt]",pkmnname,movename),&block)
+      Kernel.pbMessage(_INTL("{1} learned {2}!\\se[itemlevel]",pkmnname,movename))
       return true
     end
   end
   loop do
-    Kernel.pbMessage(_INTL("{1} wants to learn the move {2}.",pkmnname,movename),&block)
-    Kernel.pbMessage(_INTL("However, {1} already knows four moves.",pkmnname),&block)
-    if Kernel.pbConfirmMessage(_INTL("Should a move be deleted and replaced with {1}?",movename),&block)
-      Kernel.pbMessage(_INTL("Which move should be forgotten?"),&block)
+    Kernel.pbMessage(_INTL("{1} is trying to\r\nlearn {2}.\1",pkmnname,movename))
+    Kernel.pbMessage(_INTL("But {1} can't learn more than four moves.\1",pkmnname))
+    if Kernel.pbConfirmMessage(_INTL("Delete a move to make\r\nroom for {1}?",movename))
+      Kernel.pbMessage(_INTL("Which move should be forgotten?"))
       forgetmove=pbForgetMove(pokemon,move)
       if forgetmove>=0
         oldmovename=PBMoves.getName(pokemon.moves[forgetmove].id)
         oldmovepp=pokemon.moves[forgetmove].pp
         pokemon.moves[forgetmove]=PBMove.new(move) # Replaces current/total PP
         pokemon.moves[forgetmove].pp=[oldmovepp,pokemon.moves[forgetmove].totalpp].min if bymachine
-        Kernel.pbMessage(_INTL("\\se[]1,\\wt[16] 2, and\\wt[16]...\\wt[16] ...\\wt[16] ... Ta-da!\\se[balldrop]"),&block)
-        Kernel.pbMessage(_INTL("\\se[]{1} forgot how to use {2}. And... {1} learned {3}!\\se[MoveLearnt]",pkmnname,oldmovename,movename),&block)
+        Kernel.pbMessage(_INTL("\\se[]1,\\wt[4] 2,\\wt[4] and...\\wt[8] ...\\wt[8] ...\\wt[8] Poof!\\se[balldrop]\1"))
+        Kernel.pbMessage(_INTL("{1} forgot how to\r\nuse {2}.\1",pkmnname,oldmovename))
+        Kernel.pbMessage(_INTL("And...\1"))
+        Kernel.pbMessage(_INTL("\\se[]{1} learned {2}!\\se[itemlevel]",pkmnname,movename))
         return true
-      elsif Kernel.pbConfirmMessage(_INTL("Give up on learning the move {1}?",movename),&block)
-        Kernel.pbMessage(_INTL("{1} did not learn {2}.",pkmnname,movename),&block)
+      elsif Kernel.pbConfirmMessage(_INTL("Should {1} stop learning {2}?",pkmnname,movename))
+        Kernel.pbMessage(_INTL("{1} did not learn {2}.",pkmnname,movename))
         return false
       end
-    elsif Kernel.pbConfirmMessage(_INTL("Give up on learning the move {1}?",movename),&block)
-      Kernel.pbMessage(_INTL("{1} did not learn {2}.",pkmnname,movename),&block)
+    elsif Kernel.pbConfirmMessage(_INTL("Should {1} stop learning {2}?",pkmnname,movename))
+      Kernel.pbMessage(_INTL("{1} did not learn {2}.",pkmnname,movename))
       return false
     end
   end
@@ -580,16 +576,17 @@ def pbConsumeItemInBattle(bag,item)
   end
 end
 
-def pbUseItemOnPokemon(item,pokemon,scene)
+def pbCheckUseOnPokemonQuick(item,pokemon,scene) #No screen involved
+  ret=false
   if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4    # TM or HM
     machine=$ItemData[item][ITEMMACHINE]
     return false if machine==nil
     movename=PBMoves.getName(machine)
     if (pokemon.isShadow? rescue false)
-      Kernel.pbMessage(_INTL("Shadow Pokémon can't be taught any moves."))
-    elsif !pokemon.isCompatibleWithMove?(machine)
-      Kernel.pbMessage(_INTL("{1} and {2} are not compatible.",pokemon.name,movename))
-      Kernel.pbMessage(_INTL("{1} can't be learned.",movename))
+       Kernel.pbMessage(_INTL("Shadow Pokémon can't be taught any moves."))
+    elsif !pbSpeciesCompatible?(pokemon.species,machine)
+       Kernel.pbMessage(_INTL("{1} is not compatible with {2}.",pokemon.name,movename))
+       Kernel.pbMessage(_INTL("{1} can't be learned.",movename))
     else
       if pbIsHiddenMachine?(item)
         Kernel.pbMessage(_INTL("\\se[accesspc]Booted up an HM."))
@@ -598,32 +595,30 @@ def pbUseItemOnPokemon(item,pokemon,scene)
         Kernel.pbMessage(_INTL("\\se[accesspc]Booted up a TM."))
         Kernel.pbMessage(_INTL("It contained {1}.\1",movename))
       end
-      if Kernel.pbConfirmMessage(_INTL("Teach {1} to {2}?",movename,pokemon.name))
-        if pbLearnMove(pokemon,machine,false,true)
-          $PokemonBag.pbDeleteItem(item) if pbIsTechnicalMachine?(item) && !INFINITETMS
-          return true
-        end
+      if !Kernel.pbConfirmMessage(_INTL("Teach {1} to {2}?",movename,pokemon.name))
+      end
+      if pbLearnMove(pokemon,machine,false,false)
+        $PokemonBag.pbDeleteItem(item) if pbIsTechnicalMachine?(item) && !INFINITETMS
       end
     end
-    return false
   else
     ret=ItemHandlers.triggerUseOnPokemon(item,pokemon,scene)
     if ret && $ItemData[item][ITEMUSE]==1 # Usable on Pokémon, consumed
-      $PokemonBag.pbDeleteItem(item)
+       $PokemonBag.pbDeleteItem(item)
     end
     if $PokemonBag.pbQuantity(item)<=0
-      Kernel.pbMessage(_INTL("You used your last {1}.",PBItems.getName(item)))
-    end
-    return ret
+      Kernel.pbMessage(_INTL("You used your last {1}.",
+        PBItems.getName(item))) if $PokemonBag.pbQuantity(item)<=0
+      end
   end
-  Kernel.pbMessage(_INTL("Can't use that on {1}.",pokemon.name))
-  return false
+  return ret
 end
 
 def pbUseItem(bag,item,bagscene=nil)
   found=false
   if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4    # TM or HM
     machine=$ItemData[item][ITEMMACHINE]
+    ret=true
     return 0 if machine==nil
     if $Trainer.pokemonCount==0
       Kernel.pbMessage(_INTL("There is no Pokémon."))
@@ -676,7 +671,8 @@ def pbUseItem(bag,item,bagscene=nil)
                bag.pbDeleteItem(item)
              end
              if bag.pbQuantity(item)<=0
-               Kernel.pbMessage(_INTL("You used your last {1}.",PBItems.getName(item)))
+               Kernel.pbMessage(_INTL("You used your last {1}.",
+                  PBItems.getName(item))) if bag.pbQuantity(item)<=0
                break
              end
            end

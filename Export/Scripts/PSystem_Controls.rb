@@ -94,7 +94,7 @@ module Input
     when Input::B
       return [0x58,0x1B] # X, ESC 
     when Input::C
-      return [0x43,0x0D,0x20] # C, ENTER, Space
+      return [0x43,0x0d,0x20] # C, ENTER, Space
     when Input::X
       return [0x41] # A
     when Input::Y

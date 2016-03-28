@@ -3,10 +3,8 @@ module PBDebug
     begin
       yield
     rescue
-      PBDebug.log("")
       PBDebug.log("**Exception: #{$!.message}")
       PBDebug.log("#{$!.backtrace.inspect}")
-      PBDebug.log("")
 #      if $INTERNAL
         pbPrintException($!)
 #      end

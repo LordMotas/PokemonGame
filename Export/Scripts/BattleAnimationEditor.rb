@@ -1499,7 +1499,7 @@ class AnimationCanvas < Sprite
     super
   end
 
-  def play(oppmove=false)
+	def play
     if !@playing
       @sprites["pokemon0"]=Sprite.new(@viewport)
       @sprites["pokemon0"].bitmap=@user
@@ -1515,23 +1515,8 @@ class AnimationCanvas < Sprite
          pbCreateCel(PokeBattle_SceneConstants::FOCUSTARGET_X,
                      PokeBattle_SceneConstants::FOCUSTARGET_Y,-2,1),
          @sprites["pokemon0"],@sprites["pokemon1"])
-      usersprite=@sprites["pokemon#{oppmove ? 1 : 0}"]
-      targetsprite=@sprites["pokemon#{oppmove ? 0 : 1}"]
-      olduserx=usersprite ? usersprite.x : 0
-      oldusery=usersprite ? usersprite.y : 0
-      oldtargetx=targetsprite ? targetsprite.x : 0
-      oldtargety=targetsprite ? targetsprite.y : 0
       @player=PBAnimationPlayerX.new(@animation,
-         @battle.battlers[oppmove ? 1 : 0],@battle.battlers[oppmove ? 0 : 1],self,oppmove,true)
-      userwidth=(!usersprite || !usersprite.bitmap || usersprite.bitmap.disposed?) ? 128 : usersprite.bitmap.width
-      userheight=(!usersprite || !usersprite.bitmap || usersprite.bitmap.disposed?) ? 128 : usersprite.bitmap.height
-      targetwidth=(!targetsprite.bitmap || targetsprite.bitmap.disposed?) ? 128 : targetsprite.bitmap.width
-      targetheight=(!targetsprite.bitmap || targetsprite.bitmap.disposed?) ? 128 : targetsprite.bitmap.height
-      @player.setLineTransform(
-         PokeBattle_SceneConstants::FOCUSUSER_X,PokeBattle_SceneConstants::FOCUSUSER_Y,
-         PokeBattle_SceneConstants::FOCUSTARGET_X,PokeBattle_SceneConstants::FOCUSTARGET_Y,
-         olduserx,oldusery,
-         oldtargetx,oldtargety)
+         @battle.battlers[0],@battle.battlers[1],self,false,true)
       @player.start
       @playing=true
       @sprites["pokemon0"].x+=BORDERSIZE
@@ -3521,7 +3506,8 @@ def animationEditorMain(animation)
   sidewin.addButton(_INTL("Entire Slide..."))
   sidewin.addSpace
   sidewin.addButton(_INTL("Play Animation"))
-  sidewin.addButton(_INTL("Play Opp Anim"))
+
+	sidewin.addSpace
   sidewin.addButton(_INTL("Import Anim..."))
   sidewin.addButton(_INTL("Export Anim..."))
   sidewin.addButton(_INTL("Help"))
@@ -3700,9 +3686,6 @@ def animationEditorMain(animation)
     end
     if sidewin.changed?(10)
       canvas.play
-    end
-    if sidewin.changed?(11)
-      canvas.play(true)
     end
     if sidewin.changed?(12)
       pbImportAnim(animation,canvas,animwin)

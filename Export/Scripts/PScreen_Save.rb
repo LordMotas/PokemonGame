@@ -34,7 +34,7 @@ end
 def pbEmergencySave
   oldscene=$scene
   $scene=nil
-  Kernel.pbMessage(_INTL("The script is taking too long. The game will restart."))
+  Kernel.pbMessage(_INTL("The script is taking too long.  The game will restart."))
   return if !$Trainer
   if safeExists?(RTP.getSaveFileName("Game.rxdata"))
     File.open(RTP.getSaveFileName("Game.rxdata"),  'rb') {|r|
@@ -82,6 +82,7 @@ def pbSave(safesave=false)
     }
     Graphics.frame_reset
   rescue
+    Kernel.pbMessage(_INTL("{1}",$!.message))
     return false
   end
   return true
@@ -123,7 +124,7 @@ class PokemonSave
           end
         else
           if !Kernel.pbConfirmMessage(
-             _INTL("There is already a saved file. Is it OK to overwrite it?"))
+             _INTL("There is already a saved file.  Is it OK to overwrite it?"))
             @scene.pbEndScreen
             return false
           end

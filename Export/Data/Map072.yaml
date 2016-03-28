@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 022-Field05
     pitch: 100
+  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -255,7 +256,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbHasSpecies?(:DEOXYS)
+          - pbHasSpecies?(PBSpecies::DEOXYS)
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -288,17 +289,22 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - for poke in $Trainer.pokemonParty
+          - for i in 0...$Trainer.party.length
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "  if isConst?(poke.species,PBSpecies,"
+          - "  poke=$Trainer.party[i]"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "              :DEOXYS)"
+          - "  next if poke.egg?"
+          indent: 2
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "  if poke.species==PBSpecies::DEOXYS"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -424,7 +430,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbHasSpecies?(:DEOXYS)
+          - pbHasSpecies?(PBSpecies::DEOXYS)
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -457,17 +463,22 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - for poke in $Trainer.pokemonParty
+          - for i in 0...$Trainer.party.length
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "  if isConst?(poke.species,PBSpecies,"
+          - "  poke=$Trainer.party[i]"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "              :DEOXYS)"
+          - "  next if poke.egg?"
+          indent: 2
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "  if poke.species==PBSpecies::DEOXYS"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -598,7 +609,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbHasSpecies?(:DEOXYS)
+          - pbHasSpecies?(PBSpecies::DEOXYS)
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -631,17 +642,22 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - for poke in $Trainer.pokemonParty
+          - for i in 0...$Trainer.party.length
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "  if isConst?(poke.species,PBSpecies,"
+          - "  poke=$Trainer.party[i]"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "              :DEOXYS)"
+          - "  next if poke.egg?"
+          indent: 2
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "  if poke.species==PBSpecies::DEOXYS"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -772,7 +788,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - pbHasSpecies?(:DEOXYS)
+          - pbHasSpecies?(PBSpecies::DEOXYS)
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -805,17 +821,22 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - for poke in $Trainer.pokemonParty
+          - for i in 0...$Trainer.party.length
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "  if isConst?(poke.species,PBSpecies,"
+          - "  poke=$Trainer.party[i]"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "              :DEOXYS)"
+          - "  next if poke.egg?"
+          indent: 2
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "  if poke.species==PBSpecies::DEOXYS"
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -960,7 +981,7 @@ root: !ruby/object:RPG::Map
           code: 121
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbWildBattle(:DEOXYS,30)
+          - pbWildBattle(PBSpecies::DEOXYS,30)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1058,7 +1079,6 @@ root: !ruby/object:RPG::Map
       y: 12
       x: 14
       id: 8
-  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

@@ -296,11 +296,12 @@ class PokemonPokedexScene
     pbUpdateSpriteHash(@sprites)
   end
 
-  def setIconBitmap(species)
-    gender=($Trainer.formlastseen[species][0] rescue 0)
-    form=($Trainer.formlastseen[species][1] rescue 0)
-    @sprites["icon"].setSpeciesBitmap(species,(gender==1),form)
-    pbPositionPokemonSprite(@sprites["icon"],116-64,164-64)
+  def setIconBitmap(file)
+    @sprites["icon"].bitmap=AnimatedBitmapWrapper.new(file).bitmap
+    if @sprites["icon"].bitmap
+      @sprites["icon"].ox=@sprites["icon"].bitmap.width/2
+      @sprites["icon"].oy=@sprites["icon"].bitmap.height/2
+    end
   end
 
 # Gets the region used for displaying Pokédex entries.  Species will be listed
@@ -330,7 +331,6 @@ class PokemonPokedexScene
   end
 
   def pbStartScene
-    @dummypokemon=PokeBattle_Pokemon.new(1,1)
     @sprites={}
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
@@ -394,8 +394,7 @@ class PokemonPokedexScene
     addBackgroundPlane(@sprites,"background",_INTL("pokedexbg"),@viewport)
     @sprites["slider"]=IconSprite.new(Graphics.width-44,62,@viewport)
     @sprites["slider"].setBitmap(sprintf("Graphics/Pictures/pokedexSlider"))
-    @sprites["icon"]=PokemonSprite.new(@viewport)
-    @sprites["entryicon"]=PokemonSprite.new(@viewport)
+    @sprites["icon"]=IconSprite.new(116,164,@viewport)
     pbRefreshDexList($PokemonGlobal.pokedexIndex[pbGetSavePositionIndex])
     pbDeactivateWindows(@sprites)
     pbFadeInAndShow(@sprites)
@@ -548,11 +547,11 @@ class PokemonPokedexScene
     @sprites["slider"].y=ycoord
     iconspecies=@sprites["pokedex"].species
     iconspecies=0 if !$Trainer.seen[iconspecies]
-    setIconBitmap(iconspecies)
+    setIconBitmap(pbPokemonBitmapFile(iconspecies,false))
     if iconspecies>0
       @sprites["species"].text=_ISPRINTF("<ac>{1:s}</ac>",PBSpecies.getName(iconspecies))
     else
-      @sprites["species"].text=""
+      @sprites["species"].text=_ISPRINTF("")
     end
   end
 
@@ -664,7 +663,6 @@ class PokemonPokedexScene
   end
 
   def pbChangeToDexEntry(species)
-    @sprites["entryicon"].visible=true
     @sprites["dexentry"].visible=true
     @sprites["overlay"].visible=true
     @sprites["overlay"].bitmap.clear
@@ -673,11 +671,6 @@ class PokemonPokedexScene
     indexNumber=pbGetRegionalNumber(pbGetPokedexRegion(),species)
     indexNumber=species if indexNumber==0
     indexNumber-=1 if DEXINDEXOFFSETS.include?(pbGetPokedexRegion)
-    gender=($Trainer.formlastseen[species][0] rescue 0)
-    form=($Trainer.formlastseen[species][1] rescue 0)
-    @dummypokemon.species=species
-    @dummypokemon.setGender(gender)
-    @dummypokemon.forceForm(form)
     textpos=[
        [_ISPRINTF("{1:03d}{2:s} {3:s}",indexNumber," ",PBSpecies.getName(species)),
           244,40,0,Color.new(248,248,248),Color.new(0,0,0)],
@@ -685,12 +678,16 @@ class PokemonPokedexScene
        [sprintf(_INTL("WT")),318,190,0,basecolor,shadowcolor]
     ]
     if $Trainer.owned[species]
-      type1=@dummypokemon.type1
-      type2=@dummypokemon.type2
-      height=@dummypokemon.height
-      weight=@dummypokemon.weight
-      kind=@dummypokemon.kind
-      dexentry=@dummypokemon.dexEntry
+      dexdata=pbOpenDexData
+      pbDexDataOffset(dexdata,species,8)
+      type1=dexdata.fgetb
+      type2=dexdata.fgetb
+      pbDexDataOffset(dexdata,species,33)
+      height=dexdata.fgetw
+      weight=dexdata.fgetw
+      dexdata.close
+      kind=pbGetMessage(MessageTypes::Kinds,species)
+      dexentry=pbGetMessage(MessageTypes::Entries,species)
       inches=(height/0.254).round
       pounds=(weight/0.45359).round
       textpos.push([_ISPRINTF("{1:s} Pokémon",kind),244,74,0,basecolor,shadowcolor])
@@ -703,7 +700,7 @@ class PokemonPokedexScene
       end
       drawTextEx(@sprites["overlay"].bitmap,
          42,240,Graphics.width-(42*2),4,dexentry,basecolor,shadowcolor)
-      footprintfile=pbPokemonFootprintFile(@dummypokemon)
+      footprintfile=pbPokemonFootprintFile(species)
       if footprintfile
         footprint=BitmapCache.load_bitmap(footprintfile)
         @sprites["overlay"].bitmap.blt(226,136,footprint,footprint.rect)
@@ -727,13 +724,16 @@ class PokemonPokedexScene
       end
     end
     pbDrawTextPositions(@sprites["overlay"].bitmap,textpos)
-    @sprites["entryicon"].setSpeciesBitmap(species,(gender==1),form)
-    pbPositionPokemonSprite(@sprites["entryicon"],40,70)
-    pbPlayCry(@dummypokemon)
+    pkmnbitmap=AnimatedBitmapWrapper.new(pbPokemonBitmapFile(species,false))
+    @sprites["overlay"].bitmap.blt(
+       40-(pkmnbitmap.width-128)/2,
+       70-(pkmnbitmap.height-128)/2,
+       pkmnbitmap.bitmap,pkmnbitmap.bitmap.rect)
+    pkmnbitmap.dispose
+    pbPlayCry(species)
   end
 
   def pbStartDexEntryScene(species)     # Used only when capturing a new species
-    @dummypokemon=PokeBattle_Pokemon.new(species,1)
     @sprites={}
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
@@ -745,9 +745,8 @@ class PokemonPokedexScene
     @sprites["overlay"].x=0
     @sprites["overlay"].y=0
     @sprites["overlay"].visible=false
-    @sprites["entryicon"]=PokemonSprite.new(@viewport)
     pbChangeToDexEntry(species)
-    pbDrawImagePositions(@sprites["overlay"].bitmap,[["Graphics/Pictures/pokedexBlank",0,0,0,0,-1,-1]])
+    pbDrawImagePositions(@sprites["overlay"].bitmap,[[_INTL("Graphics/Pictures/pokedexBlank"),0,0,0,0,-1,-1]])
     pbFadeInAndShow(@sprites)
   end
 
@@ -756,7 +755,6 @@ class PokemonPokedexScene
        loop do
          Graphics.update
          Input.update
-         pbUpdate
          if Input.trigger?(Input::B) || Input.trigger?(Input::C)
            break
          end
@@ -782,7 +780,6 @@ class PokemonPokedexScene
              pbPlayCancelSE()
              pbFadeOutAndHide(@sprites)
            end
-           @sprites["entryicon"].clearBitmap
            break
          elsif Input.trigger?(Input::UP) || ret==8
            nextindex=-1
@@ -854,11 +851,11 @@ class PokemonPokedexScene
     @sprites["pokedex"].refresh
     iconspecies=@sprites["pokedex"].species
     iconspecies=0 if !$Trainer.seen[iconspecies]
-    setIconBitmap(iconspecies)
+    setIconBitmap(pbPokemonBitmapFile(iconspecies,false))
     if iconspecies>0
       @sprites["species"].text=_ISPRINTF("<ac>{1:s}</ac>",PBSpecies.getName(iconspecies))
     else
-      @sprites["species"].text=""
+      @sprites["species"].text=_ISPRINTF("")
     end
     # Update the slider
     ycoord=62
@@ -893,17 +890,12 @@ class PokemonPokedexScene
        _INTL("Electric"),_INTL("Psychic"),_INTL("Ice"),
        _INTL("Dragon"),_INTL("Dark")
     ]
-    @colorCommands=[_INTL("Don't specify")]
-    for i in 0..PBColors.maxValue
-      j=PBColors.getName(i)
-      @colorCommands.push(j) if j
-    end
-#    @colorCommands=[
-#       _INTL("Don't specify"),
-#       _INTL("Red"),_INTL("Blue"),_INTL("Yellow"),
-#       _INTL("Green"),_INTL("Black"),_INTL("Brown"),
-#       _INTL("Purple"),_INTL("Gray"),_INTL("White"),_INTL("Pink")
-#    ]
+    @colorCommands=[
+       _INTL("Don't specify"),
+       _INTL("Red"),_INTL("Blue"),_INTL("Yellow"),
+       _INTL("Green"),_INTL("Black"),_INTL("Brown"),
+       _INTL("Purple"),_INTL("Gray"),_INTL("White"),_INTL("Pink")
+    ]
     @orderCommands=[
        _INTL("Numeric Mode"),
        _INTL("A to Z Mode"),
@@ -985,11 +977,11 @@ class PokemonPokedexScene
                @sprites["pokedex"].refresh
                iconspecies=@sprites["pokedex"].species
                iconspecies=0 if !$Trainer.seen[iconspecies]
-               setIconBitmap(iconspecies)
+               setIconBitmap(pbPokemonBitmapFile(iconspecies,false))
                if iconspecies>0
                  @sprites["species"].text=_ISPRINTF("<ac>{1:s}</ac>",PBSpecies.getName(iconspecies))
                else
-                 @sprites["species"].text=""
+                 @sprites["species"].text=_ISPRINTF("")
                end
                seenno=0
                ownedno=0
@@ -1060,11 +1052,11 @@ class PokemonPokedexScene
            $PokemonGlobal.pokedexIndex[pbGetSavePositionIndex]=@sprites["pokedex"].index if !@searchResults
            iconspecies=@sprites["pokedex"].species
            iconspecies=0 if !$Trainer.seen[iconspecies]
-           setIconBitmap(iconspecies)
+           setIconBitmap(pbPokemonBitmapFile(iconspecies,false))
            if iconspecies>0
              @sprites["species"].text=_ISPRINTF("<ac>{1:s}</ac>",PBSpecies.getName(iconspecies))
            else
-             @sprites["species"].text=""
+             @sprites["species"].text=_ISPRINTF("")
            end
            # Update the slider
            ycoord=62

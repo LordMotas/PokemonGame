@@ -1,25 +1,3 @@
-begin
-  module PBFieldWeather
-    None        = 0 # None must be 0 (preset RMXP weather)
-    Rain        = 1 # Rain must be 1 (preset RMXP weather)
-    Storm       = 2 # Storm must be 2 (preset RMXP weather)
-    Snow        = 3 # Snow must be 3 (preset RMXP weather)
-    Blizzard    = 4
-    Sandstorm   = 5
-    HeavyRain   = 6
-    Sun = Sunny = 7
-
-    def PBFieldWeather.maxValue; 7; end
-  end
-
-rescue Exception
-  if $!.is_a?(SystemExit) || "#{$!.class}"=="Reset"
-    raise $!
-  end
-end
-
-
-
 module RPG
   class Weather
     attr_reader :type
@@ -46,8 +24,8 @@ module RPG
           @sandstormBitmap1.fill_rect(rand(bmwidth/2)*2, rand(bmheight/2)*2, 2,2,sandstormColors[rand(7)])
           @sandstormBitmap2.fill_rect(rand(bmwidth/2)*2, rand(bmheight/2)*2, 2,2,sandstormColors[rand(7)])
         end
-        @weatherTypes[PBFieldWeather::Sandstorm][0][0]=@sandstormBitmap1
-        @weatherTypes[PBFieldWeather::Sandstorm][0][1]=@sandstormBitmap2
+        @weatherTypes[4][0][0]=@sandstormBitmap1
+        @weatherTypes[4][0][1]=@sandstormBitmap2
       end
     end
 
@@ -70,9 +48,9 @@ module RPG
         @snowBitmap3.fill_rect(0,4,10,2,snowcolor)
         @snowBitmap3.fill_rect(2,6,6,2,snowcolor)
         @snowBitmap3.fill_rect(4,8,2,2,snowcolor)
-        @weatherTypes[PBFieldWeather::Snow][0][0]=@snowBitmap1
-        @weatherTypes[PBFieldWeather::Snow][0][1]=@snowBitmap2
-        @weatherTypes[PBFieldWeather::Snow][0][2]=@snowBitmap3
+        @weatherTypes[3][0][0]=@snowBitmap1
+        @weatherTypes[3][0][1]=@snowBitmap2
+        @weatherTypes[3][0][2]=@snowBitmap3
       end
     end
 
@@ -97,14 +75,14 @@ module RPG
           @blizzardBitmap3.fill_rect(rand(bmwidth/2)*2, rand(bmheight/2)*2, 2,2,snowcolor)
           @blizzardBitmap4.fill_rect(rand(bmwidth/2)*2, rand(bmheight/2)*2, 2,2,snowcolor)
         end
-        @weatherTypes[PBFieldWeather::Blizzard][0][0]=@blizzardBitmap1
-        @weatherTypes[PBFieldWeather::Blizzard][0][1]=@blizzardBitmap2
-        @weatherTypes[PBFieldWeather::Blizzard][0][2]=@blizzardBitmap3 # Tripled to make them 3x as common
-        @weatherTypes[PBFieldWeather::Blizzard][0][3]=@blizzardBitmap3
-        @weatherTypes[PBFieldWeather::Blizzard][0][4]=@blizzardBitmap3
-        @weatherTypes[PBFieldWeather::Blizzard][0][5]=@blizzardBitmap4 # Tripled to make them 3x as common
-        @weatherTypes[PBFieldWeather::Blizzard][0][6]=@blizzardBitmap4
-        @weatherTypes[PBFieldWeather::Blizzard][0][7]=@blizzardBitmap4
+        @weatherTypes[7][0][0]=@blizzardBitmap1
+        @weatherTypes[7][0][1]=@blizzardBitmap2
+        @weatherTypes[7][0][2]=@blizzardBitmap3 # Tripled to make them 3x as common
+        @weatherTypes[7][0][3]=@blizzardBitmap3
+        @weatherTypes[7][0][4]=@blizzardBitmap3
+        @weatherTypes[7][0][5]=@blizzardBitmap4 # Tripled to make them 3x as common
+        @weatherTypes[7][0][6]=@blizzardBitmap4
+        @weatherTypes[7][0][7]=@blizzardBitmap4
       end
     end
 
@@ -127,15 +105,16 @@ module RPG
       for i in 0...96
         @storm_bitmap.fill_rect(190-(i*2), i*2, 2, 2, color)
       end
-      @weatherTypes=[]
-      @weatherTypes[PBFieldWeather::None]      = nil
-      @weatherTypes[PBFieldWeather::Rain]      = [[@rain_bitmap],-6,24,-8]
-      @weatherTypes[PBFieldWeather::HeavyRain] = [[@storm_bitmap],-24,24,-4]
-      @weatherTypes[PBFieldWeather::Storm]     = [[@storm_bitmap],-24,24,-4]
-      @weatherTypes[PBFieldWeather::Snow]      = [[],-4,8,0]
-      @weatherTypes[PBFieldWeather::Blizzard]  = [[],-16,16,-4]
-      @weatherTypes[PBFieldWeather::Sandstorm] = [[],-12,4,-2]
-      @weatherTypes[PBFieldWeather::Sun]       = nil
+      @weatherTypes=[ # bitmap(s), x per frame, y per frame, opacity per frame
+         nil,                                # 0: No weather
+         [[@rain_bitmap],-6,24,-8],          # 1: Rain
+         [[@storm_bitmap],-24,24,-4],        # 2: Storm
+         [[],-4,8,0],                        # 3: Snow
+         [[],-12,4,-2],                      # 4: Sandstorm
+         nil,                                # 5: Sunny
+         [[@storm_bitmap],-24,24,-4],        # 6: Heavy rain
+         [[],-16,16,-4],                     # 7: Blizzard
+      ]
       @sprites = []
     end
 
@@ -169,38 +148,38 @@ module RPG
       return if @type == type
       @type = type
       case @type
-      when PBFieldWeather::Rain
+      when 1 # Rain
         bitmap = @rain_bitmap
-      when PBFieldWeather::HeavyRain, PBFieldWeather::Storm
+      when 2, 6 # Storm, heavy rain
         bitmap = @storm_bitmap
-      when PBFieldWeather::Snow
+      when 3 # Snow
         prepareSnowBitmaps
-      when PBFieldWeather::Blizzard
-        prepareBlizzardBitmaps
-      when PBFieldWeather::Sandstorm
+      when 4 # Sandstorm
         prepareSandstormBitmaps
+      when 7 # Blizzard
+        prepareBlizzardBitmaps
       else
         bitmap = nil
       end
-      if @type==PBFieldWeather::None
+      if @type==0
         for sprite in @sprites
           sprite.dispose
         end
         @sprites.clear
         return
       end
-      weatherbitmaps=(@type==PBFieldWeather::None || @type==PBFieldWeather::Sun) ? nil : @weatherTypes[@type][0]
+      weatherbitmaps=(@type==0 || @type==5) ? nil : @weatherTypes[@type][0]
       ensureSprites
       for i in 1..40
         sprite = @sprites[i]
         if sprite != nil
-          if @type==PBFieldWeather::Blizzard || @type==PBFieldWeather::Sandstorm
-            sprite.mirror=(rand(2)==0)
+          if @type==4 || @type==7
+            sprite.mirror=(rand(2)==0) ? true : false
           else
             sprite.mirror=false
           end
           sprite.visible = (i <= @max)
-          sprite.bitmap = (@type==PBFieldWeather::None || @type==PBFieldWeather::Sun) ? nil : weatherbitmaps[i%weatherbitmaps.length]
+          sprite.bitmap = (@type==0 || @type==5) ? nil : weatherbitmaps[i%weatherbitmaps.length]
         end
       end
     end
@@ -242,35 +221,34 @@ module RPG
     def update
       # @max is (power+1)*4, where power is between 1 and 9
       case @type
-      when PBFieldWeather::None
+      when 0 # No weather
         @viewport.tone.set(0,0,0,0)
-      when PBFieldWeather::Rain
+      when 1 # Rain
         @viewport.tone.set(-@max*3/4,-@max*3/4,-@max*3/4,10)
-      when PBFieldWeather::HeavyRain, PBFieldWeather::Storm
+      when 2, 6 # Storm, heavy rain
         @viewport.tone.set(-@max*6/4,-@max*6/4,-@max*6/4,20)
-      when PBFieldWeather::Snow
+      when 3 # Snow
         @viewport.tone.set(@max*2/4,@max*2/4,@max*2/4,0)
-      when PBFieldWeather::Blizzard
-        @viewport.tone.set(@max*3/4,@max*3/4,@max*3/4,0)
-      when PBFieldWeather::Sandstorm
+      when 4 # Sandstorm
         @viewport.tone.set(@max*2/4,0,-@max*2/4,0)
-      when PBFieldWeather::Sun
+      when 5 # Sunny
         unless @sun==@max || @sun==-@max
           @sun=@max
         end
         @sun=-@sun if @sunvalue>@max || @sunvalue<0
         @sunvalue=@sunvalue+@sun/32
         @viewport.tone.set(@sunvalue+63,@sunvalue+63,@sunvalue/2+31,0)
+      when 7 # Blizzard
+        @viewport.tone.set(@max*3/4,@max*3/4,@max*3/4,0)
       end
-      # Storm flashes
-      if @type==PBFieldWeather::Storm
+      if @type==2 # Storm flashes
         rnd=rand(300)
         if rnd<4
           @viewport.flash(Color.new(255,255,255,230),rnd*20)
         end
       end
       @viewport.update
-      return if @type==PBFieldWeather::None || @type==PBFieldWeather::Sun
+      return if @type == 0 || @type == 5
       ensureSprites
       for i in 1..@max
         sprite = @sprites[i]
@@ -278,7 +256,7 @@ module RPG
         sprite.x += @weatherTypes[@type][1]
         sprite.y += @weatherTypes[@type][2]
         sprite.opacity += @weatherTypes[@type][3]
-        sprite.x += [2,0,0,-2][rand(4)] if @type==PBFieldWeather::Snow || @type==PBFieldWeather::Blizzard
+        sprite.x += [2,0,0,-2][rand(4)] if @type==3 || @type==7
         x = sprite.x - @ox
         y = sprite.y - @oy
         nomwidth=Graphics.width
@@ -287,8 +265,8 @@ module RPG
           sprite.x = rand(nomwidth+150) - 50 + @ox
           sprite.y = rand(nomheight+150) - 200 + @oy
           sprite.opacity = 255
-          if @type==PBFieldWeather::Blizzard || @type==PBFieldWeather::Sandstorm
-            sprite.mirror=(rand(2)==0)
+          if @type==4
+            sprite.mirror=(rand(2)==0) ? true : false
           else
             sprite.mirror=false
           end

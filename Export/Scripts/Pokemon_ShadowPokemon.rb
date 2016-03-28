@@ -1,5 +1,5 @@
 module PBWeather
-  SHADOWSKY = 8
+  SHADOWSKY = 5
 end
 
 
@@ -66,7 +66,6 @@ Events.onStartBattle+=proc {|sender,e|
 
 Events.onEndBattle+=proc {|sender,e|
    decision=e[0]
-   canlose=e[1]
    for i in 0...$PokemonTemp.heartgauges.length
      pokemon=$Trainer.party[i]
      if pokemon && ($PokemonTemp.heartgauges[i] &&
@@ -307,11 +306,11 @@ def pbApplyEVGain(pokemon,ev,evgain)
   for i in 0...6
     totalev+=pokemon.ev[i]
   end
-  if totalev+evgain>PokeBattle_Pokemon::EVLIMIT # Can't exceed overall limit
-    evgain-=totalev+evgain-PokeBattle_Pokemon::EVLIMIT
+  if totalev+evgain>510 # Can't exceed overall limit
+    evgain-=totalev+evgain-510
   end
-  if pokemon.ev[ev]+evgain>PokeBattle_Pokemon::EVSTATLIMIT
-    evgain-=totalev+evgain-PokeBattle_Pokemon::EVSTATLIMIT
+  if pokemon.ev[ev]+evgain>255
+    evgain-=totalev+evgain-255
   end
   if evgain>0
     pokemon.ev[ev]+=evgain
@@ -549,7 +548,7 @@ class PokeBattle_Battler
     if p && p.respond_to?("heartgauge") && p.heartgauge>0
       return true
     end
-    return false
+    return false  
   end
 
   def inHyperMode?
@@ -583,8 +582,8 @@ end
 
 
 ################################################################################
-# No additional effect. (Shadow Blast, Shadow Blitz, Shadow Break, Shadow Rave,
-# Shadow Rush, Shadow Wave)
+# No additional effect.
+# Shadow Blast, Shadow Blitz, Shadow Break, Shadow Rave, Shadow Rush, Shadow Wave
 ################################################################################
 class PokeBattle_Move_126 < PokeBattle_Move_000
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -597,7 +596,8 @@ end
 
 
 ################################################################################
-# Paralyzes the target. (Shadow Bolt)
+# Paralyzes the target.
+# Shadow Bolt
 ################################################################################
 class PokeBattle_Move_127 < PokeBattle_Move_007
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -610,7 +610,8 @@ end
 
 
 ################################################################################
-# Burns the target. (Shadow Fire)
+# Burns the target.
+# Shadow Fire
 ################################################################################
 class PokeBattle_Move_128 < PokeBattle_Move_00A
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -623,7 +624,8 @@ end
 
 
 ################################################################################
-# Freezes the target. (Shadow Chill)
+# Freezes the target.
+# Shadow Chill
 ################################################################################
 class PokeBattle_Move_129 < PokeBattle_Move_00C
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -636,7 +638,8 @@ end
 
 
 ################################################################################
-# Confuses the target. (Shadow Panic)
+# Confuses the target.
+# Shadow Panic
 ################################################################################
 class PokeBattle_Move_12A < PokeBattle_Move_013
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -649,7 +652,8 @@ end
 
 
 ################################################################################
-# Decreases the target's Defense by 2 stages. (Shadow Down)
+# Decreases the target's Defense by 2 stages.
+# Shadow Down
 ################################################################################
 class PokeBattle_Move_12B < PokeBattle_Move_04C
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -662,11 +666,12 @@ end
 
 
 ################################################################################
-# Decreases the target's evasion by 2 stages. (Shadow Mist)
+# Decreases the target's evasion by 2 stages.
+# Shadow Mist
 ################################################################################
 class PokeBattle_Move_12C < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
-    return -1 if !opponent.pbCanReduceStatStage?(PBStats::EVASION,attacker,true,self)
+    return -1 if !opponent.pbCanReduceStatStage?(PBStats::EVASION,true)
     pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
     ret=opponent.pbReduceStat(PBStats::EVASION,2,false)
     attacker.pbHyperMode if ret
@@ -677,7 +682,8 @@ end
 
 
 ################################################################################
-# Power is doubled if the target is using Dive. (Shadow Storm)
+# Power is doubled if the target is using Dive.
+# Shadow Storm
 ################################################################################
 class PokeBattle_Move_12D < PokeBattle_Move_075
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -691,7 +697,8 @@ end
 
 ################################################################################
 # Two turn attack.  On first turn, halves the HP of all active Pokémon.
-# Skips second turn (if successful). (Shadow Half)
+# Skips second turn (if successful).
+# Shadow Half
 ################################################################################
 class PokeBattle_Move_12E < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -718,7 +725,7 @@ end
 
 ################################################################################
 # Target can no longer switch out or flee, as long as the user remains active.
-# (Shadow Hold)
+# Shadow Hold
 ################################################################################
 class PokeBattle_Move_12F < PokeBattle_Move_0EF
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
@@ -731,16 +738,14 @@ end
 
 
 ################################################################################
-# User takes recoil damage equal to 1/2 of its current HP. (Shadow End)
+# User takes recoil damage equal to 1/2 of its current HP.
+# Shadow End
 ################################################################################
 class PokeBattle_Move_130 < PokeBattle_Move
-  def isRecoilMove?
-    return true
-  end
-
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     ret=super(attacker,opponent,hitnum,alltargets,showanimation)
-    if opponent.damagestate.calcdamage>0 && !opponent.damagestate.substitute
+    if opponent.damagestate.calcdamage>0 && !opponent.damagestate.substitute &&
+       !attacker.hasWorkingAbility(:ROCKHEAD)
       attacker.pbReduceHP([1,((attacker.hp+1)/2).floor].max)
       @battle.pbDisplay(_INTL("{1} is damaged by the recoil!",attacker.pbThis))
     end
@@ -752,18 +757,12 @@ end
 
 
 ################################################################################
-# Starts shadow weather. (Shadow Sky)
+# Starts shadow weather.
+# Shadow Sky
 ################################################################################
 class PokeBattle_Move_131 < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
-    case @battle.weather
-    when PBWeather::HEAVYRAIN
-      @battle.pbDisplay(_INTL("There is no relief from this heavy rain!"))
-      return -1
-    when PBWeather::HARSHSUN
-      @battle.pbDisplay(_INTL("The extremely harsh sunlight was not lessened at all!"))
-      return -1
-    when PBWeather::SHADOWSKY
+    if @battle.weather==PBWeather::SHADOWSKY
       @battle.pbDisplay(_INTL("But it failed!"))
       return -1
     end
@@ -780,7 +779,7 @@ end
 
 ################################################################################
 # Ends the effects of Light Screen, Reflect and Safeguard on both sides.
-# (Shadow Shed)
+# Shadow Shed
 ################################################################################
 class PokeBattle_Move_132 < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)

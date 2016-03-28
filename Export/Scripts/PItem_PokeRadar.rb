@@ -15,7 +15,7 @@ end
 ################################################################################
 def pbCanUsePokeRadar?
   # Can't use Radar if not in tall grass
-  if !PBTerrain.isJustGrass?($game_map.terrain_tag($game_player.x,$game_player.y))
+  if !pbIsJustGrassTag?($game_map.terrain_tag($game_player.x,$game_player.y))
     Kernel.pbMessage(_INTL("Can't use that here."))
     return false
   end
@@ -71,7 +71,7 @@ def pbPokeRadarHighlightGrass(showmessage=true)
     # Add tile to grasses array if it's a valid grass tile
     if x>=0 && x<$game_map.width &&
        y>=0 && y<$game_map.height
-      if PBTerrain.isJustGrass?($game_map.terrain_tag(x,y))
+      if pbIsJustGrassTag?($game_map.terrain_tag(x,y))
         # Choose a rarity for the grass (0=normal, 1=rare, 2=shiny)
         s=(rand(4)==0) ? 1 : 0
         if $PokemonTemp.pokeradar && $PokemonTemp.pokeradar[2]>0
@@ -229,7 +229,7 @@ Events.onStepTaken+=proc {|sender,e|
      $PokemonGlobal.pokeradarBattery-=1
    end
    if !$PokemonEncounters.isRegularGrass? ||
-      !PBTerrain.isJustGrass?($game_map.terrain_tag($game_player.x,$game_player.y))
+      !pbIsJustGrassTag?($game_map.terrain_tag($game_player.x,$game_player.y))
      pbPokeRadarCancel
    end
 }

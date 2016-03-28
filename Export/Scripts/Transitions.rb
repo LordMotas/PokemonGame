@@ -60,23 +60,7 @@ module Graphics
       @@transition=nil
     end
     dc=File.basename(filename).downcase
-    if dc=="scrolldown"
-      @@transition=ScrollScreen.new(duration,2)
-    elsif dc=="scrollleft"
-      @@transition=ScrollScreen.new(duration,4)
-    elsif dc=="scrollright"
-      @@transition=ScrollScreen.new(duration,6)
-    elsif dc=="scrollup"
-      @@transition=ScrollScreen.new(duration,8)
-    elsif dc=="scrolldownleft"
-      @@transition=ScrollScreen.new(duration,1)
-    elsif dc=="scrolldownright"
-      @@transition=ScrollScreen.new(duration,3)
-    elsif dc=="scrollupleft"
-      @@transition=ScrollScreen.new(duration,7)
-    elsif dc=="scrollupright"
-      @@transition=ScrollScreen.new(duration,9)
-    elsif dc=="splash"
+    if dc=="splash"
       @@transition=SplashTransition.new(duration)
     elsif dc=="random_stripe_v"
       @@transition=RandomStripeTransition.new(duration,0)
@@ -86,14 +70,28 @@ module Graphics
       @@transition=ShrinkingPieces.new(duration,true)
     elsif dc=="shrinkingpieces"
       @@transition=ShrinkingPieces.new(duration,false)
+    elsif dc=="scrolldown"
+      @@transition=ScrollScreen.new(duration,2)
+    elsif dc=="scrollleft"
+      @@transition=ScrollScreen.new(duration,4)
+    elsif dc=="scrollright"
+      @@transition=ScrollScreen.new(duration,6)
+    elsif dc=="scrollup"
+      @@transition=ScrollScreen.new(duration,8)
+    elsif dc=="scrolldownright"
+      @@transition=ScrollScreen.new(duration,3)
+    elsif dc=="scrolldownleft"
+      @@transition=ScrollScreen.new(duration,1)
+    elsif dc=="scrollupleft"
+      @@transition=ScrollScreen.new(duration,7)
+    elsif dc=="scrollupright"
+      @@transition=ScrollScreen.new(duration,9)
     elsif dc=="breakingglass"
       @@transition=BreakingGlass.new(duration)
     elsif dc=="mosaic"
       @@transition=MosaicTransition.new(duration)
     elsif dc=="zoomin"
       @@transition=ZoomInTransition.new(duration)
-    elsif dc==""
-      @@transition=FadeTransition.new(duration)
     else 
       ret=false
     end
@@ -119,13 +117,12 @@ class BreakingGlass
     width=@bitmap.width/cx
     height=@bitmap.height/cy
     @numtiles=cx*cy
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
     @sprites=[]
     @offset=[]
     @y=[]
     for i in 0...@numtiles
-      @sprites[i]=Sprite.new(@viewport)
+      @sprites[i]=Sprite.new
+      @sprites[i].z=100000
       @sprites[i].bitmap=@bitmap
       @sprites[i].x=width*(i%cx)
       @sprites[i].y=height*(i/cx)
@@ -147,7 +144,6 @@ class BreakingGlass
         @sprites[i].dispose
       end
       @sprites.clear
-      @viewport.dispose if @viewport
       @disposed=true
     end
   end
@@ -183,11 +179,10 @@ class ShrinkingPieces
     width=@bitmap.width/cx
     height=@bitmap.height/cy
     @numtiles=cx*cy
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
     @sprites=[]
     for i in 0...@numtiles
-      @sprites[i]=Sprite.new(@viewport)
+      @sprites[i]=Sprite.new
+      @sprites[i].z=200000
       @sprites[i].bitmap=@bitmap
       @sprites[i].ox=width/2
       @sprites[i].oy=height/2
@@ -209,7 +204,6 @@ class ShrinkingPieces
         @sprites[i].dispose
       end
       @sprites.clear
-      @viewport.dispose if @viewport
       @disposed=true
     end
   end
@@ -250,10 +244,9 @@ class SplashTransition
       @disposed=true
       return
     end
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
-    @sprite=Sprite.new(@viewport)
+    @sprite = RPG::Sprite.new
     @sprite.bitmap = Bitmap.new(Graphics.width, Graphics.height)
+    @sprite.z = 200000
     size = SPLASH_SIZE
     size = [size,1].max
     cells = Graphics.width*Graphics.height / (size ** 2)
@@ -291,7 +284,6 @@ class SplashTransition
     @sprite.visible=false
     @sprite.bitmap.dispose
     @sprite.dispose
-    @viewport.dispose if @viewport
     @disposed=true
   end
 
@@ -345,10 +337,9 @@ class RandomStripeTransition
       @disposed=true
       return
     end
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
-    @sprite = Sprite.new(@viewport)
+    @sprite = RPG::Sprite.new
     @sprite.bitmap = Bitmap.new(Graphics.width,Graphics.height)
+    @sprite.z = 200000
     ########## 
     @direction=direction
     size = RAND_STRIPE_SIZE
@@ -358,7 +349,7 @@ class RandomStripeTransition
     ary = (0...bands).to_a
     @rand_stripe_index_array = ary.sort_by { rand }
     ##########
-    @sprite.bitmap.blt(0, 0, @buffer, @buffer.rect)
+    @sprite.bitmap.blt(0, 0,@buffer,@buffer.rect)
   end
 
   def disposed?; @disposed; end
@@ -370,7 +361,6 @@ class RandomStripeTransition
     @sprite.visible=false
     @sprite.bitmap.dispose
     @sprite.dispose
-    @viewport.dispose if @viewport
     @disposed=true
   end
 
@@ -427,14 +417,13 @@ class ZoomInTransition
     end
     @width=@buffer.width
     @height=@buffer.height
-    @viewport = Viewport.new(0,0,@width,@height)
-    @viewport.z = 99999
-    @sprite = Sprite.new(@viewport)
+    @sprite = RPG::Sprite.new
     @sprite.bitmap = @buffer
     @sprite.ox=@width/2
     @sprite.oy=@height/2
     @sprite.x=@width/2
     @sprite.y=@height/2
+    @sprite.z = 200000
   end
 
   def disposed?; @disposed; end
@@ -444,7 +433,6 @@ class ZoomInTransition
     @buffer.dispose if @buffer
     @buffer=nil
     @sprite.dispose if @sprite
-    @viewport.dispose if @viewport
     @disposed=true
   end
 
@@ -465,8 +453,8 @@ end
 
 class ScrollScreen
   def initialize(numframes,direction)
-    @numframes=numframes
     @duration=numframes
+    @numframes=numframes
     @dir=direction
     @disposed=false
     if @numframes<=0
@@ -480,10 +468,9 @@ class ScrollScreen
     end
     @width=@buffer.width
     @height=@buffer.height
-    @viewport = Viewport.new(0,0,@width,@height)
-    @viewport.z = 99999
-    @sprite = Sprite.new(@viewport)
+    @sprite = RPG::Sprite.new
     @sprite.bitmap = @buffer
+    @sprite.z = 200000
   end
 
   def disposed?; @disposed; end
@@ -493,7 +480,6 @@ class ScrollScreen
     @buffer.dispose if @buffer
     @buffer=nil
     @sprite.dispose if @sprite
-    @viewport.dispose if @viewport
     @disposed=true
   end
 
@@ -504,25 +490,25 @@ class ScrollScreen
     else
       case @dir
       when 1 # down left
-        @sprite.y+=(@height/@numframes)
-        @sprite.x-=(@width/@numframes)
+        @sprite.y+=(@buffer.height/@numframes)
+        @sprite.x-=(@buffer.width/@numframes)
       when 2 # down
-        @sprite.y+=(@height/@numframes)
+        @sprite.y+=(@buffer.height/@numframes)
       when 3 # down right
-        @sprite.y+=(@height/@numframes)
-        @sprite.x+=(@width/@numframes)
+        @sprite.y+=(@buffer.height/@numframes)
+        @sprite.x+=(@buffer.width/@numframes)
       when 4 # left
-        @sprite.x-=(@width/@numframes)
+        @sprite.x-=(@buffer.width/@numframes)
       when 6 # right
-        @sprite.x+=(@width/@numframes)
+        @sprite.x+=(@buffer.width/@numframes)
       when 7 # up left
-        @sprite.y-=(@height/@numframes)
-        @sprite.x-=(@width/@numframes)
+        @sprite.y-=(@buffer.height/@numframes)
+        @sprite.x-=(@buffer.width/@numframes)
       when 8 # up
-        @sprite.y-=(@height/@numframes)
+        @sprite.y-=(@buffer.height/@numframes)
       when 9 # up right
-        @sprite.y-=(@height/@numframes)
-        @sprite.x+=(@width/@numframes)
+        @sprite.y-=(@buffer.height/@numframes)
+        @sprite.x+=(@buffer.width/@numframes)
       end
       @duration-=1
     end
@@ -545,10 +531,11 @@ class MosaicTransition
       @disposed=true
       return
     end
-    @viewport = Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
-    @sprite = Sprite.new(@viewport)
+    @width=@buffer.width
+    @height=@buffer.height
+    @sprite = RPG::Sprite.new
     @sprite.bitmap = @buffer
+    @sprite.z = 200000
     @bitmapclone=@buffer.clone
     @bitmapclone2=@buffer.clone
   end
@@ -560,7 +547,6 @@ class MosaicTransition
     @buffer.dispose if @buffer
     @buffer=nil
     @sprite.dispose if @sprite
-    @viewport.dispose if @viewport
     @disposed=true
   end
 
@@ -577,44 +563,6 @@ class MosaicTransition
          Rect.new(0,0,@buffer.width,@buffer.height),@bitmapclone2,
          Rect.new(0,0,@buffer.width*@duration/@numframes,
          @buffer.height*@duration/@numframes))
-      @duration-=1
-    end
-  end
-end
-
-
-
-class FadeTransition
-  def initialize(numframes)
-    @duration=numframes
-    @numframes=numframes
-    @disposed=false
-    if @duration<=0
-      @disposed=true
-      return
-    end
-    @viewport = Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z = 99999
-    @sprite = BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
-    @sprite.bitmap.fill_rect(0,0,Graphics.width,Graphics.height,Color.new(0,0,0))
-    @sprite.opacity=0
-  end
-
-  def disposed?; @disposed; end
-
-  def dispose
-    return if disposed?
-    @sprite.dispose if @sprite
-    @viewport.dispose if @viewport
-    @disposed=true
-  end
-
-  def update
-    return if disposed?
-    if @duration==0
-      dispose
-    else
-      @sprite.opacity=(@duration-1)*255/@numframes
       @duration-=1
     end
   end
