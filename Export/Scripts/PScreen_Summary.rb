@@ -355,7 +355,28 @@ class PokemonSummaryScene
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Item"),16,320,0,base,shadow],
        [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
+       [_INTL("Egg Groups:"),234,334,0,Color.new(64,64,64),Color.new(176,176,176)]
     ]
+    #===========================================================================
+    # Egg Groups
+    #===========================================================================
+    if !pokemon.isEgg?
+      dexdata=pbOpenDexData
+      pbDexDataOffset(dexdata,pokemon.species,31)
+      compat10=dexdata.fgetb
+      compat11=dexdata.fgetb
+      eggGroupbitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/typesEgg"))
+      eggGroup1rect=Rect.new(0,compat10*28,64,28)
+      eggGroup2rect=Rect.new(0,compat11*28,64,28)
+      if compat10==compat11
+        overlay.blt(364,336,eggGroupbitmap.bitmap,eggGroup1rect)
+      else
+        overlay.blt(364,336,eggGroupbitmap.bitmap,eggGroup1rect)
+        overlay.blt(432,336,eggGroupbitmap.bitmap,eggGroup2rect)
+      end
+      dexdata.close
+    end
+    #===========================================================================
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
