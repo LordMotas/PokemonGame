@@ -2334,6 +2334,104 @@ class PokemonStorageScene
       imagepos=[(["Graphics/Pictures/shiny",156,198,0,0,-1,-1])]
       pbDrawImagePositions(overlay,imagepos)
     end
+    #===========================================================================
+    # IV Star Gauge
+    #===========================================================================
+    nostar="Graphics/Pictures/starempty"
+    lowstar="Graphics/Pictures/starlow"
+    highstar="Graphics/Pictures/starhigh"
+    perfectstar="Graphics/Pictures/starperfect"
+    imagepos=[([nostar,8,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,24,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,40,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,56,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,72,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,88,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    #HP
+    if pokemon.iv[0]>30
+      imagepos=[([perfectstar,8,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[0]>29
+      imagepos=[([highstar,8,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[0]<30
+      if pokemon.iv[0]>0
+        imagepos=[([lowstar,8,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Atk
+    if pokemon.iv[1]>30
+      imagepos=[([perfectstar,24,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[1]>29
+      imagepos=[([highstar,24,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[1]<30
+      if pokemon.iv[1]>0
+        imagepos=[([lowstar,24,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Def
+    if pokemon.iv[2]>30
+      imagepos=[([perfectstar,40,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[2]>29
+      imagepos=[([highstar,40,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[2]<30
+      if pokemon.iv[2]>0
+        imagepos=[([lowstar,40,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #SpAtk
+    if pokemon.iv[4]>30
+      imagepos=[([perfectstar,56,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[4]>29
+      imagepos=[([highstar,56,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[4]<30
+      if pokemon.iv[4]>0
+        imagepos=[([lowstar,56,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #SpDef
+    if pokemon.iv[5]>30
+      imagepos=[([perfectstar,72,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[5]>29
+      imagepos=[([highstar,72,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[5]<30
+      if pokemon.iv[5]>0
+        imagepos=[([lowstar,72,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Speed
+    if pokemon.iv[3]>30
+      imagepos=[([perfectstar,88,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[3]>29
+      imagepos=[([highstar,88,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[3]<30
+      if pokemon.iv[3]>0
+        imagepos=[([lowstar,88,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #===========================================================================
     typebitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/types"))
     type1rect=Rect.new(0,pokemon.type1*28,64,28)
     type2rect=Rect.new(0,pokemon.type2*28,64,28)
