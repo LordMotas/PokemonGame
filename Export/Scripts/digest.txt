@@ -188,5 +188,7 @@
 21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
 7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
 56201428    Errassus_BWBag                               Errassus_BWBag.rb
+99447868    RGSSLinker                                   RGSSLinker.rb
+2872587     FmodEx                                       FmodEx.rb
 27847358    ================                             EMPTY
 76067044    Main                                         Main.rb
