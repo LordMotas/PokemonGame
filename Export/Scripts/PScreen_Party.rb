@@ -336,56 +336,8 @@ class PokeSelectionSprite < SpriteWrapper
     @hpbarfnt=AnimatedBitmap.new("Graphics/Pictures/partyHPfnt")
     @hpbarswap=AnimatedBitmap.new("Graphics/Pictures/partyHPswap")
     @pokeballsprite=ChangelingSprite.new(0,0,viewport)
-		#@pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/partyBall")
-    #@pokeballsprite.addBitmap("pokeballsel","Graphics/Pictures/partyBallSel")
-    @pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/PartyBall/partyBallBasic")
-    @pokeballsprite.addBitmap("pokeballsel","Graphics/Pictures/PartyBall/partyBallSelBasic")
-    @pokeballsprite.addBitmap("greatballdesel","Graphics/Pictures/PartyBall/partyBallGreat")
-    @pokeballsprite.addBitmap("greatballsel","Graphics/Pictures/PartyBall/partyBallSelGreat")
-    @pokeballsprite.addBitmap("safariballdesel","Graphics/Pictures/PartyBall/partyBallSafari")
-    @pokeballsprite.addBitmap("safariballsel","Graphics/Pictures/PartyBall/partyBallSelSafari")
-    @pokeballsprite.addBitmap("ultraballdesel","Graphics/Pictures/PartyBall/partyBallUltra")
-    @pokeballsprite.addBitmap("ultraballsel","Graphics/Pictures/PartyBall/partyBallSelUltra")
-    @pokeballsprite.addBitmap("masterballdesel","Graphics/Pictures/PartyBall/partyBallMaster")
-    @pokeballsprite.addBitmap("masterballsel","Graphics/Pictures/PartyBall/partyBallSelMaster")
-    @pokeballsprite.addBitmap("netballdesel","Graphics/Pictures/PartyBall/partyBallNet")
-    @pokeballsprite.addBitmap("netballsel","Graphics/Pictures/PartyBall/partyBallSelNet")
-    @pokeballsprite.addBitmap("diveballdesel","Graphics/Pictures/PartyBall/partyBallDive")
-    @pokeballsprite.addBitmap("diveballsel","Graphics/Pictures/PartyBall/partyBallSelDive")
-    @pokeballsprite.addBitmap("nestballdesel","Graphics/Pictures/PartyBall/partyBallNest")
-    @pokeballsprite.addBitmap("nestballsel","Graphics/Pictures/PartyBall/partyBallSelNest")
-    @pokeballsprite.addBitmap("repeatballdesel","Graphics/Pictures/PartyBall/partyBallRepeat")
-    @pokeballsprite.addBitmap("repeatballsel","Graphics/Pictures/PartyBall/partyBallSelRepeat")
-    @pokeballsprite.addBitmap("timerballdesel","Graphics/Pictures/PartyBall/partyBallTimer")
-    @pokeballsprite.addBitmap("timerballsel","Graphics/Pictures/PartyBall/partyBallSelTimer")
-    @pokeballsprite.addBitmap("luxuryballdesel","Graphics/Pictures/PartyBall/partyBallLuxury")
-    @pokeballsprite.addBitmap("luxuryballsel","Graphics/Pictures/PartyBall/partyBallSelLuxury")
-    @pokeballsprite.addBitmap("premierballdesel","Graphics/Pictures/PartyBall/partyBallPremier")
-    @pokeballsprite.addBitmap("premierballsel","Graphics/Pictures/PartyBall/partyBallSelPremier")
-    @pokeballsprite.addBitmap("duskballdesel","Graphics/Pictures/PartyBall/partyBallDusk")
-    @pokeballsprite.addBitmap("duskballsel","Graphics/Pictures/PartyBall/partyBallSelDusk")
-    @pokeballsprite.addBitmap("healballdesel","Graphics/Pictures/PartyBall/partyBallHeal")
-    @pokeballsprite.addBitmap("healballsel","Graphics/Pictures/PartyBall/partyBallSelHeal")
-    @pokeballsprite.addBitmap("quickballdesel","Graphics/Pictures/PartyBall/partyBallQuick")
-    @pokeballsprite.addBitmap("quickballsel","Graphics/Pictures/PartyBall/partyBallSelQuick")
-    @pokeballsprite.addBitmap("cherishballdesel","Graphics/Pictures/PartyBall/partyBallCherish")
-    @pokeballsprite.addBitmap("cherishballsel","Graphics/Pictures/PartyBall/partyBallSelCherish")
-    @pokeballsprite.addBitmap("fastballdesel","Graphics/Pictures/PartyBall/partyBallFast")
-    @pokeballsprite.addBitmap("fastballsel","Graphics/Pictures/PartyBall/partyBallSelFast")
-    @pokeballsprite.addBitmap("levelballdesel","Graphics/Pictures/PartyBall/partyBallLevel")
-    @pokeballsprite.addBitmap("levelballsel","Graphics/Pictures/PartyBall/partyBallSelLevel")
-    @pokeballsprite.addBitmap("lureballdesel","Graphics/Pictures/PartyBall/partyBallLure")
-    @pokeballsprite.addBitmap("lureballsel","Graphics/Pictures/PartyBall/partyBallSelLure")
-    @pokeballsprite.addBitmap("heavyballdesel","Graphics/Pictures/PartyBall/partyBallHeavy")
-    @pokeballsprite.addBitmap("heavyballsel","Graphics/Pictures/PartyBall/partyBallSelHeavy")
-    @pokeballsprite.addBitmap("loveballdesel","Graphics/Pictures/PartyBall/partyBallLove")
-    @pokeballsprite.addBitmap("loveballsel","Graphics/Pictures/PartyBall/partyBallSelLove")
-    @pokeballsprite.addBitmap("friendballdesel","Graphics/Pictures/PartyBall/partyBallFriend")
-    @pokeballsprite.addBitmap("friendballsel","Graphics/Pictures/PartyBall/partyBallSelFriend")
-    @pokeballsprite.addBitmap("moonballdesel","Graphics/Pictures/PartyBall/partyBallMoon")
-    @pokeballsprite.addBitmap("moonballsel","Graphics/Pictures/PartyBall/partyBallSelMoon")
-    @pokeballsprite.addBitmap("sportballdesel","Graphics/Pictures/PartyBall/partyBallSport")
-    @pokeballsprite.addBitmap("sportballsel","Graphics/Pictures/PartyBall/partyBallSelSport")
+    @pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/partyBall")
+    @pokeballsprite.addBitmap("pokeballsel","Graphics/Pictures/partyBallSel")
     @pkmnsprite=PokemonIconSprite.new(pokemon,viewport)
     @pkmnsprite.active=active
     @itemsprite=ChangelingSprite.new(0,0,viewport)
@@ -489,56 +441,7 @@ class PokeSelectionSprite < SpriteWrapper
       @pokeballsprite.x=self.x+@pokeballXOffset
       @pokeballsprite.y=self.y+@pokeballYOffset
       @pokeballsprite.color=self.color
-      #@pokeballsprite.changeBitmap(self.selected ? "pokeballsel" : "pokeballdesel")
-      if @pokemon.ballused==1
-        @pokeballsprite.changeBitmap(self.selected ? "greatballsel" : "greatballdesel")
-      elsif @pokemon.ballused==2
-        @pokeballsprite.changeBitmap(self.selected ? "safariballsel" : "safariballdesel")
-      elsif @pokemon.ballused==3
-        @pokeballsprite.changeBitmap(self.selected ? "ultraballsel" : "ultraballdesel")
-      elsif @pokemon.ballused==4
-        @pokeballsprite.changeBitmap(self.selected ? "masterballsel" : "masterballdesel")
-      elsif @pokemon.ballused==5
-        @pokeballsprite.changeBitmap(self.selected ? "netballsel" : "netballdesel")
-      elsif @pokemon.ballused==6
-        @pokeballsprite.changeBitmap(self.selected ? "diveballsel" : "diveballdesel")
-      elsif @pokemon.ballused==7
-        @pokeballsprite.changeBitmap(self.selected ? "nestballsel" : "nestballdesel")
-      elsif @pokemon.ballused==8
-        @pokeballsprite.changeBitmap(self.selected ? "repeatballsel" : "repeatballdesel")
-      elsif @pokemon.ballused==9
-        @pokeballsprite.changeBitmap(self.selected ? "timerballsel" : "timerballdesel")
-      elsif @pokemon.ballused==10
-        @pokeballsprite.changeBitmap(self.selected ? "luxuryballsel" : "luxuryballdesel")
-      elsif @pokemon.ballused==11
-        @pokeballsprite.changeBitmap(self.selected ? "premierballsel" : "premierballdesel")
-      elsif @pokemon.ballused==12
-        @pokeballsprite.changeBitmap(self.selected ? "duskballsel" : "duskballdesel")
-      elsif @pokemon.ballused==13
-        @pokeballsprite.changeBitmap(self.selected ? "healballsel" : "healballdesel")
-      elsif @pokemon.ballused==14
-        @pokeballsprite.changeBitmap(self.selected ? "quickballsel" : "quickballdesel")
-      elsif @pokemon.ballused==15
-        @pokeballsprite.changeBitmap(self.selected ? "cherishballsel" : "cherishballdesel")
-      elsif @pokemon.ballused==16
-        @pokeballsprite.changeBitmap(self.selected ? "fastballsel" : "fastballdesel")
-      elsif @pokemon.ballused==17
-        @pokeballsprite.changeBitmap(self.selected ? "levelballsel" : "levelballdesel")
-      elsif @pokemon.ballused==18
-        @pokeballsprite.changeBitmap(self.selected ? "lureballsel" : "lureballdesel")
-      elsif @pokemon.ballused==19
-        @pokeballsprite.changeBitmap(self.selected ? "heavyballsel" : "heavyballdesel")
-      elsif @pokemon.ballused==20
-        @pokeballsprite.changeBitmap(self.selected ? "loveballsel" : "loveballdesel")
-      elsif @pokemon.ballused==21
-        @pokeballsprite.changeBitmap(self.selected ? "friendballsel" : "friendballdesel")
-      elsif @pokemon.ballused==22
-        @pokeballsprite.changeBitmap(self.selected ? "moonballsel" : "moonballdesel")
-      elsif @pokemon.ballused==23
-        @pokeballsprite.changeBitmap(self.selected ? "sportballsel" : "sportballdesel")
-      else
-        @pokeballsprite.changeBitmap(self.selected ? "pokeballsel" : "pokeballdesel")
-      end
+      @pokeballsprite.changeBitmap(self.selected ? "pokeballsel" : "pokeballdesel")
     end
     if @itemsprite && !@itemsprite.disposed?
       @itemsprite.visible=(@pokemon.item>0)

@@ -639,7 +639,6 @@ class PokeBattle_Move
 # Damage calculation and modifiers
 ################################################################################
   def pbIsCritical?(attacker,opponent)
-		return false if $PokemonGlobal.nuzlocke
     if (opponent.hasWorkingAbility(:BATTLEARMOR) ||
        opponent.hasWorkingAbility(:SHELLARMOR)) && !attacker.hasBypassingAbility 
       return false
@@ -1241,19 +1240,9 @@ class PokeBattle_Move
        opponent.damagestate.typemod<4
       finaldamagemult=(finaldamagemult*2.0).round
     end
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-		#Impenetrable
-    if opponent.hasWorkingAbility(:IMPENETRABLE) && isContactMove? && !attacker.hasBypassingAbility
-      finaldamagemult=(finaldamagemult*0.75).round
-    end
     if opponent.pbPartner.hasWorkingAbility(:FRIENDGUARD) && !attacker.hasBypassingAbility
       finaldamagemult=(finaldamagemult*0.75).round
     end
->>>>>>> c0e9efa1e953b717c4fee809f8f45034a9720726
-=======
->>>>>>> parent of 950ac23... Added the Impenetrable ability.
     if attacker.hasWorkingAbility(:SNIPER) && opponent.damagestate.critical
       finaldamagemult=(finaldamagemult*1.5).round
     end

@@ -1,6 +1,3 @@
-# Global constants
-$Bubble = 0
-$islandCount = 0
 #===============================================================================
 # * The maximum level Pokémon can reach.
 # * The level of newly hatched Pokémon.

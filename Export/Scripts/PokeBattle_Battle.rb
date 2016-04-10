@@ -2284,7 +2284,6 @@ class PokeBattle_Battle
           end
           @battlers[i].wasCaptured=false
         end
-				pbDropItem(i)
         # Now clear the participants array
         @battlers[i].participants=[]
       end
@@ -3561,29 +3560,6 @@ class PokeBattle_Battle
         pbDisplay(_INTL("{1} absorbed nutrients with its roots!",i.pbThis)) if hpgain>0
       end
     end
-		# Choking Grip
-    for i in priority
-      next if i.isFainted?
-      if i.pbOpposing1.hasWorkingAbility(:CHOKINGGRIP) && i.pbHasType?(:GRASS)
-        recipient=i.pbOpposing1
-        if recipient && !recipient.isFainted?
-          PBDebug.log("[Lingering effect triggered] #{i.pbThis}'s Choking Grip")
-          pbCommonAnimation("LeechSeed",recipient,i)
-          hploss=i.pbReduceHP((i.totalhp/8).floor,true)
-          if recipient.effects[PBEffects::HealBlock]==0
-            hploss=(hploss*1.3).floor if recipient.hasWorkingItem(:BIGROOT)
-            recipient.pbRecoverHP(hploss,true)
-          end
-            pbDisplay(_INTL("{1}'s health was choked by the weed-like grip!",i.pbThis))
-        end
-        if i.isFainted?
-          return if !i.pbFaint
-        end
-        if recipient.isFainted?
-          return if !recipient.pbFaint
-        end
-      end
-    end
     # Leech Seed
     for i in priority
       next if i.isFainted?
@@ -4310,12 +4286,5 @@ class PokeBattle_Battle
       i.itemInitial=i.itemRecycle=0
     end
     return @decision
-  end
-	### Wild pokemon drops item if defeated (100% chance)
-  def pbDropItem (i)
-    if rand(100)>0 && @battlers[i].item!=0 && !@opponent
-      $PokemonBag.pbStoreItem(@battlers[i].item)
-      pbDisplay(_INTL("{1} picked up {2} from the pokemon!", $Trainer.name, PBItems.getName(@battlers[i].item)))
-      end
   end
 end

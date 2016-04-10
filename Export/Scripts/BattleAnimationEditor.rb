@@ -1499,7 +1499,7 @@ class AnimationCanvas < Sprite
     super
   end
 
-	def play
+  def play
     if !@playing
       @sprites["pokemon0"]=Sprite.new(@viewport)
       @sprites["pokemon0"].bitmap=@user
@@ -2682,10 +2682,10 @@ end
 
 def pbHelpWindow
   helptext=""+
-     "To add a cel to the scene, click on the canvas. The selected cel will have a black "+
-     "frame. After a cel is selected, you can modify its properties using the keyboard:\n"+
+     "To add a cel to the scene, click on the canvas.  The selected cel will have a black "+
+     "frame.  After a cel is selected, you can modify its properties using the keyboard:\n"+
      "E, R - Rotate left/right;\nP - Open properties screen;\nArrow keys - Move cel 8 pixels "+
-     "(hold ALT for 2 pixels);\n+/- : Zoom in/out;\nL - Lock a cel. Locking a cel prevents it "+
+     "(hold ALT for 2 pixels);\n+/- : Zoom in/out;\nL - Lock a cel.  Locking a cel prevents it "+
      "from being moved or deleted.\nDEL - Deletes the cel.\nAlso press TAB to switch the selected cel."
   cmdwin=Window_UnformattedTextPokemon.newWithSize("",0,0,640,512)
   cmdwin.opacity=224
@@ -2936,7 +2936,7 @@ def pbImportAnim(animations,canvas,animwin)
       graphic=animations[animations.selected].graphic
       graphic="Graphics/Animations/#{graphic}"
       if graphic && graphic!="" && !FileTest.image_exist?(graphic)
-        Kernel.pbMessage(_INTL("The animation file {1} was not found. The animation will load anyway.",graphic))
+        Kernel.pbMessage(_INTL("The animation file {1} was not found.  The animation will load anyway.",graphic))
       end
       canvas.loadAnimation(animations[animations.selected])
       animwin.animbitmap=canvas.animbitmap
@@ -3506,8 +3506,7 @@ def animationEditorMain(animation)
   sidewin.addButton(_INTL("Entire Slide..."))
   sidewin.addSpace
   sidewin.addButton(_INTL("Play Animation"))
-
-	sidewin.addSpace
+  sidewin.addSpace
   sidewin.addButton(_INTL("Import Anim..."))
   sidewin.addButton(_INTL("Export Anim..."))
   sidewin.addButton(_INTL("Help"))

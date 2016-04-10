@@ -171,24 +171,9 @@
 27847358    ================                             EMPTY
 33615988    Custom Utilities                             Custom_Utilities.rb
 187318      Trade From PC                                Trade_From_PC.rb
-924438      Healing Ball Graphic                         EMPTY
+924438      Healing Ball Graphic                         Healing_Ball_Graphic.rb
 49085414    Animated Bitmap Wrapper                      Animated_Bitmap_Wrapper.rb
 34265224    More Self Switches                           More_Self_Switches.rb
 99782591    Title Screen                                 Title_Screen.rb
-30913346    ===CUSTOM SCRIPTS===                         EMPTY
-85156739    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
-85596521    ItemCrafter                                  ItemCrafter.rb
-33756233    UraniumCustomMenu                            UraniumCustomMenu.rb
-24216588    SkyInverseBattle                             EMPTY
-51398100    ChallengeModes                               ChallengeModes.rb
-28946912    ChallengeSelection                           ChallengeSelection.rb
-23982061    Challenge_Selection                          Challenge_Selection.rb
-99152027    ChallengeSelectionAbility                    ChallengeSelectionAbility.rb
-26541381    ChallengeSelectionMoves                      ChallengeSelectionMoves.rb
-21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
-7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
-56201428    Errassus_BWBag                               Errassus_BWBag.rb
-99447868    RGSSLinker                                   RGSSLinker.rb
-2872587     FmodEx                                       FmodEx.rb
-27847358    ================                             EMPTY
+60001346    ================                             EMPTY
 76067044    Main                                         Main.rb

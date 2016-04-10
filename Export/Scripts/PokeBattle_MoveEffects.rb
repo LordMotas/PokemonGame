@@ -7901,7 +7901,7 @@ class PokeBattle_Move_138 < PokeBattle_Move
         @battle.pbDisplay(_INTL("{1} sucked up the liquid ooze!",attacker.pbThis))
       elsif attacker.effects[PBEffects::HealBlock]==0
         hpgain=(hpgain*1.3).floor if attacker.hasWorkingItem(:BIGROOT)
-				attacker.pbRecoverHP(hpgain,true)
+        attacker.pbRecoverHP(hpgain,true)
         @battle.pbDisplay(_INTL("{1} had its energy drained!",opponent.pbThis))
       end
     end

@@ -1,8 +1,7 @@
 #===============================================================================
-# Custom Scripts:
-# HMs into Items
-# by FL
+# This script implements items included by default in Pokemon Essentials.
 #===============================================================================
+
 #===============================================================================
 # UseFromBag handlers
 # Return values: 0 = not used
@@ -28,46 +27,6 @@ ItemHandlers::UseFromBag.add(:REPEL,proc{|item|  pbRepel(item,100)  })
 ItemHandlers::UseFromBag.add(:SUPERREPEL,proc{|item|  pbRepel(item,200)  })
 
 ItemHandlers::UseFromBag.add(:MAXREPEL,proc{|item|  pbRepel(item,250)  })
-
-ItemHandlers::UseInField.add(:SCYTHE,proc{|item|
-  useMoveCut if canUseMoveCut?
-})
-
-ItemHandlers::UseFromBag.add(:SCYTHE,proc{|item|
-  next canUseMoveCut? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:SLEDGEHAMMER,proc{|item|
-  useMoveRockSmash if canUseMoveRockSmash?
-})
-
-ItemHandlers::UseFromBag.add(:SLEDGEHAMMER,proc{|item|
-  next canUseMoveRockSmash? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:PRYBAR,proc{|item|
-  useMoveStrength if canUseMoveStrength?
-})
-
-ItemHandlers::UseFromBag.add(:PRYBAR,proc{|item|
-  next canUseMoveStrength? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:LANTERN,proc{|item|
-  useMoveFlash if canUseMoveFlash?
-})
-
-ItemHandlers::UseFromBag.add(:LANTERN,proc{|item|
-  next canUseMoveFlash? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:SCUBAMASK,proc{|item|
-  useMoveDive if canUseMoveDive?
-})
-
-ItemHandlers::UseFromBag.add(:SCUBAMASK,proc{|item|
-  next canUseMoveDive? ? 2 : 0
-})
 
 Events.onStepTaken+=proc {
    if $game_player.terrain_tag!=PBTerrain::Ice   # Shouldn't count down if on ice

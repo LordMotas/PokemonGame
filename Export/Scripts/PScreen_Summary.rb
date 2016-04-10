@@ -355,28 +355,7 @@ class PokemonSummaryScene
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Item"),16,320,0,base,shadow],
        [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
-       [_INTL("Egg Groups:"),234,334,0,Color.new(64,64,64),Color.new(176,176,176)]
     ]
-    #===========================================================================
-    # Egg Groups
-    #===========================================================================
-    if !pokemon.isEgg?
-      dexdata=pbOpenDexData
-      pbDexDataOffset(dexdata,pokemon.species,31)
-      compat10=dexdata.fgetb
-      compat11=dexdata.fgetb
-      eggGroupbitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/typesEgg"))
-      eggGroup1rect=Rect.new(0,compat10*28,64,28)
-      eggGroup2rect=Rect.new(0,compat11*28,64,28)
-      if compat10==compat11
-        overlay.blt(364,336,eggGroupbitmap.bitmap,eggGroup1rect)
-      else
-        overlay.blt(364,336,eggGroupbitmap.bitmap,eggGroup1rect)
-        overlay.blt(432,336,eggGroupbitmap.bitmap,eggGroup2rect)
-      end
-      dexdata.close
-    end
-    #===========================================================================
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
@@ -496,80 +475,6 @@ class PokemonSummaryScene
     ballused=@pokemon.ballused ? @pokemon.ballused : 0
     ballimage=sprintf("Graphics/Pictures/summaryball%02d",@pokemon.ballused)
     imagepos.push([ballimage,14,60,0,0,-1,-1])
-    #===========================================================================
-    # IV Star Gauge
-    #===========================================================================
-    nostar="Graphics/Pictures/starempty"
-    lowstar="Graphics/Pictures/starlow"
-    highstar="Graphics/Pictures/starhigh"
-    perfectstar="Graphics/Pictures/starperfect"
-    imagepos.push([nostar,465,82,0,0,-1,-1])
-    imagepos.push([nostar,465,126,0,0,-1,-1])
-    imagepos.push([nostar,465,158,0,0,-1,-1])
-    imagepos.push([nostar,465,190,0,0,-1,-1])
-    imagepos.push([nostar,465,222,0,0,-1,-1])
-    imagepos.push([nostar,465,254,0,0,-1,-1])
-    #HP
-    if pokemon.iv[0]>30
-      imagepos.push([perfectstar,465,82,0,0,-1,-1])
-    elsif pokemon.iv[0]>29
-      imagepos.push([highstar,465,82,0,0,-1,-1])
-    elsif pokemon.iv[0]<30
-      if pokemon.iv[0]>0
-        imagepos.push([lowstar,465,82,0,0,-1,-1])
-      end
-    end
-    #Atk
-    if pokemon.iv[1]>30
-      imagepos.push([perfectstar,465,126,0,0,-1,-1])
-    elsif pokemon.iv[1]>29
-      imagepos.push([highstar,465,126,0,0,-1,-1])
-    elsif pokemon.iv[1]<30
-      if pokemon.iv[1]>0
-        imagepos.push([lowstar,465,126,0,0,-1,-1])
-      end
-    end
-    #Def
-    if pokemon.iv[2]>30
-      imagepos.push([perfectstar,465,158,0,0,-1,-1])
-    elsif pokemon.iv[2]>29
-      imagepos.push([highstar,465,158,0,0,-1,-1])
-    elsif pokemon.iv[2]<30
-      if pokemon.iv[2]>0
-        imagepos.push([lowstar,465,158,0,0,-1,-1])
-      end
-    end
-    #SpAtk
-    if pokemon.iv[4]>30
-      imagepos.push([perfectstar,465,190,0,0,-1,-1])
-    elsif pokemon.iv[4]>29
-      imagepos.push([highstar,465,190,0,0,-1,-1])
-    elsif pokemon.iv[4]<30
-      if pokemon.iv[4]>0
-        imagepos.push([lowstar,465,190,0,0,-1,-1])
-      end
-    end
-    #SpDef
-    if pokemon.iv[5]>30
-      imagepos.push([perfectstar,465,222,0,0,-1,-1])
-    elsif pokemon.iv[5]>29
-      imagepos.push([highstar,465,222,0,0,-1,-1])
-    elsif pokemon.iv[5]<30
-      if pokemon.iv[5]>0
-        imagepos.push([lowstar,465,222,0,0,-1,-1])
-      end
-    end
-    #Speed
-    if pokemon.iv[3]>30
-      imagepos.push([perfectstar,465,254,0,0,-1,-1])
-    elsif pokemon.iv[3]>29
-      imagepos.push([highstar,465,254,0,0,-1,-1])
-    elsif pokemon.iv[3]<30
-      if pokemon.iv[3]>0
-        imagepos.push([lowstar,465,254,0,0,-1,-1])
-      end
-    end
-    #===========================================================================
     pbDrawImagePositions(overlay,imagepos)
     base=Color.new(248,248,248)
     shadow=Color.new(104,104,104)

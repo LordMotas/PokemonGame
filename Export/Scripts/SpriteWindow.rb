@@ -10,8 +10,6 @@ module MessageConfig
   LIGHTTEXTSHADOW = Color.new(72,80,88)
   DARKTEXTBASE    = Color.new(88,88,80)
   DARKTEXTSHADOW  = Color.new(168,184,184)
-	BUBBLETEXTBASE  = Color.new(248,248,248)
-  BUBBLETEXTSHADOW= Color.new(72,80,88)
   # 0 = Pause cursor is displayed at end of text
   # 1 = Pause cursor is displayed at bottom right
   # 2 = Pause cursor is displayed at lower middle side
@@ -5179,6 +5177,5 @@ class Window_CommandPokemonEx < Window_CommandPokemon
 end
 
 
-
-class Window_AdvancedCommandPokemonEx < Window_AdvancedCommandPokemon
+class Window_AdvancedCommandPokemonEx < Window_AdvancedCommandPokemon
 end
