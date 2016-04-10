@@ -58,7 +58,7 @@ root: !ruby/object:Hash
     scroll_y: 240
     parent_id: 2
   9: !ruby/object:RPG::MapInfo
-    scroll_x: 191
+    scroll_x: 320
     name: !binary |-
       Q2Vkb2xhbiBDaXR5IFBva8OpIENlbnRlcg==
     expanded: false
