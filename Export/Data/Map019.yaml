@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: PokeMart
     pitch: 100
+  tileset_id: 10
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -145,7 +146,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -157,7 +158,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -187,12 +188,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -283,7 +284,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -295,7 +296,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -325,12 +326,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -421,7 +422,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -433,7 +434,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -463,12 +464,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -671,7 +672,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -683,7 +684,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -713,12 +714,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -809,7 +810,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -821,7 +822,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -851,12 +852,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -947,7 +948,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -959,7 +960,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -989,12 +990,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1197,7 +1198,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1209,7 +1210,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1239,12 +1240,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:FRESHWATER)"
+          - "$PokemonBag.pbCanStore?(PBItems::FRESHWATER)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:FRESHWATER)"
+          - "$PokemonBag.pbStoreItem(PBItems::FRESHWATER)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1335,7 +1336,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1347,7 +1348,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1377,12 +1378,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:SODAPOP)"
+          - "$PokemonBag.pbCanStore?(PBItems::SODAPOP)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:SODAPOP)"
+          - "$PokemonBag.pbStoreItem(PBItems::SODAPOP)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1473,7 +1474,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 3
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1485,7 +1486,7 @@ root: !ruby/object:RPG::Map
           code: 125
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 4
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1515,12 +1516,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbCanStore?(:LEMONADE)"
+          - "$PokemonBag.pbCanStore?(PBItems::LEMONADE)"
           indent: 5
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$PokemonBag.pbStoreItem(:LEMONADE)"
+          - "$PokemonBag.pbStoreItem(PBItems::LEMONADE)"
           indent: 6
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1723,7 +1724,6 @@ root: !ruby/object:RPG::Map
       y: 7
       x: 21
       id: 5
-  tileset_id: 10
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

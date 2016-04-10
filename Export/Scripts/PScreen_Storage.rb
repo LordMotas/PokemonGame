@@ -56,7 +56,7 @@ class PokemonStorage
     raise ArgumentError.new("Not supported")
   end
 
-  MARKINGCHARS=["●","■","▲","♥"]
+  MARKINGCHARS=["●","▲","■","♥","♣","♦"]
 
   def initialize(maxBoxes=STORAGEBOXES,maxPokemon=30)
     @boxes=[]
@@ -136,8 +136,6 @@ class PokemonStorage
         raise "Trying to copy nil to storage" # not localized
       end
       self[boxSrc,indexSrc].heal
-      self[boxSrc,indexSrc].formTime=nil if self[boxSrc,indexSrc].respond_to?("formTime") &&
-                                            self[boxSrc,indexSrc].formTime 
       self[boxDst,indexDst]=self[boxSrc,indexSrc]
     end
     return true
@@ -159,10 +157,7 @@ class PokemonStorage
   def pbMoveCaughtToBox(pkmn,box)
     for i in 0...maxPokemon(box)
       if self[box,i]==nil
-        if box>=0
-          pkmn.heal
-          pkmn.formTime=nil if pkmn.respond_to?("formTime") && pkmn.formTime
-        end
+        pkmn.heal if box>=0
         self[box,i]=pkmn
         return true
       end
@@ -376,10 +371,7 @@ class PokemonStorageScreen
       return false
     end
     @scene.pbSwap(selected,@heldpkmn)
-    if box>=0
-      @heldpkmn.heal
-      @heldpkmn.formTime=nil if @heldpkmn.respond_to?("formTime") && @heldpkmn.formTime
-    end
+    @heldpkmn.heal if box>=0
     tmp=@storage[box,index]
     @storage[box,index]=@heldpkmn
     @heldpkmn=tmp
@@ -401,10 +393,7 @@ class PokemonStorageScreen
       pbDisplay("Please remove the mail.")
       return
     end
-    if box>=0
-      @heldpkmn.heal
-      @heldpkmn.formTime=nil if @heldpkmn.respond_to?("formTime") && @heldpkmn.formTime
-    end
+    @heldpkmn.heal if box>=0
     @scene.pbPlace(selected,@heldpkmn)
     @storage[box,index]=@heldpkmn
     if box==-1
@@ -588,88 +577,6 @@ class PokemonStorageScreen
   def pbStartScreen(command)
     @heldpkmn=nil
     if command==0
-### WITHDRAW ###################################################################
-      @scene.pbStartBox(self,command)
-      loop do
-        selected=@scene.pbSelectBox(@storage.party)
-        if selected && selected[0]==-3 # Close box
-          if pbConfirm(_INTL("Exit from the Box?"))
-            break
-          else
-            next
-          end
-        end
-        if selected && selected[0]==-2 # Party Pokémon
-          pbDisplay(_INTL("Which one will you take?"))
-          next
-        end
-        if selected && selected[0]==-4 # Box name
-          pbBoxCommands
-          next
-        end
-        if selected==nil
-          if pbConfirm(_INTL("Continue Box operations?"))
-            next
-          else
-            break
-          end
-        else
-          pokemon=@storage[selected[0],selected[1]]
-          next if !pokemon
-          command=pbShowCommands(
-             _INTL("{1} is selected.",pokemon.name),[_INTL("Withdraw"),
-             _INTL("Summary"),_INTL("Mark"),_INTL("Release"),_INTL("Cancel")])
-          case command
-          when 0 # Withdraw
-            pbWithdraw(selected,nil)
-          when 1 # Summary
-            pbSummary(selected,nil)
-          when 2 # Mark
-            pbMark(selected,nil)
-          when 3 # Release
-            pbRelease(selected,nil)
-          end
-        end
-      end
-      @scene.pbCloseBox
-    elsif command==1
-### DEPOSIT ####################################################################
-      @scene.pbStartBox(self,command)
-      loop do
-        selected=@scene.pbSelectParty(@storage.party)
-        if selected==-3 # Close box
-          if pbConfirm(_INTL("Exit from the Box?"))
-            break
-          else
-            next
-          end
-        end
-        if selected<0
-          if pbConfirm(_INTL("Continue Box operations?"))
-            next
-          else
-            break
-          end
-        else
-          pokemon=@storage[-1,selected]
-          next if !pokemon
-          command=pbShowCommands(
-             _INTL("{1} is selected.",pokemon.name),[_INTL("Store"),
-             _INTL("Summary"),_INTL("Mark"),_INTL("Release"),_INTL("Cancel")])
-          case command
-          when 0 # Store
-            pbStore([-1,selected],nil)
-          when 1 # Summary
-            pbSummary([-1,selected],nil)
-          when 2 # Mark
-            pbMark([-1,selected],nil)
-          when 3 # Release
-            pbRelease([-1,selected],nil)
-          end
-        end
-      end
-      @scene.pbCloseBox
-    elsif command==2
 ### MOVE #######################################################################
       @scene.pbStartBox(self,command)
       loop do
@@ -753,8 +660,90 @@ class PokemonStorageScreen
               pkmn=@heldpkmn ? @heldpkmn : pokemon
               debugMenu(selected,pkmn,heldpoke)
             else
-              next
+              break
             end
+          end
+        end
+      end
+      @scene.pbCloseBox
+    elsif command==1
+### DEPOSIT ####################################################################
+      @scene.pbStartBox(self,command)
+      loop do
+        selected=@scene.pbSelectParty(@storage.party)
+        if selected==-3 # Close box
+          if pbConfirm(_INTL("Exit from the Box?"))
+            break
+          else
+            next
+          end
+        end
+        if selected<0
+          if pbConfirm(_INTL("Continue Box operations?"))
+            next
+          else
+            break
+          end
+        else
+          pokemon=@storage[-1,selected]
+          next if !pokemon
+          command=pbShowCommands(
+             _INTL("{1} is selected.",pokemon.name),[_INTL("Store"),
+             _INTL("Summary"),_INTL("Mark"),_INTL("Release"),_INTL("Cancel")])
+          case command
+          when 0 # Store
+            pbStore([-1,selected],nil)
+          when 1 # Summary
+            pbSummary([-1,selected],nil)
+          when 2 # Mark
+            pbMark([-1,selected],nil)
+          when 3 # Release
+            pbRelease([-1,selected],nil)
+          end
+        end
+      end
+      @scene.pbCloseBox
+    elsif command==2
+### WITHDRAW ###################################################################
+     @scene.pbStartBox(self,command)
+      loop do
+        selected=@scene.pbSelectBox(@storage.party)
+        if selected && selected[0]==-3 # Close box
+          if pbConfirm(_INTL("Exit from the Box?"))
+            break
+          else
+            next
+          end
+        end
+        if selected && selected[0]==-2 # Party Pokémon
+          pbDisplay(_INTL("Which one will you take?"))
+          next
+        end
+        if selected && selected[0]==-4 # Box name
+          pbBoxCommands
+          next
+        end
+        if selected==nil
+          if pbConfirm(_INTL("Continue Box operations?"))
+            next
+          else
+            break
+          end
+        else
+          pokemon=@storage[selected[0],selected[1]]
+          next if !pokemon
+          command=pbShowCommands(
+             _INTL("{1} is selected.",pokemon.name),[_INTL("Withdraw"),
+             _INTL("Summary"),_INTL("Mark"),_INTL("Release"),_INTL("Cancel")])
+          case command
+          when 0 # Withdraw
+            pbWithdraw(selected,nil)
+          when 1 # Summary
+            pbSummary(selected,nil)
+          when 2 # Mark
+            pbMark(selected,nil)
+          when 3 # Release
+            pbRelease(selected,nil)
           end
         end
       end
@@ -844,7 +833,7 @@ class PokemonStorageScreen
           elsif cmd==1
             pbChooseMove(pkmn,1,2)
             if pbGet(1)>=0
-              pkmn.pbDeleteMoveAtIndex(pbGet(1))
+              pbDeleteMove(pkmn,pbGet(1))
               pbDisplay(_INTL("{1} forgot {2}.",pkmn.name,pbGet(2)))
               @scene.pbHardRefresh
             end
@@ -909,21 +898,21 @@ class PokemonStorageScreen
           abils=pkmn.getAbilityList
           oldabil=PBAbilities.getName(pkmn.ability)
           commands=[]
-          for i in abils
-            commands.push((i[1]<2 ? "" : "(H) ")+PBAbilities.getName(i[0]))
+          for i in 0...abils[0].length
+            commands.push((abils[1][i]<2 ? "" : "(H) ")+PBAbilities.getName(abils[0][i]))
           end
           commands.push(_INTL("Remove override"))
           msg=[_INTL("Ability {1} is natural.",oldabil),
-               _INTL("Ability {1} is being forced.",oldabil)][pkmn.abilityflag!=nil ? 1 : 0]
+               _INTL("Ability {1} is being forced.",oldabil)][pkmn.abilityflag ? 1 : 0]
           cmd=@scene.pbShowCommands(msg,commands,cmd)
           # Break
           if cmd==-1
             break
           # Set ability override
-          elsif cmd>=0 && cmd<abils.length
-            pkmn.setAbility(abils[cmd][1])
+          elsif cmd>=0 && cmd<abils[0].length
+            pkmn.setAbility(abils[1][cmd])
           # Remove override
-          elsif cmd==abils.length
+          elsif cmd==abils[0].length
             pkmn.abilityflag=nil
           end
           @scene.pbHardRefresh
@@ -1032,12 +1021,11 @@ class PokemonStorageScreen
                 break
               elsif cmd2>=0 && cmd2<stats.length
                 params=ChooseNumberParams.new
-                params.setRange(0,PokeBattle_Pokemon::EVSTATLIMIT)
+                params.setRange(0,255)
                 params.setDefaultValue(pkmn.ev[cmd2])
                 params.setCancelValue(pkmn.ev[cmd2])
                 f=Kernel.pbMessageChooseNumber(
-                   _INTL("Set the EV for {1} (max. {2}).",
-                      stats[cmd2],PokeBattle_Pokemon::EVSTATLIMIT),params)
+                   _INTL("Set the EV for {1} (max. 255).",stats[cmd2]),params)
                 pkmn.ev[cmd2]=f
                 pkmn.calcStats
                 @scene.pbHardRefresh
@@ -2309,10 +2297,17 @@ class PokemonStorageScene
       return
     end
     @sprites["pokemon"].visible=true
+    speciesname=PBSpecies.getName(pokemon.species)
+    itemname="No item"
+    if pokemon.item>0
+      itemname=PBItems.getName(pokemon.item)
+    end
+    abilityname="No ability"
+    if pokemon.ability>0
+      abilityname=PBAbilities.getName(pokemon.ability)
+    end
     base=Color.new(88,88,80)
     shadow=Color.new(168,184,184)
-    nonbase=Color.new(208,200,184)
-    nonshadow=Color.new(224,216,200)
     pokename=pokemon.name
     textstrings=[
        [pokename,10,8,false,base,shadow]
@@ -2323,17 +2318,9 @@ class PokemonStorageScene
       elsif pokemon.isFemale?
         textstrings.push([_INTL("♀"),148,8,false,Color.new(248,56,32),Color.new(224,152,144)])
       end
-      textstrings.push([pokemon.level.to_s,36,234,false,base,shadow])
-      if pokemon.ability>0
-        textstrings.push([PBAbilities.getName(pokemon.ability),85,306,2,base,shadow])
-      else
-        textstrings.push([_INTL("No ability"),36,234,false,nonbase,nonshadow])
-      end
-      if pokemon.item>0
-        textstrings.push([PBItems.getName(pokemon.item),85,342,2,base,shadow])
-      else
-        textstrings.push([_INTL("No item"),85,342,2,nonbase,nonshadow])
-      end
+      textstrings.push([_INTL("{1}",pokemon.level),36,234,false,base,shadow])
+      textstrings.push([_INTL("{1}",abilityname),85,306,2,base,shadow])
+      textstrings.push([_INTL("{1}",itemname),85,342,2,base,shadow])
     end
     pbSetSystemFont(overlay)
     pbDrawTextPositions(overlay,textstrings)
@@ -2347,6 +2334,104 @@ class PokemonStorageScene
       imagepos=[(["Graphics/Pictures/shiny",156,198,0,0,-1,-1])]
       pbDrawImagePositions(overlay,imagepos)
     end
+    #===========================================================================
+    # IV Star Gauge
+    #===========================================================================
+    nostar="Graphics/Pictures/starempty"
+    lowstar="Graphics/Pictures/starlow"
+    highstar="Graphics/Pictures/starhigh"
+    perfectstar="Graphics/Pictures/starperfect"
+    imagepos=[([nostar,8,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,24,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,40,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,56,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,72,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    imagepos=[([nostar,88,198,0,0,-1,-1])]
+    pbDrawImagePositions(overlay,imagepos)
+    #HP
+    if pokemon.iv[0]>30
+      imagepos=[([perfectstar,8,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[0]>29
+      imagepos=[([highstar,8,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[0]<30
+      if pokemon.iv[0]>0
+        imagepos=[([lowstar,8,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Atk
+    if pokemon.iv[1]>30
+      imagepos=[([perfectstar,24,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[1]>29
+      imagepos=[([highstar,24,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[1]<30
+      if pokemon.iv[1]>0
+        imagepos=[([lowstar,24,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Def
+    if pokemon.iv[2]>30
+      imagepos=[([perfectstar,40,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[2]>29
+      imagepos=[([highstar,40,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[2]<30
+      if pokemon.iv[2]>0
+        imagepos=[([lowstar,40,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #SpAtk
+    if pokemon.iv[4]>30
+      imagepos=[([perfectstar,56,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[4]>29
+      imagepos=[([highstar,56,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[4]<30
+      if pokemon.iv[4]>0
+        imagepos=[([lowstar,56,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #SpDef
+    if pokemon.iv[5]>30
+      imagepos=[([perfectstar,72,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[5]>29
+      imagepos=[([highstar,72,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[5]<30
+      if pokemon.iv[5]>0
+        imagepos=[([lowstar,72,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #Speed
+    if pokemon.iv[3]>30
+      imagepos=[([perfectstar,88,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[3]>29
+      imagepos=[([highstar,88,198,0,0,-1,-1])]
+      pbDrawImagePositions(overlay,imagepos)
+    elsif pokemon.iv[3]<30
+      if pokemon.iv[3]>0
+        imagepos=[([lowstar,88,198,0,0,-1,-1])]
+        pbDrawImagePositions(overlay,imagepos)
+      end
+    end
+    #===========================================================================
     typebitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/types"))
     type1rect=Rect.new(0,pokemon.type1*28,64,28)
     type2rect=Rect.new(0,pokemon.type2*28,64,28)
@@ -2356,7 +2441,7 @@ class PokemonStorageScene
       overlay.blt(18,272,typebitmap.bitmap,type1rect)
       overlay.blt(88,272,typebitmap.bitmap,type2rect)
     end
-    drawMarkings(overlay,66,240,128,20,pokemon.markings)
+    drawMarkings(overlay,56,240,128,20,pokemon.markings)
     @sprites["pokemon"].setPokemonBitmap(pokemon)
     pbPositionPokemonSprite(@sprites["pokemon"],26,70)
   end
@@ -2446,7 +2531,7 @@ class PokemonStorageScene
   end
 
   def pbSelectBox(party)
-    if @command==0 # Withdraw
+    if @command==2 # Withdraw
       return pbSelectBoxInternal(party)
     else
       ret=nil
@@ -2811,7 +2896,7 @@ class RegionalStorage
       @lastmap=$game_map.map_id
     end
     if @rgnmap<0
-      raise _INTL("The current map has no region set. Please set the MapPosition metadata setting for this map.")
+      raise _INTL("The current map has no region set.  Please set the MapPosition metadata setting for this map.")
     end
     if !@storages[@rgnmap]
       @storages[@rgnmap]=PokemonStorage.new
@@ -2970,7 +3055,7 @@ def pbPCMailbox
              pbDisplayMail($PokemonGlobal.mailbox[mailIndex])
           }
         elsif command==1 # Move to Bag
-          if Kernel.pbConfirmMessage(_INTL("The message will be lost. Is that OK?"))
+          if Kernel.pbConfirmMessage(_INTL("The message will be lost.  Is that OK?"))
             if $PokemonBag.pbStoreItem($PokemonGlobal.mailbox[mailIndex].item)
               Kernel.pbMessage(_INTL("The Mail was returned to the Bag with its message erased."))
               $PokemonGlobal.mailbox.delete_at(mailIndex)
@@ -3091,9 +3176,9 @@ class StorageSystemPC
     Kernel.pbMessage(_INTL("\\se[accesspc]The Pokémon Storage System was opened."))
     loop do
       command=Kernel.pbShowCommandsWithHelp(nil,
-         [_INTL("Withdraw Pokémon"),
+         [_INTL("Move Pokémon"),
          _INTL("Deposit Pokémon"),
-         _INTL("Move Pokémon"),
+         _INTL("Withdraw Pokémon"),
          _INTL("See ya!")],
          [_INTL("Move Pokémon stored in Boxes to your party."),
          _INTL("Store Pokémon in your party in Boxes."),
@@ -3101,7 +3186,7 @@ class StorageSystemPC
          _INTL("Return to the previous menu.")],-1
       )
       if command>=0 && command<3
-        if command==0 && $PokemonStorage.party.length>=6
+        if command==2 && $PokemonStorage.party.length>=6
           Kernel.pbMessage(_INTL("Your party is full!"))
           next
         end

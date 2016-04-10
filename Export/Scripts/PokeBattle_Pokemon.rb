@@ -19,7 +19,6 @@ class PokeBattle_Pokemon
   attr_accessor(:item)        # Held item
   attr_accessor(:itemRecycle) # Consumed held item (used in battle only)
   attr_accessor(:itemInitial) # Resulting held item (used in battle only)
-  attr_accessor(:belch)       # Whether Pokémon can use Belch (used in battle only)
   attr_accessor(:mail)        # Mail
   attr_accessor(:fused)       # The Pokémon fused into this one
   attr_accessor(:name)        # Nickname
@@ -51,9 +50,6 @@ class PokeBattle_Pokemon
   attr_accessor(:shinyflag)   # Forces the shininess (true/false)
   attr_accessor(:ribbons)     # Array of ribbons
   attr_accessor :cool,:beauty,:cute,:smart,:tough,:sheen # Contest stats
-
-  EVLIMIT     = 510   # Max total EVs
-  EVSTATLIMIT = 252   # Max EVs that a single stat can have
 
 ################################################################################
 # Ownership, obtained information
@@ -115,6 +111,31 @@ class PokeBattle_Pokemon
   end
 
 ################################################################################
+#  Form Change Time
+################################################################################
+
+  def form_change_time
+    if !@form_change_time
+      @form_change_time=Time.now
+    end
+    return @form_change_time
+  end
+  
+################################################################################
+#  Party Index
+#  Returns the index of the pokemon in the trainers party, if applicable
+################################################################################
+
+  def partyIndex
+    ret=-1
+    return ret if !$Trainer || !($Trainer.party)
+    for i in 0...$Trainer.party.length
+      return i if $Trainer.party[i]==self
+    end
+    return ret
+  end   
+  
+################################################################################
 # Level
 ################################################################################
 # Returns this Pokemon's level.
@@ -135,6 +156,8 @@ class PokeBattle_Pokemon
     return @eggsteps>0
   end
   
+  def egg?; return isEgg?; end   # DEPRECATED
+
 # Returns this Pokemon's growth rate.
   def growthrate
     dexdata=pbOpenDexData
@@ -181,16 +204,6 @@ class PokeBattle_Pokemon
     return b<=genderRate
   end
 
-# Returns whether this Pokémon species is restricted to only ever being one
-# gender (or genderless).
-  def isSingleGendered?
-    dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,18)
-    genderbyte=dexdata.fgetb
-    dexdata.close
-    return genderbyte==255 || genderbyte==254 || genderbyte==0
-  end
-
 # Returns whether this Pokémon is male.
   def isMale?
     return self.gender==0
@@ -199,11 +212,6 @@ class PokeBattle_Pokemon
 # Returns whether this Pokémon is female.
   def isFemale?
     return self.gender==1
-  end
-
-# Returns whether this Pokémon is genderless.
-  def isGenderless?
-    return self.gender==2
   end
 
 # Sets this Pokémon's gender to a particular gender (if possible).
@@ -232,17 +240,35 @@ class PokeBattle_Pokemon
 # Returns the ID of this Pokemon's ability.
   def ability
     abil=abilityIndex
-    abils=getAbilityList
-    ret1=0; ret2=0
-    for i in 0...abils.length
-      next if !abils[i][0] || abils[i][0]<=0
-      return abils[i][0] if abils[i][1]==abil
-      ret1=abils[i][0] if abils[i][1]==0
-      ret2=abils[i][0] if abils[i][1]==1
+    dexdata=pbOpenDexData
+    pbDexDataOffset(dexdata,@species,29)
+    ret1=dexdata.fgetb
+    ret2=dexdata.fgetb
+    pbDexDataOffset(dexdata,@species,40)
+    h1=dexdata.fgetb
+    h2=dexdata.fgetb
+    h3=dexdata.fgetb
+    h4=dexdata.fgetb
+    dexdata.close
+    ret=ret1
+    if abil==2
+      return h1 if h1>0
+      abil=(@personalID&1)
+    elsif abil==3
+      return h2 if h2>0
+      abil=(@personalID&1)
+    elsif abil==4
+      return h3 if h3>0
+      abil=(@personalID&1)
+    elsif abil==5
+      return h4 if h4>0
+      abil=(@personalID&1)
     end
-    abil=(@personalID&1) if abil>=2
-    return ret2 if abil==1 && ret2>0
-    return ret1
+    if abil==1
+      ret=ret2
+      ret=ret1 if ret2==0
+    end
+    return ret
   end
 
 # Sets this Pokémon's ability to a particular ability (if possible).
@@ -250,27 +276,22 @@ class PokeBattle_Pokemon
     @abilityflag=value
   end
 
-  def hasHiddenAbility?
-    abil=abilityIndex
-    return abil!=nil && abil>=2
-  end
-
 # Returns the list of abilities this Pokémon can have.
   def getAbilityList
-    abils=[]; ret=[]
+    abils=[]; ret=[[],[]]
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,2)
-    abils.push(dexdata.fgetw)
-    abils.push(dexdata.fgetw)
+    pbDexDataOffset(dexdata,@species,29)
+    abils.push(dexdata.fgetb)
+    abils.push(dexdata.fgetb)
     pbDexDataOffset(dexdata,@species,40)
-    abils.push(dexdata.fgetw)
-    abils.push(dexdata.fgetw)
-    abils.push(dexdata.fgetw)
-    abils.push(dexdata.fgetw)
+    abils.push(dexdata.fgetb)
+    abils.push(dexdata.fgetb)
+    abils.push(dexdata.fgetb)
+    abils.push(dexdata.fgetb)
     dexdata.close
     for i in 0...abils.length
       next if !abils[i] || abils[i]<=0
-      ret.push([abils[i],i])
+      ret[0].push(abils[i]); ret[1].push(i)
     end
     return ret
   end
@@ -515,10 +536,6 @@ class PokeBattle_Pokemon
     end
   end
 
-  def isCompatibleWithMove?(move)
-    return pbSpeciesCompatible?(self.species,move)
-  end
-
 ################################################################################
 # Contest attributes, ribbons
 ################################################################################
@@ -652,15 +669,6 @@ class PokeBattle_Pokemon
     return "ABCDEFGHIJKLMNOPQRSTUVWXYZ?!"[@form,1]
   end
 
-# Returns the height of this Pokémon.
-  def height
-    dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,33)
-    weight=dexdata.fgetw
-    dexdata.close
-    return weight
-  end
-
 # Returns the weight of this Pokémon.
   def weight
     dexdata=pbOpenDexData
@@ -684,14 +692,6 @@ class PokeBattle_Pokemon
     return ret
   end
 
-  def kind
-    return pbGetMessage(MessageTypes::Kinds,@species)
-  end
-
-  def dexEntry
-    return pbGetMessage(MessageTypes::Entries,@species)
-  end
-
 # Sets this Pokémon's HP.
   def hp=(value)
     value=0 if value<0
@@ -704,20 +704,20 @@ class PokeBattle_Pokemon
 
 # Heals all HP of this Pokémon.
   def healHP
-    return if isEgg?
+    return if egg?
     @hp=@totalhp
   end
 
 # Heals the status problem of this Pokémon.
   def healStatus
-    return if isEgg?
+    return if egg?
     @status=0
     @statusCount=0
   end
 
 # Heals all PP of this Pokémon.
   def healPP(index=-1)
-    return if isEgg?
+    return if egg?
     if index>=0
       @moves[index].pp=@moves[index].totalpp
     else
@@ -729,7 +729,7 @@ class PokeBattle_Pokemon
 
 # Heals all HP, PP, and status problems of this Pokémon.
   def heal
-    return if isEgg?
+    return if egg?
     healHP
     healStatus
     healPP
@@ -777,7 +777,7 @@ class PokeBattle_Pokemon
     end
     gain+=1 if luxury && self.ballused==pbGetBallType(:LUXURYBALL)
     if isConst?(self.item,PBItems,:SOOTHEBELL) && gain>0
-      gain=(gain*1.5).floor
+      gain=(gain*3.0/2).round
     end
     @happiness+=gain
     @happiness=[[255,@happiness].min,0].max
@@ -836,9 +836,11 @@ class PokeBattle_Pokemon
     end
     diff=@totalhp-@hp
     @totalhp=stats[0]
-    @hp=@totalhp-diff
-    @hp=0 if @hp<=0
-    @hp=@totalhp if @hp>@totalhp
+    if @hp>0
+      @hp=@totalhp-diff
+      @hp=1 if @hp<=0
+      @hp=@totalhp if @hp>@totalhp
+    end
     @attack=stats[1]
     @defense=stats[2]
     @speed=stats[3]
@@ -863,6 +865,7 @@ class PokeBattle_Pokemon
     end
     time=pbGetTimeNow
     @timeReceived=time.getgm.to_i # Use GMT
+    @form_change_time=pbGetTimeNow
     @species=species
     # Individual Values
     @personalID=rand(256)

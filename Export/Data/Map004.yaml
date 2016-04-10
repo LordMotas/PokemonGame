@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: Lab
     pitch: 100
+  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -11,14 +12,14 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbCallBub(2,1)
+          - pbCallBub(2,1,1)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            T2FrOiBZb3Ugc2hvdWxkIGJhdHRsZSB3aXRoIHlvdXIgUG9rw6ltb24gdG8g
-            bWFrZSA=
+            XGJPYWs6IFlvdSBzaG91bGQgYmF0dGxlIHdpdGggeW91ciBQb2vDqW1vbiB0
+            byBtYWtlIA==
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -515,7 +516,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbAddPokemon(:BULBASAUR,5)
+          - pbAddPokemon(PBSpecies::BULBASAUR,5)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -722,7 +723,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbAddPokemon(:CHARMANDER,5)
+          - pbAddPokemon(PBSpecies::CHARMANDER,5)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -929,7 +930,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbAddPokemon(:SQUIRTLE,5)
+          - pbAddPokemon(PBSpecies::SQUIRTLE,5)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1774,7 +1775,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$Trainer.itemCrafter=true"
+          - "$Trainer.pokedex=true"
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1805,6 +1806,11 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.itemCrafter = true"
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
@@ -2240,11 +2246,6 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbCallBub(2,14)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - pbSet(2,Kernel.pbGetStorageCreator)
           indent: 0
           code: 355
@@ -2311,7 +2312,6 @@ root: !ruby/object:RPG::Map
       y: 10
       x: 9
       id: 14
-  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

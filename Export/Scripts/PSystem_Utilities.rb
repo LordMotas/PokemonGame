@@ -23,9 +23,10 @@ def _pbNextComb(comb,length)
 end
 
 # Bubble speech messages function
-def pbCallBub(status=0, value=0)
+def pbCallBub(status=0, value=0, times=0)
   $talkingEvent=get_character(value).id
   $Bubble=status
+  $Numbubbles=times
 end
 
 # Iterates through the array and yields each combination of _num_ elements in
@@ -560,22 +561,20 @@ def pbGetTrainerTypeGender(trainertype)
   return ret
 end
 
-def pbTrainerName(name=nil,outfit=0)
+def pbTrainerName(name=nil)
   if $PokemonGlobal.playerID<0
     pbChangePlayer(0)
   end
   trainertype=pbGetPlayerTrainerType
   trname=name
-  $Trainer=PokeBattle_Trainer.new(trname,trainertype)
-  $Trainer.outfit=outfit
   if trname==nil
     trname=pbEnterPlayerName(_INTL("Your name?"),0,7)
+    gender=pbGetTrainerTypeGender(trainertype) 
     if trname==""
-      gender=pbGetTrainerTypeGender(trainertype) 
       trname=pbSuggestTrainerName(gender)
     end
   end
-  $Trainer.name=trname
+  $Trainer=PokeBattle_Trainer.new(trname,trainertype)
   $PokemonBag=PokemonBag.new
   $PokemonTemp.begunNewGame=true
 end
@@ -916,7 +915,7 @@ def getWaveDataUI(filename,deleteFile=false)
   when 3
     Kernel.pbMessage(_INTL("The recorded data's format is not supported."))
   when 4
-    Kernel.pbMessage(_INTL("There was no sound in the recording. Please ensure that a microphone is attached to the computer and is ready."))
+    Kernel.pbMessage(_INTL("There was no sound in the recording.  Please ensure that a microphone is attached to the computer and is ready."))
   else
     return error
   end
@@ -932,10 +931,10 @@ def beginRecordUI
   case code
   when 0; return true
   when 256+66
-    Kernel.pbMessage(_INTL("All recording devices are in use. Recording is not possible now."))
+    Kernel.pbMessage(_INTL("All recording devices are in use.  Recording is not possible now."))
     return false
   when 256+72
-    Kernel.pbMessage(_INTL("No supported recording device was found. Recording is not possible."))
+    Kernel.pbMessage(_INTL("No supported recording device was found.  Recording is not possible."))
     return false
   else
     buffer="\0"*256
@@ -1073,7 +1072,7 @@ end
 ################################################################################
 # Loads Pokémon/item/trainer graphics
 ################################################################################
-def pbPokemonBitmapFile(species, shiny, back=false)   # Unused
+def pbPokemonBitmapFile(species, shiny, back=false)   # Used by the Pokédex
   if shiny
     # Load shiny bitmap
     ret=sprintf("Graphics/Battlers/%ss%s",getConstantName(PBSpecies,species),back ? "b" : "") rescue nil
@@ -1113,40 +1112,28 @@ def pbLoadPokemonBitmapSpecies(pokemon, species, back=false)
                                               pokemon.isShiny?,
                                               (pokemon.form rescue 0),
                                               (pokemon.isShadow? rescue false)])
+    if !bitmapFileName
+      bitmapFileName=pbCheckPokemonBitmapFiles([0,back,
+                                              (pokemon.isFemale?),
+                                              pokemon.isShiny?,
+                                              (pokemon.form rescue 0),
+                                              (pokemon.isShadow? rescue false)])
+    end
     # Alter bitmap if supported
-    alterBitmap=(MultipleForms.getFunction(species,"alterBitmap") rescue nil)
+    if FileTest.size(bitmapFileName)<5000 # 5KB limit, so moving bitmaps won't be altered    
+      alterBitmap=(MultipleForms.getFunction(species,"alterBitmap") rescue nil)
+    end
   end
   if bitmapFileName && alterBitmap
-    animatedBitmap=AnimatedBitmap.new(bitmapFileName)
-    copiedBitmap=animatedBitmap.copy
-    animatedBitmap.dispose
-    copiedBitmap.each {|bitmap|
-       alterBitmap.call(pokemon,bitmap)
-    }
-    ret=copiedBitmap
+      animatedBitmap=AnimatedBitmapWrapper.new(bitmapFileName)
+      copiedBitmap=animatedBitmap.copy
+      animatedBitmap.dispose
+      copiedBitmap.each {|bitmap|
+         alterBitmap.call(pokemon,bitmap)
+      }
+      ret=copiedBitmap
   elsif bitmapFileName
-    ret=AnimatedBitmap.new(bitmapFileName)
-  end
-  return ret
-end
-
-# Note: Returns an AnimatedBitmap, not a Bitmap
-def pbLoadSpeciesBitmap(species,female=false,form=0,shiny=false,shadow=false,back=false,egg=false)
-  ret=nil
-  if egg
-    bitmapFileName=sprintf("Graphics/Battlers/%segg",getConstantName(PBSpecies,species)) rescue nil
-    if !pbResolveBitmap(bitmapFileName)
-      bitmapFileName=sprintf("Graphics/Battlers/%03degg",species)
-      if !pbResolveBitmap(bitmapFileName)
-        bitmapFileName=sprintf("Graphics/Battlers/egg")
-      end
-    end
-    bitmapFileName=pbResolveBitmap(bitmapFileName)
-  else
-    bitmapFileName=pbCheckPokemonBitmapFiles([species,back,female,shiny,form,shadow])
-  end
-  if bitmapFileName
-    ret=AnimatedBitmap.new(bitmapFileName)
+      ret=AnimatedBitmapWrapper.new(bitmapFileName)
   end
   return ret
 end
@@ -1270,22 +1257,11 @@ def pbCheckPokemonIconFiles(params,egg=false)
   return nil
 end
 
-def pbPokemonFootprintFile(pokemon)   # Used by the Pokédex
-  return nil if !pokemon
-  if pokemon.is_a?(Numeric)
-    bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%s",getConstantName(PBSpecies,pokemon)) rescue nil
-    bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%03d",pokemon) if !pbResolveBitmap(bitmapFileName)
-  else
-    bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%s_%d",getConstantName(PBSpecies,pokemon.species),(pokemon.form rescue 0)) rescue nil
-    if !pbResolveBitmap(bitmapFileName)
-      bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%03d_%d",pokemon.species,(pokemon.form rescue 0)) rescue nil
-      if !pbResolveBitmap(bitmapFileName)
-        bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%s",getConstantName(PBSpecies,pokemon.species)) rescue nil
-        if !pbResolveBitmap(bitmapFileName)
-          bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%03d",pokemon.species)
-        end
-      end
-    end
+def pbPokemonFootprintFile(species)   # Used by the Pokédex
+  return nil if !species
+  bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%s",getConstantName(PBSpecies,species)) rescue nil
+  if !pbResolveBitmap(bitmapFileName)
+    bitmapFileName=sprintf("Graphics/Icons/Footprints/footprint%03d",species)
   end
   return pbResolveBitmap(bitmapFileName)
 end
@@ -1300,6 +1276,14 @@ def pbItemIconFile(item)
     if !pbResolveBitmap(bitmapFileName)
       bitmapFileName=sprintf("Graphics/Icons/item%03d",item)
     end
+  end
+  if pbIsMachine?(item) && !pbResolveBitmap(bitmapFileName)
+    movedata=pbRgssOpen("Data/moves.dat")
+    movedata.pos=$ItemData[item][ITEMMACHINE]*14+3
+    typeid=movedata.fgetb
+    movedata.close
+    type=getConstantName(PBTypes,typeid)
+    bitmapFileName=sprintf("Graphics/Icons/TM_%s",type)
   end
   return bitmapFileName
 end
@@ -1459,16 +1443,16 @@ end
 def pbCryFile(pokemon)
   return nil if !pokemon
   if pokemon.is_a?(Numeric)
-    filename=sprintf("Cries/%sCry",getConstantName(PBSpecies,pokemon)) rescue nil
-    filename=sprintf("Cries/%03dCry",pokemon) if !pbResolveAudioSE(filename)
+    filename=sprintf("%sCry",getConstantName(PBSpecies,pokemon)) rescue nil
+    filename=sprintf("%03dCry",pokemon) if !pbResolveAudioSE(filename)
     return filename if pbResolveAudioSE(filename)
   elsif !pokemon.isEgg?
-    filename=sprintf("Cries/%sCry_%d",getConstantName(PBSpecies,pokemon.species),(pokemon.form rescue 0)) rescue nil
-    filename=sprintf("Cries/%03dCry_%d",pokemon.species,(pokemon.form rescue 0)) if !pbResolveAudioSE(filename)
+    filename=sprintf("%sCry_%d",getConstantName(PBSpecies,pokemon.species),(pokemon.form rescue 0)) rescue nil
+    filename=sprintf("%03dCry_%d",pokemon.species,(pokemon.form rescue 0)) if !pbResolveAudioSE(filename)
     if !pbResolveAudioSE(filename)
-      filename=sprintf("Cries/%sCry",getConstantName(PBSpecies,pokemon.species)) rescue nil
+      filename=sprintf("%sCry",getConstantName(PBSpecies,pokemon.species)) rescue nil
     end
-    filename=sprintf("Cries/%03dCry",pokemon.species) if !pbResolveAudioSE(filename)
+    filename=sprintf("%03dCry",pokemon.species) if !pbResolveAudioSE(filename)
     return filename if pbResolveAudioSE(filename)
   end
   return nil
@@ -1763,7 +1747,7 @@ def pbAddPokemon(pokemon,level=nil,seeform=true)
     pokemon=PokeBattle_Pokemon.new(pokemon,level,$Trainer)
   end
   speciesname=PBSpecies.getName(pokemon.species)
-  Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[PokemonGet]\1",$Trainer.name,speciesname))
+  Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[itemlevel]\1",$Trainer.name,speciesname))
   pbNicknameAndStore(pokemon)
   pbSeenForm(pokemon) if seeform
   return true
@@ -1798,7 +1782,7 @@ def pbAddToParty(pokemon,level=nil,seeform=true)
     pokemon=PokeBattle_Pokemon.new(pokemon,level,$Trainer)
   end
   speciesname=PBSpecies.getName(pokemon.species)
-  Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[PokemonGet]\1",$Trainer.name,speciesname))
+  Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[itemlevel]\1",$Trainer.name,speciesname))
   pbNicknameAndStore(pokemon)
   pbSeenForm(pokemon) if seeform
   return true
@@ -1839,9 +1823,9 @@ def pbAddForeignPokemon(pokemon,level=nil,ownerName=nil,nickname=nil,ownerGender
   # Recalculate stats
   pokemon.calcStats
   if ownerName
-    Kernel.pbMessage(_INTL("{1} received a Pokémon from {2}.\\se[PokemonGet]\1",$Trainer.name,ownerName))
+    Kernel.pbMessage(_INTL("{1} received a Pokémon from {2}.\1",$Trainer.name,ownerName))
   else
-    Kernel.pbMessage(_INTL("{1} received a Pokémon.\\se[PokemonGet]\1",$Trainer.name))
+    Kernel.pbMessage(_INTL("{1} received a Pokémon.\1",$Trainer.name))
   end
   pbStorePokemon(pokemon)
   $Trainer.seen[pokemon.species]=true
@@ -2060,16 +2044,12 @@ def pbHasEgg?(species)
   compatspecies=(evospecies && evospecies[0]) ? evospecies[0][2] : species
   dexdata=pbOpenDexData
   pbDexDataOffset(dexdata,compatspecies,31)
-  compat1=dexdata.fgetb   # Get egg group 1 of this species
-  compat2=dexdata.fgetb   # Get egg group 2 of this species
+  compat1=dexdata.fgetb   # Get egg group of this species
   dexdata.close
-  return false if isConst?(compat1,PBEggGroups,:Ditto) ||
-                  isConst?(compat1,PBEggGroups,:Undiscovered) ||
-                  isConst?(compat2,PBEggGroups,:Ditto) ||
-                  isConst?(compat2,PBEggGroups,:Undiscovered)
+  return false if compat1==13 || compat1==15   # Ditto or can't breed
   baby=pbGetBabySpecies(species)
   return true if species==baby   # Is a basic species
-  baby=pbGetBabySpecies(species,0,0)
+  baby=pbGetNonIncenseLowestSpecies(baby)
   return true if species==baby   # Is an egg species without incense
   return false
 end
@@ -2128,25 +2108,10 @@ end
 
 def pbChooseAblePokemon(variableNumber,nameVarNumber)
   pbChoosePokemon(variableNumber,nameVarNumber,proc {|poke|
-     !poke.isEgg? && poke.hp>0
+    !poke.isEgg? && poke.hp>0
   })
 end
 
-def pbChoosePokemonForTrade(variableNumber,nameVarNumber,wanted)
-  pbChoosePokemon(variableNumber,nameVarNumber,proc {|poke|
-     if wanted.is_a?(String) || wanted.is_a?(Symbol)
-       wanted=getID(PBSpecies,wanted)
-     end
-     return !poke.isEgg? && !(poke.isShadow? rescue false) &&
-            isConst?(poke.species,PBSpecies,wanted)
-  })
-end
-
-
-
-################################################################################
-# Checks through the party for something
-################################################################################
 def pbHasSpecies?(species)
   if species.is_a?(String) || species.is_a?(Symbol)
     species=getID(PBSpecies,species)
@@ -2169,15 +2134,97 @@ def pbHasFatefulSpecies?(species)
   return false
 end
 
-def pbHasType?(type)
-  if type.is_a?(String) || type.is_a?(Symbol)
-    type=getID(PBTypes,type)
+
+
+################################################################################
+# Manipulates moves known by a Pokémon
+################################################################################
+# Returns the number of moves the given Pokémon knows.
+# DEPRECATED - Use pokemon.numMoves instead
+def pbNumMoves(pokemon)
+  ret=0
+  for i in 0...4
+    ret+=1 if pokemon.moves[i].id!=0
   end
-  for pokemon in $Trainer.party
-    next if pokemon.isEgg?
-    return true if pokemon.hasType?(type)
+  return ret
+end
+
+# Returns true if the given Pokémon knows the given move.
+# DEPRECATED - Use pokemon.knowsMove?(move) instead
+def pbHasMove?(pokemon,move)
+  move=getID(PBMoves,move)
+  return false if !pokemon || !move || move<=0
+  for i in 0...4
+    return true if pokemon.moves[i].id==move
   end
   return false
+end
+
+# Silently teaches the given Pokémon the given move.  Will delete the first
+# known move if necessary.
+# DEPRECATED - Use pokemon.pbLearnMove(move) instead
+def pbAutoLearnMove(pokemon,move)
+  move=getID(PBMoves,move)
+  return if move<=0
+  for i in 0..3
+    if pokemon.moves[i].id==move
+      # Shift move to end
+      j=i+1;while j<4
+        break if pokemon.moves[j].id==0
+        tmp=pokemon.moves[j]
+        pokemon.moves[j]=pokemon.moves[j-1]
+        pokemon.moves[j-1]=tmp
+        j+=1
+      end
+      return
+    end
+  end
+  for i in 0..3
+    if pokemon.moves[i].id==0
+      pokemon.moves[i]=PBMove.new(move)
+      return
+    end
+  end
+  pokemon.moves[0]=pokemon.moves[1]
+  pokemon.moves[1]=pokemon.moves[2]
+  pokemon.moves[2]=pokemon.moves[3]
+  pokemon.moves[3]=PBMove.new(move)
+end
+
+# Deletes the move at the given index from the given Pokémon.
+# DEPRECATED - Use pokemon.pbDeleteMoveAtIndex(index) instead
+def pbDeleteMove(pokemon,index)
+  newmoves=[]
+  for i in 0...4
+    newmoves.push(pokemon.moves[i]) if i!=index
+  end
+  newmoves.push(PBMove.new(0))
+  for i in 0...4
+    pokemon.moves[i]=newmoves[i]
+  end
+end
+
+# Deletes all moves from the given Pokémon.
+# DEPRECATED - Use pokemon.pbDeleteAllMoves instead
+def pbDeleteAllMoves(pokemon)
+  return if !pokemon
+  for i in 0...4
+    pokemon.moves[i]=PBMove.new(0)
+  end
+end
+
+# Deletes the given move from the given Pokémon.
+# DEPRECATED - Use pokemon.pbDeleteMove(move) instead
+def pbDeleteMoveByID(pokemon,id)
+  return if !id || id==0 || !pokemon
+  newmoves=[]
+  for i in 0...4
+    newmoves.push(pokemon.moves[i]) if pokemon.moves[i].id!=id
+  end
+  newmoves.push(PBMove.new(0))
+  for i in 0...4
+    pokemon.moves[i]=newmoves[i]
+  end
 end
 
 # Checks whether any Pokémon in the party knows the given move, and returns
@@ -2357,7 +2404,7 @@ def pbMoveTutorAnnotations(move,movelist=nil)
     if !$Trainer.party[i].isEgg? && movelist && movelist.any?{|j| j==species }
       # Checked data from movelist
       ret[i]=_INTL("ABLE")
-    elsif !$Trainer.party[i].isEgg? && $Trainer.party[i].isCompatibleWithMove?(move)
+    elsif !$Trainer.party[i].isEgg? && pbSpeciesCompatible?(species,move)
       # Checked data from PBS/tm.txt
       ret[i]=_INTL("ABLE")
     else
@@ -2369,16 +2416,6 @@ end
 
 def pbMoveTutorChoose(move,movelist=nil,bymachine=false)
   ret=false
-  if move.is_a?(String) || move.is_a?(Symbol)
-    move=getID(PBMoves,move)
-  end
-  if movelist!=nil && movelist.is_a?(Array)
-    for i in 0...movelist.length
-      if movelist[i].is_a?(String) || movelist[i].is_a?(Symbol)
-        movelist[i]=getID(PBSpecies,movelist[i])
-      end
-    end
-  end
   pbFadeOutIn(99999){
      scene=PokemonScreen_Scene.new
      movename=PBMoves.getName(move)
@@ -2394,10 +2431,10 @@ def pbMoveTutorChoose(move,movelist=nil,bymachine=false)
          elsif (pokemon.isShadow? rescue false)
            Kernel.pbMessage(_INTL("Shadow Pokémon can't be taught any moves."))
          elsif movelist && !movelist.any?{|j| j==pokemon.species }
-           Kernel.pbMessage(_INTL("{1} and {2} are not compatible.",pokemon.name,movename))
+           Kernel.pbMessage(_INTL("{1} is not compatible with {2}.",pokemon.name,movename))
            Kernel.pbMessage(_INTL("{1} can't be learned.",movename))
-         elsif !pokemon.isCompatibleWithMove?(move)
-           Kernel.pbMessage(_INTL("{1} and {2} are not compatible.",pokemon.name,movename))
+         elsif !pbSpeciesCompatible?(pokemon.species,move)
+           Kernel.pbMessage(_INTL("{1} is not compatible with {2}.",pokemon.name,movename))
            Kernel.pbMessage(_INTL("{1} can't be learned.",movename))
          else
            if pbLearnMove(pokemon,move,false,bymachine)

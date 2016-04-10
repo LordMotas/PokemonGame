@@ -14,7 +14,7 @@ class PokeBattle_Trainer
   attr_accessor(:party)
   attr_accessor(:pokedex)    # Whether the Pokédex was obtained
   attr_accessor(:pokegear)   # Whether the Pokégear was obtained
-  attr_accessor(:itemCrafter)# Whether the Item Crafter was obtained
+  attr_accessor(:itemCrafter) # Whether the Item Crafter was obtained
   attr_accessor(:language)
 
   def trainerTypeName   # Name of this trainer type (localized)
@@ -87,21 +87,6 @@ class PokeBattle_Trainer
        ret=trainertypes[@trainertype][8]
     }
     return ret
-  end
-
-  def skillCode
-    ret=""
-    pbRgssOpen("Data/trainertypes.dat","rb"){|f|
-       trainertypes=Marshal.load(f)
-       return "" if !trainertypes[@trainertype]
-       ret=trainertypes[@trainertype][9]
-    }
-    return ret
-  end
-
-  def hasSkillCode(code)
-    return true if skillCode[/#{code}/]
-    return false
   end
 
   def numbadges   # Number of badges
@@ -282,7 +267,6 @@ class PokeBattle_Trainer
     @metaID=0
     @outfit=0
     @pokegear=false
-    @itemCrafter=false
     @pokedex=false
     clearPokedex
     @shadowcaught=[]

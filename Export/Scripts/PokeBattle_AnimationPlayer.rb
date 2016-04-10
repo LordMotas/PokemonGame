@@ -534,8 +534,8 @@ class PBAnimation < Array
             pbSEPlay(i.name,i.volume,i.pitch)
           else
             poke=(user && user.pokemon) ? user.pokemon : 1
-            name=(pbCryFile(poke) rescue nil)
-            pbSEPlay(name,i.volume,i.pitch) if name
+            name=(pbCryFile(poke) rescue "001Cry")
+            pbSEPlay(name,i.volume,i.pitch)
           end
 #          if sprite
 #            sprite.flash(i.flashColor,i.flashDuration*2) if i.flashScope==1
@@ -705,13 +705,15 @@ end
 ################################################################################
 class PBAnimationPlayerX
   attr_accessor :looping
-  MAXSPRITES = 30
+  MAXSPRITES=30
 
   def initialize(animation,user,target,scene=nil,oppmove=false,ineditor=false)
     @animation=animation
     @user=(oppmove) ? target : user # Just used for playing user's cry
     @usersprite=(user) ? scene.sprites["pokemon#{user.index}"] : nil
     @targetsprite=(target) ? scene.sprites["pokemon#{target.index}"] : nil
+    @rect1=@usersprite.src_rect if @usersprite
+    @rect2=@targetsprite.src_rect if @targetsprite
     @userbitmap=(@usersprite && @usersprite.bitmap) ? @usersprite.bitmap : nil # not to be disposed
     @targetbitmap=(@targetsprite && @targetsprite.bitmap) ? @targetsprite.bitmap : nil # not to be disposed
     @scene=scene
@@ -824,34 +826,36 @@ class PBAnimationPlayerX
         # Set cel sprite's graphic
         if cel[AnimFrame::PATTERN]==-1
           sprite.bitmap=@userbitmap
+          sprite.src_rect.set(@rect1.x,@rect1.y,@rect1.width,@rect1.height) if @rect1
         elsif cel[AnimFrame::PATTERN]==-2
           sprite.bitmap=@targetbitmap
+          sprite.src_rect.set(@rect2.x,@rect2.y,@rect2.width,@rect2.height) if @rect2
         else
           sprite.bitmap=@animbitmap
         end
         # Apply settings to the cel sprite
         pbSpriteSetAnimFrame(sprite,cel,@usersprite,@targetsprite)
         case cel[AnimFrame::FOCUS]
-        when 1   # Focused on target
-          sprite.x=cel[AnimFrame::X]+@targetOrig[0]-PokeBattle_SceneConstants::FOCUSTARGET_X
-          sprite.y=cel[AnimFrame::Y]+@targetOrig[1]-PokeBattle_SceneConstants::FOCUSTARGET_Y
-        when 2   # Focused on user
-          sprite.x=cel[AnimFrame::X]+@userOrig[0]-PokeBattle_SceneConstants::FOCUSUSER_X
-          sprite.y=cel[AnimFrame::Y]+@userOrig[1]-PokeBattle_SceneConstants::FOCUSUSER_Y
-        when 3   # Focused on user and target
-          if @srcLine && @dstLine
-            point=transformPoint(
-               @srcLine[0],@srcLine[1],@srcLine[2],@srcLine[3],
-               @dstLine[0],@dstLine[1],@dstLine[2],@dstLine[3],
-               sprite.x,sprite.y)
-            sprite.x=point[0]
-            sprite.y=point[1]
-            if isReversed(@srcLine[0],@srcLine[2],@dstLine[0],@dstLine[2]) &&
-               cel[AnimFrame::PATTERN]>=0
-              # Reverse direction
-              sprite.mirror=!sprite.mirror
+          when 1   # Focused on target
+            sprite.x=cel[AnimFrame::X]+@targetOrig[0]-PokeBattle_SceneConstants::FOCUSTARGET_X
+            sprite.y=cel[AnimFrame::Y]+@targetOrig[1]-PokeBattle_SceneConstants::FOCUSTARGET_Y
+          when 2   # Focused on user
+            sprite.x=cel[AnimFrame::X]+@userOrig[0]-PokeBattle_SceneConstants::FOCUSUSER_X
+            sprite.y=cel[AnimFrame::Y]+@userOrig[1]-PokeBattle_SceneConstants::FOCUSUSER_Y
+          when 3   # Focused on user and target
+            if @srcLine && @dstLine
+              point=transformPoint(
+                 @srcLine[0],@srcLine[1],@srcLine[2],@srcLine[3],
+                 @dstLine[0],@dstLine[1],@dstLine[2],@dstLine[3],
+                 sprite.x,sprite.y)
+              sprite.x=point[0]
+              sprite.y=point[1]
+              if isReversed(@srcLine[0],@srcLine[2],@dstLine[0],@dstLine[2]) &&
+                 cel[AnimFrame::PATTERN]>=0
+                # Reverse direction
+                sprite.mirror=!sprite.mirror
+              end
             end
-          end
         end
         sprite.x+=64 if @ineditor
         sprite.y+=64 if @ineditor

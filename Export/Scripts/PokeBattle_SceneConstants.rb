@@ -76,7 +76,7 @@ module PokeBattle_SceneConstants
   # Coordinates of the centre bottom of the player's battler's sprite
   # Is also the centre middle of its shadow
   PLAYERBATTLER_X   = 128
-  PLAYERBATTLER_Y   = Graphics.height - 80
+  PLAYERBATTLER_Y   = Graphics.height - 120
   PLAYERBATTLERD1_X = PLAYERBATTLER_X - 48
   PLAYERBATTLERD1_Y = PLAYERBATTLER_Y
   PLAYERBATTLERD2_X = PLAYERBATTLER_X + 32
@@ -85,23 +85,25 @@ module PokeBattle_SceneConstants
   # Coordinates of the centre bottom of the foe's battler's sprite
   # Is also the centre middle of its shadow
   FOEBATTLER_X      = Graphics.width - 128
-  FOEBATTLER_Y      = (Graphics.height * 3/4) - 112
-  FOEBATTLERD1_X    = FOEBATTLER_X + 48
-  FOEBATTLERD1_Y    = FOEBATTLER_Y
+  FOEBATTLER_Y      = (Graphics.height * 3/4) -180
+  FOEBATTLERD1_X    = FOEBATTLER_X + 64
+  FOEBATTLERD1_Y    = FOEBATTLER_Y + 26
   FOEBATTLERD2_X    = FOEBATTLER_X - 32
-  FOEBATTLERD2_Y    = FOEBATTLER_Y - 16
+  FOEBATTLERD2_Y    = FOEBATTLER_Y + 16
 
   # Centre bottom of the player's side base graphic
   PLAYERBASEX = PLAYERBATTLER_X
-  PLAYERBASEY = PLAYERBATTLER_Y
+  PLAYERBASEY = PLAYERBATTLER_Y+40
 
   # Centre middle of the foe's side base graphic
   FOEBASEX    = FOEBATTLER_X
-  FOEBASEY    = FOEBATTLER_Y
+  FOEBASEY    = FOEBATTLER_Y+16
+  FOEBASED1_Y = FOEBATTLERD1_Y+16
+  FOEBASED2_Y = FOEBATTLERD2_Y+16
 
   # Coordinates of the centre bottom of the player's sprite
   PLAYERTRAINER_X   = PLAYERBATTLER_X
-  PLAYERTRAINER_Y   = PLAYERBATTLER_Y - 16
+  PLAYERTRAINER_Y   = PLAYERBATTLER_Y+32
   PLAYERTRAINERD1_X = PLAYERBATTLERD1_X
   PLAYERTRAINERD1_Y = PLAYERTRAINER_Y
   PLAYERTRAINERD2_X = PLAYERBATTLERD2_X
@@ -109,11 +111,11 @@ module PokeBattle_SceneConstants
 
   # Coordinates of the centre bottom of the foe trainer's sprite
   FOETRAINER_X      = FOEBATTLER_X
-  FOETRAINER_Y      = FOEBATTLER_Y + 6
+  FOETRAINER_Y      = FOEBATTLER_Y + 26
   FOETRAINERD1_X    = FOEBATTLERD1_X
-  FOETRAINERD1_Y    = FOEBATTLERD1_Y + 6
+  FOETRAINERD1_Y    = FOEBATTLERD1_Y + 26
   FOETRAINERD2_X    = FOEBATTLERD2_X
-  FOETRAINERD2_Y    = FOEBATTLERD2_Y + 6
+  FOETRAINERD2_Y    = FOEBATTLERD2_Y + 26
 
   # Default focal points of user and target in animations - do not change!
   FOCUSUSER_X   = 128   # 144

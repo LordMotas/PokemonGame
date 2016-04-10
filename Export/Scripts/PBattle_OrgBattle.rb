@@ -207,7 +207,7 @@ class PBPokemon
     for i in 0...6
       evcount+=1 if ((@ev&(1<<i))!=0)
     end
-    evperstat=(evcount==0) ? 0 : PokeBattle_Pokemon::EVLIMIT/evcount
+    evperstat=(evcount==0) ? 0 : 510/evcount
     for i in 0...6
       pokemon.iv[i]=iv
       pokemon.ev[i]=((@ev&(1<<i))!=0) ? evperstat : 0
@@ -747,7 +747,7 @@ def pbBattleChallengeGraphic(event)
     bitmap.dispose
     event.character_name=filename
   rescue
-    event.character_name="NPC 01"
+    event.character_name="Red"
   end
 end
 

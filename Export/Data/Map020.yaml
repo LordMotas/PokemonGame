@@ -4,6 +4,7 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: PokeMart
     pitch: 100
+  tileset_id: 10
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -240,17 +241,12 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - numfloors=5
+          - cur=5-pbGet(10)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - cur=numfloors-pbGet(10)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbSet(11,Kernel.pbMessage(
+          - "$game_variables[11]=Kernel.pbMessage("
           indent: 0
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -270,7 +266,7 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "    numfloors+1,nil,cur))"
+          - "    6,nil,cur)"
           indent: 0
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -280,7 +276,7 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbSet(11,numfloors-t)
+          - pbSet(11,5-t)
           indent: 0
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -1276,7 +1272,6 @@ root: !ruby/object:RPG::Map
       y: 2
       x: 3
       id: 5
-  tileset_id: 10
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

@@ -55,8 +55,7 @@ def pbIsDitto?(pokemon)
   compat10=dexdata.fgetb
   compat11=dexdata.fgetb
   dexdata.close
-  return isConst?(compat10,PBEggGroups,:Ditto) ||
-         isConst?(compat11,PBEggGroups,:Ditto)
+  return (compat10==13 || compat11==13)
 end
 
 def pbDayCareCompatibleGender(pokemon1,pokemon2)
@@ -85,21 +84,15 @@ def pbDayCareGetCompat
     compat20=dexdata.fgetb
     compat21=dexdata.fgetb
     dexdata.close
-    if !isConst?(compat10,PBEggGroups,:Undiscovered) &&
-       !isConst?(compat11,PBEggGroups,:Undiscovered) &&
-       !isConst?(compat20,PBEggGroups,:Undiscovered) &&
-       !isConst?(compat21,PBEggGroups,:Undiscovered)
-      if compat10==compat20 || compat11==compat20 ||
-         compat10==compat21 || compat11==compat21 ||
-         isConst?(compat10,PBEggGroups,:Ditto) ||
-         isConst?(compat11,PBEggGroups,:Ditto) ||
-         isConst?(compat20,PBEggGroups,:Ditto) ||
-         isConst?(compat21,PBEggGroups,:Ditto)
-        if pbDayCareCompatibleGender(pokemon1,pokemon2)
-          ret=1
-          ret+=1 if pokemon1.species==pokemon2.species
-          ret+=1 if pokemon1.trainerID!=pokemon2.trainerID
-          return ret
+    if (compat10==compat20 || compat11==compat20 ||
+       compat10==compat21 || compat11==compat21 ||
+       compat10==13 || compat11==13 || compat20==13 || compat21==13) &&
+       compat10!=15 && compat11!=15 && compat20!=15 && compat21!=15
+      if pbDayCareCompatibleGender(pokemon1,pokemon2)
+        if pokemon1.species==pokemon2.species
+          return (pokemon1.trainerID==pokemon2.trainerID) ? 2 : 3
+        else
+          return (pokemon1.trainerID==pokemon2.trainerID) ? 1 : 2
         end
       end
     end
@@ -135,9 +128,9 @@ def pbDayCareChoose(text,variable)
     for i in 0...2
       pokemon=$PokemonGlobal.daycare[i][0]
       if pokemon.isMale?
-        choices.push(_ISPRINTF("{1:s} (♂, Lv{2:d})",pokemon.name,pokemon.level))
+        choices.push(_ISPRINTF("{1:s} (M, Lv{2:d})",pokemon.name,pokemon.level))
       elsif pokemon.isFemale?
-        choices.push(_ISPRINTF("{1:s} (♀, Lv{2:d})",pokemon.name,pokemon.level))
+        choices.push(_ISPRINTF("{1:s} (F, Lv{2:d})",pokemon.name,pokemon.level))
       else
         choices.push(_ISPRINTF("{1:s} (Lv{2:d})",pokemon.name,pokemon.level))
       end
@@ -146,6 +139,31 @@ def pbDayCareChoose(text,variable)
     command=Kernel.pbMessage(text,choices,choices.length)
     $game_variables[variable]=(command==2) ? -1 : command
   end
+end
+
+# Given a baby species, returns the lowest possible evolution of that species
+# assuming no incense is involved.
+def pbGetNonIncenseLowestSpecies(baby)
+  if isConst?(baby,PBSpecies,:MUNCHLAX) && hasConst?(PBSpecies,:SNORLAX)
+    return getConst(PBSpecies,:SNORLAX)
+  elsif isConst?(baby,PBSpecies,:WYNAUT) && hasConst?(PBSpecies,:WOBBUFFET)
+    return getConst(PBSpecies,:WOBBUFFET)
+  elsif isConst?(baby,PBSpecies,:HAPPINY) && hasConst?(PBSpecies,:CHANSEY)
+    return getConst(PBSpecies,:CHANSEY)
+  elsif isConst?(baby,PBSpecies,:MIMEJR) && hasConst?(PBSpecies,:MRMIME)
+    return getConst(PBSpecies,:MRMIME)
+  elsif isConst?(baby,PBSpecies,:CHINGLING) && hasConst?(PBSpecies,:CHIMECHO)
+    return getConst(PBSpecies,:CHIMECHO)
+  elsif isConst?(baby,PBSpecies,:BONSLY) && hasConst?(PBSpecies,:SUDOWOODO)
+    return getConst(PBSpecies,:SUDOWOODO)
+  elsif isConst?(baby,PBSpecies,:BUDEW) && hasConst?(PBSpecies,:ROSELIA)
+    return getConst(PBSpecies,:ROSELIA)
+  elsif isConst?(baby,PBSpecies,:AZURILL) && hasConst?(PBSpecies,:MARILL)
+    return getConst(PBSpecies,:MARILL)
+  elsif isConst?(baby,PBSpecies,:MANTYKE) && hasConst?(PBSpecies,:MANTINE)
+    return getConst(PBSpecies,:MANTINE)
+  end
+  return baby
 end
 
 def pbDayCareGenerateEgg
@@ -170,17 +188,58 @@ def pbDayCareGenerateEgg
     mother=pokemon1
     father=pokemon0
   end
-  babyspecies=pbGetBabySpecies(babyspecies,mother.item,father.item)
+  babyspecies=pbGetBabySpecies(babyspecies)
   if isConst?(babyspecies,PBSpecies,:MANAPHY) && hasConst?(PBSpecies,:PHIONE)
     babyspecies=getConst(PBSpecies,:PHIONE)
-  elsif (isConst?(babyspecies,PBSpecies,:NIDORANfE) && hasConst?(PBSpecies,:NIDORANmA)) ||
-        (isConst?(babyspecies,PBSpecies,:NIDORANmA) && hasConst?(PBSpecies,:NIDORANfE))
+  end
+  if isConst?(babyspecies,PBSpecies,:NIDORANfE) && hasConst?(PBSpecies,:NIDORANmA)
     babyspecies=[getConst(PBSpecies,:NIDORANmA),
                  getConst(PBSpecies,:NIDORANfE)][rand(2)]
-  elsif (isConst?(babyspecies,PBSpecies,:VOLBEAT) && hasConst?(PBSpecies,:ILLUMISE)) ||
-        (isConst?(babyspecies,PBSpecies,:ILLUMISE) && hasConst?(PBSpecies,:VOLBEAT))
+  elsif isConst?(babyspecies,PBSpecies,:NIDORANmA) && hasConst?(PBSpecies,:NIDORANfE)
+    babyspecies=[getConst(PBSpecies,:NIDORANmA),
+                 getConst(PBSpecies,:NIDORANfE)][rand(2)]
+  elsif isConst?(babyspecies,PBSpecies,:VOLBEAT) && hasConst?(PBSpecies,:ILLUMISE)
     babyspecies=[getConst(PBSpecies,:VOLBEAT),
                  getConst(PBSpecies,:ILLUMISE)][rand(2)]
+  elsif isConst?(babyspecies,PBSpecies,:ILLUMISE) && hasConst?(PBSpecies,:VOLBEAT)
+    babyspecies=[getConst(PBSpecies,:VOLBEAT),
+                 getConst(PBSpecies,:ILLUMISE)][rand(2)]
+  elsif isConst?(babyspecies,PBSpecies,:MUNCHLAX) &&
+        !isConst?(mother.item,PBItems,:FULLINCENSE) &&
+        !isConst?(father.item,PBItems,:FULLINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:WYNAUT) &&
+        !isConst?(mother.item,PBItems,:LAXINCENSE) &&
+        !isConst?(father.item,PBItems,:LAXINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:HAPPINY) &&
+        !isConst?(mother.item,PBItems,:LUCKINCENSE) &&
+        !isConst?(father.item,PBItems,:LUCKINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:MIMEJR) &&
+        !isConst?(mother.item,PBItems,:ODDINCENSE) &&
+        !isConst?(father.item,PBItems,:ODDINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:CHINGLING) &&
+        !isConst?(mother.item,PBItems,:PUREINCENSE) &&
+        !isConst?(father.item,PBItems,:PUREINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:BONSLY) &&
+        !isConst?(mother.item,PBItems,:ROCKINCENSE) &&
+        !isConst?(father.item,PBItems,:ROCKINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:BUDEW) &&
+        !isConst?(mother.item,PBItems,:ROSEINCENSE) &&
+        !isConst?(father.item,PBItems,:ROSEINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:AZURILL) &&
+        !isConst?(mother.item,PBItems,:SEAINCENSE) &&
+        !isConst?(father.item,PBItems,:SEAINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
+  elsif isConst?(babyspecies,PBSpecies,:MANTYKE) &&
+        !isConst?(mother.item,PBItems,:WAVEINCENSE) &&
+        !isConst?(father.item,PBItems,:WAVEINCENSE)
+    babyspecies=pbGetNonIncenseLowestSpecies(babyspecies)
   end
   # Generate egg
   egg=PokeBattle_Pokemon.new(babyspecies,EGGINITIALLEVEL,$Trainer)
@@ -197,10 +256,8 @@ def pbDayCareGenerateEgg
   # Inheriting Moves
   moves=[]
   othermoves=[] 
-  movefather=father; movemother=mother
-  if pbIsDitto?(movefather) && !mother.isFemale?
-    movefather=mother; movemother=father
-  end
+  movefather=father
+  movefather=mother if pbIsDitto?(movefather) && mother.gender!=1
   # Initial Moves
   initialmoves=egg.getMoveList
   for k in initialmoves
@@ -215,18 +272,18 @@ def pbDayCareGenerateEgg
     moves.push(move)
   end
   # Inheriting Machine Moves
-  if !USENEWBATTLEMECHANICS
+  if movefather.gender==0
     for i in 0...$ItemData.length
       next if !$ItemData[i]
       atk=$ItemData[i][ITEMMACHINE]
       next if !atk || atk==0
-      if egg.isCompatibleWithMove?(atk)
+      if pbSpeciesCompatible?(babyspecies,atk)
         moves.push(atk) if movefather.knowsMove?(atk)
       end
     end
   end
   # Inheriting Egg Moves
-  if movefather.isMale?
+  if movefather.gender==0
     pbRgssOpen("Data/eggEmerald.dat","rb"){|f|
        f.pos=(babyspecies-1)*8
        offset=f.fgetdw
@@ -236,21 +293,6 @@ def pbDayCareGenerateEgg
          i=0; loop do break unless i<length
            atk=f.fgetw
            moves.push(atk) if movefather.knowsMove?(atk)
-           i+=1
-         end
-       end
-    }
-  end
-  if USENEWBATTLEMECHANICS
-    pbRgssOpen("Data/eggEmerald.dat","rb"){|f|
-       f.pos=(babyspecies-1)*8
-       offset=f.fgetdw
-       length=f.fgetdw
-       if length>0
-         f.pos=offset
-         i=0; loop do break unless i<length
-           atk=f.fgetw
-           moves.push(atk) if movemother.knowsMove?(atk)
            i+=1
          end
        end
@@ -310,20 +352,17 @@ def pbDayCareGenerateEgg
   end
   stats=[PBStats::HP,PBStats::ATTACK,PBStats::DEFENSE,
          PBStats::SPEED,PBStats::SPATK,PBStats::SPDEF]
-  limit=(USENEWBATTLEMECHANICS && (isConst?(mother.item,PBItems,:DESTINYKNOT) ||
-         isConst?(father.item,PBItems,:DESTINYKNOT))) ? 5 : 3
   loop do
-    freestats=[]
-    for i in stats
-      freestats.push(i) if !ivinherit.include?(i)
+    r=stats[rand(stats.length)]
+    if !ivinherit.include?(r)
+      parent=[mother,father][rand(2)]
+      ivs[r]=parent.iv[r]
+      ivinherit.push(r)
+      num+=1
     end
-    break if freestats.length==0
-    r=freestats[rand(freestats.length)]
-    parent=[mother,father][rand(2)]
-    ivs[r]=parent.iv[r]
-    ivinherit.push(r)
-    num+=1
-    break if num>=limit
+    #Destiny Knot inheritance included
+    break if (num==3 && !(isConst?([mother,father][0].item,PBItems,:DESTINYKNOT) || 
+    isConst?([mother,father][1].item,PBItems,:DESTINYKNOT))) || num==5 
   end
   # Inheriting nature
   newnatures=[]
@@ -344,20 +383,19 @@ def pbDayCareGenerateEgg
     end
   end
   # Inheriting ability from the mother
-  if (!ditto0 && !ditto1)
-    if mother.hasHiddenAbility?
-      egg.setAbility(mother.abilityIndex) if rand(10)<6
+  # Chance to pass down HA from a non-ditto mother
+  if mother.abilityflag && mother.abilityIndex==2 && mother.species !=getID(PBSpecies,:DITTO)
+    egg.setAbility(2) if rand(10)<6
+  # Low chance to inherit HA from non-ditto father
+  elsif father.species != getID(PBSpecies,:DITTO) &&
+        father.abilityflag && father.abilityIndex==2
+      egg.setAbility(2) if rand(10)<2  # 20% chance
+  # If between male and female of species, high chance to inherit the mother's ability
+  elsif !ditto0 && !ditto1
+    if rand(10)<8
+      egg.setAbility(mother.abilityIndex)
     else
-      if rand(10)<8
-        egg.setAbility(mother.abilityIndex)
-      else
-        egg.setAbility((mother.abilityIndex+1)%2)
-      end
-    end
-  elsif ((!ditto0 && ditto1) || (!ditto1 && ditto0)) && USENEWBATTLEMECHANICS
-    parent=(!ditto0) ? mother : father
-    if parent.hasHiddenAbility?
-      egg.setAbility(parent.abilityIndex) if rand(10)<6
+      egg.setAbility((mother.abilityIndex+1)%2)
     end
   end
   # Inheriting Poké Ball from the mother
@@ -399,7 +437,7 @@ Events.onStepTaken+=proc {|sender,e|
      if $PokemonGlobal.daycareEggSteps==256
        $PokemonGlobal.daycareEggSteps=0
        compatval=[0,20,50,70][pbDayCareGetCompat]
-       if hasConst?(PBItems,:OVALCHARM) && $PokemonBag.pbQuantity(:OVALCHARM)>0
+       if hasConst?(PBItems,:OVALCHARM) && $PokemonBag.pbQuantity(PBItems::OVALCHARM)>0
          compatval=[0,40,80,88][pbDayCareGetCompat]
        end
        rnd=rand(100)

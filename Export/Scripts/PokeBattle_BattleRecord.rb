@@ -162,10 +162,10 @@ end
 
 module PokeBattle_BattlePlayerModule
   module Commands
-    Fight   = 0
-    Bag     = 1
-    Pokemon = 2
-    Run     = 3
+    Fight=0
+    Bag=1
+    Pokemon=2
+    Run=3
   end
 
   def initialize(scene,battle)

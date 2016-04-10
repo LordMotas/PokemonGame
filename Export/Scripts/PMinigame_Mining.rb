@@ -527,26 +527,26 @@ class MiningGameScene
       # Input
       if Input.trigger?(Input::UP) || Input.repeat?(Input::UP)
         if @sprites["cursor"].position>=BOARDWIDTH
-          pbSEPlay("MiningMove")
+          pbSEPlay("Choose")
           @sprites["cursor"].position-=BOARDWIDTH
         end
       elsif Input.trigger?(Input::DOWN) || Input.repeat?(Input::DOWN)
         if @sprites["cursor"].position<(BOARDWIDTH*(BOARDHEIGHT-1))
-          pbSEPlay("MiningMove")
+          pbSEPlay("Choose")
           @sprites["cursor"].position+=BOARDWIDTH
         end
       elsif Input.trigger?(Input::LEFT) || Input.repeat?(Input::LEFT)
         if @sprites["cursor"].position%BOARDWIDTH>0
-          pbSEPlay("MiningMove")
+          pbSEPlay("Choose")
           @sprites["cursor"].position-=1
         end
       elsif Input.trigger?(Input::RIGHT) || Input.repeat?(Input::RIGHT)
         if @sprites["cursor"].position%BOARDWIDTH<(BOARDWIDTH-1)
-          pbSEPlay("MiningMove")
+          pbSEPlay("Choose")
           @sprites["cursor"].position+=1
         end
       elsif Input.trigger?(Input::A) # Change tool mode
-        pbSEPlay("MiningChangeTool")
+        pbSEPlay("Choose")
         newmode=(@sprites["cursor"].mode+1)%2
         @sprites["cursor"].mode=newmode
         @sprites["tool"].src_rect.set(newmode*68,0,68,100)
@@ -564,7 +564,7 @@ class MiningGameScene
     if @itemswon.length>0
       for i in @itemswon
         if $PokemonBag.pbStoreItem(i)
-          Kernel.pbMessage(_INTL("One {1} was obtained.\\se[MiningItemGet]\\wtnp[30]",
+          Kernel.pbMessage(_INTL("One {1} was obtained.\\se[itemlevel]\\wtnp[30]",
              PBItems.getName(i)))
         else
           Kernel.pbMessage(_INTL("One {1} was found, but you have no room for it.",

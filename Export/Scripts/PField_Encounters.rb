@@ -116,12 +116,12 @@ class PokemonEncounters
   def isEncounterPossibleHere?
     if $PokemonGlobal && $PokemonGlobal.surfing
       return true
-    elsif PBTerrain.isIce?(pbGetTerrainTag($game_player))
+    elsif pbGetTerrainTag($game_player)==PBTerrain::Ice
       return false
     elsif self.isCave?
       return true
     elsif self.isGrass?
-      return PBTerrain.isGrass?($game_map.terrain_tag($game_player.x,$game_player.y))
+      return pbIsGrassTag?($game_map.terrain_tag($game_player.x,$game_player.y))
     end
     return false
   end
@@ -191,47 +191,7 @@ class PokemonEncounters
       raise ArgumentError.new(_INTL("Encounter type out of range"))
     end
     return nil if @enctypes[enctype]==nil
-    encounters=@enctypes[enctype]
     chances=EncounterTypes::EnctypeChances[enctype]
-    firstpoke=$Trainer.firstParty
-    if firstpoke && !firstpoke.isEgg? && rand(2)==0
-      if isConst?(firstpoke.ability,PBAbilities,:STATIC)
-        newencs=[]; newchances=[]
-        dexdata=pbOpenDexData
-        for i in 0...encounters.length
-          pbDexDataOffset(dexdata,encounters[i][0],8)
-          t1=dexdata.fgetb
-          t2=dexdata.fgetb
-          if isConst?(t1,PBTypes,:ELECTRIC) || isConst?(t2,PBTypes,:ELECTRIC)
-            newencs.push(encounters[i])
-            newchances.push(chances[i])
-          end
-        end
-        dexdata.close
-        if newencs.length>0
-          encounters=newencs
-          chances=newchances
-        end
-      end
-      if isConst?(firstpoke.ability,PBAbilities,:MAGNETPULL)
-        newencs=[]; newchances=[]
-        dexdata=pbOpenDexData
-        for i in 0...encounters.length
-          pbDexDataOffset(dexdata,encounters[i][0],8)
-          t1=dexdata.fgetb
-          t2=dexdata.fgetb
-          if isConst?(t1,PBTypes,:STEEL) || isConst?(t2,PBTypes,:STEEL)
-            newencs.push(encounters[i])
-            newchances.push(chances[i])
-          end
-        end
-        dexdata.close
-        if newencs.length>0
-          encounters=newencs
-          chances=newchances
-        end
-      end
-    end
     chancetotal=0
     chances.each {|a| chancetotal+=a}
     rnd=0
@@ -248,22 +208,9 @@ class PokemonEncounters
         break
       end
     end
-    encounter=encounters[chosenpkmn]
+    encounter=@enctypes[enctype][chosenpkmn]
     return nil if !encounter
     level=encounter[1]+rand(1+encounter[2]-encounter[1])
-    if $Trainer.firstParty && !$Trainer.firstParty.isEgg? &&
-       (isConst?($Trainer.firstParty.ability,PBAbilities,:HUSTLE) ||
-       isConst?($Trainer.firstParty.ability,PBAbilities,:VITALSPIRIT) ||
-       isConst?($Trainer.firstParty.ability,PBAbilities,:PRESSURE)) &&
-       rand(2)==0
-      level2=encounter[1]+rand(1+encounter[2]-encounter[1])
-      level=[level,level2].max
-    end
-    if $PokemonMap.blackFluteUsed && USENEWBATTLEMECHANICS
-      level=[level+1+rand(3),PBExperience::MAXLEVEL].min
-    elsif $PokemonMap.whiteFluteUsed && USENEWBATTLEMECHANICS
-      level=[level-1-rand(3),1].max
-    end
     return [encounter[0],level]
   end
 
@@ -289,52 +236,53 @@ class PokemonEncounters
     return nil if @stepcount<=3 # Check three steps after battle ends
     encount=@density[enctype]*16
     if $PokemonGlobal.bicycle
-      encount=(encount*0.8)
+      encount=(encount*4/5)
     end
-    if $PokemonMap.blackFluteUsed && !USENEWBATTLEMECHANICS
-      encount=(encount/2)
-    elsif $PokemonMap.whiteFluteUsed && !USENEWBATTLEMECHANICS
-      encount=(encount*1.5)
+    if $PokemonMap.blackFluteUsed
+      encount/=2
     end
-    firstpoke=$Trainer.firstParty
-    if firstpoke && !firstpoke.isEgg?
-      if isConst?(firstpoke.item,PBItems,:CLEANSETAG)
+    if $PokemonMap.whiteFluteUsed
+      encount=(encount*3/2)
+    end
+    if $Trainer.party.length>0 && !$Trainer.party[0].isEgg?
+      if isConst?($Trainer.party[0].item,PBItems,:CLEANSETAG)
         encount=(encount*2/3)
-      elsif isConst?(firstpoke.item,PBItems,:PUREINCENSE)
+      elsif isConst?($Trainer.party[0].item,PBItems,:PUREINCENSE)
         encount=(encount*2/3)
       else   # Ignore ability effects if an item effect applies
-        if isConst?(firstpoke.ability,PBAbilities,:STENCH)
+        if isConst?($Trainer.party[0].ability,PBAbilities,:STENCH)
           encount=(encount/2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:WHITESMOKE)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:WHITESMOKE)
           encount=(encount/2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:QUICKFEET)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:QUICKFEET)
           encount=(encount/2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:SNOWCLOAK) &&
-           ($game_screen.weather_type==PBFieldWeather::Snow ||
-           $game_screen.weather_type==PBFieldWeather::Blizzard)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:SNOWCLOAK) &&
+           $game_screen.weather_type==3
           encount=(encount/2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:SANDVEIL) &&
-           $game_screen.weather_type==PBFieldWeather::Sandstorm
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:SANDVEIL) &&
+           $game_screen.weather_type==4
           encount=(encount/2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:SWARM)
-          encount=(encount*1.5)
-        elsif isConst?(firstpoke.ability,PBAbilities,:ILLUMINATE)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:SWARM)
+          encount=(encount*3/2)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:ILLUMINATE)
           encount=(encount*2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:ARENATRAP)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:ARENATRAP)
           encount=(encount*2)
-        elsif isConst?(firstpoke.ability,PBAbilities,:NOGUARD)
+        elsif isConst?($Trainer.party[0].ability,PBAbilities,:NOGUARD)
           encount=(encount*2)
         end
       end
     end
     return nil if rand(180*16)>=encount
     encpoke=pbEncounteredPokemon(enctype)
-    if encpoke && firstpoke && !firstpoke.isEgg?
-      if isConst?(firstpoke.ability,PBAbilities,:INTIMIDATE) ||
-         isConst?(firstpoke.ability,PBAbilities,:KEENEYE)
-        if encpoke[1]<=firstpoke.level-5 && rand(2)==0
-          encpoke=nil
-        end
+    if $Trainer.party.length>0 && !$Trainer.party[0].isEgg?
+      if encpoke && isConst?($Trainer.party[0].ability,PBAbilities,:INTIMIDATE) &&
+         encpoke[1]<=$Trainer.party[0].level-5 && rand(2)==0
+        encpoke=nil
+      end
+      if encpoke && isConst?($Trainer.party[0].ability,PBAbilities,:KEENEYE) &&
+         encpoke[1]<=$Trainer.party[0].level-5 && rand(2)==0
+        encpoke=nil
       end
     end
     return encpoke

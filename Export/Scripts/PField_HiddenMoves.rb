@@ -3,97 +3,6 @@
 # HMs into Items
 # by FL
 #==============================================================================
-#===============================================================================
-# Interpolators
-#===============================================================================
-class RectInterpolator
-  def initialize(oldrect,newrect,frames)
-    restart(oldrect,newrect,frames)
-  end
-
-  def restart(oldrect,newrect,frames)
-    @oldrect=oldrect
-    @newrect=newrect
-    @frames=[frames,1].max
-    @curframe=0
-    @rect=oldrect.clone
-  end
-
-  def set(rect)
-    rect.set(@rect.x,@rect.y,@rect.width,@rect.height)
-  end
-
-  def done?
-    @curframe>@frames
-  end
-
-  def update
-    return if done?
-    t=(@curframe*1.0/@frames)
-    x1=@oldrect.x
-    x2=@newrect.x
-    x=x1+t*(x2-x1)
-    y1=@oldrect.y
-    y2=@newrect.y
-    y=y1+t*(y2-y1)
-    rx1=@oldrect.x+@oldrect.width
-    rx2=@newrect.x+@newrect.width
-    rx=rx1+t*(rx2-rx1)
-    ry1=@oldrect.y+@oldrect.height
-    ry2=@newrect.y+@newrect.height
-    ry=ry1+t*(ry2-ry1)
-    minx=x<rx ? x : rx
-    maxx=x>rx ? x : rx
-    miny=y<ry ? y : ry
-    maxy=y>ry ? y : ry
-    @rect.set(minx,miny,maxx-minx,maxy-miny)
-    @curframe+=1
-  end
-end
-
-
-
-class PointInterpolator
-  def initialize(oldx,oldy,newx,newy,frames)
-    restart(oldx,oldy,newx,newy,frames)
-  end
-
-  def restart(oldx,oldy,newx,newy,frames)
-    @oldx=oldx
-    @oldy=oldy
-    @newx=newx
-    @newy=newy
-    @frames=frames
-    @curframe=0
-    @x=oldx
-    @y=oldy
-  end
-
-  def x; @x;end
-  def y; @y;end
-
-  def done?
-    @curframe>@frames
-  end
-
-  def update
-    return if done?
-    t=(@curframe*1.0/@frames)
-    rx1=@oldx
-    rx2=@newx
-    @x=rx1+t*(rx2-rx1)
-    ry1=@oldy
-    ry2=@newy
-    @y=ry1+t*(ry2-ry1)
-    @curframe+=1
-  end
-end
-
-
-
-#===============================================================================
-# Hidden move handlers
-#===============================================================================
 class MoveHandlerHash < HandlerHash
   def initialize
     super(:PBMoves)
@@ -139,21 +48,6 @@ end
 
 
 
-def Kernel.pbCanUseHiddenMove?(pkmn,move)
-  return HiddenMoveHandlers.triggerCanUseMove(move,pkmn)
-end
-
-def Kernel.pbUseHiddenMove(pokemon,move)
-  return HiddenMoveHandlers.triggerUseMove(move,pokemon)
-end
-
-def Kernel.pbHiddenMoveEvent
-  Events.onAction.trigger(nil)
-end
-
-#===============================================================================
-# Hidden move animation
-#===============================================================================
 def pbHiddenMoveAnimation(pokemon)
   return false if !pokemon
   viewport=Viewport.new(0,0,0,0)
@@ -186,7 +80,6 @@ def pbHiddenMoveAnimation(pokemon)
   begin
     Graphics.update
     Input.update
-    sprite.update
     case phase
     when 1 # Expand viewport height from zero to full
       interp.update
@@ -343,7 +236,6 @@ def useMoveCut
   end
   return true
 end
-
 #===============================================================================
 # Headbutt
 #===============================================================================
@@ -359,10 +251,10 @@ def Kernel.pbHeadbuttEffect(event)
     chance=5
   end
   if rand(10)>=chance
-    Kernel.pbMessage(_INTL("Nope. Nothing..."))
+    Kernel.pbMessage(_INTL("Nope.  Nothing..."))
   else
     if !pbEncounter(chance==1 ? EncounterTypes::HeadbuttLow : EncounterTypes::HeadbuttHigh)
-      Kernel.pbMessage(_INTL("Nope. Nothing..."))
+      Kernel.pbMessage(_INTL("Nope.  Nothing..."))
     end
   end
 end
@@ -370,14 +262,14 @@ end
 def Kernel.pbHeadbutt(event)
   movefinder=Kernel.pbCheckMove(:HEADBUTT)
   if $DEBUG || movefinder
-    if Kernel.pbConfirmMessage(_INTL("A Pokémon could be in this tree. Would you like to use Headbutt?"))
+    if Kernel.pbConfirmMessage(_INTL("A Pokémon could be in this tree.  Would you like to use Headbutt?"))
       speciesname=!movefinder ? $Trainer.name : movefinder.name
       Kernel.pbMessage(_INTL("{1} used Headbutt.",speciesname))
       pbHiddenMoveAnimation(movefinder)
       Kernel.pbHeadbuttEffect(event)
     end
   else
-    Kernel.pbMessage(_INTL("A Pokémon could be in this tree. Maybe a Pokémon could shake it."))
+    Kernel.pbMessage(_INTL("A Pokémon could be in this tree.  Maybe a Pokémon could shake it."))
   end
   Input.update
   return
@@ -485,7 +377,6 @@ def useMoveRockSmash
   end
   return true
 end
-
 #===============================================================================
 # Strength
 #===============================================================================
@@ -568,7 +459,6 @@ def useMoveStrength?
    $PokemonMap.strengthUsed=true
    return true
 end
-
 #===============================================================================
 # Surf
 #===============================================================================
@@ -612,7 +502,7 @@ def pbEndSurf(xOffset,yOffset)
   y=$game_player.y
   currentTag=$game_map.terrain_tag(x,y)
   facingTag=Kernel.pbFacingTerrainTag
-  if PBTerrain.isSurfable?(currentTag) && !PBTerrain.isSurfable?(facingTag)
+  if pbIsSurfableTag?(currentTag) && !pbIsSurfableTag?(facingTag)
     if Kernel.pbJumpToward(1,false,true)
 #      Kernel.pbCancelVehicles
       $game_map.autoplayAsCue
@@ -643,7 +533,7 @@ end
 Events.onAction+=proc{|sender,e|
    terrain=Kernel.pbFacingTerrainTag
    notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
-   if PBTerrain.isSurfable?(terrain) && !$PokemonGlobal.surfing && 
+   if pbIsSurfableTag?(terrain) && !$PokemonGlobal.surfing && 
       !pbGetMetadata($game_map.map_id,MetadataBicycleAlways) && notCliff
      Kernel.pbSurf
      return
@@ -670,7 +560,7 @@ HiddenMoveHandlers::CanUseMove.add(:SURF,proc{|move,pkmn|
      Kernel.pbMessage(_INTL("Let's enjoy cycling!"))
      return false
    end
-   if !PBTerrain.isSurfable?(terrain) || !notCliff
+   if !pbIsSurfableTag?(terrain) || !notCliff
      Kernel.pbMessage(_INTL("No surfing here!"))
      return false
    end
@@ -731,7 +621,7 @@ def Kernel.pbWaterfall
     (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORWATERFALL : $Trainer.badges[BADGEFORWATERFALL])
     movefinder=Kernel.pbCheckMove(:WATERFALL)
     if $DEBUG || movefinder
-      if Kernel.pbConfirmMessage(_INTL("It's a large waterfall. Would you like to use Waterfall?"))
+      if Kernel.pbConfirmMessage(_INTL("It's a large waterfall.  Would you like to use Waterfall?"))
         speciesname=!movefinder ? $Trainer.name : movefinder.name
         Kernel.pbMessage(_INTL("{1} used Waterfall.",speciesname))
         pbHiddenMoveAnimation(movefinder)
@@ -1281,7 +1171,7 @@ HiddenMoveHandlers::UseMove.add(:DIG,proc{|move,pokemon|
 # Sweet Scent
 #===============================================================================
 def pbSweetScent
-  if $game_screen.weather_type!=PBFieldWeather::None
+  if $game_screen.weather_type!=0
     Kernel.pbMessage(_INTL("The sweet scent faded for some reason..."))
     return
   end
@@ -1326,3 +1216,17 @@ HiddenMoveHandlers::UseMove.add(:SWEETSCENT,proc{|move,pokemon|
    pbSweetScent
    return true
 })
+
+
+
+def Kernel.pbCanUseHiddenMove?(pkmn,move)
+  return HiddenMoveHandlers.triggerCanUseMove(move,pkmn)
+end
+
+def Kernel.pbUseHiddenMove(pokemon,move)
+  return HiddenMoveHandlers.triggerUseMove(move,pokemon)
+end
+
+def Kernel.pbHiddenMoveEvent
+  Events.onAction.trigger(nil)
+end

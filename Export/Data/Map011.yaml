@@ -4,18 +4,12 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: Lab
     pitch: 100
+  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
         list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 13
-          - 13
-          - 1
-          indent: 0
-          code: 121
         - !ruby/object:RPG::EventCommand
           parameters:
           - !ruby/object:RPG::AudioFile
@@ -158,12 +152,7 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - _I("<c2=6546675A>Do you have a fossil for me to revive?"),
-          indent: 0
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - '9,'
+          - _I("<c2=6546675A>Do you have a fossil for me to revive?"),9,
           indent: 0
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -252,7 +241,7 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbSet(3,PBItems.getName(pbGet(9)))
+          - "$game_variables[3]=PBItems.getName(pbGet(9))"
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -410,7 +399,7 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbSet(3,PBSpecies.getName(pbGet(9)))
+          - "$game_variables[3]=PBSpecies.getName(pbGet(9))"
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -645,7 +634,6 @@ root: !ruby/object:RPG::Map
       y: 1
       x: 1
       id: 3
-  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

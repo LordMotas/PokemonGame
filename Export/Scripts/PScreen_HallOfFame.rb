@@ -56,22 +56,14 @@ class HallOfFameScene
           # ENTRYWAITTIME and goes to the next battler
           pbPlayCry(@hallEntry[@battlerIndex-1])
           writePokemonData(@hallEntry[@battlerIndex-1])
-          ENTRYWAITTIME.times do
-            Graphics.update
-            Input.update
-            pbUpdate
-          end
+          pbWait(ENTRYWAITTIME)
           if @battlerIndex<@hallEntry.size   # Preparates the next battler
             setPokemonSpritesOpacity(@battlerIndex,OPACITY)
             @sprites["overlay"].bitmap.clear
           else # Show the welcome message and preparates the trainer
             setPokemonSpritesOpacity(-1)
             writeWelcome
-            (ENTRYWAITTIME*2).times do
-              Graphics.update
-              Input.update
-              pbUpdate
-            end
+            pbWait(ENTRYWAITTIME*2)
             setPokemonSpritesOpacity(-1,OPACITY) if !SINGLEROW
             createTrainerBattler
           end
@@ -80,11 +72,7 @@ class HallOfFameScene
     elsif @battlerIndex>@hallEntry.size
       # Write the trainer data and fade
       writeTrainerData
-      ENTRYWAITTIME.times do
-        Graphics.update
-        Input.update
-        pbUpdate
-      end
+      pbWait(ENTRYWAITTIME)      
       fadeSpeed=((Math.log(2**12)-Math.log(FINALFADESPEED))/Math.log(2)).floor
       pbBGMFade((2**fadeSpeed).to_f/20) if @useMusic
       slowFadeOut(@sprites,fadeSpeed){ pbUpdate } 
@@ -124,13 +112,7 @@ class HallOfFameScene
     max=2**exponent
     speed=(2**8)/max
     for j in 0..max
-      if extraWaitExponent>-1
-        (2**extraWaitExponent).times do
-          Graphics.update
-          Input.update
-          pbUpdate
-        end
-      end
+      pbWait(2**extraWaitExponent) if extraWaitExponent>-1
       pbSetSpritesToColor(sprites,Color.new(0,0,0,j*speed))
       block_given? ? yield : pbUpdateSpriteHash(sprites)
     end
@@ -326,11 +308,7 @@ class HallOfFameScene
       @xmovement[@battlerIndex]=(startpoint-@sprites["trainer"].x)/2
       @sprites["trainer"].x=startpoint
     else
-      ENTRYWAITTIME.times do
-        Graphics.update
-        Input.update
-        pbUpdate
-      end
+      pbWait(ENTRYWAITTIME)
     end
   end
 

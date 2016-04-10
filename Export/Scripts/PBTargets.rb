@@ -17,11 +17,4 @@ module PBTargets
     return move.target==PBTargets::AllOpposing ||
            move.target==PBTargets::AllNonUsers
   end
-
-  def self.targetsOneOpponent?(move)
-    return move.target==PBTargets::SingleNonUser ||
-           move.target==PBTargets::RandomOpposing ||
-           move.target==PBTargets::SingleOpposing ||
-           move.target==PBTargets::OppositeOpposing
-  end
 end

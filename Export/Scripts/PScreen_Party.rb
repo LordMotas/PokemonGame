@@ -1,3 +1,97 @@
+# Data structure representing mail that the Pokémon can hold
+class PokemonMail
+  attr_accessor :item,:message,:sender,:poke1,:poke2,:poke3
+
+  def initialize(item,message,sender,poke1=nil,poke2=nil,poke3=nil)
+    @item=item   # Item represented by this mail
+    @message=message   # Message text
+    @sender=sender   # Name of the message's sender
+    @poke1=poke1   # [species,gender,shininess,form,shadowness,is egg]
+    @poke2=poke2
+    @poke3=poke3
+  end
+end
+
+
+
+def pbMoveToMailbox(pokemon)
+  $PokemonGlobal.mailbox=[] if !$PokemonGlobal.mailbox
+  return false if $PokemonGlobal.mailbox.length>=10
+  return false if !pokemon.mail
+  $PokemonGlobal.mailbox.push(pokemon.mail)
+  pokemon.mail=nil
+  return true
+end
+
+def pbStoreMail(pkmn,item,message,poke1=nil,poke2=nil,poke3=nil)
+  raise _INTL("Pokémon already has mail") if pkmn.mail
+  pkmn.mail=PokemonMail.new(item,message,$Trainer.name,poke1,poke2,poke3)
+end
+
+def pbDisplayMail(mail,bearer=nil)
+  sprites={}
+  viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+  viewport.z=99999
+  addBackgroundPlane(sprites,"background","mailbg",viewport)
+  sprites["card"]=IconSprite.new(0,0,viewport)
+  sprites["card"].setBitmap(pbMailBackFile(mail.item))
+  sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,viewport)
+  overlay=sprites["overlay"].bitmap
+  pbSetSystemFont(overlay)
+  if $ItemData[mail.item][ITEMTYPE]==2
+    if mail.poke1
+      sprites["bearer"]=IconSprite.new(64,288,viewport)
+      bitmapFileName=pbCheckPokemonIconFiles(mail.poke1,mail.poke1[5])
+      sprites["bearer"].setBitmap(bitmapFileName)
+      sprites["bearer"].src_rect.set(0,0,64,64)
+    end
+    if mail.poke2
+      sprites["bearer2"]=IconSprite.new(144,288,viewport)
+      bitmapFileName=pbCheckPokemonIconFiles(mail.poke2,mail.poke2[5])
+      sprites["bearer2"].setBitmap(bitmapFileName)
+      sprites["bearer2"].src_rect.set(0,0,64,64)
+    end
+    if mail.poke3
+      sprites["bearer3"]=IconSprite.new(224,288,viewport)
+      bitmapFileName=pbCheckPokemonIconFiles(mail.poke3,mail.poke3[5])
+      sprites["bearer3"].setBitmap(bitmapFileName)
+      sprites["bearer3"].src_rect.set(0,0,64,64)
+    end
+  end
+  baseForDarkBG=Color.new(248,248,248)
+  shadowForDarkBG=Color.new(72,80,88)
+  baseForLightBG=Color.new(80,80,88)
+  shadowForLightBG=Color.new(168,168,176)
+  if mail.message && mail.message!=""
+    isDark=isDarkBackground(sprites["card"].bitmap,Rect.new(48,48,Graphics.width-96,32*7))
+    drawTextEx(overlay,48,48,Graphics.width-96,7,mail.message,
+       isDark ? baseForDarkBG : baseForLightBG,
+       isDark ? shadowForDarkBG : shadowForLightBG)
+  end
+  if mail.sender && mail.sender!=""
+    isDark=isDarkBackground(sprites["card"].bitmap,Rect.new(336,322,144,32*1))
+    drawTextEx(overlay,336,322,144,1,_INTL("{1}",mail.sender),
+       isDark ? baseForDarkBG : baseForLightBG,
+       isDark ? shadowForDarkBG : shadowForLightBG)
+  end
+  pbFadeInAndShow(sprites)
+  loop do
+    Graphics.update
+    Input.update
+    pbUpdateSpriteHash(sprites)
+    if Input.trigger?(Input::B) || Input.trigger?(Input::C)
+      break
+    end
+  end
+  pbFadeOutAndHide(sprites)
+  pbDisposeSpriteHash(sprites)
+  viewport.dispose
+end
+
+
+###########################
+
+
 class PokeSelectionPlaceholderSprite < SpriteWrapper
   attr_accessor :text
 
@@ -242,7 +336,7 @@ class PokeSelectionSprite < SpriteWrapper
     @hpbarfnt=AnimatedBitmap.new("Graphics/Pictures/partyHPfnt")
     @hpbarswap=AnimatedBitmap.new("Graphics/Pictures/partyHPswap")
     @pokeballsprite=ChangelingSprite.new(0,0,viewport)
-    #@pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/partyBall")
+		#@pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/partyBall")
     #@pokeballsprite.addBitmap("pokeballsel","Graphics/Pictures/partyBallSel")
     @pokeballsprite.addBitmap("pokeballdesel","Graphics/Pictures/PartyBall/partyBallBasic")
     @pokeballsprite.addBitmap("pokeballsel","Graphics/Pictures/PartyBall/partyBallSelBasic")
@@ -540,6 +634,7 @@ class PokeSelectionSprite < SpriteWrapper
       @pkmnsprite.update
     end
   end
+  
 end
 
 
@@ -740,12 +835,11 @@ class PokemonScreen_Scene
     @activecmd=pkmn
   end
 
-  def pbChoosePokemon(switching=false,initialsel=-1)
+  def pbChoosePokemon(switching=false)
     for i in 0...6
-      @sprites["pokemon#{i}"].preselected=(switching && i==@activecmd)
+      @sprites["pokemon#{i}"].preselected=(switching&&i==@activecmd)
       @sprites["pokemon#{i}"].switching=switching
     end
-    @activecmd=initialsel if initialsel>=0
     pbRefresh
     loop do
       Graphics.update
@@ -896,14 +990,14 @@ class PokemonScreen_Scene
     pbFadeInAndShow(@sprites,oldsprites)
     return ret
   end
-
+  
   def pbUseItem(bag,pokemon)
     oldsprites=pbFadeOutAndHide(@sprites)
     @sprites["helpwindow"].visible=false
     @sprites["messagebox"].visible=false
     scene=PokemonBag_Scene.new
     screen=PokemonBagScreen.new(scene,bag)
-    ret=screen.pbUseItemScreen(pokemon)
+    ret=screen.pbUseItemScreen(pokemon) 
     pbFadeInAndShow(@sprites,oldsprites)
     return ret
   end
@@ -987,7 +1081,7 @@ class PokemonScreen
     if !pkmn.hasItem?
       pbDisplay(_INTL("{1} isn't holding anything.",pkmn.name))
     elsif !$PokemonBag.pbCanStore?(pkmn.item)
-      pbDisplay(_INTL("The Bag is full. The Pokémon's item could not be removed."))
+      pbDisplay(_INTL("The Bag is full.  The Pokémon's item could not be removed."))
     elsif pkmn.mail
       if pbConfirm(_INTL("Send the removed mail to your PC?"))
         if !pbMoveToMailbox(pkmn)
@@ -996,7 +1090,7 @@ class PokemonScreen
           pbDisplay(_INTL("The mail was sent to your PC."))
           pkmn.setItem(0)
         end
-      elsif pbConfirm(_INTL("If the mail is removed, the message will be lost. OK?"))
+      elsif pbConfirm(_INTL("If the mail is removed, the message will be lost.  OK?"))
         pbDisplay(_INTL("Mail was taken from the Pokémon."))
         $PokemonBag.pbStoreItem(pkmn.item)
         pkmn.setItem(0)
@@ -1015,20 +1109,21 @@ class PokemonScreen
     if pkmn.isEgg?
       pbDisplay(_INTL("Eggs can't hold items."))
       return false
-    elsif pkmn.mail
-      pbDisplay(_INTL("{1}'s mail must be removed before giving it an item.",pkmn.name))
+    end
+    if pkmn.mail
+      pbDisplay(_INTL("Mail must be removed before holding an item."))
       return false
     end
     if pkmn.item!=0
       itemname=PBItems.getName(pkmn.item)
-      pbDisplay(_INTL("{1} is already holding {2}.\1",pkmn.name,itemname))
+      pbDisplay(_INTL("{1} is already holding one {2}.\1",pkmn.name,itemname))
       if pbConfirm(_INTL("Would you like to switch the two items?"))
         $PokemonBag.pbDeleteItem(item)
         if !$PokemonBag.pbStoreItem(pkmn.item)
           if !$PokemonBag.pbStoreItem(item) # Compensate
             raise _INTL("Can't re-store deleted item in bag")
           end
-          pbDisplay(_INTL("The Bag is full. The Pokémon's item could not be removed."))
+          pbDisplay(_INTL("The Bag is full.  The Pokémon's item could not be removed."))
         else
           if pbIsMail?(item)
             if pbMailScreen(item,pkmn,pkmnid)
@@ -1042,7 +1137,7 @@ class PokemonScreen
             end
           else
             pkmn.setItem(item)
-            pbDisplay(_INTL("Took the Pokémon's {1} and gave it the {2}.",itemname,thisitemname))
+            pbDisplay(_INTL("The {1} was taken and replaced with the {2}.",itemname,thisitemname))
             return true
           end
         end
@@ -1051,7 +1146,7 @@ class PokemonScreen
       if !pbIsMail?(item) || pbMailScreen(item,pkmn,pkmnid) # Open the mail screen if necessary
         $PokemonBag.pbDeleteItem(item)
         pkmn.setItem(item)
-        pbDisplay(_INTL("The Pokémon is now holding the {1}.",thisitemname))
+        pbDisplay(_INTL("{1} was given the {2} to hold.",pkmn.name,thisitemname))
         return true
       end
     end
@@ -1076,7 +1171,7 @@ class PokemonScreen
     if pkmnid>=0
       pkmn=@party[pkmnid]
       if pkmn.item!=0 || pkmn.mail
-        pbDisplay(_INTL("This Pokémon is holding an item. It can't hold mail."))
+        pbDisplay(_INTL("This Pokémon is holding an item.  It can't hold mail."))
       elsif pkmn.isEgg?
         pbDisplay(_INTL("Eggs can't hold mail."))
       else
@@ -1300,11 +1395,12 @@ class PokemonScreen
          _INTL("Make Mystery Gift"),
          _INTL("Duplicate"),
          _INTL("Delete"),
+         _INTL("Force Evo"),
          _INTL("Cancel")
       ],command)
       case command
       ### Cancel ###
-      when -1, 21
+      when -1, 22
         break
       ### HP/Status ###
       when 0
@@ -1415,7 +1511,7 @@ class PokemonScreen
             move=pbChooseMove(pkmn,_INTL("Choose move to forget."))
             if move>=0
               movename=PBMoves.getName(pkmn.moves[move].id)
-              pkmn.pbDeleteMoveAtIndex(move)
+              pbDeleteMove(pkmn,move)
               pbDisplay(_INTL("{1} forgot {2}.",pkmn.name,movename))
               pbRefreshSingle(pkmnid)
             end
@@ -1480,21 +1576,21 @@ class PokemonScreen
           abils=pkmn.getAbilityList
           oldabil=PBAbilities.getName(pkmn.ability)
           commands=[]
-          for i in abils
-            commands.push((i[1]<2 ? "" : "(H) ")+PBAbilities.getName(i[0]))
+          for i in 0...abils[0].length
+            commands.push((abils[1][i]<2 ? "" : "(H) ")+PBAbilities.getName(abils[0][i]))
           end
           commands.push(_INTL("Remove override"))
           msg=[_INTL("Ability {1} is natural.",oldabil),
-               _INTL("Ability {1} is being forced.",oldabil)][pkmn.abilityflag!=nil ? 1 : 0]
+               _INTL("Ability {1} is being forced.",oldabil)][pkmn.abilityflag ? 1 : 0]
           cmd=@scene.pbShowCommands(msg,commands,cmd)
           # Break
           if cmd==-1
             break
           # Set ability override
-          elsif cmd>=0 && cmd<abils.length
-            pkmn.setAbility(abils[cmd][1])
+          elsif cmd>=0 && cmd<abils[0].length
+             pkmn.setAbility(abils[1][cmd])
           # Remove override
-          elsif cmd==abils.length
+          elsif cmd==abils[0].length
             pkmn.abilityflag=nil
           end
           pbRefreshSingle(pkmnid)
@@ -1604,12 +1700,11 @@ class PokemonScreen
                 break
               elsif cmd2>=0 && cmd2<stats.length
                 params=ChooseNumberParams.new
-                params.setRange(0,PokeBattle_Pokemon::EVSTATLIMIT)
+                params.setRange(0,255)
                 params.setDefaultValue(pkmn.ev[cmd2])
                 params.setCancelValue(pkmn.ev[cmd2])
                 f=Kernel.pbMessageChooseNumber(
-                   _INTL("Set the EV for {1} (max. {2}).",
-                      stats[cmd2],PokeBattle_Pokemon::EVSTATLIMIT),params) { @scene.update }
+                   _INTL("Set the EV for {1} (max. 255).",stats[cmd2]),params) { @scene.update }
                 pkmn.ev[cmd2]=f
                 pkmn.totalhp
                 pkmn.calcStats
@@ -1898,33 +1993,46 @@ class PokemonScreen
           pbDisplay(_INTL("The Pokémon was deleted."))
           break
         end
+      ## Force Evolution##  
+      when 21  
+          pbForceEvo(pkmn)
+          pbHardRefresh
       end
     end
   end
 
   def pbPokemonScreen
-    @scene.pbStartScene(@party,@party.length>1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."),nil)
+    @scene.pbStartScene(@party,
+       @party.length>1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."),nil)
     loop do
-      @scene.pbSetHelpText(@party.length>1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."))
+      @scene.pbSetHelpText(
+         @party.length>1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."))
       pkmnid=@scene.pbChoosePokemon
-      break if pkmnid<0
+      if pkmnid<0
+        break
+      end
       pkmn=@party[pkmnid]
       commands=[]
       cmdSummary=-1
-      cmdDebug=-1
-      cmdMoves=[-1,-1,-1,-1]
       cmdSwitch=-1
-      cmdMail=-1
       cmdItem=-1
+      cmdDebug=-1
+      cmdMail=-1
       # Build the commands
       commands[cmdSummary=commands.length]=_INTL("Summary")
-      commands[cmdDebug=commands.length]=_INTL("Debug") if $DEBUG
+      if $DEBUG
+        # Commands for debug mode only
+        commands[cmdDebug=commands.length]=_INTL("Debug")
+      end
+      cmdMoves=[-1,-1,-1,-1]
       for i in 0...pkmn.moves.length
         move=pkmn.moves[i]
         # Check for hidden moves and add any that were found
-        if !pkmn.isEgg? && (isConst?(move.id,PBMoves,:MILKDRINK) ||
-                            isConst?(move.id,PBMoves,:SOFTBOILED) ||
-                            HiddenMoveHandlers.hasHandler(move.id))
+        if !pkmn.isEgg? && (
+           isConst?(move.id,PBMoves,:MILKDRINK) ||
+           isConst?(move.id,PBMoves,:SOFTBOILED) ||
+           HiddenMoveHandlers.hasHandler(move.id)
+           )
           commands[cmdMoves[i]=commands.length]=PBMoves.getName(move.id)
         end
       end
@@ -1944,7 +2052,7 @@ class PokemonScreen
           havecommand=true
           if isConst?(pkmn.moves[i].id,PBMoves,:SOFTBOILED) ||
              isConst?(pkmn.moves[i].id,PBMoves,:MILKDRINK)
-            if pkmn.hp<=(pkmn.totalhp/5).floor
+            if pkmn.hp<=pkmn.totalhp/5
               pbDisplay(_INTL("Not enough HP..."))
               break
             end
@@ -1952,22 +2060,17 @@ class PokemonScreen
             oldpkmnid=pkmnid
             loop do
               @scene.pbPreSelect(oldpkmnid)
-              pkmnid=@scene.pbChoosePokemon(true,pkmnid)
+              pkmnid=@scene.pbChoosePokemon(true)
               break if pkmnid<0
               newpkmn=@party[pkmnid]
-              if pkmnid==oldpkmnid
-                pbDisplay(_INTL("{1} can't use {2} on itself!",pkmn.name,PBMoves.getName(pkmn.moves[i].id)))
-              elsif newpkmn.isEgg?
-                pbDisplay(_INTL("{1} can't be used on an Egg!",PBMoves.getName(pkmn.moves[i].id)))
-              elsif newpkmn.hp==0 || newpkmn.hp==newpkmn.totalhp
-                pbDisplay(_INTL("{1} can't be used on that Pokémon.",PBMoves.getName(pkmn.moves[i].id)))
+              if newpkmn.isEgg? || newpkmn.hp==0 || newpkmn.hp==newpkmn.totalhp || pkmnid==oldpkmnid
+                pbDisplay(_INTL("This item can't be used on that Pokémon."))
               else
-                pkmn.hp-=(pkmn.totalhp/5).floor
-                hpgain=pbItemRestoreHP(newpkmn,(pkmn.totalhp/5).floor)
+                pkmn.hp-=pkmn.totalhp/5
+                hpgain=pbItemRestoreHP(newpkmn,pkmn.totalhp/5)
                 @scene.pbDisplay(_INTL("{1}'s HP was restored by {2} points.",newpkmn.name,hpgain))
                 pbRefresh
               end
-              break if pkmn.hp<=(pkmn.totalhp/5).floor
             end
             break
           elsif Kernel.pbCanUseHiddenMove?(pkmn,pkmn.moves[i].id)
@@ -1993,8 +2096,6 @@ class PokemonScreen
       next if havecommand
       if cmdSummary>=0 && command==cmdSummary
         @scene.pbSummary(pkmnid)
-      elsif cmdDebug>=0 && command==cmdDebug
-        pbPokemonDebug(pkmn,pkmnid)
       elsif cmdSwitch>=0 && command==cmdSwitch
         @scene.pbSetHelpText(_INTL("Move to where?"))
         oldpkmnid=pkmnid
@@ -2002,9 +2103,10 @@ class PokemonScreen
         if pkmnid>=0 && pkmnid!=oldpkmnid
           pbSwitch(oldpkmnid,pkmnid)
         end
+      elsif cmdDebug>=0 && command==cmdDebug
+        pbPokemonDebug(pkmn,pkmnid)
       elsif cmdMail>=0 && command==cmdMail
-        command=@scene.pbShowCommands(_INTL("Do what with the mail?"),
-           [_INTL("Read"),_INTL("Take"),_INTL("Cancel")])
+        command=@scene.pbShowCommands(_INTL("Do what with the mail?"),[_INTL("Read"),_INTL("Take"),_INTL("Cancel")])
         case command
         when 0 # Read
           pbFadeOutIn(99999){
@@ -2015,68 +2117,47 @@ class PokemonScreen
           pbRefreshSingle(pkmnid)
         end
       elsif cmdItem>=0 && command==cmdItem
-        itemcommands=[]
-        cmdUseItem=-1
-        cmdGiveItem=-1
-        cmdTakeItem=-1
-        cmdMoveItem=-1
-        # Build the commands
-        itemcommands[cmdUseItem=itemcommands.length]=_INTL("Use")
-        itemcommands[cmdGiveItem=itemcommands.length]=_INTL("Give")
-        itemcommands[cmdTakeItem=itemcommands.length]=_INTL("Take") if pkmn.hasItem?
-        itemcommands[cmdMoveItem=itemcommands.length]=_INTL("Move") if pkmn.hasItem? && !pbIsMail?(pkmn.item)
-        itemcommands[itemcommands.length]=_INTL("Cancel")
-        command=@scene.pbShowCommands(_INTL("Do what with an item?"),itemcommands)
-        if cmdUseItem>=0 && command==cmdUseItem   # Use
-          item=@scene.pbUseItem($PokemonBag,pkmn)
-          if item>0
-            pbUseItemOnPokemon(item,pkmn,self)
-            pbRefreshSingle(pkmnid)
-          end
-        elsif cmdGiveItem>=0 && command==cmdGiveItem   # Give
+        command=@scene.pbShowCommands(_INTL("Do what with an item?"),[_INTL("Give"),_INTL("Take"),_INTL("Use"),_INTL("Move"),_INTL("Cancel")])
+        case command
+        when 0 # Give
           item=@scene.pbChooseItem($PokemonBag)
           if item>0
             pbGiveMail(item,pkmn,pkmnid)
             pbRefreshSingle(pkmnid)
           end
-        elsif cmdTakeItem>=0 && command==cmdTakeItem   # Take
+        when 1 # Take
           pbTakeMail(pkmn)
           pbRefreshSingle(pkmnid)
-        elsif cmdMoveItem>=0 && command==cmdMoveItem   # Move
-          item=pkmn.item
-          itemname=PBItems.getName(item)
-          @scene.pbSetHelpText(_INTL("Give {1} to which Pokémon?",itemname))
-          oldpkmnid=pkmnid
-          loop do
-            @scene.pbPreSelect(oldpkmnid)
-            pkmnid=@scene.pbChoosePokemon(true,pkmnid)
-            break if pkmnid<0
-            newpkmn=@party[pkmnid]
-            if pkmnid==oldpkmnid
-              break
-            elsif newpkmn.isEgg?
-              pbDisplay(_INTL("Eggs can't hold items."))
-            elsif !newpkmn.hasItem?
-              newpkmn.setItem(item)
-              pkmn.setItem(0)
-              pbRefresh
-              pbDisplay(_INTL("{1} was given the {2} to hold.",newpkmn.name,itemname))
-              break
-            elsif pbIsMail?(newpkmn.item)
-              pbDisplay(_INTL("{1}'s mail must be removed before giving it an item.",newpkmn.name))
+        when 2 # Use
+          @scene.pbUseItem($PokemonBag,pkmn)
+        when 3
+          if pkmn.item>0
+            moveitem=pkmn.item
+            pkmn.item=0
+            pbRefreshSingle(pkmnid)
+            pokeid=pbChoosePokemon(_INTL("Give {1} to which Pokemon?",PBItems.getName(moveitem)))
+            poke=$Trainer.party[pokeid]
+            if pokeid>=0 && !poke.isEgg?
+              if poke.item>0
+                if pbConfirm(_INTL("{1} is already holding an item, would you like to put the {3} in your bag?",
+                    poke.name,PBItems.getName(poke.item),PBItems.getName(poke.item)))
+                  pbTakeMail(poke)
+                  poke.item=moveitem
+                pbDisplay(_INTL("{1} was given {2} to hold",poke.name,PBItems.getName(poke.item)))
+                  pbRefreshSingle(pokeid)
+                end
+              else
+                poke.item=moveitem
+                pbDisplay(_INTL("{1} was given {2} to hold",poke.name,PBItems.getName(poke.item)))
+              end 
             else
-              newitem=newpkmn.item
-              newitemname=PBItems.getName(newitem)
-              pbDisplay(_INTL("{1} is already holding one {2}.\1",newpkmn.name,newitemname))
-              if pbConfirm(_INTL("Would you like to switch the two items?"))
-                newpkmn.setItem(item)
-                pkmn.setItem(newitem)
-                pbRefresh
-                pbDisplay(_INTL("{1} was given the {2} to hold.",newpkmn.name,itemname))
-                pbDisplay(_INTL("{1} was given the {2} to hold.",pkmn.name,newitemname))
-                break
+              if poke.isEgg?
+                pbDisplay(_INTL("An egg can't hold an item!"))
               end
+              pkmn.item=moveitem
             end
+          else
+            pbDisplay(_INTL("{1} isn't holding an item",pkmn.name))
           end
         end
       end

@@ -502,12 +502,12 @@ class TilePuzzleScene
       if dir>0
         if @game==3 || (@game!=3 && @sprites["cursor"].selected)
           if pbCanMoveInDir?(@sprites["cursor"].position,dir,true)
-            pbSEPlay("TileGameMove")
+            pbSEPlay("Choose")
             pbSwapTiles(dir)
           end
         else
           if pbCanMoveInDir?(@sprites["cursor"].position,dir,false)
-            pbSEPlay("TileGameMove")
+            pbSEPlay("Choose")
             @sprites["cursor"].position=pbMoveCursor(@sprites["cursor"].position,dir)
           end
         end
