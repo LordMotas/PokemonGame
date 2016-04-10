@@ -1,6 +1,7 @@
 --- !ruby/object:Hash
 root:
 <<<<<<< HEAD
+<<<<<<< HEAD
 - - 26518148
 =======
 <<<<<<< HEAD
@@ -375,6 +376,9 @@ root:
 =======
 - - 66804425
 >>>>>>> c0e9efa1e953b717c4fee809f8f45034a9720726
+=======
+- - 26518148
+>>>>>>> parent of 950ac23... Added the Impenetrable ability.
   - PBTypes
   - !binary |-
     eJxljstqwzAQRfcC/YOXKZRS9ZU0YRaKrMoituVKSkKWbq2GQuKG2Ib27zs2
@@ -703,11 +707,15 @@ root:
     HT9++eXHv3z88fnf9f/++fHLn/70vO0/7ecff//pdx7X/uO3v//6+Szr8nd+
     +POP/3v78W+/ffzOD+1f/w8B8xHJ
 <<<<<<< HEAD
+<<<<<<< HEAD
 - - 96178549
 =======
 - - 82159247
 >>>>>>> parent of 25c0e26... This shouldnt change anything.
 >>>>>>> c0e9efa1e953b717c4fee809f8f45034a9720726
+=======
+- - 96178549
+>>>>>>> parent of 950ac23... Added the Impenetrable ability.
   - PBTrainers
   - !binary |-
     eJxlVE1v4jAQvSPxH3rsSqsV+YZKc3CCCV4cB9lOK06rtLhsVBpWCay2/37H
