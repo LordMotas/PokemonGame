@@ -151,6 +151,7 @@ root: !ruby/object:Hash
     scroll_y: 1468
     parent_id: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
   22: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Random Hall
@@ -158,6 +159,8 @@ root: !ruby/object:Hash
     order: 6
     scroll_y: 400
     parent_id: 2
+=======
+>>>>>>> parent of 25c0e26... This shouldnt change anything.
 =======
 >>>>>>> parent of 25c0e26... This shouldnt change anything.
   23: !ruby/object:RPG::MapInfo
