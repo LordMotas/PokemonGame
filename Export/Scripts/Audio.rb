@@ -101,23 +101,23 @@ module AudioState
       at_exit { @SEContext.dispose }
     end
   else
-    AudioContextIsActive=nil# :nodoc:
-    AudioContextPlay=nil# :nodoc:
-    AudioContextStop=nil# :nodoc:
-    AudioContextFadeOut=nil# :nodoc:
-    AudioContextGetPosition=nil# :nodoc:
-    AudioContextFadeIn=nil# :nodoc:
-    AudioContextSetVolume=nil# :nodoc:
-    AudioContextSEPlay=nil# :nodoc:
+    AudioContextIsActive    = nil # :nodoc:
+    AudioContextPlay        = nil # :nodoc:
+    AudioContextStop        = nil # :nodoc:
+    AudioContextFadeOut     = nil # :nodoc:
+    AudioContextGetPosition = nil # :nodoc:
+    AudioContextFadeIn      = nil # :nodoc:
+    AudioContextSetVolume   = nil # :nodoc:
+    AudioContextSEPlay      = nil # :nodoc:
   end
-  @channel=nil
-  @bgm=nil
-  @name=""
-  @pitch=100
-  @bgmVolume=100.0
-  @meVolume=100.0
-  @bgsVolume=100.0
-  @seVolume=100.0
+  @channel   = nil
+  @bgm       = nil
+  @name      = ""
+  @pitch     = 100
+  @bgmVolume = 100.0
+  @meVolume  = 100.0
+  @bgsVolume = 100.0
+  @seVolume  = 100.0
 
   def self.setWaitingBGM(bgm,volume,pitch,position)
     @waitingBGM=[bgm,volume,pitch,position]
@@ -184,6 +184,39 @@ def Audio_bgm_play(name, volume, pitch, position = 0)
   end
 end
 
+def Audio_bgm_fadein(ms)
+  AudioState::AudioContextFadeIn.call(AudioState.context,ms.to_i)
+end
+
+def Audio_bgm_fade(ms)
+  AudioState::AudioContextFadeOut.call(AudioState.context,ms.to_i)
+end
+
+def Audio_bgm_stop()
+  begin
+    AudioState::AudioContextStop.call(AudioState.context)
+    AudioState.waitingBGM=nil
+    AudioState.name = ""
+  rescue
+    p $!.message,$!.backtrace
+  end
+end
+
+def Audio_bgm_get_position
+  return AudioState::AudioContextGetPosition.call(AudioState.context)
+end
+
+def Audio_bgm_get_volume
+  return 0 if !AudioState.bgmActive?
+  return AudioState.volume
+end
+
+def Audio_bgm_set_volume(volume)
+  return if !AudioState.bgmActive?
+  AudioState.volume = volume * 1.0
+  AudioState::AudioContextSetVolume.call(AudioState.context,volume.to_i)
+end
+
 def Audio_me_play(name, volume, pitch, position = 0)
   volume=0 if !getPlayMusic()
   begin
@@ -211,39 +244,6 @@ end
 
 def Audio_me_stop()
   AudioState::AudioContextStop.call(AudioState.meContext) 
-end
-
-def Audio_bgm_stop()
-  begin
-    AudioState::AudioContextStop.call(AudioState.context)
-    AudioState.waitingBGM=nil
-    AudioState.name = ""
-  rescue
-    p $!.message,$!.backtrace
-  end
-end
-
-def Audio_bgm_get_position
-  return AudioState::AudioContextGetPosition.call(AudioState.context)
-end
-
-def Audio_bgm_fade(ms)
-  AudioState::AudioContextFadeOut.call(AudioState.context,ms.to_i)
-end
-
-def Audio_bgm_fadein(ms)
-  AudioState::AudioContextFadeIn.call(AudioState.context,ms.to_i)
-end
-
-def Audio_bgm_get_volume
-  return 0 if !AudioState.bgmActive?
-  return AudioState.volume
-end
-
-def Audio_bgm_set_volume(volume)
-  return if !AudioState.bgmActive?
-  AudioState.volume = volume * 1.0
-  AudioState::AudioContextSetVolume.call(AudioState.context,volume.to_i)
 end
 
 def Audio_bgs_play(name, volume, pitch, position = 0)
@@ -364,12 +364,13 @@ module Audio
   end
 
 =begin
- def self.se_play(name,volume=80,pitch=100)
-   Kernel.Audio_se_play(name,volume,pitch,0)
- end
- def self.se_stop
-   Kernel.Audio_se_stop()
- end
+  def self.se_play(name,volume=80,pitch=100)
+    Kernel.Audio_se_play(name,volume,pitch,0)
+  end
+
+  def self.se_stop
+    Kernel.Audio_se_stop()
+  end
 =end
 end
 

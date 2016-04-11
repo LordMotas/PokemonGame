@@ -25,29 +25,26 @@ class ReflectedSprite
 
   def update
     return if disposed?
-    currentY=@event.real_y.to_i/(4*Game_Map::TILEHEIGHT)
     limit=@rsprite.src_rect.height
-    shouldShow=false
-    # Clipping at Y
-    i=0
-    while i<@rsprite.src_rect.height+Game_Map::TILEHEIGHT
-      nextY=currentY+1+(i>>5)
-      if @event.map.terrain_tag(@event.x,nextY)!=PBTerrain::StillWater
-        limit= ((nextY * (4*Game_Map::TILEHEIGHT))-@event.map.display_y+3).to_i/4
-        limit-=@rsprite.y
-        break
-      else
-        shouldShow=true
+    shouldShow=visible
+    if shouldShow
+      shouldShow=false
+      currentY=@event.real_y.to_i/(4*Game_Map::TILEHEIGHT)
+      # Clipping at Y
+      i=0
+      while i<@rsprite.src_rect.height+Game_Map::TILEHEIGHT
+        nextY=currentY+1+(i>>5)
+        if !PBTerrain.hasReflections?(@event.map.terrain_tag(@event.x,nextY))
+          limit= ((nextY * (4*Game_Map::TILEHEIGHT))-@event.map.display_y+3).to_i/4
+          limit-=@rsprite.y
+          break
+        else
+          shouldShow=true
+        end
+        i+=Game_Map::TILEHEIGHT
       end
-      i+=Game_Map::TILEHEIGHT
     end
-    shouldShow=false if !visible
-    if limit>0 && shouldShow
-      # Just-in-time creation of sprite
-      if !@sprite
-        @sprite=Sprite.new(@viewport)
-      end
-    else
+    if !shouldShow || limit<=0
       # Just-in-time disposal of sprite 
       if @sprite
         @sprite.dispose
@@ -55,10 +52,12 @@ class ReflectedSprite
       end
       return
     end
+    # Just-in-time creation of sprite
+    @sprite=Sprite.new(@viewport) if !@sprite
     if @sprite
       x=@rsprite.x-@rsprite.ox
       y=@rsprite.y-@rsprite.oy
-      if @event.map.terrain_tag(@event.x,@event.y)==PBTerrain::StillWater
+      if PBTerrain.hasReflections?(@event.map.terrain_tag(@event.x,@event.y))
         y-=8; limit+=8   # Arbitrary shift reflection up if on still water
       end
       if @rsprite.character.character_name[/offset/]
@@ -135,6 +134,7 @@ end
 class Spriteset_Map
   attr_reader :map
   attr_reader :viewport1
+  attr_accessor :tilemap
 
   def initialize(map=nil)
     @map=map ? map : $game_map
@@ -217,14 +217,10 @@ class Spriteset_Map
 
   def in_range?(object)
     return true if $PokemonSystem.tilemap==2
-    screne_x = @map.display_x
-    screne_x -= 128*4 # 128 pixels = 4 tile border
-    screne_y = @map.display_y
-    screne_y -= 128*4
-    screne_width = @map.display_x
-    screne_width += Graphics.width*4+128*4
-    screne_height = @map.display_y
-    screne_height += Graphics.height*4+128*4
+    screne_x = @map.display_x - 4*32*4
+    screne_y = @map.display_y - 4*32*4
+    screne_width = @map.display_x + Graphics.width*4 + 4*32*4
+    screne_height = @map.display_y + Graphics.height*4 + 4*32*4
     return false if object.real_x <= screne_x
     return false if object.real_x >= screne_width
     return false if object.real_y <= screne_y

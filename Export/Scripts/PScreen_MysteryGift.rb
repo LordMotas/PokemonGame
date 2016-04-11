@@ -31,7 +31,7 @@ end
 ################################################################################
 # type: 0=Pokémon; 1 or higher=item (is the item's quantity).
 # item: The thing being turned into a Mystery Gift (Pokémon object or item ID).
-def pbEditMysteryGift(type,item,id=0,giftname="",plural="")
+def pbEditMysteryGift(type,item,id=0,giftname="")
   begin
     if type==0   # Pokémon
       commands=[_INTL("Mystery Gift"),
@@ -66,14 +66,6 @@ def pbEditMysteryGift(type,item,id=0,giftname="",plural="")
           return nil if Kernel.pbConfirmMessage(_INTL("Stop editng this gift?"))
         else
           type=newtype
-          if type>1 && Kernel.pbConfirmMessage(_INTL("Does this gift need a plural form of its name?"))
-            itemname=PBItems.getName(item)
-            plural=itemname if plural==""
-            newplural=Kernel.pbMessageFreeText(
-               _INTL("Enter a plural form of {1}.",plural),plural,false,32)
-            newplural="" if !newplural || newplural=="" || newplural==itemname
-            plural=newplural
-          end
           break
         end
       end
@@ -111,7 +103,7 @@ def pbEditMysteryGift(type,item,id=0,giftname="",plural="")
       end
       return nil if Kernel.pbConfirmMessage(_INTL("Stop editng this gift?"))
     end
-    return [id,type,item,giftname,plural]
+    return [id,type,item,giftname]
   rescue
     Kernel.pbMessage(_INTL("Couldn't edit the gift."))
     return nil
@@ -221,7 +213,7 @@ def pbManageMysteryGifts
             online.push(gift[0])
           end
         elsif cmd==1   # Edit
-          newgift=pbEditMysteryGift(gift[1],gift[2],gift[0],gift[3],gift[4])
+          newgift=pbEditMysteryGift(gift[1],gift[2],gift[0],gift[3])
           master[command]=newgift if newgift
         elsif cmd==2   # Receive
           replaced=false
@@ -302,32 +294,42 @@ def pbDownloadMysteryGift(trainer)
         else
           gift=pending[command]
           sprites["msgwindow"].visible=false
+          isitem=false
           if gift[1]==0
             sprite=PokemonSprite.new(viewport)
             sprite.setPokemonBitmap(gift[2])
+            sprite.ox=sprite.bitmap.width/2
+            sprite.oy=sprite.bitmap.height/2
+            sprite.x=Graphics.width/2
+            sprite.y=-sprite.bitmap.height/2
           else
-            sprite=IconSprite.new(0,0,viewport)
-            sprite.setBitmap(pbItemIconFile(gift[2]))
+            sprite=ItemIconSprite.new(0,0,gift[2],viewport)
+            sprite.x=Graphics.width/2
+            sprite.y=-sprite.height/2
+            isitem=true
           end
-          sprite.ox=sprite.bitmap.width/2
-          sprite.oy=sprite.bitmap.height/2
-          sprite.x=Graphics.width/2
-          sprite.y=-sprite.bitmap.height/2
           begin
             Graphics.update
             Input.update
+            sprite.update
             sprite.y+=4
           end while sprite.y<Graphics.height/2
           pbMEPlay("Jingle - HMTM")
-          pbWait(3*Graphics.frame_rate)
+          3*Graphics.frame_rate.times do
+            Graphics.update
+            Input.update
+            sprite.update
+            pbUpdateSceneMap
+          end
           sprites["msgwindow"].visible=true
-          Kernel.pbMessageDisplay(sprites["msgwindow"],_INTL("The gift has been received!"))
-          Kernel.pbMessageDisplay(sprites["msgwindow"],_INTL("Please pick up your gift from the deliveryman in any Poké Mart."))
+          Kernel.pbMessageDisplay(sprites["msgwindow"],_INTL("The gift has been received!")) { sprite.update }
+          Kernel.pbMessageDisplay(sprites["msgwindow"],_INTL("Please pick up your gift from the deliveryman in any Poké Mart.")) { sprite.update }
           trainer.mysterygift.push(gift)
           pending[command]=nil; pending.compact!
           begin
             Graphics.update
             Input.update
+            sprite.update
             sprite.opacity-=8
           end while sprite.opacity>0
           sprite.dispose
@@ -406,32 +408,24 @@ def pbReceiveMysteryGift(id)
       gift[2].obtainLevel=gift[2].level
     end
     if pbAddPokemonSilent(gift[2])
-      Kernel.pbMessage(_INTL("{1} received {2}!\\se[itemlevel]\1",$Trainer.name,gift[2].name))
+      Kernel.pbMessage(_INTL("{1} received {2}!\\se[ItemGet]\1",$Trainer.name,gift[2].name))
       $Trainer.mysterygift[index]=[id]
       return true
     end
   elsif gift[1]>0
     if $PokemonBag.pbCanStore?(gift[2],gift[1])
       $PokemonBag.pbStoreItem(gift[2],gift[1])
-      item=gift[2]; qty=gift[1]; itemname=PBItems.getName(item)
+      item=gift[2]; qty=gift[1]
+      itemname=(qty>1) ? PBItems.getNamePlural(item) : PBItems.getName(item)
       if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4
-        machine=PBMoves.getName($ItemData[item][ITEMMACHINE])
-        Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received \\c[1]{2}\\c[0]!\\nIt contained \\c[1]{3}\\c[0].\\wtnp[30]",
-           $Trainer.name,itemname,machine))
+        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received \\c[1]{2}\\c[0]!\\nIt contained \\c[1]{3}\\c[0].\\wtnp[30]",
+           $Trainer.name,itemname,PBMoves.getName($ItemData[item][ITEMMACHINE])))
       elsif isConst?(item,PBItems,:LEFTOVERS)
-        Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received some \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
+        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received some \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
       elsif qty>1
-        if gift[4] && gift[4]!=""
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received {2} \\c[1]{3}\\c[0]!\\wtnp[30]",$Trainer.name,qty,gift[4]))
-        else
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received {2} \\c[1]{3}s\\c[0]!\\wtnp[30]",$Trainer.name,qty,itemname))
-        end
+        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received {2} \\c[1]{3}\\c[0]!\\wtnp[30]",$Trainer.name,qty,itemname))
       else
-        if "AEIOUaeiou".include?(itemname[0])
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received an \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
-        else
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} received a \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
-        end
+        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received one \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
       end
       $Trainer.mysterygift[index]=[id]
       return true

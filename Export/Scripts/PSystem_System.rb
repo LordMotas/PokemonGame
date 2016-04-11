@@ -25,14 +25,14 @@ def pbChooseLanguage
 end
 
 if !Kernel.respond_to?("pbSetResizeFactor")
-  def pbSetResizeFactor(dummy); end
+  def pbSetResizeFactor(dummy,dummy2=false); end
   def setScreenBorderName(border); end
 
-  $ResizeFactor=1.0
-  $ResizeFactorMul=100
-  $ResizeOffsetX=0
-  $ResizeOffsetY=0
-  $ResizeFactorSet=false
+  $ResizeFactor    = 1.0
+  $ResizeFactorMul = 100
+  $ResizeOffsetX   = 0
+  $ResizeOffsetY   = 0
+  $ResizeFactorSet = false
 
   module Graphics
     def self.snap_to_bitmap; return nil; end
@@ -69,10 +69,7 @@ def pbSetUpSystem
   if !$INEDITOR
     $PokemonSystem=pokemonSystem
     $game_system=Game_System
-    $ResizeOffsetX=0 #[0,0][$PokemonSystem.screensize]
-    $ResizeOffsetY=0 #[0,0][$PokemonSystem.screensize]
-    resizefactor=[0.5,1.0,2.0][$PokemonSystem.screensize]
-    pbSetResizeFactor(resizefactor)
+    pbSetResizeFactor($PokemonSystem.screensize)
   else
     pbSetResizeFactor(1.0)
   end

@@ -6,9 +6,15 @@ begin
     MovingWater = 3
     StillWater  = 4
     Underwater  = 5
-    Rock        = 6
-    Cave        = 7
+    Cave        = 6
+    Rock        = 7
     Sand        = 8
+    Forest      = 9
+    Snow        = 10
+    Volcano     = 11
+    Graveyard   = 12
+    Sky         = 13
+    Space       = 14
   end
 
 rescue Exception

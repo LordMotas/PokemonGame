@@ -20,28 +20,23 @@ class PBTypes
     return PBTypes.loadTypeData()[1].include?(type)
   end
 
-  def PBTypes.getEffectiveness(attackType,opponentType,inverse=false)
-    ret=PBTypes.loadTypeData()[2][attackType*(PBTypes.maxValue+1)+opponentType]
-    if inverse
-      if ret==0 || ret==1
-        ret=4
-      elsif ret==4
-        ret=1
-      end
-    end
-    return ret
+  def PBTypes.getEffectiveness(attackType,opponentType)
+    return PBTypes.loadTypeData()[2][attackType*(PBTypes.maxValue+1)+opponentType]
   end
 
-  def PBTypes.getCombinedEffectiveness(attackType,opponentType1,opponentType2=nil,opponentType3=nil)
-    if opponentType2==nil && opponentType3==nil
+  def PBTypes.getCombinedEffectiveness(attackType,opponentType1,opponentType2=nil)
+    if opponentType2==nil || opponentType1==opponentType2
       return PBTypes.getEffectiveness(attackType,opponentType1)*2
     else
-      mod3=2
       mod1=PBTypes.getEffectiveness(attackType,opponentType1)
-      mod2=(opponentType1==opponentType2) ? 2 : PBTypes.getEffectiveness(attackType,opponentType2)
-      mod3=(opponentType3==nil || opponentType3==opponentType2 || opponentType3==opponentType1)? 2: PBTypes.getEffectiveness(attackType,opponentType3)
-      return ((mod1*mod2*mod3)/2)
+      mod2=PBTypes.getEffectiveness(attackType,opponentType2)
+      return (mod1*mod2)
     end
+  end
+
+  def PBTypes.isIneffective?(attackType,opponentType1,opponentType2=nil)
+    e=PBTypes.getCombinedEffectiveness(attackType,opponentType1,opponentType2)
+    return e==0
   end
 
   def PBTypes.isNotVeryEffective?(attackType,opponentType1,opponentType2=nil)
@@ -52,11 +47,6 @@ class PBTypes
   def PBTypes.isNormalEffective?(attackType,opponentType1,opponentType2=nil)
     e=PBTypes.getCombinedEffectiveness(attackType,opponentType1,opponentType2)
     return e==4
-  end
-
-  def PBTypes.isIneffective?(attackType,opponentType1,opponentType2=nil)
-    e=PBTypes.getCombinedEffectiveness(attackType,opponentType1,opponentType2)
-    return e==0
   end
 
   def PBTypes.isSuperEffective?(attackType,opponentType1,opponentType2=nil)

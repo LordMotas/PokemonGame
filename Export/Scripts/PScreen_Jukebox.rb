@@ -136,8 +136,14 @@ class Scene_Jukebox
         Dir.chdir("Audio/BGM/"){
            Dir.glob("*.mp3"){|f| files.push(f) }
            Dir.glob("*.MP3"){|f| files.push(f) }
+           Dir.glob("*.ogg"){|f| files.push(f) }
+           Dir.glob("*.OGG"){|f| files.push(f) }
+           Dir.glob("*.wav"){|f| files.push(f) }
+           Dir.glob("*.WAV"){|f| files.push(f) }
            Dir.glob("*.mid"){|f| files.push(f) }
            Dir.glob("*.MID"){|f| files.push(f) }
+           Dir.glob("*.midi"){|f| files.push(f) }
+           Dir.glob("*.MIDI"){|f| files.push(f) }
         }
         @sprites["command_window"].commands=files
         @sprites["command_window"].index=0

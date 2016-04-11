@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: Mom Theme
     pitch: 100
-  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -3385,7 +3384,7 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - party index in Variable 1.
+          - party index in game variable 1.
           indent: 1
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -3444,13 +3443,14 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Variable 1.
+          - game variable 1.
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            U3RvcmUgdGhhdCBQb2vDqW1vbidzIG5hbWUgaW4gVmFyaWFibGUgMi4=
+            U3RvcmUgdGhhdCBQb2vDqW1vbidzIG5hbWUgaW4gZ2FtZSB2YXJpYWJsZSAy
+            Lg==
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -3552,12 +3552,12 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'If it can''t be added to the party, then it is stored in '
+          - 'If it can''t be added to the party, it is stored in the PC '
           indent: 1
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - the PC instead.
+          - instead.
           indent: 1
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -4018,238 +4018,7 @@ root: !ruby/object:RPG::Map
       y: 1
       x: 5
       id: 15
-    16: !ruby/object:RPG::Event
-      pages:
-      - !ruby/object:RPG::Event::Page
-        list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - for i in 0..5
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$Trainer.party[i]=PokeBattle_Pokemon.new(rand(PBSpecies.maxValue)+1,20,$Trainer)"
-          indent: 0
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - end
-          indent: 0
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Here, take these pokemon with you.  You'll also probably need running
-            shoes.
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$PokemonGlobal.runningShoes=true"
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 0
-        move_type: 0
-        direction_fix: false
-        condition: !ruby/object:RPG::Event::Page::Condition
-          switch2_valid: false
-          self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
-          variable_value: 0
-          self_switch_valid: false
-          variable_id: 1
-          variable_valid: false
-          switch2_id: 1
-        move_route: !ruby/object:RPG::MoveRoute
-          list:
-          - !ruby/object:RPG::MoveCommand
-            parameters: []
-            code: 0
-          skippable: false
-          repeat: true
-        trigger: 0
-        step_anime: false
-        move_frequency: 3
-        always_on_top: false
-        graphic: !ruby/object:RPG::Event::Page::Graphic
-          opacity: 255
-          character_name: NPC 26
-          pattern: 0
-          tile_id: 0
-          direction: 2
-          blend_type: 0
-          character_hue: 0
-        walk_anime: true
-        move_speed: 3
-        through: false
-      name: EV016
-      y: 7
-      x: 23
-      id: 16
-    17: !ruby/object:RPG::Event
-      pages:
-      - !ruby/object:RPG::Event::Page
-        list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 12
-          - "$Trainer.party.length>0"
-          indent: 0
-          code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - You wanna trade boy?
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - - 'Yes'
-            - 'No'
-          - 2
-          indent: 1
-          code: 102
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 0
-          - 'Yes'
-          indent: 1
-          code: 402
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - I'll take anything but a Wurmple
-          indent: 2
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - p=PokeBattle_Pokemon.new(PBSpecies::GRENINJA,15);
-          indent: 2
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - ret=pbTradeFromPC(p,15,"Steven",0,"Billy",proc {|poke| !poke.egg? && !(poke.isShadow?
-            rescue false) &&
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - " poke.species!=PBSpecies::WURMPLE})"
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - if ret
-          indent: 2
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Kernel.pbMessage(_INTL("Good trade laddie!"))
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - else
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Kernel.pbMessage(_INTL("K"))
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - end
-          indent: 2
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 2
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 1
-          - 'No'
-          indent: 1
-          code: 402
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Alright then
-          indent: 2
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 2
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 404
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 411
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - You don't have any pokemon.  Do you even train bro?
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 412
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 0
-        move_type: 0
-        direction_fix: false
-        condition: !ruby/object:RPG::Event::Page::Condition
-          switch2_valid: false
-          self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
-          variable_value: 0
-          self_switch_valid: false
-          variable_id: 1
-          variable_valid: false
-          switch2_id: 1
-        move_route: !ruby/object:RPG::MoveRoute
-          list:
-          - !ruby/object:RPG::MoveCommand
-            parameters: []
-            code: 0
-          skippable: false
-          repeat: true
-        trigger: 0
-        step_anime: false
-        move_frequency: 3
-        always_on_top: false
-        graphic: !ruby/object:RPG::Event::Page::Graphic
-          opacity: 255
-          character_name: trchar026
-          pattern: 0
-          tile_id: 0
-          direction: 4
-          blend_type: 0
-          character_hue: 0
-        walk_anime: true
-        move_speed: 3
-        through: false
-      name: EV017
-      y: 7
-      x: 29
-      id: 17
+  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: route
     pitch: 100
-  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -164,7 +163,12 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - _I("<c2=6546675A>Which Apricorn would you like me to convert?"),8,
+          - _I("<c2=6546675A>Which Apricorn would you like me to convert?"),
+          indent: 0
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - '8,'
           indent: 0
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -625,6 +629,7 @@ root: !ruby/object:RPG::Map
       y: 4
       x: 7
       id: 2
+  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

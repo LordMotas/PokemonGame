@@ -140,12 +140,12 @@ class BattleSwapScene
     @viewport.z=99999
     @sprites["title"]=Window_UnformattedTextPokemon.newWithSize(
        _INTL("RENTAL POKéMON"),0,0,Graphics.width,64,@viewport)
-    @sprites["help"]=Window_UnformattedTextPokemon.newWithSize(
-       _INTL(""),0,Graphics.height-64,Graphics.width,64,@viewport)
+    @sprites["help"]=Window_UnformattedTextPokemon.newWithSize("",
+       0,Graphics.height-64,Graphics.width,64,@viewport)
     @sprites["list"]=Window_AdvancedCommandPokemonEx.newWithSize(
        [],0,64,Graphics.width,Graphics.height-128,@viewport)
-    @sprites["msgwindow"]=Window_AdvancedTextPokemon.newWithSize(
-       _INTL(""),0,Graphics.height-64,Graphics.height,64,@viewport)
+    @sprites["msgwindow"]=Window_AdvancedTextPokemon.newWithSize("",
+       0,Graphics.height-64,Graphics.height,64,@viewport)
     @sprites["msgwindow"].visible=false
     addBackgroundPlane(@sprites,"bg","rentbg",@viewport)
     pbUpdateChoices([])

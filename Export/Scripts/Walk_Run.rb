@@ -22,13 +22,14 @@ class Game_Player
   end
 
   def pbCanRun?
+    return false if $game_temp.in_menu
     terrain=pbGetTerrainTag
-    return Input.press?(Input::A) &&
+    input=($PokemonSystem.runstyle==1) ? ($PokemonGlobal && $PokemonGlobal.runtoggle) : Input.press?(Input::A)
+    return input &&
        !pbMapInterpreterRunning? && !@move_route_forcing && 
        $PokemonGlobal && $PokemonGlobal.runningShoes &&
        !$PokemonGlobal.diving && !$PokemonGlobal.surfing &&
-       !$PokemonGlobal.bicycle && terrain!=PBTerrain::TallGrass &&
-       terrain!=PBTerrain::Ice
+       !$PokemonGlobal.bicycle && !PBTerrain.onlyWalk?(terrain)
   end
 
   def pbIsRunning?
@@ -61,15 +62,12 @@ class Game_Player
   alias update_old update
 
   def update
-    if pbGetTerrainTag==PBTerrain::Ice
+    if PBTerrain.isIce?(pbGetTerrainTag)
       @move_speed = $RPGVX ? 6.5 : 4.8
     elsif !moving? && !@move_route_forcing && $PokemonGlobal
       if $PokemonGlobal.bicycle
         @move_speed = $RPGVX ? 8 : 5.2
-      # change surf speed here
-      elsif $PokemonGlobal.surfing
-        @move_speed = $RPGVX ? ((4.5*SURFSPEED*10).floor/10) : ((3.8*SURFSPEED*10).floor/10)
-      elsif pbCanRun?
+      elsif pbCanRun? || $PokemonGlobal.surfing || $PokemonGlobal.diving
         @move_speed = $RPGVX ? 6.5 : 4.8
       else
         @move_speed = $RPGVX ? 4.5 : 3.8

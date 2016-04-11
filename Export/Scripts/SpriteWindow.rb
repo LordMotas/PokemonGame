@@ -1,7 +1,7 @@
 module MessageConfig
   FontName        = "Power Green"
   # in Graphics/Windowskins/ (specify empty string to use the default windowskin)
-  TextSkinName    = "speech hgss 1"
+  TextSkinName    = "frlgtextskin"
   ChoiceSkinName  = "choice 1"
   WindowOpacity   = 255
   TextSpeed       = nil # can be positive to wait frames or negative to
@@ -10,6 +10,8 @@ module MessageConfig
   LIGHTTEXTSHADOW = Color.new(72,80,88)
   DARKTEXTBASE    = Color.new(88,88,80)
   DARKTEXTSHADOW  = Color.new(168,184,184)
+  BUBBLETEXTBASE  = Color.new(248,248,248)
+  BUBBLETEXTSHADOW= Color.new(72,80,88)
   # 0 = Pause cursor is displayed at end of text
   # 1 = Pause cursor is displayed at bottom right
   # 2 = Pause cursor is displayed at lower middle side
@@ -20,8 +22,7 @@ module MessageConfig
      "Power Green"=>"Pokemon Emerald",
      "Power Green Narrow"=>"Pokemon Emerald Narrow",
      "Power Green Small"=>"Pokemon Emerald Small",
-     "Power Clear"=>"Pokemon DP",
-     "Power Black and White"=>"Pokemon BW"
+     "Power Clear"=>"Pokemon DP"
   }
   @@systemFrame     = nil
   @@defaultTextSkin = nil
@@ -217,7 +218,7 @@ end
 class AnimatedBitmap
   def initialize(file,hue=0)
     raise "filename is nil" if file==nil
-    if file[/^\[(\d+)\]/]
+    if file[/^\[(\d+)\]/]   # Starts with 1 or more digits in brackets
       @bitmap=PngAnimatedBitmap.new(file,hue)
     else
       @bitmap=GifBitmap.new(file,hue)
@@ -239,6 +240,8 @@ class AnimatedBitmap
   def deanimate; @bitmap.deanimate; end
   def copy; @bitmap.copy; end
 end
+
+
 
 def pbGetTileBitmap(filename, tile_id, hue)
   return BitmapCache.tileEx(filename, tile_id, hue){|f| 
@@ -582,9 +585,9 @@ module RTP
     title=RTP.getGameIniValue("Game","Title")
     title="RGSS Game" if title==""
     title=title.gsub(/[^\w ]/,"_")
-    newdir=dir.gsub(/[\/\\]$/,"")+"/"+title
+    newdir=dir.gsub(/[\/\\]$/,"")+"/"
     # Convert to UTF-8 because of ANSI function
-    newdir=getUnicodeStringFromAnsi(newdir)
+    newdir+=getUnicodeStringFromAnsi(title)
     Dir.mkdir(newdir) rescue nil
     ret=safeIsDirectory?(newdir) ? newdir : dir
     return ret
@@ -654,7 +657,7 @@ class PngAnimatedBitmap # :nodoc:
     @currentFrame=0
     @framecount=0
     panorama=BitmapCache.load_bitmap(file,hue)
-    if file[/^\[(\d+)\]/]
+    if file[/^\[(\d+)\]/]   # Starts with 1 or more digits in brackets
       # File has a frame count
       numFrames=$1.to_i
       if numFrames<=0
@@ -819,7 +822,7 @@ class GifBitmap
            @totalframes=@gifdelays.pop
            for i in 0...@gifdelays.length
              @gifdelays[i]=[@gifdelays[i],1].max
-             bmfile=sprintf("%s%d.png",tmpBase,i);
+             bmfile=sprintf("%s%d.png",tmpBase,i)
              if safeExists?(bmfile)
                gifbitmap=BitmapWrapper.new(bmfile)
                @gifbitmaps.push(gifbitmap)
@@ -920,8 +923,8 @@ class GifBitmap
     @disposed=true
   end
 
- attr_accessor :gifbitmaps # internal
- attr_accessor :gifdelays # internal
+  attr_accessor :gifbitmaps # internal
+  attr_accessor :gifdelays # internal
 
   def copy
     x=self.clone
@@ -931,287 +934,6 @@ class GifBitmap
       x.gifbitmaps[i]=x.gifbitmaps[i].copy
     end
     return x
-  end
-end
-
-
-########################
-########################
-
-
-def pbStringToAudioFile(str)
-  if str[/^(.*)\:\s*(\d+)\s*\:\s*(\d+)\s*$/]
-    file=$1
-    volume=$2.to_i
-    pitch=$3.to_i
-    return RPG::AudioFile.new(file,volume,pitch)
-  elsif str[/^(.*)\:\s*(\d+)\s*$/]
-    file=$1
-    volume=$2.to_i
-    return RPG::AudioFile.new(file,volume,100)
-  else
-    return RPG::AudioFile.new(str,100,100)
-  end
-end
-
-# Converts an object to an audio file. 
-# str -- Either a string showing the filename or an RPG::AudioFile object.
-# Possible formats for _str_:
-# filename                        volume and pitch 100
-# filename:volume           pitch 100
-# filename:volume:pitch
-# volume -- Volume of the file, up to 100
-# pitch -- Pitch of the file, normally 100
-def pbResolveAudioFile(str,volume=nil,pitch=nil)
-  if str.is_a?(String)
-    str=pbStringToAudioFile(str)
-    str.volume=100
-    str.volume=volume if volume
-    str.pitch=100
-    str.pitch=pitch if pitch
-  end
-  if str.is_a?(RPG::AudioFile)
-    if volume || pitch
-      return RPG::AudioFile.new(str.name,
-                                volume||str.volume||100,
-                                pitch||str.pitch||100)
-    else
-      return str
-    end
-  end
-  return str
-end
-
-# Plays a BGM file.
-# param -- Either a string showing the filename 
-# (relative to Audio/BGM/) or an RPG::AudioFile object.
-# Possible formats for _param_:
-# filename                        volume and pitch 100
-# filename:volume           pitch 100
-# filename:volume:pitch
-# volume -- Volume of the file, up to 100
-# pitch -- Pitch of the file, normally 100
-def pbBGMPlay(param,volume=nil,pitch=nil)
-  return if !param
-  param=pbResolveAudioFile(param,volume,pitch)
-  if param.name && param.name!=""
-    if $game_system && $game_system.respond_to?("bgm_play")
-      $game_system.bgm_play(param)
-      return
-    elsif (RPG.const_defined?(:BGM) rescue false)
-      b=RPG::BGM.new(param.name,param.volume,param.pitch)
-      if b && b.respond_to?("play")
-        b.play; return
-      end
-    end
-    Audio.bgm_play(canonicalize("Audio/BGM/"+param.name),param.volume,param.pitch)
-  end
-end
-
-# Plays an ME file.
-# param -- Either a string showing the filename 
-# (relative to Audio/ME/) or an RPG::AudioFile object.
-# Possible formats for _param_:
-# filename                        volume and pitch 100
-# filename:volume           pitch 100
-# filename:volume:pitch
-# volume -- Volume of the file, up to 100
-# pitch -- Pitch of the file, normally 100
-def pbMEPlay(param,volume=nil,pitch=nil)
-  return if !param
-  param=pbResolveAudioFile(param,volume,pitch)
-  if param.name && param.name!=""
-    if $game_system && $game_system.respond_to?("me_play")
-      $game_system.me_play(param)
-      return
-    elsif (RPG.const_defined?(:ME) rescue false)
-      b=RPG::ME.new(param.name,param.volume,param.pitch)
-      if b && b.respond_to?("play")
-        b.play; return
-      end
-    end
-    Audio.me_play(canonicalize("Audio/ME/"+param.name),param.volume,param.pitch)
-  end
-end
-
-# Plays a BGS file.
-# param -- Either a string showing the filename 
-# (relative to Audio/BGS/) or an RPG::AudioFile object.
-# Possible formats for _param_:
-# filename                        volume and pitch 100
-# filename:volume           pitch 100
-# filename:volume:pitch
-# volume -- Volume of the file, up to 100
-# pitch -- Pitch of the file, normally 100
-def pbBGSPlay(param,volume=nil,pitch=nil)
-  return if !param
-  param=pbResolveAudioFile(param,volume,pitch)
-  if param.name && param.name!=""
-    if $game_system && $game_system.respond_to?("bgs_play")
-      $game_system.bgs_play(param)
-      return
-    elsif (RPG.const_defined?(:BGS) rescue false)
-      b=RPG::BGS.new(param.name,param.volume,param.pitch)
-      if b && b.respond_to?("play")
-        b.play; return
-      end
-    end
-    Audio.bgs_play(canonicalize("Audio/BGS/"+param.name),param.volume,param.pitch)
-  end
-end
-
-# Plays an SE file.
-# param -- Either a string showing the filename 
-# (relative to Audio/SE/) or an RPG::AudioFile object.
-# Possible formats for _param_:
-# filename                        volume and pitch 100
-# filename:volume           pitch 100
-# filename:volume:pitch
-# volume -- Volume of the file, up to 100
-# pitch -- Pitch of the file, normally 100
-def pbSEPlay(param,volume=nil,pitch=nil)
-  return if !param
-  param=pbResolveAudioFile(param,volume,pitch)
-  if param.name && param.name!=""
-    if $game_system && $game_system.respond_to?("se_play")
-      $game_system.se_play(param)
-      return
-    elsif (RPG.const_defined?(:SE) rescue false)
-      b=RPG::SE.new(param.name,param.volume,param.pitch)
-      if b && b.respond_to?("play")
-        b.play; return
-      end
-    end
-    Audio.se_play(canonicalize("Audio/SE/"+param.name),param.volume,param.pitch)
-  end
-end
-
-# Stops SE playback.
-def pbSEFade(x=0.0); pbSEStop(x);end
-
-# Fades out or stops ME playback. 'x' is the time in seconds to fade out.
-def pbMEFade(x=0.0); pbMEStop(x);end
-
-# Fades out or stops BGM playback. 'x' is the time in seconds to fade out.
-def pbBGMFade(x=0.0); pbBGMStop(x);end
-
-# Fades out or stops BGS playback. 'x' is the time in seconds to fade out.
-def pbBGSFade(x=0.0); pbBGSStop(x);end
-
-# Stops SE playback.
-def pbSEStop(timeInSeconds=0.0)
-  if $game_system
-    $game_system.se_stop
-  elsif (RPG.const_defined?(:SE) rescue false)
-    RPG::SE.stop rescue nil
-  else
-    Audio.se_stop
-  end
-end
-
-# Fades out or stops ME playback. 'x' is the time in seconds to fade out.
-def pbMEStop(timeInSeconds=0.0)
-  if $game_system && timeInSeconds>0.0 && $game_system.respond_to?("me_fade")
-    $game_system.me_fade(timeInSeconds)
-    return
-  elsif $game_system && $game_system.respond_to?("me_stop")
-    $game_system.me_stop(nil)
-    return
-  elsif (RPG.const_defined?(:ME) rescue false)
-    begin
-      (timeInSeconds>0.0) ? RPG::ME.fade((timeInSeconds*1000).floor) : RPG::ME.stop
-      return
-    rescue
-    end
-  end
-  (timeInSeconds>0.0) ? Audio.me_fade((timeInSeconds*1000).floor) : Audio.me_stop
-end
-
-# Fades out or stops BGM playback. 'x' is the time in seconds to fade out.
-def pbBGMStop(timeInSeconds=0.0)
-  if $game_system && timeInSeconds>0.0 && $game_system.respond_to?("bgm_fade")
-    $game_system.bgm_fade(timeInSeconds)
-    return
-  elsif $game_system && $game_system.respond_to?("bgm_stop")
-    $game_system.bgm_stop
-    return
-  elsif (RPG.const_defined?(:BGM) rescue false)
-    begin
-      (timeInSeconds>0.0) ? RPG::BGM.fade((timeInSeconds*1000).floor) : RPG::BGM.stop
-      return
-    rescue
-    end
-  end
-  (timeInSeconds>0.0) ? Audio.bgm_fade((timeInSeconds*1000).floor) : Audio.bgm_stop
-end
-
-# Fades out or stops BGS playback. 'x' is the time in seconds to fade out.
-def pbBGSStop(timeInSeconds=0.0)
-  if $game_system && timeInSeconds>0.0 && $game_system.respond_to?("bgs_fade")
-    $game_system.bgs_fade(timeInSeconds)
-    return
-  elsif $game_system && $game_system.respond_to?("bgs_play")
-    $game_system.bgs_play(nil)
-    return
-  elsif (RPG.const_defined?(:BGS) rescue false)
-    begin
-      (timeInSeconds>0.0) ? RPG::BGS.fade((timeInSeconds*1000).floor) : RPG::BGS.stop
-      return
-    rescue
-    end
-  end
-  (timeInSeconds>0.0) ? Audio.bgs_fade((timeInSeconds*1000).floor) : Audio.bgs_stop
-end
-
-# Plays a sound effect that plays when a decision is confirmed or a choice is made.
-def pbPlayDecisionSE()
-  if $data_system && $data_system.respond_to?("decision_se") &&
-     $data_system.decision_se && $data_system.decision_se.name!=""
-    pbSEPlay($data_system.decision_se)
-  elsif $data_system && $data_system.respond_to?("sounds") &&
-     $data_system.sounds && $data_system.sounds[1] && $data_system.sounds[1].name!=""
-    pbSEPlay($data_system.sounds[1])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
-  end
-end
-
-# Plays a sound effect that plays when the player moves the cursor.
-def pbPlayCursorSE()
-  if $data_system && $data_system.respond_to?("cursor_se") &&
-     $data_system.cursor_se && $data_system.cursor_se.name!=""
-    pbSEPlay($data_system.cursor_se)
-  elsif $data_system && $data_system.respond_to?("sounds") &&
-     $data_system.sounds && $data_system.sounds[0] && $data_system.sounds[0].name!=""
-    pbSEPlay($data_system.sounds[0])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
-  end
-end
-
-# Plays a sound effect that plays when a choice is canceled.
-def pbPlayCancelSE()
-  if $data_system && $data_system.respond_to?("cancel_se") &&
-     $data_system.cancel_se && $data_system.cancel_se.name!=""
-    pbSEPlay($data_system.cancel_se)
-  elsif $data_system && $data_system.respond_to?("sounds") &&
-     $data_system.sounds && $data_system.sounds[2] && $data_system.sounds[2].name!=""
-    pbSEPlay($data_system.sounds[2])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
-  end
-end
-
-# Plays a buzzer sound effect.
-def pbPlayBuzzerSE()
-  if $data_system && $data_system.respond_to?("buzzer_se") &&
-     $data_system.buzzer_se && $data_system.buzzer_se.name!=""
-    pbSEPlay($data_system.buzzer_se)
-  elsif $data_system && $data_system.respond_to?("sounds") &&
-     $data_system.sounds && $data_system.sounds[3] && $data_system.sounds[3].name!=""
-    pbSEPlay($data_system.sounds[3])
-  elsif FileTest.audio_exist?("Audio/SE/buzzer")
-    pbSEPlay("buzzer",80)
   end
 end
 
@@ -1512,7 +1234,7 @@ end
 # pbFadeOutIn(z) { block }
 # Fades out the screen before a block is run and fades it back in after the
 # block exits.  z indicates the z-coordinate of the viewport used for this effect
-def pbFadeOutIn(z)
+def pbFadeOutIn(z,nofadeout=false)
   col=Color.new(0,0,0,0)
   viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
   viewport.z=z
@@ -1527,11 +1249,13 @@ def pbFadeOutIn(z)
     yield if block_given?
   ensure
     pbPopFade
-    for j in 0..17
-      col.set(0,0,0,(17-j)*15)
-      viewport.color=col
-      Graphics.update
-      Input.update
+    if !nofadeout
+      for j in 0..17
+        col.set(0,0,0,(17-j)*15)
+        viewport.color=col
+        Graphics.update
+        Input.update
+      end
     end
     viewport.dispose
   end
@@ -1643,7 +1367,7 @@ def pbSrcOver(dstColor,srcColor)
 end
 
 def pbSetSpritesToColor(sprites,color)
-  return if !sprites||!color
+  return if !sprites || !color
   colors={}
   for i in sprites
     next if !i[1] || pbDisposed?(i[1])
@@ -1781,161 +1505,45 @@ class SpriteWrapper < Sprite
     @sprite=Sprite.new(viewport)
   end
 
-  def dispose
-    @sprite.dispose
-  end
-
-  def disposed?
-    return @sprite.disposed?
-  end
-
-  def viewport
-    return @sprite.viewport
-  end
-
-  def flash(color,duration)
-    return @sprite.flash(color,duration)
-  end
-
-  def update
-    return @sprite.update
-  end
-
-  def x
-    @sprite.x
-  end
-
-  def x=(value)
-    @sprite.x=value
-  end
-
-  def y
-    @sprite.y
-  end
-
-  def y=(value)
-    @sprite.y=value
-  end
-
-  def bitmap
-    @sprite.bitmap
-  end
-
-  def bitmap=(value)
-    @sprite.bitmap=value
-  end
-
-  def src_rect
-    @sprite.src_rect
-  end
-
-  def src_rect=(value)
-    @sprite.src_rect=value
-  end
-
-  def visible
-    @sprite.visible
-  end
-
-  def visible=(value)
-    @sprite.visible=value
-  end
-
-  def z
-    @sprite.z
-  end
-
-  def z=(value)
-    @sprite.z=value
-  end
-
-  def ox
-    @sprite.ox
-  end
-
-  def ox=(value)
-    @sprite.ox=value
-  end
-
-  def oy
-    @sprite.oy
-  end
-
-  def oy=(value)
-    @sprite.oy=value
-  end
-
-  def zoom_x
-    @sprite.zoom_x
-  end
-
-  def zoom_x=(value)
-    @sprite.zoom_x=value
-  end
-
-  def zoom_y
-    @sprite.zoom_y
-  end
-
-  def zoom_y=(value)
-    @sprite.zoom_y=value
-  end
-
-  def angle
-    @sprite.angle
-  end
-
-  def angle=(value)
-    @sprite.angle=value
-  end
-
-  def mirror
-    @sprite.mirror
-  end
-
-  def mirror=(value)
-    @sprite.mirror=value
-  end
-
-  def bush_depth
-    @sprite.bush_depth
-  end
-
-  def bush_depth=(value)
-    @sprite.bush_depth=value
-  end
-
-  def opacity
-    @sprite.opacity
-  end
-
-  def opacity=(value)
-    @sprite.opacity=value
-  end
-
-  def blend_type
-    @sprite.blend_type
-  end
-
-  def blend_type=(value)
-    @sprite.blend_type=value
-  end
-
-  def color
-    @sprite.color
-  end
-
-  def color=(value)
-    @sprite.color=value
-  end
-
-  def tone
-    @sprite.tone
-  end
-
-  def tone=(value)
-    @sprite.tone=value
-  end
+  def dispose;               @sprite.dispose; end
+  def disposed?;             return @sprite.disposed?; end
+  def viewport;              return @sprite.viewport; end
+  def flash(color,duration); return @sprite.flash(color,duration); end
+  def update;                return @sprite.update; end
+  def x;                     @sprite.x; end
+  def x=(value);             @sprite.x=value; end
+  def y;                     @sprite.y; end
+  def y=(value);             @sprite.y=value; end
+  def bitmap;                @sprite.bitmap; end
+  def bitmap=(value);        @sprite.bitmap=value; end
+  def src_rect;              @sprite.src_rect; end
+  def src_rect=(value);      @sprite.src_rect=value; end
+  def visible;               @sprite.visible; end
+  def visible=(value);       @sprite.visible=value; end
+  def z;                     @sprite.z; end
+  def z=(value);             @sprite.z=value; end
+  def ox;                    @sprite.ox; end
+  def ox=(value);            @sprite.ox=value; end
+  def oy;                    @sprite.oy; end
+  def oy=(value);            @sprite.oy=value; end
+  def zoom_x;                @sprite.zoom_x; end
+  def zoom_x=(value);        @sprite.zoom_x=value; end
+  def zoom_y;                @sprite.zoom_y; end
+  def zoom_y=(value);        @sprite.zoom_y=value; end
+  def angle;                 @sprite.angle; end
+  def angle=(value);         @sprite.angle=value; end
+  def mirror;                @sprite.mirror; end
+  def mirror=(value);        @sprite.mirror=value; end
+  def bush_depth;            @sprite.bush_depth; end
+  def bush_depth=(value);    @sprite.bush_depth=value; end
+  def opacity;               @sprite.opacity; end
+  def opacity=(value);       @sprite.opacity=value; end
+  def blend_type;            @sprite.blend_type; end
+  def blend_type=(value);    @sprite.blend_type=value; end
+  def color;                 @sprite.color; end
+  def color=(value);         @sprite.color=value; end
+  def tone;                  @sprite.tone; end
+  def tone=(value);          @sprite.tone=value; end
 
   def viewport=(value)
     return if self.viewport==value
@@ -2337,12 +1945,12 @@ class SpriteWindow < Window
   # Flags used to preserve compatibility
   # with RGSS/RGSS2's version of Window
   module CompatBits 
-    CorrectZ=1
-    ExpandBack=2
-    ShowScrollArrows=4
-    StretchSides=8
-    ShowPause=16
-    ShowCursor=32
+    CorrectZ         = 1
+    ExpandBack       = 2
+    ShowScrollArrows = 4
+    StretchSides     = 8
+    ShowPause        = 16
+    ShowCursor       = 32
   end
 
   attr_reader :compat
@@ -3448,7 +3056,7 @@ class SpriteWindow_Selectable < SpriteWindow_Base
       self.top_row = row - (self.page_row_max - 1)
       dorefresh=true
     end
-    self.top_row = [self.top_row, self.row_max - self.page_row_max].min  # ADDED
+    self.top_row = [self.top_row, self.row_max - self.page_row_max].min
     cursor_width = (self.width-self.borderX) / @column_max
     x = self.index % @column_max * (cursor_width + @column_spacing)
     y = self.index / @column_max * @row_height - @virtualOy
@@ -4697,112 +4305,11 @@ end
 
 
 # Old GifSprite class, retained for compatibility
-class GifSprite
- # Creates a sprite from a GIF file with the specified
- # optional viewport.  Can also load non-animated bitmaps.
- # 'File' can be nil.
- def initialize(file=nil,viewport=nil)
-  @file=file
-  @sprite=SpriteWrapper.new(viewport)
-  if file
-   @bitmap=AnimatedBitmap.new(file)
-   @sprite.bitmap=@bitmap.bitmap
+class GifSprite < IconSprite
+  def initialize(path)
+    super(0,0)
+    setBitmap(path)
   end
- end
- def [](index); @bitmap[index]; end
- def length; @bitmap.length; end
- def each; @bitmap.each { yield }; end
- def currentIndex; @bitmap.currentIndex; end
- def frameDelay; @bitmap.frameDelay; end
- def totalFrames; @bitmap.totalFrames; end
- def width; @bitmap.bitmap.width; end
- def height; @bitmap.bitmap.height; end
- def length; @bitmap.length; end
- def ox; @bitmap.ox; end
- def oy; @bitmap.oy; end
- def clearBitmaps
-  @bitmap.dispose if @bitmap
-  @bitmap=nil
-  self.bitmap=nil if !self.disposed?
- end
- # Sets the icon's filename.
- def setBitmap(file,hue=0)
-  oldrc=self.src_rect
-  clearBitmaps()
-  @name=file
-  return if file==nil
-  if file!=""
-   @bitmap=AnimatedBitmap.new(file,hue)
-   # for compatibility
-   self.bitmap=@bitmap ? @bitmap.bitmap : nil
-   self.src_rect=oldrc
-   @sprite.bitmap=@bitmap.bitmap
-  else
-   @bitmap=nil
- end
- end
- def setBitmap(file)
-  @bitmap.dispose if @bitmap
-  @bitmap=AnimatedBitmap.new(file)  
-  @sprite.bitmap=@bitmap.bitmap
- end
- def bitmap
-  @sprite.bitmap
- end
- def getData
-    data = "rgba" * width * height
-    RtlMoveMemory_pi.call(data, self.address, data.length)
-    return data
-  end
- def bitmap=(value)
-  @sprite.bitmap=value
- end
- def disposed?
-  @sprite.disposed?
- end
- def width
-  @sprite.bitmap.width
- end
- def height
-  @sprite.bitmap.height
- end
- # This function must be called in order to animate
- # the GIF image.
- #def update
- #if @bitmap
- # @bitmap.update
- # @sprite.update
- #  if self.bitmap!=@bitmap.bitmap
- #  oldrc=self.src_rect
- #   self.bitmap=@bitmap.bitmap
- #  self.src_rect=oldrc
- #  end
- #end
- #end
- def update
-  @bitmap.update
-  @sprite.update
-  if @sprite.bitmap!=@bitmap.bitmap
-   oldsrc=@sprite.src_rect ? @sprite.src_rect.clone : nil
-   @sprite.bitmap=@bitmap.bitmap
-   @sprite.src_rect=oldsrc if oldsrc
-  end
- end
- def dispose
-  @bitmap.dispose
-  @sprite.dispose
- end
- def flash(*arg); sprite.flash(*arg); end
- %w[
-   x y z ox oy visible zoom_x zoom_y
-   angle mirror bush_depth opacity blend_type
-   color tone src_rect viewport width height
- ].each do |s|
-  eval <<-__END__
-   def #{s}; @sprite.#{s}; end
-   def #{s}=(value); @sprite.#{s}=value; end
-  __END__
- end
 end
 
 

@@ -37,11 +37,11 @@ class Interpreter
   #     list     : list of event commands
   #     event_id : event ID
   #-----------------------------------------------------------------------------
-  def setup(list, event_id, map_id=nil) #### CHANGED
+  def setup(list, event_id, map_id=nil)
     # Clear inner situation of interpreter
     clear
     # Remember map ID
-    @map_id = map_id ? map_id : $game_map.map_id#### CHANGED
+    @map_id = map_id ? map_id : $game_map.map_id
     # Remember event ID
     @event_id = event_id
     # Remember list of event commands
@@ -257,7 +257,7 @@ class Interpreter
            end
            if line[/^\s*\(/]
              message+="\r\n***Line '#{line}' shouldn't begin with '('. Try\r\n"
-             message+="putting '(' at the end of the previous line instead,\r\n"
+             message+="putting the '(' at the end of the previous line instead,\r\n"
              message+="or using Extendtext."
            end
         }
@@ -507,7 +507,7 @@ class Interpreter
     # Clear list of event commands
     @list = nil
     # If main map event and event ID are valid
-    if @main and @event_id > 0
+    if @main and @event_id > 0 && $game_map.events[@event_id]
       # Unlock event
       $game_map.events[@event_id].unlock
     end

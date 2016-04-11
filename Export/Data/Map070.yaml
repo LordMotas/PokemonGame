@@ -4,8 +4,8 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: uwater
     pitch: 100
-  tileset_id: 22
   events: !ruby/object:Hash {}
+  tileset_id: 22
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

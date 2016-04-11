@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: route
     pitch: 100
-  tileset_id: 15
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -177,13 +176,13 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(PBItems::AURORATICKET)>0"
+          - "$PokemonBag.pbQuantity(:AURORATICKET)>0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(PBItems::OLDSEAMAP)>0"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)>0"
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -194,7 +193,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - - Tiall Region
-            - Daroxy Island
+            - Berth Island
             - Faraday Island
             - Exit
           - 4
@@ -218,12 +217,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 1
-          - Daroxy Island
+          - Berth Island
           indent: 2
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Daroxy Island
+          - Berth Island
           indent: 3
           code: 119
         - !ruby/object:RPG::EventCommand
@@ -280,7 +279,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - - Tiall Region
-            - Daroxy Island
+            - Berth Island
             - Exit
           - 3
           indent: 2
@@ -303,12 +302,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 1
-          - Daroxy Island
+          - Berth Island
           indent: 2
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Daroxy Island
+          - Berth Island
           indent: 3
           code: 119
         - !ruby/object:RPG::EventCommand
@@ -353,7 +352,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(PBItems::OLDSEAMAP)>0"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)>0"
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -656,12 +655,12 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Daroxy Island
+          - Berth Island
           indent: 0
           code: 118
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bDaroxy Island it is.  All aboard!"
+          - "\\bBerth Island it is.  All aboard!"
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -1041,7 +1040,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(PBItems::AURORATICKET)<=0"
+          - "$PokemonBag.pbQuantity(:AURORATICKET)<=0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1052,12 +1051,12 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(PBItems::AURORATICKET)
+          - Kernel.pbReceiveItem(:AURORATICKET)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bYou can use that to sail to Daroxy Island."
+          - "\\bYou can use that to sail to Berth Island."
           indent: 2
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -1096,7 +1095,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - gone to Daroxy Island yet?
+          - gone to Berth Island yet?
           indent: 1
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -1156,7 +1155,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbQuantity(PBItems::OLDSEAMAP)<=0"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)<=0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1167,7 +1166,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - Kernel.pbReceiveItem(PBItems::OLDSEAMAP)
+          - Kernel.pbReceiveItem(:OLDSEAMAP)
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -1264,6 +1263,7 @@ root: !ruby/object:RPG::Map
       y: 5
       x: 10
       id: 4
+  tileset_id: 15
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

@@ -260,7 +260,7 @@ class VoltorbFlip
       if @cursor[0][3]==64 # If in mark mode
         for i in 0...@squares.length
           if @index[0]*64+128==@squares[i][0] && @index[1]*64==@squares[i][1] && @squares[i][3]==false
-            pbSEPlay("Voltorb Flip Mark")
+            pbSEPlay("VoltorbFlipMark")
           end
         end
         for i in 0...@marks.length+1
@@ -284,7 +284,7 @@ class VoltorbFlip
             @squares[i][3]=true
             # If Voltorb (0), display all tiles on the board
             if @squares[i][2]==0
-              pbSEPlay("Voltorb Flip Explosion")
+              pbSEPlay("VoltorbFlipExplosion")
               # Play explosion animation
               # Part1
               animation=[]
@@ -320,7 +320,7 @@ class VoltorbFlip
                 if @level>newLevel
                   @level=newLevel
                   @level=1 if @level<1
-                  Kernel.pbMessage(_INTL("\\se[Voltorb Flip Level Dropped]Dropped to Game Lv. {1}!",@level.to_s))
+                  Kernel.pbMessage(_INTL("\\se[VoltorbFlipLevelDown]Dropped to Game Lv. {1}!",@level.to_s))
                 end
               end
               # Update level text
@@ -348,10 +348,10 @@ class VoltorbFlip
               end
               if @points==0
                 @points+=@squares[i][2]
-                pbSEPlay("Voltorb Flip Point")
+                pbSEPlay("VoltorbFlipPoint")
               elsif @squares[i][2]>1
                 @points*=@squares[i][2]
-                pbSEPlay("Voltorb Flip Point")
+                pbSEPlay("VoltorbFlipPoint")
               end
               break
             end
@@ -503,7 +503,7 @@ class VoltorbFlip
     end
     icons[3]=[@directory+"tiles",x,y,tile*64,0,64,64]
     pbDrawImagePositions(@sprites["icon"].bitmap,icons)
-    pbSEPlay("Voltorb Flip Tile")
+    pbSEPlay("VoltorbFlipTile")
   end
 
   def pbShowAndDispose
@@ -514,7 +514,7 @@ class VoltorbFlip
       @sprites[i].bitmap.clear
       @sprites[i].z=99997
     end
-    pbSEPlay("Voltorb Flip Tile")
+    pbSEPlay("VoltorbFlipTile")
     @sprites[5].visible=true
     @sprites["mark"].bitmap.clear
     pbWait(2)
@@ -528,7 +528,7 @@ class VoltorbFlip
     # "Dispose" of tiles by column
     for i in 0...5
       icons=[]
-      pbSEPlay("Voltorb Flip Tile")
+      pbSEPlay("VoltorbFlipTile")
       for j in 0...5
         icons[j]=[@directory+"tiles",@squares[i+(j*5)][0],@squares[i+(j*5)][1],448+(@squares[i+(j*5)][2]*64),0,64,64]
       end
@@ -616,7 +616,7 @@ end
 
 
 def pbVoltorbFlip
-  if hasConst?(PBItems,:COINCASE) && $PokemonBag.pbQuantity(PBItems::COINCASE)<=0
+  if hasConst?(PBItems,:COINCASE) && $PokemonBag.pbQuantity(:COINCASE)<=0
     Kernel.pbMessage(_INTL("You can't play unless you have a Coin Case."))
   elsif $PokemonGlobal.coins==MAXCOINS
     Kernel.pbMessage(_INTL("Your Coin Case is full!"))

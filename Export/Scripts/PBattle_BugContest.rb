@@ -379,8 +379,8 @@ Events.onMapUpdate+=proc{|sender,e|
    elsif !$game_player.move_route_forcing && !pbMapInterpreterRunning? &&
          !$game_temp.message_window_showing
      if pbBugContestState.expired?
-       Kernel.pbMessage("ANNOUNCER:  BEEEEEP!")
-       Kernel.pbMessage("Time's up!")
+       Kernel.pbMessage(_INTL("ANNOUNCER:  BEEEEEP!"))
+       Kernel.pbMessage(_INTL("Time's up!"))
        pbBugContestState.pbStartJudging
      end
    end
@@ -421,18 +421,18 @@ def pbBugContestBattle(species,level)
   decision=0
   pbBattleAnimation(pbGetWildBattleBGM(species)) { 
      decision=battle.pbStartBattle
+     Events.onEndBattle.trigger(nil,decision,true)
      if decision==2 || decision==5
        $game_system.bgm_unpause
        $game_system.bgs_unpause
        Kernel.pbBugContestStartOver
      end
-     Events.onEndBattle.trigger(nil,decision)
   }
   pbBugContestState.ballcount=battle.ballcount
   Input.update
   Events.onWildBattleEnd.trigger(nil,species,level,decision)
   if pbBugContestState.ballcount==0
-    Kernel.pbMessage("ANNOUNCER:  The Bug-Catching Contest is over!")
+    Kernel.pbMessage(_INTL("ANNOUNCER:  The Bug-Catching Contest is over!"))
     pbBugContestState.pbStartJudging
   end
   return (decision!=2 && decision!=5)

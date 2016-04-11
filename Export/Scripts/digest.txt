@@ -43,7 +43,7 @@
 71359307    PBDebug                                      PBDebug.rb
 83068051    ================                             EMPTY
 81118607    Audio                                        Audio.rb
-82922566    AudioPlay                                    EMPTY
+82922566    AudioPlay                                    AudioPlay.rb
 23773314    AudioUtilities                               AudioUtilities.rb
 4971563     ================                             EMPTY
 82335198    BitmapCache                                  BitmapCache.rb
@@ -61,7 +61,7 @@
 68340238    Scene_Credits                                Scene_Credits.rb
 99031337    Transitions                                  Transitions.rb
 36377771    ================                             EMPTY
-30205337    MiscData                                     EMPTY
+30205337    MiscData                                     MiscData.rb
 87446417    PBMove                                       PBMove.rb
 56495368    PBStatuses                                   PBStatuses.rb
 51698776    PBTypes_Extra                                PBTypes_Extra.rb
@@ -69,8 +69,8 @@
 99993693    PBExperience                                 PBExperience.rb
 48438576    PBStats                                      PBStats.rb
 212145      PBRibbons                                    PBRibbons.rb
-97865779    PBEggGroups                                  EMPTY
-7466226     PBColors                                     EMPTY
+97865779    PBEggGroups                                  PBEggGroups.rb
+7466226     PBColors                                     PBColors.rb
 30475794    PBEnvironment                                PBEnvironment.rb
 80850057    ================                             EMPTY
 82042322    PBEffects                                    PBEffects.rb
@@ -98,8 +98,8 @@
 35681012    PBTerrain                                    PBTerrain.rb
 13862471    PField_Field                                 PField_Field.rb
 34036101    PField_FieldWeather                          PField_FieldWeather.rb
-7433173     PField_Metadata                              EMPTY
-44189734    PField_MapFactory                            EMPTY
+7433173     PField_Metadata                              PField_Metadata.rb
+44189734    PField_MapFactory                            PField_MapFactory.rb
 83521781    PField_HiddenMoves                           PField_HiddenMoves.rb
 99166834    PField_Encounters                            PField_Encounters.rb
 59741688    PField_EncounterModifiers                    PField_EncounterModifiers.rb
@@ -117,12 +117,12 @@
 98118426    PItem_ItemEffects                            PItem_ItemEffects.rb
 71716027    PItem_PokeBalls                              PItem_PokeBalls.rb
 26789106    PItem_PokeRadar                              PItem_PokeRadar.rb
-13650551    PItem_Mail                                   EMPTY
-58714349    PItem_Sprites                                EMPTY
+13650551    PItem_Mail                                   PItem_Mail.rb
+58714349    PItem_Sprites                                PItem_Sprites.rb
 7164315     ================                             EMPTY
 12627955    PokeBattle_Pokemon                           PokeBattle_Pokemon.rb
 38169587    Pokemon_MultipleForms                        Pokemon_MultipleForms.rb
-99154456    Pokemon_MegaEvolution                        EMPTY
+99154456    Pokemon_MegaEvolution                        Pokemon_MegaEvolution.rb
 59631760    Pokemon_ShadowPokemon                        Pokemon_ShadowPokemon.rb
 24965382    Pokemon_Evolution                            Pokemon_Evolution.rb
 76534435    Pokemon_Chatter                              Pokemon_Chatter.rb
@@ -176,10 +176,10 @@
 35205096    Editor                                       Editor.rb
 66443344    Compiler                                     Compiler.rb
 30913346    ===CUSTOM SCRIPTS===                         EMPTY
-85156739    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
-85596521    ItemCrafter                                  ItemCrafter.rb
-33756233    UraniumCustomMenu                            UraniumCustomMenu.rb
-24216588    SkyInverseBattle                             EMPTY
+10488910    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
+61226699    ItemCrafter                                  ItemCrafter.rb
+6123542     UraniumCustomMenu                            UraniumCustomMenu.rb
+24216588    SkyInverseBattle                             SkyInverseBattle.rb
 51398100    ChallengeModes                               ChallengeModes.rb
 28946912    ChallengeSelection                           ChallengeSelection.rb
 23982061    Challenge_Selection                          Challenge_Selection.rb
@@ -188,6 +188,6 @@
 21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
 7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
 56201428    Errassus_BWBag                               Errassus_BWBag.rb
-66124780    AdvancedTitleScreen                          EMPTY
+66124780    AdvancedTitleScreen                          AdvancedTitleScreen.rb
 27847358    ================                             EMPTY
 76067044    Main                                         Main.rb

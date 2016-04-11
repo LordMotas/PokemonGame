@@ -115,11 +115,12 @@ class Sprite_Character < RPG::Sprite
       end
     end
     @charbitmap.update if @charbitmapAnimated
-    if @character.bush_depth==0
+    bushdepth=@character.bush_depth
+    if bushdepth==0
       self.bitmap=@charbitmapAnimated ? @charbitmap.bitmap : @charbitmap
     else
       if !@bushbitmap
-        @bushbitmap=BushBitmap.new(@charbitmap,@tile_id >= 384,@character.bush_depth)
+        @bushbitmap=BushBitmap.new(@charbitmap,@tile_id >= 384,bushdepth)
       end
       self.bitmap=@bushbitmap.bitmap
     end

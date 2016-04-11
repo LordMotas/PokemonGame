@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 100
     name: ''
     pitch: 100
-  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -1286,7 +1285,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Kernel.pbReceiveItem(PBItems::SUNSTONE)
+          - Kernel.pbReceiveItem(:SUNSTONE)
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1318,7 +1317,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Kernel.pbReceiveItem(PBItems::EVERSTONE)
+          - Kernel.pbReceiveItem(:EVERSTONE)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1342,7 +1341,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Kernel.pbReceiveItem(PBItems::SITRUSBERRY)
+          - Kernel.pbReceiveItem(:SITRUSBERRY)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1371,7 +1370,7 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Kernel.pbReceiveItem(PBItems::SHEDSHELL)
+          - Kernel.pbReceiveItem(:SHEDSHELL)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1749,7 +1748,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Barry: \bI study a lot, but that''s not good enough to '
+          - 'Barry: \bI work a lot, but that''s not good enough to '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -1845,12 +1844,12 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Samuel: \bI study a lot, but that''s not good enough to '
+          - 'Samuel: \bI put lots of effort in, but that''s not good '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - win.
+          - enough to win.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -1941,7 +1940,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Abby: \rI study a lot, but that''s not good enough to '
+          - 'Abby: \rI try my best, but that''s not good enough to '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -1991,6 +1990,7 @@ root: !ruby/object:RPG::Map
       y: 5
       x: 8
       id: 7
+  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

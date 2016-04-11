@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 035-Dungeon01
     pitch: 100
-  tileset_id: 7
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -87,6 +86,7 @@ root: !ruby/object:RPG::Map
       y: 1
       x: 1
       id: 1
+  tileset_id: 7
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

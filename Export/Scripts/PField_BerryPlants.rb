@@ -1,3 +1,18 @@
+class PokemonTemp
+  attr_reader :berryPlantData
+
+  def pbGetBerryPlantData(item)
+    if !@berryPlantData
+      pbRgssOpen("Data/berryplants.dat","rb"){|f|
+         @berryPlantData=Marshal.load(f)
+      }
+    end
+    return @berryPlantData[item]
+  end
+end
+
+
+
 Events.onSpritesetCreate+=proc{|sender,e|
    spriteset=e[0]
    viewport=e[1]
@@ -71,72 +86,8 @@ end
 
 
 class BerryPlantSprite
-  # Berry, hours per stage, drying per hour, min yield, max yield, plural
-  BERRYVALUES=[[:CHERIBERRY,  3,15, 2,5,  _INTL("Cheri Berries")],
-               [:CHESTOBERRY, 3,15, 2,5,  _INTL("Chesto Berries")],
-               [:PECHABERRY,  3,15, 2,5,  _INTL("Pecha Berries")],
-               [:RAWSTBERRY,  3,15, 2,5,  _INTL("Rawst Berries")],
-               [:ASPEARBERRY, 3,15, 2,5,  _INTL("Aspear Berries")],
-               [:LEPPABERRY,  4,15, 2,5,  _INTL("Leppa Berries")],
-               [:ORANBERRY,   4,15, 2,5,  _INTL("Oran Berries")],
-               [:PERSIMBERRY, 4,15, 2,5,  _INTL("Persim Berries")],
-               [:LUMBERRY,    12,8, 2,5,  _INTL("Lum Berries")],
-               [:SITRUSBERRY, 8,7,  2,5,  _INTL("Sitrus Berries")],
-               [:FIGYBERRY,   5,10, 1,5,  _INTL("Figy Berries")],
-               [:WIKIBERRY,   5,10, 1,5,  _INTL("Wiki Berries")],
-               [:MAGOBERRY,   5,10, 1,5,  _INTL("Mago Berries")],
-               [:AGUAVBERRY,  5,10, 1,5,  _INTL("Aguav Berries")],
-               [:IAPAPABERRY, 5,10, 1,5,  _INTL("Iapapa Berries")],
-               [:RAZZBERRY,   2,35, 2,10, _INTL("Razz Berries")],
-               [:BLUKBERRY,   2,35, 2,10, _INTL("Bluk Berries")],
-               [:NANABBERRY,  2,35, 2,10, _INTL("Nanab Berries")],
-               [:WEPEARBERRY, 2,35, 2,10, _INTL("Wepear Berries")],
-               [:PINAPBERRY,  2,35, 2,10, _INTL("Pinap Berries")],
-               [:POMEGBERRY,  8,8,  1,5,  _INTL("Pomeg Berries")],
-               [:KELPSYBERRY, 8,8,  1,5,  _INTL("Kelpsy Berries")],
-               [:QUALOTBERRY, 8,8,  1,5,  _INTL("Qualot Berries")],
-               [:HONDEWBERRY, 8,8,  1,5,  _INTL("Hondew Berries")],
-               [:GREPABERRY,  8,8,  1,5,  _INTL("Grepa Berries")],
-               [:TAMATOBERRY, 8,8,  1,5,  _INTL("Tamato Berries")],
-               [:CORNNBERRY,  6,10, 2,10, _INTL("Cornn Berries")],
-               [:MAGOSTBERRY, 6,10, 2,10, _INTL("Magost Berries")],
-               [:RABUTABERRY, 6,10, 2,10, _INTL("Rabuta Berries")],
-               [:NOMELBERRY,  6,10, 2,10, _INTL("Nomel Berries")],
-               [:SPELONBERRY, 15,8, 2,15, _INTL("Spelon Berries")],
-               [:PAMTREBERRY, 15,8, 3,15, _INTL("Pamtre Berries")],
-               [:WATMELBERRY, 15,8, 2,15, _INTL("Watmel Berries")],
-               [:DURINBERRY,  15,8, 3,15, _INTL("Durin Berries")],
-               [:BELUEBERRY,  15,8, 2,15, _INTL("Belue Berries")],
-               [:OCCABERRY,   18,6, 1,5,  _INTL("Occa Berries")],
-               [:PASSHOBERRY, 18,6, 1,5,  _INTL("Passho Berries")],
-               [:WACANBERRY,  18,6, 1,5,  _INTL("Wacan Berries")],
-               [:RINDOBERRY,  18,6, 1,5,  _INTL("Rindo Berries")],
-               [:YACHEBERRY,  18,6, 1,5,  _INTL("Yache Berries")],
-               [:CHOPLEBERRY, 18,6, 1,5,  _INTL("Chople Berries")],
-               [:KEBIABERRY,  18,6, 1,5,  _INTL("Kebia Berries")],
-               [:SHUCABERRY,  18,6, 1,5,  _INTL("Shuca Berries")],
-               [:COBABERRY,   18,6, 1,5,  _INTL("Coba Berries")],
-               [:PAYAPABERRY, 18,6, 1,5,  _INTL("Payapa Berries")],
-               [:TANGABERRY,  18,6, 1,5,  _INTL("Tanga Berries")],
-               [:CHARTIBERRY, 18,6, 1,5,  _INTL("Charti Berries")],
-               [:KASIBBERRY,  18,6, 1,5,  _INTL("Kasib Berries")],
-               [:HABANBERRY,  18,6, 1,5,  _INTL("Haban Berries")],
-               [:COLBURBERRY, 18,6, 1,5,  _INTL("Colbur Berries")],
-               [:BABIRIBERRY, 18,6, 1,5,  _INTL("Babiri Berries")],
-               [:CHILANBERRY, 18,6, 1,5,  _INTL("Chilan  Berries")],
-               [:LIECHIBERRY, 24,4, 1,5,  _INTL("Liechi Berries")],
-               [:GANLONBERRY, 24,4, 1,5,  _INTL("Ganlon Berries")],
-               [:SALACBERRY,  24,4, 1,5,  _INTL("Salac Berries")],
-               [:PETAYABERRY, 24,4, 1,5,  _INTL("Petaya Berries")],
-               [:APICOTBERRY, 24,4, 1,5,  _INTL("Apicot Berries")],
-               [:LANSATBERRY, 24,4, 1,5,  _INTL("Lansat Berries")],
-               [:STARFBERRY,  24,4, 1,5,  _INTL("Starf Berries")],
-               [:ENIGMABERRY, 24,7, 1,5,  _INTL("Enigma Berries")],
-               [:MICLEBERRY,  24,7, 1,5,  _INTL("Micle Berries")],
-               [:CUSTAPBERRY, 24,7, 1,5,  _INTL("Custap Berries")],
-               [:JABOCABERRY, 24,7, 1,5,  _INTL("Jaboca Berries")],
-               [:ROWAPBERRY,  24,7, 1,5,  _INTL("Rowap Berries")]]
-  REPLANTS=9
+  DEFAULTBERRYVALUES = [3,15,2,5] # Hours/stage, drying/hour, min yield, max yield
+  REPLANTS = 9
 
   def initialize(event,map,viewport)
     @event=event
@@ -171,19 +122,13 @@ class BerryPlantSprite
   end
 
   def updatePlantDetails(berryData)
-    berryvalues=nil
-    for i in BERRYVALUES
-      if isConst?(berryData[1],PBItems,i[0])
-        berryvalues=i
-        break
-      end
-    end
-    berryvalues=BERRYVALUES[0] if !berryvalues
-    timeperstage=berryvalues[1]
+    berryvalues=$PokemonTemp.pbGetBerryPlantData(berryData[1])
+    berryvalues=DEFAULTBERRYVALUES if !berryvalues # Default values
+    timeperstage=berryvalues[0]
     if berryData.length>6
       # Gen 4 growth mechanisms
       if berryData[0]>0
-        dryingrate=berryvalues[2]
+        dryingrate=berryvalues[1]
         timeperstage*=3600
         if hasConst?(PBItems,:GROWTHMULCH) && isConst?(berryData[7],PBItems,:GROWTHMULCH)
           timeperstage=(timeperstage*0.75).to_i
@@ -298,7 +243,9 @@ class BerryPlantSprite
       if berryData[0]>0 && berryData[0]<5
         # Reset watering
         if $game_screen && 
-           ($game_screen.weather_type==1 || $game_screen.weather_type==2)
+           ($game_screen.weather_type==PBFieldWeather::Rain ||
+           $game_screen.weather_type==PBFieldWeather::HeavyRain ||
+           $game_screen.weather_type==PBFieldWeather::Storm)
           # If raining, plant is already watered
           if berryData[2]==false
             berryData[2]=true
@@ -363,18 +310,11 @@ def pbBerryPlant
   when 5  # X berries
     thisEvent.turn_up
   end
-  berryvalues=nil
-  for i in BerryPlantSprite::BERRYVALUES
-    if isConst?(berryData[1],PBItems,i[0])
-      berryvalues=i
-      break
-    end
-  end
-  berryvalues=BerryPlantSprite::BERRYVALUES[0] if !berryvalues
   watering=[]
   watering.push(getConst(PBItems,:SPRAYDUCK)) if hasConst?(PBItems,:SPRAYDUCK)
   watering.push(getConst(PBItems,:SQUIRTBOTTLE)) if hasConst?(PBItems,:SQUIRTBOTTLE)
   watering.push(getConst(PBItems,:WAILMERPAIL)) if hasConst?(PBItems,:WAILMERPAIL)
+  watering.push(getConst(PBItems,:SPRINKLOTAD)) if hasConst?(PBItems,:SPRINKLOTAD)
   berry=berryData[1]
   case berryData[0]
   when 0  # empty
@@ -514,41 +454,41 @@ def pbBerryPlant
       end
     end
   when 5  # X berries
+    berryvalues=$PokemonTemp.pbGetBerryPlantData(berryData[1])
+    berryvalues=DEFAULTBERRYVALUES if !berryvalues # Default values
     # Get berry yield (berrycount)
     berrycount=1
     if berryData.length>6
       # Gen 4 berry yield calculation
-      berrycount=[berryvalues[4]-berryData[6],berryvalues[3]].max
+      berrycount=[berryvalues[3]-berryData[6],berryvalues[2]].max
     else
       # Gen 3 berry yield calculation
       if berryData[4]>0
-        randomno=rand(1+berryvalues[4]-berryvalues[3])
-        berrycount=(((berryvalues[4]-berryvalues[3])*(berryData[4]-1)+randomno)/4).floor+berryvalues[3]
+        randomno=rand(1+berryvalues[3]-berryvalues[2])
+        berrycount=(((berryvalues[3]-berryvalues[2])*(berryData[4]-1)+randomno)/4).floor+berryvalues[2]
       else
-        berrycount=berryvalues[3]
+        berrycount=berryvalues[2]
       end
     end
-    plural=(berryvalues[5]) ? berryvalues[5] : PBItems.getName(item)
+    itemname=(berrycount>1) ? PBItems.getNamePlural(berry) : PBItems.getName(berry)
     if berrycount>1
-      message=_INTL("There are {1} {2}!\nWant to pick them?",berrycount,plural)
+      message=_INTL("There are {1} {2}!\nWant to pick them?",berrycount,itemname)
     else
-      message=_INTL("There is 1 {1}!\nWant to pick it?",PBItems.getName(berry))
+      message=_INTL("There is 1 {1}!\nWant to pick it?",itemname)
     end
     if Kernel.pbConfirmMessage(message)
-      if !$PokemonBag.pbCanStore?(berryData[1],berrycount)
+      if !$PokemonBag.pbCanStore?(berry,berrycount)
         Kernel.pbMessage(_INTL("Too bad...\nThe bag is full."))
         return
       end
-      $PokemonBag.pbStoreItem(berryData[1],berrycount)
+      $PokemonBag.pbStoreItem(berry,berrycount)
       if berrycount>1
-        Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",berrycount,plural))
-        Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{BERRYPOCKET}>\\c[1]Berries\\c[0] Pocket.\1",
-           $Trainer.name,plural))
+        Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",berrycount,itemname))
       else
-        Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",PBItems.getName(berry)))
-        Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{BERRYPOCKET}>\\c[1]Berries\\c[0] Pocket.\1",
-           $Trainer.name,PBItems.getName(berry)))
+        Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",itemname))
       end
+      Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{BERRYPOCKET}>\\c[1]Berries\\c[0] Pocket.\1",
+         $Trainer.name,itemname))
       if NEWBERRYPLANTS
         Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state.\1"))
         berryData=[0,0,0,0,0,0,0,0]
@@ -592,20 +532,14 @@ def pbPickBerry(berry,qty=1)
   interp=pbMapInterpreter
   thisEvent=interp.get_character(0)
   berryData=interp.getVariable
-  berryplural=_INTL("unknown berries")
   if berry.is_a?(String) || berry.is_a?(Symbol)
     berry=getID(PBItems,berry)
   end
-  for i in BerryPlantSprite::BERRYVALUES
-    if isConst?(berry,PBItems,i[0])
-      berryplural=i[5]
-      break
-    end
-  end
+  itemname=(qty>1) ? PBItems.getNamePlural(berry) : PBItems.getName(berry)
   if qty>1
-    message=_INTL("There are {1} {2}!\nWant to pick them?",qty,berryplural)
+    message=_INTL("There are {1} {2}!\nWant to pick them?",qty,itemname)
   else
-    message=_INTL("There is 1 {1}!\nWant to pick it?",PBItems.getName(berry))
+    message=_INTL("There is 1 {1}!\nWant to pick it?",itemname)
   end
   if Kernel.pbConfirmMessage(message)
     if !$PokemonBag.pbCanStore?(berry,qty)
@@ -615,14 +549,12 @@ def pbPickBerry(berry,qty=1)
     $PokemonBag.pbStoreItem(berry,qty)
     pocket=pbGetPocket(berry)
     if qty>1
-      Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",qty,berryplural))
-      Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{pocket}>\\c[1]Berries\\c[0] Pocket.\1",
-         $Trainer.name,berryplural))
+      Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",qty,itemname))
     else
-      Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",PBItems.getName(berry)))
-      Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{pocket}>\\c[1]Berries\\c[0] Pocket.\1",
-         $Trainer.name,PBItems.getName(berry)))
+      Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",itemname))
     end
+    Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{pocket}>\\c[1]Berries\\c[0] Pocket.\1",
+       $Trainer.name,itemname))
     if NEWBERRYPLANTS
       Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state.\1"))
       berryData=[0,0,0,0,0,0,0,0]

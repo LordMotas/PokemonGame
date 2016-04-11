@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 022-Field05
     pitch: 100
-  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -282,7 +281,7 @@ root: !ruby/object:RPG::Map
           code: 121
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbWildBattle(PBSpecies::MEW,30,1)
+          - pbWildBattle(:MEW,30,1)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -491,6 +490,7 @@ root: !ruby/object:RPG::Map
       y: 12
       x: 14
       id: 8
+  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

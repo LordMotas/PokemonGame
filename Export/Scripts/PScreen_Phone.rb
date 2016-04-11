@@ -355,10 +355,10 @@ class PokemonPhoneScene
     @sprites["header"].baseColor=Color.new(248,248,248)
     @sprites["header"].shadowColor=Color.new(0,0,0)
     mapname=(@trainers[0][2]) ? pbGetMessage(MessageTypes::MapNames,@trainers[0][2]) : ""
-    @sprites["bottom"]=Window_AdvancedTextPokemon.newWithSize(_INTL(""),
+    @sprites["bottom"]=Window_AdvancedTextPokemon.newWithSize("",
        162,Graphics.height-64,Graphics.width-158,64,@viewport)
     @sprites["bottom"].text="<ac>"+mapname
-    @sprites["info"]=Window_AdvancedTextPokemon.newWithSize(_INTL(""),
+    @sprites["info"]=Window_AdvancedTextPokemon.newWithSize("",
        -8,224,180,160,@viewport)
     addBackgroundPlane(@sprites,"bg","phonebg",@viewport)
     @sprites["icon"]=IconSprite.new(70,102,@viewport)

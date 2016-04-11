@@ -1,3 +1,99 @@
+#==============================================================================
+# Custom Scripts:
+# HMs into Items
+# by FL
+#==============================================================================
+#===============================================================================
+# Interpolators
+#===============================================================================
+class RectInterpolator
+  def initialize(oldrect,newrect,frames)
+    restart(oldrect,newrect,frames)
+  end
+
+  def restart(oldrect,newrect,frames)
+    @oldrect=oldrect
+    @newrect=newrect
+    @frames=[frames,1].max
+    @curframe=0
+    @rect=oldrect.clone
+  end
+
+  def set(rect)
+    rect.set(@rect.x,@rect.y,@rect.width,@rect.height)
+  end
+
+  def done?
+    @curframe>@frames
+  end
+
+  def update
+    return if done?
+    t=(@curframe*1.0/@frames)
+    x1=@oldrect.x
+    x2=@newrect.x
+    x=x1+t*(x2-x1)
+    y1=@oldrect.y
+    y2=@newrect.y
+    y=y1+t*(y2-y1)
+    rx1=@oldrect.x+@oldrect.width
+    rx2=@newrect.x+@newrect.width
+    rx=rx1+t*(rx2-rx1)
+    ry1=@oldrect.y+@oldrect.height
+    ry2=@newrect.y+@newrect.height
+    ry=ry1+t*(ry2-ry1)
+    minx=x<rx ? x : rx
+    maxx=x>rx ? x : rx
+    miny=y<ry ? y : ry
+    maxy=y>ry ? y : ry
+    @rect.set(minx,miny,maxx-minx,maxy-miny)
+    @curframe+=1
+  end
+end
+
+
+
+class PointInterpolator
+  def initialize(oldx,oldy,newx,newy,frames)
+    restart(oldx,oldy,newx,newy,frames)
+  end
+
+  def restart(oldx,oldy,newx,newy,frames)
+    @oldx=oldx
+    @oldy=oldy
+    @newx=newx
+    @newy=newy
+    @frames=frames
+    @curframe=0
+    @x=oldx
+    @y=oldy
+  end
+
+  def x; @x;end
+  def y; @y;end
+
+  def done?
+    @curframe>@frames
+  end
+
+  def update
+    return if done?
+    t=(@curframe*1.0/@frames)
+    rx1=@oldx
+    rx2=@newx
+    @x=rx1+t*(rx2-rx1)
+    ry1=@oldy
+    ry2=@newy
+    @y=ry1+t*(ry2-ry1)
+    @curframe+=1
+  end
+end
+
+
+
+#===============================================================================
+# Hidden move handlers
+#===============================================================================
 class MoveHandlerHash < HandlerHash
   def initialize
     super(:PBMoves)
@@ -43,6 +139,21 @@ end
 
 
 
+def Kernel.pbCanUseHiddenMove?(pkmn,move)
+  return HiddenMoveHandlers.triggerCanUseMove(move,pkmn)
+end
+
+def Kernel.pbUseHiddenMove(pokemon,move)
+  return HiddenMoveHandlers.triggerUseMove(move,pokemon)
+end
+
+def Kernel.pbHiddenMoveEvent
+  Events.onAction.trigger(nil)
+end
+
+#===============================================================================
+# Hidden move animation
+#===============================================================================
 def pbHiddenMoveAnimation(pokemon)
   return false if !pokemon
   viewport=Viewport.new(0,0,0,0)
@@ -75,6 +186,7 @@ def pbHiddenMoveAnimation(pokemon)
   begin
     Graphics.update
     Input.update
+    sprite.update
     case phase
     when 1 # Expand viewport height from zero to full
       interp.update
@@ -157,26 +269,28 @@ end
 # Cut
 #===============================================================================
 def Kernel.pbCut
-  if $DEBUG ||
-     (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORCUT : $Trainer.badges[BADGEFORCUT])
-    movefinder=Kernel.pbCheckMove(:CUT)
-    if $DEBUG || movefinder
+  #if $DEBUG ||
+     #(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORCUT : $Trainer.badges[BADGEFORCUT])
+    #movefinder=Kernel.pbCheckMove(:CUT)
+    if $DEBUG || $PokemonBag.pbQuantity(PBItems::SCYTHE)>0 #movefinder
       Kernel.pbMessage(_INTL("This tree looks like it can be cut down!\1"))
       if Kernel.pbConfirmMessage(_INTL("Would you like to cut it?"))
-        speciesname=!movefinder ? $Trainer.name : movefinder.name
-        Kernel.pbMessage(_INTL("{1} used Cut!",speciesname))
-        pbHiddenMoveAnimation(movefinder)
+        #speciesname=!movefinder ? $Trainer.name : movefinder.name
+        #Kernel.pbMessage(_INTL("{1} used Cut!",speciesname))
+        Kernel.pbMessage(_INTL("{1} used the Scythe!",$Trainer.name))
+        #pbHiddenMoveAnimation(movefinder)
         return true
       end
     else
       Kernel.pbMessage(_INTL("This tree looks like it can be cut down."))
     end
-  else
-    Kernel.pbMessage(_INTL("This tree looks like it can be cut down."))
-  end
+  #else
+    #Kernel.pbMessage(_INTL("This tree looks like it can be cut down."))
+  #end
   return false
 end
 
+=begin
 HiddenMoveHandlers::CanUseMove.add(:CUT,proc{|move,pkmn|
    if !$DEBUG &&
       !(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORCUT : $Trainer.badges[BADGEFORCUT])
@@ -202,6 +316,33 @@ HiddenMoveHandlers::UseMove.add(:CUT,proc{|move,pokemon|
    end
    return true
 })
+=end
+
+def canUseMoveCut?
+  #if !$DEBUG &&
+    #  !(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORCUT : $Trainer.badges[BADGEFORCUT])
+    #Kernel.pbMessage(_INTL("Sorry, a new Badge is required."))
+    #return false
+  #end
+  facingEvent=$game_player.pbFacingEvent
+  if !facingEvent || facingEvent.name!="Tree"
+    Kernel.pbMessage(_INTL("Can't use that here."))
+    return false
+  end
+  return true
+end
+
+def useMoveCut
+  if !pbHiddenMoveAnimation(nil)
+    Kernel.pbMessage(_INTL("{1} used the Scythe!",$Trainer.name))
+  end
+  facingEvent=$game_player.pbFacingEvent
+  if facingEvent
+    facingEvent.erase
+    $PokemonMap.addErasedEvent(facingEvent.id)
+  end
+  return true
+end
 
 #===============================================================================
 # Headbutt
@@ -218,10 +359,10 @@ def Kernel.pbHeadbuttEffect(event)
     chance=5
   end
   if rand(10)>=chance
-    Kernel.pbMessage(_INTL("Nope.  Nothing..."))
+    Kernel.pbMessage(_INTL("Nope. Nothing..."))
   else
     if !pbEncounter(chance==1 ? EncounterTypes::HeadbuttLow : EncounterTypes::HeadbuttHigh)
-      Kernel.pbMessage(_INTL("Nope.  Nothing..."))
+      Kernel.pbMessage(_INTL("Nope. Nothing..."))
     end
   end
 end
@@ -229,14 +370,14 @@ end
 def Kernel.pbHeadbutt(event)
   movefinder=Kernel.pbCheckMove(:HEADBUTT)
   if $DEBUG || movefinder
-    if Kernel.pbConfirmMessage(_INTL("A Pokémon could be in this tree.  Would you like to use Headbutt?"))
+    if Kernel.pbConfirmMessage(_INTL("A Pokémon could be in this tree. Would you like to use Headbutt?"))
       speciesname=!movefinder ? $Trainer.name : movefinder.name
       Kernel.pbMessage(_INTL("{1} used Headbutt.",speciesname))
       pbHiddenMoveAnimation(movefinder)
       Kernel.pbHeadbuttEffect(event)
     end
   else
-    Kernel.pbMessage(_INTL("A Pokémon could be in this tree.  Maybe a Pokémon could shake it."))
+    Kernel.pbMessage(_INTL("A Pokémon could be in this tree. Maybe a Pokémon could shake it."))
   end
   Input.update
   return
@@ -269,25 +410,28 @@ def pbRockSmashRandomEncounter
 end
 
 def Kernel.pbRockSmash
-  if $DEBUG ||
-    (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORROCKSMASH : $Trainer.badges[BADGEFORROCKSMASH])
-    movefinder=Kernel.pbCheckMove(:ROCKSMASH)
-    if $DEBUG || movefinder
-      if Kernel.pbConfirmMessage(_INTL("This rock appears to be breakable.  Would you like to use Rock Smash?"))
-        speciesname=!movefinder ? $Trainer.name : movefinder.name
-        Kernel.pbMessage(_INTL("{1} used Rock Smash!",speciesname))
-        pbHiddenMoveAnimation(movefinder)
+  #if $DEBUG ||
+    #(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORROCKSMASH : $Trainer.badges[BADGEFORROCKSMASH])
+    #movefinder=Kernel.pbCheckMove(:ROCKSMASH)
+    #$DEBUG || 
+    if $PokemonBag.pbQuantity(PBItems::SLEDGEHAMMER)>0 #movefinder
+      if Kernel.pbConfirmMessage(_INTL("This rock appears to be breakable. Would you like to break it?"))
+        #speciesname=!movefinder ? $Trainer.name : movefinder.name
+        #Kernel.pbMessage(_INTL("{1} used Rock Smash!",speciesname))
+        Kernel.pbMessage(_INTL("{1} used the Sledgehammer!",$Trainer.name))
+        #pbHiddenMoveAnimation(movefinder)
         return true
       end
     else
-      Kernel.pbMessage(_INTL("It's a rugged rock, but a Pokémon may be able to smash it."))
+      Kernel.pbMessage(_INTL("It's a rugged rock, but an item may be able to smash it."))
     end
-  else
-    Kernel.pbMessage(_INTL("It's a rugged rock, but a Pokémon may be able to smash it."))
-  end
+  #else
+    #Kernel.pbMessage(_INTL("It's a rugged rock, but an item may be able to smash it."))
+  #end
   return false
 end
 
+=begin
 HiddenMoveHandlers::CanUseMove.add(:ROCKSMASH,proc{|move,pkmn|
    terrain=Kernel.pbFacingTerrainTag
    if !$DEBUG &&
@@ -314,31 +458,59 @@ HiddenMoveHandlers::UseMove.add(:ROCKSMASH,proc{|move,pokemon|
    end
    return true  
 })
+=end
+
+def canUseMoveRockSmash?
+  #if !$DEBUG &&
+      #!(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORROCKSMASH : $Trainer.badges[BADGEFORROCKSMASH])
+    #Kernel.pbMessage(_INTL("Sorry, a new Badge is required."))
+    #return false
+  #end
+  facingEvent=$game_player.pbFacingEvent
+  if !facingEvent || facingEvent.name!="Rock"
+    Kernel.pbMessage(_INTL("Can't use that here."))
+    return false
+  end
+  return true
+end
+
+def useMoveRockSmash
+  if !pbHiddenMoveAnimation(nil)
+    Kernel.pbMessage(_INTL("{1} used the Sledgehammer!",$Trainer.name))
+  end
+  facingEvent=$game_player.pbFacingEvent
+  if facingEvent
+    facingEvent.erase
+    $PokemonMap.addErasedEvent(facingEvent.id)
+  end
+  return true
+end
 
 #===============================================================================
 # Strength
 #===============================================================================
 def Kernel.pbStrength
   if $PokemonMap.strengthUsed
-    Kernel.pbMessage(_INTL("Strength made it possible to move boulders around."))
-  elsif $DEBUG ||
-    (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORSTRENGTH : $Trainer.badges[BADGEFORSTRENGTH])
-    movefinder=Kernel.pbCheckMove(:STRENGTH)
-    if $DEBUG || movefinder
-      Kernel.pbMessage(_INTL("It's a big boulder, but a Pokémon may be able to push it aside."))
-      if Kernel.pbConfirmMessage(_INTL("Would you like to use Strength?"))
-        speciesname=!movefinder ? $Trainer.name : movefinder.name
-        Kernel.pbMessage(_INTL("{1} used Strength!\1",speciesname))
-        pbHiddenMoveAnimation(movefinder)
-        Kernel.pbMessage(_INTL("{1}'s Strength made it possible to move boulders around!",speciesname))
+    Kernel.pbMessage(_INTL("The Pry Bar made it possible to move boulders around."))
+  #elsif $DEBUG ||
+    #(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORSTRENGTH : $Trainer.badges[BADGEFORSTRENGTH])
+    #movefinder=Kernel.pbCheckMove(:STRENGTH)
+    #$DEBUG || 
+    if $PokemonBag.pbQuantity(PBItems::PRYBAR)>0 #movefinder
+      Kernel.pbMessage(_INTL("It's a big boulder, but an item may be able to push it aside."))
+      if Kernel.pbConfirmMessage(_INTL("Would you like to use the Pry Bar?"))
+        #speciesname=!movefinder ? $Trainer.name : movefinder.name
+        Kernel.pbMessage(_INTL("{1} used the Pry Bar!\1",$Trainer.name))
+        #pbHiddenMoveAnimation(movefinder)
+        Kernel.pbMessage(_INTL("{1}'s Pry Bar made it possible to move boulders around!",$Trainer.name))
         $PokemonMap.strengthUsed=true
         return true
       end
     else
-      Kernel.pbMessage(_INTL("It's a big boulder, but a Pokémon may be able to push it aside."))
+      Kernel.pbMessage(_INTL("It's a big boulder, but an item may be able to push it aside."))
     end
-  else
-    Kernel.pbMessage(_INTL("It's a big boulder, but a Pokémon may be able to push it aside."))
+  #else
+    #Kernel.pbMessage(_INTL("It's a big boulder, but an item may be able to push it aside."))
   end
   return false
 end
@@ -353,6 +525,7 @@ Events.onAction+=proc{|sender,e|
    end
 }
 
+=begin
 HiddenMoveHandlers::CanUseMove.add(:STRENGTH,proc{|move,pkmn|
    if !$DEBUG &&
       !(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORSTRENGTH : $Trainer.badges[BADGEFORSTRENGTH])
@@ -373,6 +546,28 @@ HiddenMoveHandlers::UseMove.add(:STRENGTH,proc{|move,pokemon|
    $PokemonMap.strengthUsed=true
    return true  
 })
+=end
+
+def canUseMoveStregth?
+   #if !$DEBUG &&
+      #!(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORSTRENGTH : $Trainer.badges[BADGEFORSTRENGTH])
+     #Kernel.pbMessage(_INTL("Sorry, a new Badge is required."))
+     #return false
+   #end
+   if $PokemonMap.strengthUsed
+     Kernel.pbMessage(_INTL("The Pry Bar is already being used."))
+     return false
+   end
+   return true
+end
+
+def useMoveStrength?
+  pbHiddenMoveAnimation(pokemon)
+   Kernel.pbMessage(_INTL("{1} used the Pry Bar!\1",$Trainer.name))
+   Kernel.pbMessage(_INTL("{1}'s Pry Bar made it possible to move boulders around!",$Trainer.name))
+   $PokemonMap.strengthUsed=true
+   return true
+end
 
 #===============================================================================
 # Surf
@@ -417,7 +612,7 @@ def pbEndSurf(xOffset,yOffset)
   y=$game_player.y
   currentTag=$game_map.terrain_tag(x,y)
   facingTag=Kernel.pbFacingTerrainTag
-  if pbIsSurfableTag?(currentTag) && !pbIsSurfableTag?(facingTag)
+  if PBTerrain.isSurfable?(currentTag) && !PBTerrain.isSurfable?(facingTag)
     if Kernel.pbJumpToward(1,false,true)
 #      Kernel.pbCancelVehicles
       $game_map.autoplayAsCue
@@ -448,7 +643,7 @@ end
 Events.onAction+=proc{|sender,e|
    terrain=Kernel.pbFacingTerrainTag
    notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
-   if pbIsSurfableTag?(terrain) && !$PokemonGlobal.surfing && 
+   if PBTerrain.isSurfable?(terrain) && !$PokemonGlobal.surfing && 
       !pbGetMetadata($game_map.map_id,MetadataBicycleAlways) && notCliff
      Kernel.pbSurf
      return
@@ -475,7 +670,7 @@ HiddenMoveHandlers::CanUseMove.add(:SURF,proc{|move,pkmn|
      Kernel.pbMessage(_INTL("Let's enjoy cycling!"))
      return false
    end
-   if !pbIsSurfableTag?(terrain) || !notCliff
+   if !PBTerrain.isSurfable?(terrain) || !notCliff
      Kernel.pbMessage(_INTL("No surfing here!"))
      return false
    end
@@ -536,7 +731,7 @@ def Kernel.pbWaterfall
     (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORWATERFALL : $Trainer.badges[BADGEFORWATERFALL])
     movefinder=Kernel.pbCheckMove(:WATERFALL)
     if $DEBUG || movefinder
-      if Kernel.pbConfirmMessage(_INTL("It's a large waterfall.  Would you like to use Waterfall?"))
+      if Kernel.pbConfirmMessage(_INTL("It's a large waterfall. Would you like to use Waterfall?"))
         speciesname=!movefinder ? $Trainer.name : movefinder.name
         Kernel.pbMessage(_INTL("{1} used Waterfall.",speciesname))
         pbHiddenMoveAnimation(movefinder)
@@ -592,14 +787,16 @@ HiddenMoveHandlers::UseMove.add(:WATERFALL,proc{|move,pokemon|
 def Kernel.pbDive
   divemap=pbGetMetadata($game_map.map_id,MetadataDiveMap)
   return false if !divemap
-  if $DEBUG ||
-    (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
-    movefinder=Kernel.pbCheckMove(:DIVE)
-    if $DEBUG || movefinder
-      if Kernel.pbConfirmMessage(_INTL("The sea is deep here.  Would you like to use Dive?"))
-        speciesname=!movefinder ? $Trainer.name : movefinder.name
-        Kernel.pbMessage(_INTL("{1} used Dive.",speciesname))
-        pbHiddenMoveAnimation(movefinder)
+  #if #$DEBUG ||
+    #(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
+    #movefinder=Kernel.pbCheckMove(:DIVE)
+    #$DEBUG ||
+    if $PokemonBag.pbQuantity(PBItems::SCUBAMASK)>0 #movefinder
+      if Kernel.pbConfirmMessage(_INTL("The sea is deep here. Would you like to dive using the Scuba Mask?"))
+        #speciesname=!movefinder ? $Trainer.name : movefinder.name
+        Kernel.pbMessage(_INTL("{1} dove using the Scuba Mask.",$Trainer.name))
+        #Kernel.pbMessage(_INTL("{1} used Dive.",speciesname))
+        #pbHiddenMoveAnimation(movefinder)
         pbFadeOutIn(99999){
            $game_temp.player_new_map_id=divemap
            $game_temp.player_new_x=$game_player.x
@@ -615,11 +812,11 @@ def Kernel.pbDive
         return true
       end
     else
-      Kernel.pbMessage(_INTL("The sea is deep here.  A Pokémon may be able to go underwater."))
+      Kernel.pbMessage(_INTL("The sea is deep here. An item may allow diving underwater."))
     end
-  else
-    Kernel.pbMessage(_INTL("The sea is deep here.  A Pokémon may be able to go underwater."))
-  end
+  #else
+    #Kernel.pbMessage(_INTL("The sea is deep here.  An item may allow diving underwater."))
+  #end
   return false
 end
 
@@ -636,13 +833,14 @@ def Kernel.pbSurfacing
     end
   end
   return if !divemap
-  movefinder=Kernel.pbCheckMove(:DIVE)
-  if $DEBUG || (movefinder &&
-    (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE]) )
-    if Kernel.pbConfirmMessage(_INTL("Light is filtering down from above.  Would you like to use Dive?"))
-      speciesname=!movefinder ? $Trainer.name : movefinder.name
-      Kernel.pbMessage(_INTL("{1} used Dive.",speciesname))
-      pbHiddenMoveAnimation(movefinder)
+  #movefinder=Kernel.pbCheckMove(:DIVE)
+  #if $DEBUG || (movefinder &&
+    #(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE]) )
+    if Kernel.pbConfirmMessage(_INTL("Light is filtering down from above. Would you like to resurface?"))
+      #speciesname=!movefinder ? $Trainer.name : movefinder.name
+      Kernel.pbMessage(_INTL("{1} resurfaced using the Scuba Mask.",$Trainer.name))
+      #Kernel.pbMessage(_INTL("{1} used Dive.",speciesname))
+      #pbHiddenMoveAnimation(movefinder)
       pbFadeOutIn(99999){
          $game_temp.player_new_map_id=divemap
          $game_temp.player_new_x=$game_player.x
@@ -662,9 +860,9 @@ def Kernel.pbSurfacing
       }
       return true
     end
-  else
-    Kernel.pbMessage(_INTL("Light is filtering down from above.  A Pokémon may be able to surface here."))
-  end
+  #else
+    #Kernel.pbMessage(_INTL("Light is filtering down from above. An item may allow you to surface here."))
+  #end
   return false
 end
 
@@ -712,6 +910,7 @@ Events.onAction+=proc{|sender,e|
    end
 }
 
+=begin
 HiddenMoveHandlers::CanUseMove.add(:DIVE,proc{|move,pkmn|
    if !$DEBUG &&
       !(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
@@ -786,6 +985,80 @@ HiddenMoveHandlers::UseMove.add(:DIVE,proc{|move,pokemon|
    }
    return true
 })
+=end
+
+def useUseDive?
+   #if !$DEBUG &&
+      #!(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
+     #Kernel.pbMessage(_INTL("Sorry, a new Badge is required."))
+     #return false
+   #end
+   if $PokemonGlobal.diving
+     return true if DIVINGSURFACEANYWHERE
+     divemap=nil
+     meta=pbLoadMetadata
+     for i in 0...meta.length
+       if meta[i] && meta[i][MetadataDiveMap]
+         if meta[i][MetadataDiveMap]==$game_map.map_id
+           divemap=i
+           break
+         end
+       end
+     end
+     if $MapFactory.getTerrainTag(divemap,$game_player.x,$game_player.y)==PBTerrain::DeepWater
+       return true
+     else
+       Kernel.pbMessage(_INTL("Can't use that here."))
+       return false
+     end
+   end
+   if $game_player.terrain_tag!=PBTerrain::DeepWater
+     Kernel.pbMessage(_INTL("Can't use that here."))
+     return false
+   end
+   if !pbGetMetadata($game_map.map_id,MetadataDiveMap)
+     Kernel.pbMessage(_INTL("Can't use that here."))
+     return false
+   end
+   return true
+end
+
+def useMoveDive
+   wasdiving=$PokemonGlobal.diving
+   if $PokemonGlobal.diving
+     divemap=nil
+     meta=pbLoadMetadata
+     for i in 0...meta.length
+       if meta[i] && meta[i][MetadataDiveMap]
+         if meta[i][MetadataDiveMap]==$game_map.map_id
+           divemap=i
+           break
+         end
+       end
+     end
+   else
+     divemap=pbGetMetadata($game_map.map_id,MetadataDiveMap)
+   end
+   return false if !divemap
+   Kernel.pbMessage(_INTL("{1} used the Scuba Mask.",$Trainer.name))
+   pbFadeOutIn(99999){
+      $game_temp.player_new_map_id=divemap
+      $game_temp.player_new_x=$game_player.x
+      $game_temp.player_new_y=$game_player.y
+      $game_temp.player_new_direction=$game_player.direction
+      Kernel.pbCancelVehicles
+      if wasdiving
+        $PokemonGlobal.surfing=true
+      else
+        $PokemonGlobal.diving=true
+      end
+      Kernel.pbUpdateVehicle
+      $scene.transfer_player(false)
+      $game_map.autoplay
+      $game_map.refresh
+   }
+   return true
+end
 
 #===============================================================================
 # Fly
@@ -832,6 +1105,7 @@ HiddenMoveHandlers::UseMove.add(:FLY,proc{|move,pokemon|
 #===============================================================================
 # Flash
 #===============================================================================
+=begin
 HiddenMoveHandlers::CanUseMove.add(:FLASH,proc{|move,pkmn|
    if !$DEBUG &&
       !(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORFLASH : $Trainer.badges[BADGEFORFLASH])
@@ -864,6 +1138,49 @@ HiddenMoveHandlers::UseMove.add(:FLASH,proc{|move,pokemon|
    end
    return true
 })
+=end
+
+def Kernel.pbAutoFlash
+  Kernel.pbMessage(_INTL("It's too dark to see..."))
+  if $PokemonBag.pbQuantity(PBItems::LANTERN)>0
+    if Kernel.pbConfirmMessage(_INTL("Would you like to use the Lantern?"))
+      useMoveFlash
+    end
+  end
+end
+
+def canUseMoveFlash?
+  #if !$DEBUG &&
+      #!(HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORFLASH : $Trainer.badges[BADGEFORFLASH])
+    #Kernel.pbMessage(_INTL("Sorry, a new Badge is required."))
+    #return false
+  #end
+  if !pbGetMetadata($game_map.map_id,MetadataDarkMap)
+    Kernel.pbMessage(_INTL("Can't use that here."))
+    return false
+  end
+  if $PokemonGlobal.flashUsed
+    Kernel.pbMessage(_INTL("This is in use already."))
+    return false
+  end
+  return true
+end
+
+def useMoveFlash
+  darkness=$PokemonTemp.darknessSprite
+  return false if !darkness || darkness.disposed?
+  if !pbHiddenMoveAnimation(nil)
+    Kernel.pbMessage(_INTL("{1} used the Lantern!",$Trainer.name))
+  end
+  $PokemonGlobal.flashUsed=true
+  while darkness.radius<176
+    Graphics.update
+    Input.update
+    pbUpdateSceneMap
+    darkness.radius+=4
+  end
+  return true
+end
 
 #===============================================================================
 # Teleport
@@ -964,7 +1281,7 @@ HiddenMoveHandlers::UseMove.add(:DIG,proc{|move,pokemon|
 # Sweet Scent
 #===============================================================================
 def pbSweetScent
-  if $game_screen.weather_type!=0
+  if $game_screen.weather_type!=PBFieldWeather::None
     Kernel.pbMessage(_INTL("The sweet scent faded for some reason..."))
     return
   end
@@ -1009,17 +1326,3 @@ HiddenMoveHandlers::UseMove.add(:SWEETSCENT,proc{|move,pokemon|
    pbSweetScent
    return true
 })
-
-
-
-def Kernel.pbCanUseHiddenMove?(pkmn,move)
-  return HiddenMoveHandlers.triggerCanUseMove(move,pkmn)
-end
-
-def Kernel.pbUseHiddenMove(pokemon,move)
-  return HiddenMoveHandlers.triggerUseMove(move,pokemon)
-end
-
-def Kernel.pbHiddenMoveEvent
-  Events.onAction.trigger(nil)
-end

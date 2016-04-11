@@ -259,6 +259,7 @@ class PokemonLoad
     cmdOption      = -1
     cmdLanguage    = -1
     cmdMysteryGift = -1
+    cmdQuit        = -1
     commands       = []
     savefile = RTP.getSaveFileName("Game.rxdata")
     FontInstaller.install
@@ -291,7 +292,7 @@ class PokemonLoad
           end
         end
         if haveBackup
-          Kernel.pbMessage(_INTL("The save file is corrupt.  The previous save file will be loaded."))
+          Kernel.pbMessage(_INTL("The save file is corrupt. The previous save file will be loaded."))
         else
           Kernel.pbMessage(_INTL("The save file is corrupt, or is incompatible with this game."))
           if !Kernel.pbConfirmMessageSerious(_INTL("Do you want to delete the save file and start anew?"))
@@ -312,14 +313,12 @@ class PokemonLoad
       commands[cmdContinue=commands.length]=_INTL("Continue") if showContinue
       commands[cmdNewGame=commands.length]=_INTL("New Game")
       commands[cmdMysteryGift=commands.length]=_INTL("Mystery Gift") if (trainer.mysterygiftaccess rescue false)
-      commands[cmdOption=commands.length]=_INTL("Options")
     else
       commands[cmdNewGame=commands.length]=_INTL("New Game")
-      commands[cmdOption=commands.length]=_INTL("Options")
     end
-    if LANGUAGES.length>=2
-      commands[cmdLanguage=commands.length]=_INTL("Language")
-    end
+    commands[cmdOption=commands.length]=_INTL("Options")
+    commands[cmdLanguage=commands.length]=_INTL("Language") if LANGUAGES.length>=2
+    commands[cmdQuit=commands.length]=_INTL("Quit Game")
     @scene.pbStartScene(commands,showContinue,trainer,framecount,mapid)
     @scene.pbSetParty(trainer) if showContinue
     @scene.pbStartScene2
@@ -436,7 +435,7 @@ class PokemonLoad
       elsif cmdOption>=0 && command==cmdOption
         scene=PokemonOptionScene.new
         screen=PokemonOption.new(scene)
-        pbFadeOutIn(99999) { screen.pbStartScreen }
+        pbFadeOutIn(99999) { screen.pbStartScreen(true) }
       elsif cmdLanguage>=0 && command==cmdLanguage
         @scene.pbEndScene
         $PokemonSystem.language=pbChooseLanguage
@@ -455,6 +454,10 @@ class PokemonLoad
           end
         end
         $scene=pbCallTitle
+        return
+      elsif cmdQuit>=0 && command==cmdQuit
+        @scene.pbEndScene
+        $scene=nil
         return
       end
     end

@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 100
     name: PokeCenter
     pitch: 100
-  tileset_id: 4
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -1180,6 +1179,7 @@ root: !ruby/object:RPG::Map
       y: 1
       x: 13
       id: 7
+  tileset_id: 4
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

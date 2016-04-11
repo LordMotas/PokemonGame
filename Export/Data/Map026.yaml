@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 021-Field04
     pitch: 100
-  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -124,34 +123,35 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbChoosePokemon(1,2,
+          - !binary |-
+            VGhlIGNob3NlbiBQb2vDqW1vbidzIHBhcnR5IGluZGV4IGdvZXMgaW4gZ2Ft
+            ZSA=
+          indent: 1
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !binary |-
+            dmFyaWFibGUgMS4gQSB2YWx1ZSBvZiAtMSBtZWFucyBubyBQb2vDqW1vbiB3
+            YXMg
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - chosen.
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !binary |-
+            VGhlIGNob3NlbiBQb2vDqW1vbidzIG5hbWUgZ29lcyBpbiBnYW1lIHZhcmlh
+            YmxlIDIu
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbChoosePokemonForTrade(1,2,:RATTATA)
           indent: 1
           code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - proc {|poke|
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - " !poke.egg? &&"
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - " !(poke.isShadow? rescue false) &&"
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - " poke.species==PBSpecies::RATTATA"
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "})"
-          indent: 1
-          code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
           - 1
@@ -335,7 +335,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            UG9rw6ltb24uICBJdHMgT1Qgd2lsbCBiZSB0aGUgcGxheWVyLg==
+            UG9rw6ltb24uIEl0cyBPVCB3aWxsIGJlIHRoZSBwbGF5ZXIu
           indent: 0
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -513,7 +513,7 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'can only be done afterwards.  Remember to add '
+          - 'can only be done afterwards. Remember to add '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -524,22 +524,23 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            VGhlIGFkZGVkIFBva8OpbW9uIHdpbGwgYWx3YXlzIGJlIGF0IHRoZQ==
+            VGhlIGFkZGVkIFBva8OpbW9uIHdpbGwgYWx3YXlzIGJlIGF0IHRoZSBlbmQg
+            b2YgdGhlIA==
           indent: 2
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'end of the player''s party, i.e. at index '
+          - 'player''s party, so you can use $Trainer.lastParty to '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$Trainer.party.length-1."
+          - locate it.
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - poke=$Trainer.party[$Trainer.party.length-1]
+          - poke=$Trainer.lastParty
           indent: 2
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -549,7 +550,7 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - poke.setNature(PBNatures::MODEST)
+          - poke.setNature(:MODEST)
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -739,19 +740,40 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'The requirements are more specific than usual, as the '
+          - 'Because there are more requirements than just '
+          indent: 1
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'wanting the correct species, the method '
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'pbChoosePokemonForTrade cannot be used here. '
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Instead, it is recreated using method '
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbChoosePokemon.
+          indent: 1
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !binary |-
+            Tm90ZSB0aGUgZGVmYXVsdCByZXF1aXJlbWVudHMgb2YgdGhlIFBva8OpbW9u
+            IG5vdCA=
           indent: 1
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            UG9rw6ltb24gbXVzdCBhbHNvIGJlIGZlbWFsZS4gIEFsbCByZXF1aXJlbWVu
-            dHMgZ28gaW4g
-          indent: 1
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - here.
+            YmVpbmcgYW4gZWdnIGFuZCBub3QgYmVpbmcgYSBTaGFkb3cgUG9rw6ltb24u
           indent: 1
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -818,39 +840,46 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
+          - 'This trade is providing a special Dodrio with certain '
+          indent: 2
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - !binary |-
-            VGhlIHJlY2VpdmVkIFBva8OpbW9uJ3Mgc3ByaXRlIGlzIHNob3duIGR1cmlu
-            ZyB0aGUg
+            Y3VzdG9tIG1vZGlmaWNhdGlvbnMuIFlvdSBzaG91bGQgZGVmaW5lIHRoaXMg
+            UG9rw6ltb24g
+          indent: 2
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - first and modify it, and then put it in the trade.
+          indent: 2
+          code: 408
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Remember to add "poke.calcStats" at the end. It '
           indent: 2
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'trade, so any factor which could change it (i.e. '
+          - !binary |-
+            bWFrZXMgc3VyZSB0aGUgUG9rw6ltb24ncyBzdGF0cyBhcmUgY29ycmVjdCwg
+            YXMgc29tZSA=
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'gender, shininess, form) MUST be set before the '
+          - 'modifications can affect them. It doesn''t hurt to have '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - trade.
+          - 'this line there just to be sure, even if you don''t affect '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Many other modifications can also be done here, for '
-          indent: 2
-          code: 108
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'convenience.  Remember to add "poke.calcStats" at '
-          indent: 2
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - the end.
+          - the stats.
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -865,22 +894,22 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - p.item=PBItems::SMOKEBALL
+          - p.setItem(:SMOKEBALL)
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'p.setGender(1)                 # Female'
+          - p.makeFemale
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'p.setAbility(0)                # Run Away'
+          - 'p.setAbility(0)         # Run Away'
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - p.setNature(PBNatures::IMPISH)
+          - p.setNature(:IMPISH)
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -890,7 +919,12 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'p.ballused=10                  # Luxury Ball'
+          - 'p.ballused=10           # Luxury Ball'
+          indent: 2
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - p.pbLearnMove(:SURF)
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -900,12 +934,12 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - ''
+          - pbStartTrade(pbGet(1),p,
           indent: 2
-          code: 655
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbStartTrade(pbGet(1),p,"Doris","Ayana",1)
+          - _I("Doris"),_I("Ayana"),1)
           indent: 2
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -917,50 +951,19 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'nickname, moves, obtain method, and OT details.  '
+          - 'nickname, obtain method and OT details. These can '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - These can only be modified after the trade.
+          - 'only be modified after the trade, although you '
           indent: 2
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - !binary |-
-            VGhlIHJlY2VpdmVkIFBva8OpbW9uIHdpbGwgYmUgaW4gdGhlIHNhbWUgcGxh
-            Y2UgaW4gdGhlIA==
-          indent: 2
-          code: 108
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !binary |-
-            cGFydHkgYXMgdGhlIHRyYWRlZCBQb2vDqW1vbiwgc28gaXRzIGluZGV4IGlu
-            IHRoZSA=
+          - shouldn't need to do so.
           indent: 2
           code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !binary |-
-            cGFydHkgd2lsbCBiZSBwYkdldCgxKSBhbmQgdGhlIFBva8OpbW9uIGl0c2Vs
-            ZiB3aWxsIGJl
-          indent: 2
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbGetPokemon(1).
-          indent: 2
-          code: 408
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - p=pbGetPokemon(1)
-          indent: 2
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAutoLearnMove(p,:SURF)
-          indent: 2
-          code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
           - "\\PN traded Dragonair for Dodrio!"
@@ -1499,12 +1502,14 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'been modified.  Note the differences to the basic '
+          - !binary |-
+            YmVlbiBtb2RpZmllZC4gVGhlIFBva8OpbW9uIGlzIGRlZmluZWQgc2VwYXJh
+            dGVseSA=
           indent: 0
           code: 408
         - !ruby/object:RPG::EventCommand
           parameters:
-          - version.
+          - before being given to the player.
           indent: 0
           code: 408
         - !ruby/object:RPG::EventCommand
@@ -1515,22 +1520,27 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - p=PokeBattle_Pokemon.new(:PICHU,30,$Trainer)
+          - p=PokeBattle_Pokemon.new(:PICHU,30,
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - p.item=PBItems::ZAPPLATE
+          - "   $Trainer)"
           indent: 1
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'p.form=1         # Spiky-eared'
+          - p.setItem(:ZAPPLATE)
           indent: 1
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'p.setGender(1)   # Female'
+          - 'p.form=1                # Spiky-eared'
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - p.makeFemale
           indent: 1
           code: 655
         - !ruby/object:RPG::EventCommand
@@ -1540,39 +1550,34 @@ root: !ruby/object:RPG::Map
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
+          - p.pbLearnMove(:VOLTTACKLE)
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - p.pbLearnMove(:HELPINGHAND)
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - p.pbLearnMove(:SWAGGER)
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - p.pbLearnMove(:PAINSPLIT)
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - p.calcStats
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAutoLearnMove(p,:VOLTTACKLE)
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAutoLearnMove(p,:HELPINGHAND)
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAutoLearnMove(p,:SWAGGER)
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAutoLearnMove(p,:PAINSPLIT)
-          indent: 1
-          code: 655
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - ''
           indent: 1
           code: 655
         - !ruby/object:RPG::EventCommand
           parameters:
           - Kernel.pbAddPokemon(p)
           indent: 1
-          code: 655
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - A
@@ -1691,6 +1696,7 @@ root: !ruby/object:RPG::Map
       y: 7
       x: 6
       id: 8
+  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

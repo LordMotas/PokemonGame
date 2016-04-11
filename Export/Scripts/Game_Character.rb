@@ -205,7 +205,7 @@ class Game_Character
     if @tile_id > 0
       return z + self.map.priorities[@tile_id] * 32
     else
-      # Add Z if height exceeds 32
+      # Add z if height exceeds 32
       return z + ((height > 32) ? 31 : 0)
     end
   end
@@ -232,6 +232,7 @@ class Game_Character
 
 # Updating stuff ###############################################################
   def update
+    return if $game_temp.in_menu
     if jumping?
       update_jump
     elsif moving?

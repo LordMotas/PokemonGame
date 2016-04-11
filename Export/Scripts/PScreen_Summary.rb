@@ -72,8 +72,6 @@ class PokemonSummaryScene
   def pbStartScene(party,partyindex)
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
-    @viewport2=Viewport.new(0,220,Graphics.width,Graphics.height)
-    @viewport2.z=99999+1
     @party=party
     @partyindex=partyindex
     @pokemon=@party[@partyindex]
@@ -81,15 +79,10 @@ class PokemonSummaryScene
     @typebitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/types"))
     @sprites["background"]=IconSprite.new(0,0,@viewport)
     @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
-    @sprites["overlay2"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport2)
-    @sprites["overlaytxt"]=IconSprite.new(0,0,@viewport)
-    @sprites["overlaytxt"].visible=false
-    @sprites["overlaytxt"].z=@sprites["background"].z+1
-    @sprites["pokemon"]=PokemonBattlerSprite.new(false,0,@viewport)
+    @sprites["pokemon"]=PokemonSprite.new(@viewport)
     @sprites["pokemon"].setPokemonBitmap(@pokemon)
     @sprites["pokemon"].mirror=false
     @sprites["pokemon"].color=Color.new(0,0,0,0)
-    @sprites["pokemon"].visible=true
     pbPositionPokemonSprite(@sprites["pokemon"],40,144)
     @sprites["pokeicon"]=PokemonBoxIcon.new(@pokemon,@viewport)
     @sprites["pokeicon"].x=14
@@ -109,8 +102,6 @@ class PokemonSummaryScene
   def pbStartForgetScene(party,partyindex,moveToLearn)
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
-    @viewport2=Viewport.new(0,220,Graphics.width,Graphics.height)
-    @viewport2.z=99999+1
     @party=party
     @partyindex=partyindex
     @pokemon=@party[@partyindex]
@@ -119,10 +110,6 @@ class PokemonSummaryScene
     @typebitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/types"))
     @sprites["background"]=IconSprite.new(0,0,@viewport)
     @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
-    @sprites["overlay2"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport2)
-    @sprites["overlaytxt"]=IconSprite.new(0,0,@viewport)
-    @sprites["overlaytxt"].visible=false
-    @sprites["overlaytxt"].z=@sprites["background"].z+1
     @sprites["pokeicon"]=PokemonBoxIcon.new(@pokemon,@viewport)
     @sprites["pokeicon"].x=14
     @sprites["pokeicon"].y=52
@@ -204,7 +191,6 @@ class PokemonSummaryScene
     numbershadow=(pokemon.isShiny?) ? Color.new(224,152,144) : Color.new(176,176,176)
     publicID=pokemon.publicID
     speciesname=PBSpecies.getName(pokemon.species)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     growthrate=pokemon.growthrate
     startexp=PBExperience.pbGetStartExperience(pokemon.level,growthrate)
     endexp=PBExperience.pbGetStartExperience(pokemon.level+1,growthrate)
@@ -214,7 +200,6 @@ class PokemonSummaryScene
        [pokename,46,62,0,base,shadow],
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_ISPRINTF("Dex No."),238,80,0,base,shadow],
        [sprintf("%03d",pokemon.species),435,80,2,numberbase,numbershadow],
        [_INTL("Species"),238,112,0,base,shadow],
@@ -223,6 +208,11 @@ class PokemonSummaryScene
        [_INTL("OT"),238,176,0,base,shadow],
        [_INTL("ID No."),238,208,0,base,shadow],
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     if (pokemon.isShadow? rescue false)
       textpos.push([_INTL("Heart Gauge"),238,240,0,base,shadow])
       heartmessage=[_INTL("The door to its heart is open! Undo the final lock!"),
@@ -289,13 +279,16 @@ class PokemonSummaryScene
     base=Color.new(248,248,248)
     shadow=Color.new(104,104,104)
     pbSetSystemFont(overlay)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     textpos=[
        [_INTL("TRAINER MEMO"),26,16,0,base,shadow],
        [pokemon.name,46,62,0,base,shadow],
-       [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
+       [_INTL("Item"),16,320,0,base,shadow]
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     pbDrawTextPositions(overlay,textpos)
     memo=""
     if pokemon.timeReceived
@@ -314,9 +307,9 @@ class PokemonSummaryScene
     memo+="<c3=404040,B0B0B0>\n"
     memo+=_INTL("<c3=404040,B0B0B0>\"The Egg Watch\"\n")
     eggstate=_INTL("It looks like this Egg will take a long time to hatch.")
-    eggstate=_INTL("What will hatch from this?  It doesn't seem close to hatching.") if pokemon.eggsteps<10200
-    eggstate=_INTL("It appears to move occasionally.  It may be close to hatching.") if pokemon.eggsteps<2550
-    eggstate=_INTL("Sounds can be heard coming from inside!  It will hatch soon!") if pokemon.eggsteps<1275
+    eggstate=_INTL("What will hatch from this? It doesn't seem close to hatching.") if pokemon.eggsteps<10200
+    eggstate=_INTL("It appears to move occasionally. It may be close to hatching.") if pokemon.eggsteps<2550
+    eggstate=_INTL("Sounds can be heard coming from inside! It will hatch soon!") if pokemon.eggsteps<1275
     memo+=sprintf("<c3=404040,B0B0B0>%s\n",eggstate)
     drawFormattedTextEx(overlay,232,78,276,memo)
     drawMarkings(overlay,15,291,72,20,pokemon.markings)
@@ -347,15 +340,18 @@ class PokemonSummaryScene
     shadow=Color.new(104,104,104)
     pbSetSystemFont(overlay)
     naturename=PBNatures.getName(pokemon.nature)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     pokename=@pokemon.name
     textpos=[
        [_INTL("TRAINER MEMO"),26,16,0,base,shadow],
        [pokename,46,62,0,base,shadow],
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
-       [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
+       [_INTL("Item"),16,320,0,base,shadow]
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
@@ -489,14 +485,12 @@ class PokemonSummaryScene
     pbSetSystemFont(overlay)
     abilityname=PBAbilities.getName(pokemon.ability)
     abilitydesc=pbGetMessage(MessageTypes::AbilityDescs,pokemon.ability)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     pokename=@pokemon.name
     textpos=[
        [_INTL("SKILLS"),26,16,0,base,shadow],
        [pokename,46,62,0,base,shadow],
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("HP"),292,76,2,base,shadow],
        [sprintf("%3d/%3d",pokemon.hp,pokemon.totalhp),462,76,1,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Attack"),248,120,0,base,statshadows[0]],
@@ -512,6 +506,11 @@ class PokemonSummaryScene
        [_INTL("Ability"),224,284,0,base,shadow],
        [abilityname,362,284,0,Color.new(64,64,64),Color.new(176,176,176)],
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
@@ -537,10 +536,7 @@ class PokemonSummaryScene
   def drawPageFour(pokemon)
     overlay=@sprites["overlay"].bitmap
     overlay.clear
-    overlay2=@sprites["overlay2"].bitmap
-    overlay2.clear
     @sprites["background"].setBitmap("Graphics/Pictures/summary4")
-    @sprites["overlaytxt"].visible=false
     @sprites["pokemon"].visible=true
     @sprites["pokeicon"].visible=false
     imagepos=[]
@@ -563,15 +559,18 @@ class PokemonSummaryScene
     base=Color.new(248,248,248)
     shadow=Color.new(104,104,104)
     pbSetSystemFont(overlay)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     pokename=@pokemon.name
     textpos=[
        [_INTL("MOVES"),26,16,0,base,shadow],
        [pokename,46,62,0,base,shadow],
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
-       [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
+       [_INTL("Item"),16,320,0,base,shadow]
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
@@ -605,9 +604,6 @@ class PokemonSummaryScene
 
   def drawSelectedMove(pokemon,moveToLearn,moveid)
     overlay=@sprites["overlay"].bitmap
-    overlay2=@sprites["overlay2"].bitmap
-    overlay2.clear
-    @sprites["overlay2"].y=0
     @sprites["pokemon"].visible=false if @sprites["pokemon"]
     @sprites["pokeicon"].setBitmap(pbPokemonIconFile(pokemon))
     @sprites["pokeicon"].src_rect=Rect.new(0,0,64,64)
@@ -619,7 +615,6 @@ class PokemonSummaryScene
     accuracy=movedata.accuracy
     drawMoveSelection(pokemon,moveToLearn)
     pbSetSystemFont(overlay)
-    pbSetSystemFont(overlay2)
     move=moveid
     textpos=[
        [basedamage<=1 ? basedamage==1 ? "???" : "---" : sprintf("%d",basedamage),
@@ -630,10 +625,7 @@ class PokemonSummaryScene
     pbDrawTextPositions(overlay,textpos)
     imagepos=[["Graphics/Pictures/category",166,124,0,category*28,64,28]]
     pbDrawImagePositions(overlay,imagepos)
-    desclength=pbGetMessage(MessageTypes::MoveDescriptions,moveid)
-    desclength=getLineBrokenChunks(overlay2,desclength,238,nil,true)
-    $desclength=desclength.collect{|x| x[1]}.grep(0).size
-    drawTextEx(overlay2,4,0,238,$desclength,
+    drawTextEx(overlay,4,218,238,5,
        pbGetMessage(MessageTypes::MoveDescriptions,moveid),
        Color.new(64,64,64),Color.new(176,176,176))
   end
@@ -641,17 +633,13 @@ class PokemonSummaryScene
   def drawMoveSelection(pokemon,moveToLearn)
     overlay=@sprites["overlay"].bitmap
     overlay.clear
-    overlay2=@sprites["overlay2"].bitmap
-    overlay2.clear
     base=Color.new(248,248,248)
     shadow=Color.new(104,104,104)
     @sprites["background"].setBitmap("Graphics/Pictures/summary4details")
     if moveToLearn!=0
       @sprites["background"].setBitmap("Graphics/Pictures/summary4learning")
     end
-    @sprites["overlaytxt"].setBitmap("Graphics/Pictures/summary4overlay")
     pbSetSystemFont(overlay)
-    pbSetSystemFont(overlay2)
     textpos=[
        [_INTL("MOVES"),26,16,0,base,shadow],
        [_INTL("CATEGORY"),20,122,0,base,shadow],
@@ -703,8 +691,6 @@ class PokemonSummaryScene
   def drawPageFive(pokemon)
     overlay=@sprites["overlay"].bitmap
     overlay.clear
-    overlay2=@sprites["overlay2"].bitmap
-    overlay2.clear
     @sprites["background"].setBitmap("Graphics/Pictures/summary5")
     imagepos=[]
     if pbPokerus(pokemon)==1 || pokemon.hp==0 || @pokemon.status>0
@@ -726,17 +712,20 @@ class PokemonSummaryScene
     base=Color.new(248,248,248)
     shadow=Color.new(104,104,104)
     pbSetSystemFont(overlay)
-    itemname=pokemon.hasItem? ? PBItems.getName(pokemon.item) : _INTL("None")
     pokename=@pokemon.name
     textpos=[
        [_INTL("RIBBONS"),26,16,0,base,shadow],
        [pokename,46,62,0,base,shadow],
        [pokemon.level.to_s,46,92,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("Item"),16,320,0,base,shadow],
-       [itemname,16,352,0,Color.new(64,64,64),Color.new(176,176,176)],
        [_INTL("No. of Ribbons:"),234,342,0,Color.new(64,64,64),Color.new(176,176,176)],
        [pokemon.ribbonCount.to_s,450,342,1,Color.new(64,64,64),Color.new(176,176,176)],
     ]
+    if pokemon.hasItem?
+      textpos.push([PBItems.getName(pokemon.item),16,352,0,Color.new(64,64,64),Color.new(176,176,176)])
+    else
+      textpos.push([_INTL("None"),16,352,0,Color.new(184,184,160),Color.new(208,208,200)])
+    end
     if pokemon.isMale?
       textpos.push([_INTL("♂"),178,62,0,Color.new(24,112,216),Color.new(136,168,208)])
     elsif pokemon.isFemale?
@@ -761,7 +750,6 @@ class PokemonSummaryScene
   def pbChooseMoveToForget(moveToLearn)
     selmove=0
     ret=0
-    descpos=0
     maxmove=(moveToLearn>0) ? 4 : 3
     loop do
       Graphics.update
@@ -775,7 +763,6 @@ class PokemonSummaryScene
         break
       end
       if Input.trigger?(Input::DOWN)
-        descpos=0
         selmove+=1
         if selmove<4 && selmove>=@pokemon.numMoves
           selmove=(moveToLearn>0) ? maxmove : 0
@@ -787,7 +774,6 @@ class PokemonSummaryScene
         ret=selmove
       end
       if Input.trigger?(Input::UP)
-        descpos=0
         selmove-=1
         selmove=maxmove if selmove<0
         if selmove<4 && selmove>=@pokemon.numMoves
@@ -797,23 +783,6 @@ class PokemonSummaryScene
         newmove=(selmove==4) ? moveToLearn : @pokemon.moves[selmove].id
         drawSelectedMove(@pokemon,moveToLearn,newmove)
         ret=selmove
-      end
-      if Input.trigger?(Input::L) || Input.repeat?(Input::L)
-        if descpos>0
-          descpos-=1 
-          @sprites["overlay2"].y+=32
-        end
-      end
-      if Input.trigger?(Input::R) || Input.repeat?(Input::R)
-        if descpos<$desclength-5 && descpos>=0 && $desclength>5
-          descpos+=1 
-          @sprites["overlay2"].y-=32
-        end
-      end
-      if descpos %2 == 1
-       @sprites["overlaytxt"].visible=true
-      else
-       @sprites["overlaytxt"].visible=false
       end
     end
     return (ret==4) ? -1 : ret
@@ -826,7 +795,6 @@ class PokemonSummaryScene
     oldselmove=0
     switching=false
     drawSelectedMove(@pokemon,0,@pokemon.moves[selmove].id)
-    descpos=0
     loop do
       Graphics.update
       Input.update
@@ -865,7 +833,6 @@ class PokemonSummaryScene
         end
       end
       if Input.trigger?(Input::DOWN)
-        descpos=0
         selmove+=1
         selmove=0 if selmove<4 && selmove>=@pokemon.numMoves
         selmove=0 if selmove>=4
@@ -873,10 +840,9 @@ class PokemonSummaryScene
         @sprites["movesel"].index=selmove
         newmove=@pokemon.moves[selmove].id
         pbPlayCursorSE()
-        drawSelectedMove(@pokemon,0,@pokemon.moves[selmove].id)
+        drawSelectedMove(@pokemon,0,newmove)
       end
       if Input.trigger?(Input::UP)
-        descpos=0
         selmove-=1
         if selmove<4 && selmove>=@pokemon.numMoves
           selmove=@pokemon.numMoves-1
@@ -886,24 +852,7 @@ class PokemonSummaryScene
         @sprites["movesel"].index=selmove
         newmove=@pokemon.moves[selmove].id
         pbPlayCursorSE()
-        drawSelectedMove(@pokemon,0,@pokemon.moves[selmove].id)
-      end
-      if Input.trigger?(Input::L) || Input.repeat?(Input::L)
-        if descpos>0
-          descpos-=1 
-          @sprites["overlay2"].y+=32
-        end
-      end
-      if Input.trigger?(Input::R) || Input.repeat?(Input::R)
-        if descpos<$desclength-5 && descpos>=0 && $desclength>5
-          descpos+=1 
-          @sprites["overlay2"].y-=32
-        end
-      end
-      if descpos %2 == 1
-       @sprites["overlaytxt"].visible=true
-      else
-       @sprites["overlaytxt"].visible=false
+        drawSelectedMove(@pokemon,0,newmove)
       end
     end 
     @sprites["movesel"].visible=false
@@ -973,22 +922,28 @@ class PokemonSummaryScene
         end
       end
       if Input.trigger?(Input::UP) && @partyindex>0
+        oldindex=@partyindex
         pbGoToPrevious
-        @pokemon=@party[@partyindex]
-        @sprites["pokemon"].setPokemonBitmap(@pokemon)
-        @sprites["pokemon"].color=Color.new(0,0,0,0)
-        pbPositionPokemonSprite(@sprites["pokemon"],40,144)
-        dorefresh=true
-        pbPlayCry(@pokemon)
+        if @partyindex!=oldindex
+          @pokemon=@party[@partyindex]
+          @sprites["pokemon"].setPokemonBitmap(@pokemon)
+          @sprites["pokemon"].color=Color.new(0,0,0,0)
+          pbPositionPokemonSprite(@sprites["pokemon"],40,144)
+          dorefresh=true
+          pbPlayCry(@pokemon)
+        end
       end
       if Input.trigger?(Input::DOWN) && @partyindex<@party.length-1
+        oldindex=@partyindex
         pbGoToNext
-        @pokemon=@party[@partyindex]
-        @sprites["pokemon"].setPokemonBitmap(@pokemon)
-        @sprites["pokemon"].color=Color.new(0,0,0,0)
-        pbPositionPokemonSprite(@sprites["pokemon"],40,144)
-        dorefresh=true
-        pbPlayCry(@pokemon)
+        if @partyindex!=oldindex
+          @pokemon=@party[@partyindex]
+          @sprites["pokemon"].setPokemonBitmap(@pokemon)
+          @sprites["pokemon"].color=Color.new(0,0,0,0)
+          pbPositionPokemonSprite(@sprites["pokemon"],40,144)
+          dorefresh=true
+          pbPlayCry(@pokemon)
+        end
       end
       if Input.trigger?(Input::LEFT) && !@pokemon.isEgg?
         oldpage=@page
@@ -1013,16 +968,16 @@ class PokemonSummaryScene
       end
       if dorefresh
         case @page
-          when 0
-            drawPageOne(@pokemon)
-          when 1
-            drawPageTwo(@pokemon)
-          when 2
-            drawPageThree(@pokemon)
-          when 3
-            drawPageFour(@pokemon)
-          when 4
-            drawPageFive(@pokemon)
+        when 0
+          drawPageOne(@pokemon)
+        when 1
+          drawPageTwo(@pokemon)
+        when 2
+          drawPageThree(@pokemon)
+        when 3
+          drawPageFour(@pokemon)
+        when 4
+          drawPageFive(@pokemon)
         end
       end
     end

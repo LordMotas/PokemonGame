@@ -413,7 +413,7 @@ class PurifyChamberScreen
 	      PurifyChamberHelper.pbSetPokemon(@chamber,position,pkmn)
         @scene.pbRefresh()
       else
-        @scene.pbDisplay(_INTL("Can't place a Shadow Pokemon there."))
+        @scene.pbDisplay(_INTL("Can't place a Shadow Pokémon there."))
         return false
       end
     end

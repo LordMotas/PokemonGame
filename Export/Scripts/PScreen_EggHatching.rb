@@ -13,15 +13,17 @@ class PokemonEggHatchScene
   def pbStartScene(pokemon)
     @sprites={}
     @pokemon=pokemon
+    @nicknamed=false
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
-    @pokemon.eggsteps=1 # Just for drawing the egg
     addBackgroundOrColoredPlane(@sprites,"background","hatchbg",
        Color.new(248,248,248),@viewport)
     @sprites["pokemon"]=PokemonSprite.new(@viewport)
-    @sprites["pokemon"].setPokemonBitmap(@pokemon)
-    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].src_rect.width/2
-    @sprites["pokemon"].y=48+Graphics.height/2-@sprites["pokemon"].src_rect.width/2
+    @sprites["pokemon"].setSpeciesBitmap(@pokemon.species,@pokemon.isFemale?,
+                                         (@pokemon.form rescue 0),@pokemon.isShiny?,
+                                         false,false,true) # Egg sprite
+    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].bitmap.width/2
+    @sprites["pokemon"].y=48+(Graphics.height-@sprites["pokemon"].bitmap.height)/2
     @sprites["hatch"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     @sprites["overlay"].z=200
@@ -29,7 +31,6 @@ class PokemonEggHatchScene
     @sprites["overlay"].bitmap.fill_rect(0,0,Graphics.width,Graphics.height,
         Color.new(255,255,255))
     @sprites["overlay"].opacity=0
-    @pokemon.eggsteps=0 # Correct egg steps again
     pbFadeInAndShow(@sprites)
   end
 
@@ -72,13 +73,11 @@ class PokemonEggHatchScene
       updateScene
     end
     updateScene(30)
-    pbDisposeSprite(@sprites,"pokemon")
-    @sprites["pokemon"]=PokemonBattlerSprite.new(0,false,@viewport)
-    @sprites["pokemon"].setPokemonBitmap(@pokemon)
-    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].src_rect.width/2
-    @sprites["pokemon"].y=48+Graphics.height/2-@sprites["pokemon"].src_rect.width/2
-    @sprites["pokemon"].visible=true
-    Graphics.update
+    @sprites["pokemon"].setPokemonBitmap(@pokemon) # Pokémon sprite
+    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].bitmap.width/2
+    @sprites["pokemon"].y=-8+(Graphics.height-@sprites["pokemon"].bitmap.height)/2
+    metrics=load_data("Data/metrics.dat")
+    @sprites["pokemon"].y+=(metrics[1][@pokemon.species] || 0)*2 - (metrics[2][@pokemon.species] || 0)*2
     @sprites["hatch"].visible=false
     for i in 1..(255/fadeSpeed)
       @sprites["pokemon"].tone=Tone.new(255-i*fadeSpeed,255-i*fadeSpeed,255-i*fadeSpeed)
@@ -91,32 +90,30 @@ class PokemonEggHatchScene
     frames=pbCryFrameLength(@pokemon.species)
     pbBGMStop()
     pbPlayCry(@pokemon)
-    frames.times do
-      Graphics.update
-    end
-    pbMEPlay("004-Victory04")
-    Kernel.setMessageSprites(@sprites)
-    Kernel.pbMessage(_INTL("\\se[]{1} hatched from the Egg!\\wt[80]",@pokemon.name))
+    updateScene(frames)
+    pbMEPlay("EvolutionSuccess")
+    Kernel.pbMessage(_INTL("\\se[]{1} hatched from the Egg!\\wt[80]",@pokemon.name)) { update }
     if Kernel.pbConfirmMessage(
-        _INTL("Would you like to nickname the newly hatched {1}?",@pokemon.name))
-      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",@pokemon.name),0,10,"",@pokemon)
+        _INTL("Would you like to nickname the newly hatched {1}?",@pokemon.name)) { update }
+      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",@pokemon.name),0,10,"",@pokemon,true)
       @pokemon.name=nickname if nickname!=""
+      @nicknamed=true
     end
   end
 
   def pbPositionHatchMask(hatchSheet,index)
     @sprites["hatch"].bitmap.clear
     frames = 5
-    frameWidth = hatchSheet.width/frames
+    frameWidth = (hatchSheet.width/frames).floor
     rect = Rect.new(frameWidth*index,0,frameWidth,hatchSheet.height)
     @sprites["hatch"].bitmap.blt(@sprites["pokemon"].x,@sprites["pokemon"].y,
-        hatchSheet.bitmap,rect)
+                                 hatchSheet.bitmap,rect)
   end
 
   def swingEgg(speed,swingTimes=1) # Only accepts 2, 4 or 8 for speed.
     limit = 8
     targets = [@sprites["pokemon"].x-limit,@sprites["pokemon"].x+limit,
-        @sprites["pokemon"].x]
+               @sprites["pokemon"].x]
     swingTimes.times do
       usedSpeed=speed
       for target in targets
@@ -135,7 +132,6 @@ class PokemonEggHatchScene
       Graphics.update
       Input.update
       self.update
-      @sprites["pokemon"].update
     end
   end  
 
@@ -144,8 +140,7 @@ class PokemonEggHatchScene
   end
 
   def pbEndScene
-    Kernel.setMessageSprites(nil)
-    pbFadeOutAndHide(@sprites) { update }
+    pbFadeOutAndHide(@sprites) { update } if !@nicknamed
     pbDisposeSpriteHash(@sprites)
     @viewport.dispose
   end
@@ -208,9 +203,9 @@ Events.onStepTaken+=proc {|sender,e|
    for egg in $Trainer.party
      if egg.eggsteps>0
        egg.eggsteps-=1
-       for i in $Trainer.party
-         if !i.isEgg? && (isConst?(i.ability,PBAbilities,:FLAMEBODY) ||
-                          isConst?(i.ability,PBAbilities,:MAGMAARMOR))
+       for i in $Trainer.pokemonParty
+         if isConst?(i.ability,PBAbilities,:FLAMEBODY) ||
+            isConst?(i.ability,PBAbilities,:MAGMAARMOR)
            egg.eggsteps-=1
            break
          end

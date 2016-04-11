@@ -21,7 +21,7 @@ class PBMoveData
   attr_reader :function,:basedamage,:type,:accuracy
   attr_reader :totalpp,:addlEffect,:target,:priority
   attr_reader :flags
-  attr_reader :category#,:contestType
+  attr_reader :category
 
   def initializeOld(moveid)
     movedata=pbRgssOpen("Data/rsattacks.dat")
@@ -56,7 +56,6 @@ class PBMoveData
     @target      = movedata.fgetw
     @priority    = movedata.fgetsb
     @flags       = movedata.fgetw
-#    @contestType = movedata.fgetb
     movedata.close
   end
 end
@@ -64,9 +63,9 @@ end
 
 
 class PBMove
-  attr_reader(:id)       # Gets this move's ID.
-  attr_accessor(:pp)     # Gets the number of PP remaining for this move.
-  attr_accessor(:ppup)   # Gets the number of PP Ups used for this move.
+  attr_reader(:id)       # This move's ID
+  attr_accessor(:pp)     # The amount of PP remaining for this move
+  attr_accessor(:ppup)   # The number of PP Ups used for this move
 
 # Gets this move's type.
   def type

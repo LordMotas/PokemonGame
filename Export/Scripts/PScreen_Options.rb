@@ -61,8 +61,24 @@ class Window_PokemonOption < Window_DrawableCommand
            optionname,self.baseColor,self.shadowColor)
       end
     elsif @options[index].is_a?(NumberOption)
-      value=_ISPRINTF("{1:d}",@options[index].optstart+self[index])
+      value=sprintf("Type %d/%d",@options[index].optstart+self[index],
+         @options[index].optend-@options[index].optstart+1)
       xpos=optionwidth+rect.x
+      pbDrawShadowText(self.contents,xpos,rect.y,optionwidth,rect.height,value,
+         @selBaseColor,@selShadowColor)
+    elsif @options[index].is_a?(SliderOption)
+      value=sprintf(" %d",@options[index].optend)
+      sliderlength=optionwidth-self.contents.text_size(value).width
+      xpos=optionwidth+rect.x
+      self.contents.fill_rect(xpos,rect.y-2+rect.height/2,
+         optionwidth-self.contents.text_size(value).width,4,self.baseColor)
+      self.contents.fill_rect(
+         xpos+(sliderlength-8)*(@options[index].optstart+self[index])/@options[index].optend,
+         rect.y-8+rect.height/2,
+         8,16,@selBaseColor)
+      
+      value=sprintf("%d",@options[index].optstart+self[index])
+      xpos+=optionwidth-self.contents.text_size(value).width
       pbDrawShadowText(self.contents,xpos,rect.y,optionwidth,rect.height,value,
          @selBaseColor,@selShadowColor)
     else
@@ -167,10 +183,10 @@ class NumberOption
   include PropertyMixin
   attr_reader :name
   attr_reader :optstart
+  attr_reader :optend
 
-  def initialize(name,format,optstart,optend,getProc,setProc)
+  def initialize(name,optstart,optend,getProc,setProc)
     @name=name
-    @format=format
     @optstart=optstart
     @optend=optend
     @getProc=getProc
@@ -196,9 +212,45 @@ class NumberOption
   end
 end
 
+
+
+class SliderOption
+  include PropertyMixin
+  attr_reader :name
+  attr_reader :optstart
+  attr_reader :optend
+
+  def initialize(name,optstart,optend,optinterval,getProc,setProc)
+    @name=name
+    @optstart=optstart
+    @optend=optend
+    @optinterval=optinterval
+    @getProc=getProc
+    @setProc=setProc
+  end
+
+  def next(current)
+    index=current+@optstart
+    index+=@optinterval
+    if index>@optend
+      index=@optend
+    end
+    return index-@optstart
+  end
+
+  def prev(current)
+    index=current+@optstart
+    index-=@optinterval
+    if index<@optstart
+      index=@optstart
+    end
+    return index-@optstart
+  end
+end
+
 #####################
 #
-#  Stores game options
+# Stores game options
 # Default options are at the top of script section SpriteWindow.
 
 $SpeechFrames=[
@@ -260,8 +312,7 @@ $VersionStyles=[
   [MessageConfig::FontName], # Default font style - Power Green/"Pokemon Emerald"
   ["Power Red and Blue"],
   ["Power Red and Green"],
-  ["Power Clear"],
-  ["Power Black and White"]
+  ["Power Clear"]
 ]
 
 def pbSettingToTextSpeed(speed)
@@ -319,6 +370,10 @@ class PokemonSystem
   attr_accessor :font
   attr_accessor :screensize
   attr_accessor :language
+  attr_accessor :border
+  attr_accessor :runstyle
+  attr_accessor :bgmvolume
+  attr_accessor :sevolume
 
   def language
     return (!@language) ? 0 : @language
@@ -328,17 +383,37 @@ class PokemonSystem
     return (!@textskin) ? 0 : @textskin
   end
 
+  def border
+    return (!@border) ? 0 : @border
+  end
+
+  def runstyle
+    return (!@runstyle) ? 0 : @runstyle
+  end
+
+  def bgmvolume
+    return (!@bgmvolume) ? 100 : @bgmvolume
+  end
+
+  def sevolume
+    return (!@sevolume) ? 100 : @sevolume
+  end
+
   def tilemap; return MAPVIEWMODE; end
 
   def initialize
-    @textspeed   = 1   # Text speed (0=slow, 1=mid, 2=fast)
-    @battlescene = 0   # Battle scene (animations) (0=on, 1=off)
-    @battlestyle = 0   # Battle style (0=shift, 1=set)
+    @textspeed   = 1   # Text speed (0=slow, 1=normal, 2=fast)
+    @battlescene = 0   # Battle effects (animations) (0=on, 1=off)
+    @battlestyle = 0   # Battle style (0=switch, 1=set)
     @frame       = 0   # Default window frame (see also $TextFrames)
     @textskin    = 0   # Speech frame
     @font        = 0   # Font (see also $VersionStyles)
     @screensize  = (DEFAULTSCREENZOOM.floor).to_i # 0=half size, 1=full size, 2=double size
+    @border      = 0   # Screen border (0=off, 1=on)
     @language    = 0   # Language (see also LANGUAGES in script PokemonSystem)
+    @runstyle    = 0   # Run key functionality (0=hold to run, 1=toggle auto-run)
+    @bgmvolume   = 100 # Volume of background music and ME
+    @sevolume    = 100 # Volume of sound effects
   end
 end
 
@@ -349,7 +424,7 @@ class PokemonOptionScene
     pbUpdateSpriteHash(@sprites)
   end
 
- def pbStartScene
+ def pbStartScene(inloadscreen=false)
     @sprites={}
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @viewport.z=99999
@@ -362,58 +437,106 @@ class PokemonOptionScene
     # setter and a getter for that option.  To delete an option, comment it out
     # or delete it.  The game's options may be placed in any order.
     @PokemonOptions=[
-       EnumOption.new(_INTL("Text Speed"),[_INTL("Slow"),_INTL("Mid"),_INTL("Fast")],
+       SliderOption.new(_INTL("Music Volume"),0,100,5,
+          proc { $PokemonSystem.bgmvolume },
+          proc {|value|
+             if $PokemonSystem.bgmvolume!=value
+               $PokemonSystem.bgmvolume=value
+               if $game_system.playing_bgm != nil && !inloadscreen
+                 $game_system.playing_bgm.volume=value
+                 playingBGM=$game_system.getPlayingBGM
+                 $game_system.bgm_pause
+                 $game_system.bgm_resume(playingBGM)
+               end
+             end
+          }
+       ),
+       SliderOption.new(_INTL("SE Volume"),0,100,5,
+          proc { $PokemonSystem.sevolume },
+          proc {|value|
+             if $PokemonSystem.sevolume!=value
+               $PokemonSystem.sevolume=value
+               if $game_system.playing_bgs != nil
+                 $game_system.playing_bgs.volume=value
+                 playingBGS=$game_system.getPlayingBGS
+                 $game_system.bgs_pause
+                 $game_system.bgs_resume(playingBGS)
+               end
+               pbPlayCursorSE()
+             end
+          }
+       ),
+       EnumOption.new(_INTL("Text Speed"),[_INTL("Slow"),_INTL("Normal"),_INTL("Fast")],
           proc { $PokemonSystem.textspeed },
-          proc {|value|  
+          proc {|value|
              $PokemonSystem.textspeed=value 
              MessageConfig.pbSetTextSpeed(pbSettingToTextSpeed(value)) 
           }
        ),
-       EnumOption.new(_INTL("Battle Scene"),[_INTL("On"),_INTL("Off")],
+       EnumOption.new(_INTL("Battle Effects"),[_INTL("On"),_INTL("Off")],
           proc { $PokemonSystem.battlescene },
-          proc {|value|  $PokemonSystem.battlescene=value }
+          proc {|value| $PokemonSystem.battlescene=value }
        ),
-       EnumOption.new(_INTL("Battle Style"),[_INTL("Shift"),_INTL("Set")],
+       EnumOption.new(_INTL("Battle Style"),[_INTL("Switch"),_INTL("Set")],
           proc { $PokemonSystem.battlestyle },
-          proc {|value|  $PokemonSystem.battlestyle=value }
+          proc {|value| $PokemonSystem.battlestyle=value }
        ),
-       NumberOption.new(_INTL("Speech Frame"),_INTL("Type %d"),1,$SpeechFrames.length,
+       EnumOption.new(_INTL("Running Key"),[_INTL("Hold"),_INTL("Toggle")],
+          proc { $PokemonSystem.runstyle },
+          proc {|value|
+             $PokemonSystem.runstyle=value
+             $PokemonGlobal.runtoggle=false if $PokemonGlobal
+          }
+       ),
+       NumberOption.new(_INTL("Speech Frame"),1,$SpeechFrames.length,
           proc { $PokemonSystem.textskin },
-          proc {|value|  $PokemonSystem.textskin=value;
-             MessageConfig.pbSetSpeechFrame(
-                "Graphics/Windowskins/"+$SpeechFrames[value]) }
+          proc {|value| 
+             $PokemonSystem.textskin=value
+             MessageConfig.pbSetSpeechFrame("Graphics/Windowskins/"+$SpeechFrames[value])
+          }
        ),
-       NumberOption.new(_INTL("Menu Frame"),_INTL("Type %d"),1,$TextFrames.length,
+       NumberOption.new(_INTL("Menu Frame"),1,$TextFrames.length,
           proc { $PokemonSystem.frame },
-          proc {|value|  
+          proc {|value|
              $PokemonSystem.frame=value
              MessageConfig.pbSetSystemFrame($TextFrames[value]) 
           }
        ),
-       EnumOption.new(_INTL("Font Style"),[_INTL("Em"),_INTL("R/S"),_INTL("FRLG"),_INTL("DP"),_INTL("BW")],
+       EnumOption.new(_INTL("Font Style"),[_INTL("Em"),_INTL("R/S"),_INTL("FRLG"),_INTL("DP")],
           proc { $PokemonSystem.font },
-          proc {|value|  
+          proc {|value|
              $PokemonSystem.font=value
              MessageConfig.pbSetSystemFontName($VersionStyles[value])
           }
        ),
+# ------------------------------------------------------------------------------
 # Quote this section out if you don't want to allow players to change the screen
 # size.
-       EnumOption.new(_INTL("Screen Size"),[_INTL("Small"),_INTL("Medium"),_INTL("Large")],
+       EnumOption.new(_INTL("Screen Size"),[_INTL("S"),_INTL("M"),_INTL("L"),_INTL("XL"),_INTL("Full")],
           proc { $PokemonSystem.screensize },
           proc {|value|
              oldvalue=$PokemonSystem.screensize
              $PokemonSystem.screensize=value
-             $ResizeOffsetX=0
-             $ResizeOffsetY=0
-             pbSetResizeFactor([0.5,1.0,2.0][value])
              if value!=oldvalue
+               pbSetResizeFactor($PokemonSystem.screensize)
+               ObjectSpace.each_object(TilemapLoader){|o| next if o.disposed?; o.updateClass }
+             end
+          }
+       ),
+# ------------------------------------------------------------------------------
+       EnumOption.new(_INTL("Screen Border"),[_INTL("Off"),_INTL("On")],
+          proc { $PokemonSystem.border },
+          proc {|value|
+             oldvalue=$PokemonSystem.border
+             $PokemonSystem.border=value
+             if value!=oldvalue
+               pbSetResizeFactor($PokemonSystem.screensize)
                ObjectSpace.each_object(TilemapLoader){|o| next if o.disposed?; o.updateClass }
              end
           }
        )
-# ------------------------------------------------------------------------------
     ]
+    @PokemonOptions=pbAddOnOptions(@PokemonOptions)
     @sprites["option"]=Window_PokemonOption.new(@PokemonOptions,0,
        @sprites["title"].height,Graphics.width,
        Graphics.height-@sprites["title"].height-@sprites["textbox"].height)
@@ -425,6 +548,10 @@ class PokemonOptionScene
     end
     pbDeactivateWindows(@sprites)
     pbFadeInAndShow(@sprites) { pbUpdate }
+  end
+
+  def pbAddOnOptions(options)
+    return options
   end
 
   def pbOptions
@@ -473,8 +600,8 @@ class PokemonOption
     @scene=scene
   end
 
-  def pbStartScreen
-    @scene.pbStartScene
+  def pbStartScreen(inloadscreen=false)
+    @scene.pbStartScene(inloadscreen)
     @scene.pbOptions
     @scene.pbEndScene
   end

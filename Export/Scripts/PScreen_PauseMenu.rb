@@ -95,15 +95,16 @@ class PokemonMenu
     endscene=true
     pbSetViableDexes
     commands=[]
-    cmdPokedex=-1
-    cmdPokemon=-1
-    cmdBag=-1
-    cmdTrainer=-1
-    cmdSave=-1
-    cmdOption=-1
-    cmdPokegear=-1
-    cmdDebug=-1
-    cmdQuit=-1
+    cmdPokedex  = -1
+    cmdPokemon  = -1
+    cmdBag      = -1
+    cmdTrainer  = -1
+    cmdSave     = -1
+    cmdOption   = -1
+    cmdPokegear = -1
+    cmdDebug    = -1
+    cmdQuit     = -1
+    cmdEndGame  = -1
     if !$Trainer
       if $DEBUG
         Kernel.pbMessage(_INTL("The player trainer was not defined, so the menu can't be displayed."))
@@ -132,13 +133,13 @@ class PokemonMenu
       else
         @scene.pbShowInfo(_INTL("Caught: None\nBalls: {1}",pbBugContestState.ballcount))
       end
-      commands[cmdQuit=commands.length]=_INTL("Quit")
+      commands[cmdQuit=commands.length]=_INTL("Quit Contest")
     else
       commands[cmdSave=commands.length]=_INTL("Save") if !$game_system || !$game_system.save_disabled
     end
     commands[cmdOption=commands.length]=_INTL("Options")
     commands[cmdDebug=commands.length]=_INTL("Debug") if $DEBUG
-    commands[commands.length]=_INTL("Exit")
+    commands[cmdEndGame=commands.length]=_INTL("Quit Game")
     loop do
       command=@scene.pbShowCommands(commands)
       if cmdPokedex>=0 && command==cmdPokedex
@@ -248,6 +249,20 @@ class PokemonMenu
            pbUpdateSceneMap
            @scene.pbRefresh
         }
+      elsif cmdEndGame>=0 && command==cmdEndGame
+        @scene.pbHideMenu
+        if Kernel.pbConfirmMessage(_INTL("Are you sure you want to quit the game?"))
+          scene=PokemonSaveScene.new
+          screen=PokemonSave.new(scene)
+          if screen.pbSaveScreen
+            @scene.pbEndScene
+          end
+          @scene.pbEndScene
+          $scene=nil
+          return
+        else
+          pbShowMenu
+        end
       else
         break
       end

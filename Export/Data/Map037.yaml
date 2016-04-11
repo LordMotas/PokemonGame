@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: PkmRS-BTower
     pitch: 100
-  tileset_id: 14
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -19,7 +18,7 @@ root: !ruby/object:RPG::Map
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
-          switch1_id: 1
+          switch1_id: 21
           switch1_valid: false
           variable_value: 0
           self_switch_valid: false
@@ -100,10 +99,10 @@ root: !ruby/object:RPG::Map
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
-          switch1_id: 12
-          switch1_valid: false
+          switch1_id: 21
+          switch1_valid: true
           variable_value: 0
-          self_switch_valid: true
+          self_switch_valid: false
           variable_id: 1
           variable_valid: false
           switch2_id: 1
@@ -228,10 +227,9 @@ root: !ruby/object:RPG::Map
           code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
-          - A
-          - 0
+          - setTempSwitchOn("A")
           indent: 0
-          code: 123
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
@@ -281,10 +279,10 @@ root: !ruby/object:RPG::Map
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
+          switch1_id: 21
+          switch1_valid: true
           variable_value: 0
-          self_switch_valid: true
+          self_switch_valid: false
           variable_id: 1
           variable_valid: false
           switch2_id: 1
@@ -325,17 +323,17 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bI'll battle you each time you enter my room because "
+          - "\\bEverything in here uses a temporary switch to "
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'I use a temporary switch to decide when I''m beaten, '
+          - 'decide what to do, rather than a Self Switch, '
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - rather than a Self Switch.
+          - because it all needs to reset each time you enter.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -356,7 +354,7 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbSetSelfSwitch(1,"A",true)
+          - get_character(1).setTempSwitchOn("A")
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -459,6 +457,7 @@ root: !ruby/object:RPG::Map
       y: 6
       x: 6
       id: 3
+  tileset_id: 14
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: route
     pitch: 100
-  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -2113,12 +2112,12 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - you like to see?\ch[1,-1,None,Rain,Storm,
+          - you like to see?\ch[1,-1,None,Rain,HeavyRain,Storm,
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Snow,Sandstorm,Sunny,HeavyRain,Blizzard]
+          - Snow,Blizzard,Sandstorm,Sun]
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -2181,7 +2180,7 @@ root: !ruby/object:RPG::Map
           code: 412
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Storm (with lightning flashes).
+          - HeavyRain (like storm but no lightning flashes).
           indent: 0
           code: 108
         - !ruby/object:RPG::EventCommand
@@ -2190,6 +2189,38 @@ root: !ruby/object:RPG::Map
           - 1
           - 0
           - 2
+          - 0
+          indent: 0
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$game_screen.weather("
+          indent: 1
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "   PBFieldWeather::HeavyRain,9.0,20)"
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Storm (with lightning flashes).
+          indent: 0
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 1
+          - 0
+          - 3
           - 0
           indent: 0
           code: 111
@@ -2218,7 +2249,7 @@ root: !ruby/object:RPG::Map
           - 1
           - 1
           - 0
-          - 3
+          - 4
           - 0
           indent: 0
           code: 111
@@ -2239,6 +2270,38 @@ root: !ruby/object:RPG::Map
           code: 412
         - !ruby/object:RPG::EventCommand
           parameters:
+          - Blizzard.
+          indent: 0
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 1
+          - 0
+          - 5
+          - 0
+          indent: 0
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$game_screen.weather("
+          indent: 1
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "   PBFieldWeather::Blizzard,9.0,20)"
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - Sandstorm.
           indent: 0
           code: 108
@@ -2247,15 +2310,20 @@ root: !ruby/object:RPG::Map
           - 1
           - 1
           - 0
-          - 4
+          - 6
           - 0
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$game_screen.weather(4,9.0,20)"
+          - "$game_screen.weather("
           indent: 1
           code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "   PBFieldWeather::Sandstorm,9.0,20)"
+          indent: 1
+          code: 655
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 1
@@ -2274,79 +2342,35 @@ root: !ruby/object:RPG::Map
           - 1
           - 1
           - 0
-          - 5
-          - 0
-          indent: 0
-          code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$game_screen.weather(5,9.0,20)"
-          indent: 1
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\bThis weather can occur even at night, and doesn't "
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - fade in/out.  It's better if you don't use it.
-          indent: 1
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 412
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - HeavyRain (like storm but no lightning flashes).
-          indent: 0
-          code: 108
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 1
-          - 1
-          - 0
-          - 6
-          - 0
-          indent: 0
-          code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$game_screen.weather(6,9.0,20)"
-          indent: 1
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 412
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Blizzard.
-          indent: 0
-          code: 108
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 1
-          - 1
-          - 0
           - 7
           - 0
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$game_screen.weather(7,9.0,20)"
+          - "$game_screen.weather("
           indent: 1
           code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "   PBFieldWeather::Sun,9.0,20)"
+          indent: 1
+          code: 655
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\bThis weather can occur even at night, but doesn't "
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'negate the day/night shading. It''s better if you don''t '
+          indent: 1
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - use it.
+          indent: 1
+          code: 401
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 1
@@ -2412,6 +2436,7 @@ root: !ruby/object:RPG::Map
       y: 20
       x: 49
       id: 13
+  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

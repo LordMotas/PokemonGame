@@ -1,94 +1,6 @@
-################################################################################
-# Interpolators
-################################################################################
-class RectInterpolator
-  def initialize(oldrect,newrect,frames)
-    restart(oldrect,newrect,frames)
-  end
-
-  def restart(oldrect,newrect,frames)
-    @oldrect=oldrect
-    @newrect=newrect
-    @frames=[frames,1].max
-    @curframe=0
-    @rect=oldrect.clone
-  end
-
-  def set(rect)
-    rect.set(@rect.x,@rect.y,@rect.width,@rect.height)
-  end
-
-  def done?
-    @curframe>@frames
-  end
-
-  def update
-    return if done?
-    t=(@curframe*1.0/@frames)
-    x1=@oldrect.x
-    x2=@newrect.x
-    x=x1+t*(x2-x1)
-    y1=@oldrect.y
-    y2=@newrect.y
-    y=y1+t*(y2-y1)
-    rx1=@oldrect.x+@oldrect.width
-    rx2=@newrect.x+@newrect.width
-    rx=rx1+t*(rx2-rx1)
-    ry1=@oldrect.y+@oldrect.height
-    ry2=@newrect.y+@newrect.height
-    ry=ry1+t*(ry2-ry1)
-    minx=x<rx ? x : rx
-    maxx=x>rx ? x : rx
-    miny=y<ry ? y : ry
-    maxy=y>ry ? y : ry
-    @rect.set(minx,miny,maxx-minx,maxy-miny)
-    @curframe+=1
-  end
-end
-
-
-
-class PointInterpolator
-  def initialize(oldx,oldy,newx,newy,frames)
-    restart(oldx,oldy,newx,newy,frames)
-  end
-
-  def restart(oldx,oldy,newx,newy,frames)
-    @oldx=oldx
-    @oldy=oldy
-    @newx=newx
-    @newy=newy
-    @frames=frames
-    @curframe=0
-    @x=oldx
-    @y=oldy
-  end
-
-  def x; @x;end
-  def y; @y;end
-
-  def done?
-    @curframe>@frames
-  end
-
-  def update
-    return if done?
-    t=(@curframe*1.0/@frames)
-    rx1=@oldx
-    rx2=@newx
-    @x=rx1+t*(rx2-rx1)
-    ry1=@oldy
-    ry2=@newy
-    @y=ry1+t*(ry2-ry1)
-    @curframe+=1
-  end
-end
-
-
-
-################################################################################
+#===============================================================================
 # Visibility circle in dark maps
-################################################################################
+#===============================================================================
 class DarknessSprite < SpriteWrapper
   attr_reader :radius
 
@@ -131,9 +43,75 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Location signpost
-################################################################################
+#===============================================================================
+class LocationWindow #Uranium
+  def initialize(name)
+    @currentmap=$game_map.map_id
+    @frames=0
+    mapname=$game_map.name
+    @overlay=BitmapSprite.new(Graphics.width,784,@viewport)
+    @overlay.z=99999
+    @overlay.y=18
+    @overlay.x = 520
+    overlay=@overlay.bitmap
+    overlay.clear
+    baseColor=Color.new(247,241,232)
+    shadowColor=Color.new(140,123,107)
+    pbSetSystemFont(@overlay.bitmap)
+   textPositions=[
+   [_INTL("{1}", mapname),512,0,1,baseColor,shadowColor]
+   ]
+   pbDrawTextPositions(overlay,textPositions)
+  
+  @panel = Sprite.new(@viewport)
+  @panel.bitmap=BitmapCache.load_bitmap("Graphics/Pictures/panel")
+  @panel.y = 16
+  @panel.zoom_x = 2.0
+  @panel.zoom_y = 2.0
+  @panel.opacity = 0
+  @panel.z=99998
+  end
+
+  def disposed?
+    @overlay.disposed?
+    @panel.disposed?
+  end
+
+  def dispose
+    @overlay.dispose
+    @panel.dispose
+  end
+
+  def update
+    return if @overlay.disposed?
+    return if @panel.disposed?
+    @overlay.update
+    @panel.update
+    if $game_temp.message_window_showing ||
+      @currentmap!=$game_map.map_id
+      @overlay.dispose 
+      @panel.dispose 
+      return
+    end
+    if @frames>100
+      @overlay.opacity -= 12 if @overlay.opacity != 0
+      if @panel.opacity != 0
+        @panel.opacity -= 6
+      end
+    else
+      if @panel.opacity != 160
+        @panel.opacity += 8
+      else
+        @overlay.x -= 20 if @overlay.x != -300
+      end
+      @frames+=1
+    end
+  end
+end
+
+=begin
 class LocationWindow
   def initialize(name)
     @window=Window_AdvancedTextPokemon.new(name)
@@ -141,6 +119,7 @@ class LocationWindow
     @window.x=0
     @window.y=-@window.height
     @window.z=99999
+    @window.viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
     @currentmap=$game_map.map_id
     @frames=0
   end
@@ -170,12 +149,12 @@ class LocationWindow
     end
   end
 end
+=end
 
 
-
-################################################################################
+#===============================================================================
 # Lights
-################################################################################
+#===============================================================================
 class LightEffect
   def initialize(event,viewport=nil,map=nil,filename=nil)
     @light = IconSprite.new(0,0,viewport)
@@ -294,11 +273,11 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # This module stores encounter-modifying events that can happen during the game.
 # A procedure can subscribe to an event by adding itself to the event.  It will
 # then be called whenever the event occurs.
-################################################################################
+#===============================================================================
 module EncounterModifier
   @@procs=[]
   @@procsEnd=[]
@@ -327,11 +306,11 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # This module stores events that can happen during the game.  A procedure can
 # subscribe to an event by adding itself to the event.  It will then be called
 # whenever the event occurs.
-################################################################################
+#===============================================================================
 module Events
   @@OnMapChange=Event.new
   @@OnMapSceneChange=Event.new
@@ -544,9 +523,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Battles
-################################################################################
+#===============================================================================
 class Game_Temp
   attr_accessor :background_bitmap
 end
@@ -779,12 +758,7 @@ def pbBattleAnimation(bgm=nil,trainerid=-1,trainername="")
   end
   # End of VS. sequence script
   if !handled
-    if $PokemonGlobal.nextTransition !=nil && $PokemonGlobal.nextTransition !="" #force chosen transition
-         Graphics.freeze
-         viewport.color=Color.new(0,0,0,255)
-         Graphics.transition(50,sprintf("Graphics/Transitions/%s",$PokemonGlobal.nextTransition))
-      $PokemonGlobal.nextTransition=""
-    elsif Sprite.method_defined?(:wave_amp) && rand(15)==0
+    if Sprite.method_defined?(:wave_amp) && rand(15)==0
       viewport.color=Color.new(0,0,0,255)
       sprite = Sprite.new
       bitmap=Graphics.snap_to_bitmap
@@ -821,22 +795,21 @@ def pbBattleAnimation(bgm=nil,trainerid=-1,trainername="")
       bitmap.dispose
       bm.dispose
       sprite.dispose
-    elsif rand(15)==0
-      scroll=["ScrollDown","ScrollLeft","ScrollRight","ScrollUp"]
+    elsif rand(10)==0 # Custom transition method
+      scroll=["ScrollDown","ScrollLeft","ScrollRight","ScrollUp",
+              "ScrollDownRight","ScrollDownLeft","ScrollUpRight","ScrollUpLeft"]
       Graphics.freeze
       viewport.color=Color.new(0,0,0,255)
-      Graphics.transition(50,sprintf("Graphics/Transitions/%s",scroll[rand(4)]))
-    elsif rand(15)==0
-      scroll=["ScrollDownRight","ScrollDownLeft","ScrollUpRight","ScrollUpLeft"]
-      Graphics.freeze
-      viewport.color=Color.new(0,0,0,255)
-      Graphics.transition(50,sprintf("Graphics/Transitions/%s",scroll[rand(4)]))
+      Graphics.transition(50,sprintf("Graphics/Transitions/%s",scroll[rand(scroll.length)]))
     else
-      transitions=["021-Normal01","022-Normal02",
+      transitions=[
+         # Transitions with graphic files
+         "021-Normal01","022-Normal02",
          "Battle","battle1","battle2","battle3","battle4",
          "computertr","computertrclose",
          "hexatr","hexatrc","hexatzr",
          "Image1","Image2","Image3","Image4",
+         # Custom transition methods
          "Splash","Random_stripe_v","Random_stripe_h",
          "RotatingPieces","ShrinkingPieces",
          "BreakingGlass","Mosaic","zoomin"
@@ -874,16 +847,16 @@ end
 
 def pbPrepareBattle(battle)
   case $game_screen.weather_type
-  when 1, 2, 6
+  when PBFieldWeather::Rain, PBFieldWeather::HeavyRain, PBFieldWeather::Storm
     battle.weather=PBWeather::RAINDANCE
     battle.weatherduration=-1
-  when 3, 7
+  when PBFieldWeather::Snow, PBFieldWeather::Blizzard
     battle.weather=PBWeather::HAIL
     battle.weatherduration=-1
-  when 4
+  when PBFieldWeather::Sandstorm
     battle.weather=PBWeather::SANDSTORM
     battle.weatherduration=-1
-  when 5
+  when PBFieldWeather::Sun
     battle.weather=PBWeather::SUNNYDAY
     battle.weatherduration=-1
   end
@@ -919,12 +892,13 @@ def pbGetEnvironment
   end
 end
 
-def pbGenerateWildPokemon(species,level)
+def pbGenerateWildPokemon(species,level,isroamer=false)
   genwildpoke=PokeBattle_Pokemon.new(species,level,$Trainer)
   items=genwildpoke.wildHoldItems
+  firstpoke=$Trainer.firstParty
   chances=[50,5,1]
-  chances=[60,20,5] if !$Trainer.party[0].isEgg? &&
-     isConst?($Trainer.party[0].ability,PBAbilities,:COMPOUNDEYES)
+  chances=[60,20,5] if firstpoke && !firstpoke.isEgg? &&
+                       isConst?(firstpoke.ability,PBAbilities,:COMPOUNDEYES)
   itemrnd=rand(100)
   if itemrnd<chances[0] || (items[0]==items[1] && items[1]==items[2])
     genwildpoke.setItem(items[0])
@@ -933,7 +907,7 @@ def pbGenerateWildPokemon(species,level)
   elsif itemrnd<(chances[0]+chances[1]+chances[2])
     genwildpoke.setItem(items[2])
   end
-  if hasConst?(PBItems,:SHINYCHARM) && $PokemonBag.pbQuantity(PBItems::SHINYCHARM)>0
+  if hasConst?(PBItems,:SHINYCHARM) && $PokemonBag.pbQuantity(:SHINYCHARM)>0
     for i in 0...2   # 3 times as likely
       break if genwildpoke.isShiny?
       genwildpoke.personalID=rand(65536)|(rand(65536)<<16)
@@ -942,29 +916,23 @@ def pbGenerateWildPokemon(species,level)
   if rand(65536)<POKERUSCHANCE
     genwildpoke.givePokerus
   end
-  #Cute Charm.  Should also include swarming pokemon, if you implement that
-  if !$Trainer.party[0].egg? && isConst?($Trainer.party[0].ability,PBAbilities,:CUTECHARM)
-    if genwildpoke.gender !=2 && rand(100)<67 #&& $game_map.map_id !=XX where XX is the id of Hidden Grotto map, if you have one
-      genwildpoke.setGender(($Trainer.party[0].gender==0)? 1:0)
+  if firstpoke && !firstpoke.isEgg?
+    if isConst?(firstpoke.ability,PBAbilities,:CUTECHARM) &&
+       !genwildpoke.isSingleGendered?
+      if firstpoke.isMale?
+        (rand(3)<2) ? genwildpoke.makeFemale : genwildpoke.makeMale
+      elsif firstpoke.isFemale?
+        (rand(3)<2) ? genwildpoke.makeMale : genwildpoke.makeFemale
+      end
+    elsif isConst?(firstpoke.ability,PBAbilities,:SYNCHRONIZE)
+      genwildpoke.setNature(firstpoke.nature) if !isroamer && rand(10)<5
     end
-  end
-  #Hustle, Pressure, Vital Spirit.  Probably not the best way to implement this
-  if !$Trainer.party[0].egg? && (isConst?($Trainer.party[0].ability,PBAbilities,:HUSTLE) || isConst?($Trainer.party[0].ability,PBAbilities,:PRESSURE) || isConst?($Trainer.party[0].ability,PBAbilities,:VITALSPIRIT))
-    if rand(100)<50
-    increase=(genwildpoke.level/10).floor
-    genwildpoke.level+=increase
-    genwildpoke.level=MAXIMUMLEVEL if genwildpoke.level>MAXIMUMLEVEL
-    end
-  end
-  #Synchronize
-  if !$Trainer.party[0].egg? && isConst?($Trainer.party[0].ability,PBAbilities,:SYNCHRONIZE)
-    genwildpoke.setNature($Trainer.party[0].nature) if rand(100)<50
   end
   Events.onWildPokemonCreate.trigger(nil,genwildpoke)
   return genwildpoke
 end
 
-def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false,skybattle=false,inverse=false)
+def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false)
   if (Input.press?(Input::CTRL) && $DEBUG) || $Trainer.pokemonCount==0
     if $Trainer.pokemonCount>0
       Kernel.pbMessage(_INTL("SKIPPING BATTLE..."))
@@ -974,17 +942,6 @@ def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false,skybatt
     $PokemonGlobal.nextBattleME=nil
     $PokemonGlobal.nextBattleBack=nil
     return true
-  end
-  # Sky battle eligibility for player
-  if skybattle
-    count=0
-    for poke in $Trainer.party
-      count+=1 if pbCanSkyBattle?(poke)
-    end
-    if count==0
-      Kernel.pbMessage(_INTL("You don't have any eligible pokemon for a sky battle"))
-      return false
-    end
   end
   if species.is_a?(String) || species.is_a?(Symbol)
     species=getID(PBSpecies,species)
@@ -1000,12 +957,8 @@ def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false,skybatt
   end
   genwildpoke=pbGenerateWildPokemon(species,level)
   Events.onStartBattle.trigger(nil,genwildpoke)
-  if skybattle && !pbCanSkyBattle?(genwildpoke)
-    Kernel.pbMessage(_INTL("This pokemon can't fight in a sky battle!"))
-    return false
-  end
   scene=pbNewBattleScene
-  battle=PokeBattle_Battle.new(scene,$Trainer.party,[genwildpoke],$Trainer,nil,skybattle,inverse)
+  battle=PokeBattle_Battle.new(scene,$Trainer.party,[genwildpoke],$Trainer,nil)
   battle.internalbattle=true
   battle.cantescape=!canescape
   pbPrepareBattle(battle)
@@ -1028,13 +981,13 @@ def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false,skybatt
          for i in 0...10
            Graphics.update
          end
-       else
-         $game_system.bgm_unpause
-         $game_system.bgs_unpause
-         Kernel.pbStartOver
+#       else
+#         $game_system.bgm_unpause
+#         $game_system.bgs_unpause
+#         Kernel.pbStartOver
        end
      end
-     Events.onEndBattle.trigger(nil,decision)
+     Events.onEndBattle.trigger(nil,decision,canlose)
   }
   Input.update
   pbSet(variable,decision)
@@ -1042,7 +995,7 @@ def pbWildBattle(species,level,variable=nil,canescape=true,canlose=false,skybatt
   return (decision!=2)
 end
 
-def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=true,canlose=false,skybattle=false,inverse=false)
+def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=true,canlose=false)
   if (Input.press?(Input::CTRL) && $DEBUG) || $Trainer.pokemonCount==0
     if $Trainer.pokemonCount>0
       Kernel.pbMessage(_INTL("SKIPPING BATTLE..."))
@@ -1052,17 +1005,6 @@ def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=tr
     $PokemonGlobal.nextBattleME=nil
     $PokemonGlobal.nextBattleBack=nil
     return true
-  end
-   # Sky battle eligibility for player
-  if skybattle
-    count=0
-    for poke in $Trainer.party
-      count+=1 if pbCanSkyBattle?(poke)
-    end
-    if count==0
-      Kernel.pbMessage(_INTL("You don't have any eligible pokemon for a sky battle"))
-      return false
-    end
   end
   if species1.is_a?(String) || species1.is_a?(Symbol)
     species1=getID(PBSpecies,species1)
@@ -1077,10 +1019,6 @@ def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=tr
   genwildpoke=pbGenerateWildPokemon(species1,level1)
   genwildpoke2=pbGenerateWildPokemon(species2,level2)
   Events.onStartBattle.trigger(nil,genwildpoke)
-  if skybattle && (!pbCanSkyBattle?(genwildpoke) || !pbCanSkyBattle?(genwildpoke2))
-    Kernel.pbMessage(_INTL("These pokemon can't fight in a sky battle!"))
-    return false
-  end
   scene=pbNewBattleScene
   if $PokemonGlobal.partner
     othertrainer=PokeBattle_Trainer.new(
@@ -1095,11 +1033,12 @@ def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=tr
       combinedParty[6+i]=othertrainer.party[i]
     end
     battle=PokeBattle_Battle.new(scene,combinedParty,[genwildpoke,genwildpoke2],
-       [$Trainer,othertrainer],nil,skybattle,inverse)
+       [$Trainer,othertrainer],nil)
     battle.fullparty1=true
   else
     battle=PokeBattle_Battle.new(scene,$Trainer.party,[genwildpoke,genwildpoke2],
-       $Trainer,nil,skybattle,inverse)
+       $Trainer,nil)
+    battle.fullparty1=false
   end
   battle.internalbattle=true
   battle.doublebattle=battle.pbDoubleBattleAllowed?()
@@ -1124,13 +1063,13 @@ def pbDoubleWildBattle(species1,level1,species2,level2,variable=nil,canescape=tr
          for i in 0...10
            Graphics.update
          end
-       else
-         $game_system.bgm_unpause
-         $game_system.bgs_unpause
-         Kernel.pbStartOver
+#       else
+#         $game_system.bgm_unpause
+#         $game_system.bgs_unpause
+#         Kernel.pbStartOver
        end
      end
-     Events.onEndBattle.trigger(nil,decision)
+     Events.onEndBattle.trigger(nil,decision,canlose)
   }
   Input.update
   pbSet(variable,decision)
@@ -1208,25 +1147,25 @@ def Kernel.pbPickup(pokemon)
      :FULLRESTORE,
      :ETHER,
      :IRONBALL,
-     :PRISMSCALE,
+     :DESTINYKNOT,
      :ELIXIR,
-     :PRISMSCALE,
+     :DESTINYKNOT,
      :LEFTOVERS,
-     :PRISMSCALE
+     :DESTINYKNOT
   )
   return if pickupList.length!=18
   return if pickupListRare.length!=11
   randlist=[30,10,10,10,10,10,10,4,4,1,1]
   items=[]
   plevel=[100,pokemon.level].min
-  rnd=rand(100)
   itemstart=(plevel-1)/10
   itemstart=0 if itemstart<0
   for i in 0...9
-    items.push(pickupList[i+itemstart])
+    items.push(pickupList[itemstart+i])
   end
   items.push(pickupListRare[itemstart])
   items.push(pickupListRare[itemstart+1])
+  rnd=rand(100)
   cumnumber=0
   for i in 0...11
     cumnumber+=randlist[i]
@@ -1275,7 +1214,8 @@ Events.onStartBattle+=proc {|sender,e|
 
 Events.onEndBattle+=proc {|sender,e|
   decision=e[0]
-  if (decision!=2 && decision!=5) || EVOLVEAFTERLOSS # not a loss or a draw
+  canlose=e[1]
+  if USENEWBATTLEMECHANICS || (decision!=2 && decision!=5) # not a loss or a draw
     if $PokemonTemp.evolutionLevels
       pbEvolutionCheck($PokemonTemp.evolutionLevels)
       $PokemonTemp.evolutionLevels=nil
@@ -1286,19 +1226,24 @@ Events.onEndBattle+=proc {|sender,e|
       Kernel.pbPickup(pkmn)
       if isConst?(pkmn.ability,PBAbilities,:HONEYGATHER) && !pkmn.isEgg? && !pkmn.hasItem?
         if hasConst?(PBItems,:HONEY)
-          chance = 5 + ((pkmn.level-1)/10)*5
+          chance = 5 + ((pkmn.level-1)/10).floor*5
           pkmn.setItem(:HONEY) if rand(100)<chance
         end
       end
     end
   end
+  if (decision==2 || decision==5) && !canlose
+    $game_system.bgm_unpause
+    $game_system.bgs_unpause
+    Kernel.pbStartOver
+  end
 }
 
 
 
-################################################################################
+#===============================================================================
 # Scene_Map and Spriteset_Map
-################################################################################
+#===============================================================================
 class Scene_Map
   def createSingleSpriteset(map)
     temp=$scene.spriteset.getAnimations
@@ -1349,11 +1294,11 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Field movement
-################################################################################
+#===============================================================================
 def pbLedge(xOffset,yOffset)
-  if Kernel.pbFacingTerrainTag==PBTerrain::Ledge
+  if PBTerrain.isLedge?(Kernel.pbFacingTerrainTag)
     if Kernel.pbJumpToward(2,true)
       $scene.spriteset.addUserAnimation(DUST_ANIMATION_ID,$game_player.x,$game_player.y,true)
       $game_player.increase_steps
@@ -1367,7 +1312,7 @@ end
 def Kernel.pbSlideOnIce(event=nil)
   event=$game_player if !event
   return if !event
-  return if pbGetTerrainTag(event)!=PBTerrain::Ice
+  return if !PBTerrain.isIce?(pbGetTerrainTag(event))
   $PokemonGlobal.sliding=true
   direction=event.direction
   oldwalkanime=event.walk_anime
@@ -1376,7 +1321,7 @@ def Kernel.pbSlideOnIce(event=nil)
   event.walk_anime=false
   loop do
     break if !event.passable?(event.x,event.y,direction)
-    break if pbGetTerrainTag(event)!=PBTerrain::Ice
+    break if !PBTerrain.isIce?(pbGetTerrainTag(event))
     event.move_forward
     while event.moving?
       Graphics.update
@@ -1398,7 +1343,7 @@ Events.onStepTakenTransferPossible+=proc {|sender,e|
     flashed=false
     for i in $Trainer.party
       if i.status==PBStatuses::POISON && i.hp>0 && !i.isEgg? &&
-         !isConst?(i.ability,PBAbilities,:POISONHEAL) && !isConst?(i.ability,PBAbilities,:IMMUNITY)
+         !isConst?(i.ability,PBAbilities,:IMMUNITY)
         if !flashed
           $game_screen.start_flash(Color.new(255,0,0,128), 4)
           flashed=true
@@ -1442,7 +1387,7 @@ Events.onStepTakenFieldMovement+=proc{|sender,e|
   event=e[0] # Get the event affected by field movement
   thistile=$MapFactory.getRealTilePos(event.map.map_id,event.x,event.y)
   map=$MapFactory.getMap(thistile[0])
-  sootlevel=nil
+  sootlevel=-1
   for i in [2, 1, 0]
     tile_id = map.data[thistile[1],thistile[2],i]
     next if tile_id == nil
@@ -1452,26 +1397,28 @@ Events.onStepTakenFieldMovement+=proc{|sender,e|
       break
     end
   end
-  if sootlevel
+  if sootlevel>=0 && hasConst?(PBItems,:SOOTSACK)
     $PokemonGlobal.sootsack=0 if !$PokemonGlobal.sootsack
-    map.data[thistile[1],thistile[2],sootlevel]=0
-    if event==$game_player && $PokemonBag.pbQuantity(getConst(PBItems,:SOOTSACK))>0
+#    map.data[thistile[1],thistile[2],sootlevel]=0
+    if event==$game_player && $PokemonBag.pbQuantity(:SOOTSACK)>0
       $PokemonGlobal.sootsack+=1
     end
-    $scene.createSingleSpriteset(map.map_id)
+#    $scene.createSingleSpriteset(map.map_id)
   end
 }
 
 Events.onStepTakenFieldMovement+=proc{|sender,e|
   event=e[0] # Get the event affected by field movement
-  currentTag=pbGetTerrainTag(event)
-  if pbGetTerrainTag(event,true)==PBTerrain::Grass  # Won't show if under bridge
-    $scene.spriteset.addUserAnimation(GRASS_ANIMATION_ID,event.x,event.y,true)
-  elsif event==$game_player && currentTag==PBTerrain::WaterfallCrest
-    # Descend waterfall, but only if this event is the player
-    Kernel.pbDescendWaterfall(event)
-  elsif event==$game_player && currentTag==PBTerrain::Ice && !$PokemonGlobal.sliding
-    Kernel.pbSlideOnIce(event)
+  if $scene.is_a?(Scene_Map)
+    currentTag=pbGetTerrainTag(event)
+    if PBTerrain.isJustGrass?(pbGetTerrainTag(event,true))  # Won't show if under bridge
+      $scene.spriteset.addUserAnimation(GRASS_ANIMATION_ID,event.x,event.y,true)
+    elsif event==$game_player && currentTag==PBTerrain::WaterfallCrest
+      # Descend waterfall, but only if this event is the player
+      Kernel.pbDescendWaterfall(event)
+    elsif event==$game_player && PBTerrain.isIce?(currentTag) && !$PokemonGlobal.sliding
+      Kernel.pbSlideOnIce(event)
+    end
   end
 }
 
@@ -1585,9 +1532,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Fishing
-################################################################################
+#===============================================================================
 def pbFishingBegin
   $PokemonGlobal.fishing=true
   if !pbCommonEvent(FISHINGBEGINCOMMONEVENT)
@@ -1631,20 +1578,21 @@ def pbFishingEnd
 end
 
 def pbFishing(hasencounter,rodtype=1)
+  speedup=($Trainer.firstParty && !$Trainer.firstParty.isEgg? &&
+     (isConst?($Trainer.firstParty.ability,PBAbilities,:STICKYHOLD) ||
+     isConst?($Trainer.firstParty.ability,PBAbilities,:SUCTIONCUPS)))
   bitechance=20+(25*rodtype)   # 45, 70, 95
-  if $Trainer.party.length>0 && !$Trainer.party[0].isEgg?
-    bitechance*=2 if isConst?($Trainer.party[0].ability,PBAbilities,:STICKYHOLD)
-    bitechance*=2 if isConst?($Trainer.party[0].ability,PBAbilities,:SUCTIONCUPS)
-  end
+  bitechance*=1.5 if speedup
   hookchance=100
   oldpattern=$game_player.fullPattern
   pbFishingBegin
   msgwindow=Kernel.pbCreateMessageWindow
   loop do
     time=2+rand(10)
+    time=[time,2+rand(10)].min if speedup
     message=""
     time.times do 
-      message+=".  "
+      message+=". "
     end
     if pbWaitMessage(msgwindow,time)
       pbFishingEnd
@@ -1655,7 +1603,7 @@ def pbFishing(hasencounter,rodtype=1)
     end
     if rand(100)<bitechance && hasencounter
       frames=rand(21)+20
-      if !pbWaitForInput(msgwindow,message+_INTL("\r\nOh!  A bite!"),frames)
+      if !pbWaitForInput(msgwindow,message+_INTL("\r\nOh! A bite!"),frames)
         pbFishingEnd
         $game_player.setDefaultCharName(nil,oldpattern)
         Kernel.pbMessageDisplay(msgwindow,_INTL("The Pokémon got away..."))
@@ -1700,7 +1648,7 @@ end
 def pbWaitMessage(msgwindow,time)
   message=""
   (time+1).times do |i|
-    message+=".  " if i>0
+    message+=". " if i>0
     Kernel.pbMessageDisplay(msgwindow,message,false)
     20.times do
       Graphics.update
@@ -1716,9 +1664,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Moving between maps
-################################################################################
+#===============================================================================
 Events.onMapChange+=proc {|sender,e|
   oldid=e[0] # previous map ID, 0 if no map ID
   healing=pbGetMetadata($game_map.map_id,MetadataHealingSpot)
@@ -1841,7 +1789,7 @@ def Kernel.pbStartOver(gameover=false)
     homedata=pbGetMetadata(0,MetadataHome)
     if (homedata && !pbRxdataExists?(sprintf("Data/Map%03d",homedata[0])) )
       if $DEBUG
-        Kernel.pbMessage(_ISPRINTF("Can't find the map 'Map{1:03d}' in the Data folder.  The game will resume at the player's position.",homedata[0]))
+        Kernel.pbMessage(_ISPRINTF("Can't find the map 'Map{1:03d}' in the Data folder. The game will resume at the player's position.",homedata[0]))
       end
       pbHealAll()
       return
@@ -1963,9 +1911,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Partner trainer
-################################################################################
+#===============================================================================
 def pbRegisterPartner(trainerid,trainername,partyid=0)
   Kernel.pbCancelVehicles
   trainer=pbLoadTrainer(trainerid,trainername,partyid)
@@ -1986,9 +1934,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Constant checks
-################################################################################
+#===============================================================================
 Events.onMapUpdate+=proc {|sender,e|   # Pokérus check
   last=$PokemonGlobal.pokerusTime
   now=pbGetTimeNow
@@ -2054,7 +2002,7 @@ Events.onMapUpdate+=proc {|sender,e|
      !pbMapInterpreterRunning? && !$game_temp.message_window_showing &&
      pbBatteryLow?
     $PokemonTemp.batterywarning=true
-    Kernel.pbMessage(_INTL("The game has detected that the battery is low.  You should save soon to avoid losing your progress."))
+    Kernel.pbMessage(_INTL("The game has detected that the battery is low. You should save soon to avoid losing your progress."))
   end
   if $PokemonTemp.cueFrames
     $PokemonTemp.cueFrames-=1
@@ -2069,9 +2017,9 @@ Events.onMapUpdate+=proc {|sender,e|
 
 
 
-################################################################################
+#===============================================================================
 # Audio playing
-################################################################################
+#===============================================================================
 def pbCueBGM(bgm,seconds,volume=nil,pitch=nil)
   return if !bgm
   bgm=pbResolveAudioFile(bgm,volume,pitch)
@@ -2107,9 +2055,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Voice recorder
-################################################################################
+#===============================================================================
 def pbRecord(text,maxtime=30.0)
   text="" if !text
   textwindow=Window_UnformattedTextPokemon.newWithSize(text,
@@ -2186,116 +2134,68 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Gaining items
-################################################################################
-def Kernel.pbItemBall(item,quantity=1,plural=nil)
+#===============================================================================
+def Kernel.pbItemBall(item,quantity=1)
   if item.is_a?(String) || item.is_a?(Symbol)
     item=getID(PBItems,item)
   end
   return false if !item || item<=0 || quantity<1
-  itemname=PBItems.getName(item)
+  itemname=(quantity>1) ? PBItems.getNamePlural(item) : PBItems.getName(item)
   pocket=pbGetPocket(item)
   if $PokemonBag.pbStoreItem(item,quantity)   # If item can be picked up
     if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4
-      Kernel.pbMessage(_INTL("\\se[itemlevel]{1} found \\c[1]{2}\\c[0]!\\nIt contained \\c[1]{3}\\c[0].\\wtnp[30]",
+      Kernel.pbMessage(_INTL("\\se[ItemGet]{1} found \\c[1]{2}\\c[0]!\\nIt contained \\c[1]{3}\\c[0].\\wtnp[30]",
          $Trainer.name,itemname,PBMoves.getName($ItemData[item][ITEMMACHINE])))
-      Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-         $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
     elsif isConst?(item,PBItems,:LEFTOVERS)
-      Kernel.pbMessage(_INTL("\\se[itemlevel]{1} found some \\c[1]{2}\\c[0]!\\wtnp[30]",
-         $Trainer.name,itemname))
-      Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-         $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
+      Kernel.pbMessage(_INTL("\\se[ItemGet]{1} found some \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
+    elsif quantity>1
+      Kernel.pbMessage(_INTL("\\se[ItemGet]{1} found {2} \\c[1]{3}\\c[0]!\\wtnp[30]",$Trainer.name,quantity,itemname))
     else
-      if quantity>1
-        if plural
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} found {2} \\c[1]{3}\\c[0]!\\wtnp[30]",
-             $Trainer.name,quantity,plural))
-          Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-             $Trainer.name,plural,PokemonBag.pocketNames()[pocket]))
-        else
-          Kernel.pbMessage(_INTL("\\se[itemlevel]{1} found {2} \\c[1]{3}s\\c[0]!\\wtnp[30]",
-             $Trainer.name,quantity,itemname))
-          Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}s\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-             $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
-        end
-      else
-        Kernel.pbMessage(_INTL("\\se[itemlevel]{1} found one \\c[1]{2}\\c[0]!\\wtnp[30]",
-           $Trainer.name,itemname))
-        Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-           $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
-      end
+      Kernel.pbMessage(_INTL("\\se[ItemGet]{1} found one \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
     end
+    Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
+       $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
     return true
   else   # Can't add the item
     if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4
-      Kernel.pbMessage(_INTL("{1} found \\c[1]{2}\\c[0]!\\wtnp[20]",
-         $Trainer.name,itemname))
+      Kernel.pbMessage(_INTL("{1} found \\c[1]{2}\\c[0]!\\wtnp[20]",$Trainer.name,itemname))
     elsif isConst?(item,PBItems,:LEFTOVERS)
-      Kernel.pbMessage(_INTL("{1} found some \\c[1]{2}\\c[0]!\\wtnp[20]",
-         $Trainer.name,itemname))
+      Kernel.pbMessage(_INTL("{1} found some \\c[1]{2}\\c[0]!\\wtnp[20]",$Trainer.name,itemname))
+    elsif quantity>1
+      Kernel.pbMessage(_INTL("{1} found {2} \\c[1]{3}\\c[0]!\\wtnp[20]",$Trainer.name,quantity,itemname))
     else
-      if quantity>1
-        if plural
-          Kernel.pbMessage(_INTL("{1} found {2} \\c[1]{3}\\c[0]!\\wtnp[20]",
-             $Trainer.name,quantity,plural))
-        else
-          Kernel.pbMessage(_INTL("{1} found {2} \\c[1]{3}s\\c[0]!\\wtnp[20]",
-             $Trainer.name,quantity,itemname))
-        end
-      else
-        Kernel.pbMessage(_INTL("{1} found one \\c[1]{2}\\c[0]!\\wtnp[20]",
-           $Trainer.name,itemname))
-      end
+      Kernel.pbMessage(_INTL("{1} found one \\c[1]{2}\\c[0]!\\wtnp[20]",$Trainer.name,itemname))
     end
     Kernel.pbMessage(_INTL("Too bad... The Bag is full..."))
     return false
   end
 end
 
-def Kernel.pbReceiveItem(item,quantity=1,plural=nil)
+def Kernel.pbReceiveItem(item,quantity=1)
   if item.is_a?(String) || item.is_a?(Symbol)
     item=getID(PBItems,item)
   end
   return false if !item || item<=0 || quantity<1
-  itemname=PBItems.getName(item)
+  itemname=(quantity>1) ? PBItems.getNamePlural(item) : PBItems.getName(item)
   pocket=pbGetPocket(item)
   if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4
-    Kernel.pbMessage(_INTL("\\se[itemlevel]Obtained \\c[1]{1}\\c[0]!\\nIt contained \\c[1]{2}\\c[0].\\wtnp[30]",
+    Kernel.pbMessage(_INTL("\\se[ItemGet]Obtained \\c[1]{1}\\c[0]!\\nIt contained \\c[1]{2}\\c[0].\\wtnp[30]",
        itemname,PBMoves.getName($ItemData[item][ITEMMACHINE])))
   elsif isConst?(item,PBItems,:LEFTOVERS)
-    Kernel.pbMessage(_INTL("\\se[itemlevel]Obtained some \\c[1]{1}\\c[0]!\\wtnp[30]",
-       itemname))
+    Kernel.pbMessage(_INTL("\\se[ItemGet]Obtained some \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
   elsif quantity>1
-    if plural
-      Kernel.pbMessage(_INTL("\\se[itemlevel]Obtained \\c[1]{1}\\c[0]!\\wtnp[30]",
-         plural))
-    else
-      Kernel.pbMessage(_INTL("\\se[itemlevel]Obtained \\c[1]{1}s\\c[0]!\\wtnp[30]",
-         itemname))
-    end
+    Kernel.pbMessage(_INTL("\\se[ItemGet]Obtained \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
   else
-    Kernel.pbMessage(_INTL("\\se[itemlevel]Obtained \\c[1]{1}\\c[0]!\\wtnp[30]",
-       itemname))
+    Kernel.pbMessage(_INTL("\\se[ItemGet]Obtained \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
   end
   if $PokemonBag.pbStoreItem(item,quantity)   # If item can be added
-    if quantity>1
-      if plural
-        Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-           $Trainer.name,plural,PokemonBag.pocketNames()[pocket]))
-      else
-        Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}s\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-           $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
-      end
-    else
-      Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
-         $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
-    end
+    Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket#{pocket}>\\c[1]{3}\\c[0] Pocket.",
+       $Trainer.name,itemname,PokemonBag.pocketNames()[pocket]))
     return true
-  else   # Can't add the item
-    return false
   end
+  return false   # Can't add the item
 end
 
 def pbUseKeyItem
@@ -2308,15 +2208,28 @@ end
 
 
 
-################################################################################
+#===============================================================================
+# Bridges
+#===============================================================================
+def pbBridgeOn(height=2)
+  $PokemonGlobal.bridge=height
+end
+
+def pbBridgeOff
+  $PokemonGlobal.bridge=0
+end
+
+
+
+#===============================================================================
 # Event locations, terrain tags
-################################################################################
+#===============================================================================
 def pbEventFacesPlayer?(event,player,distance)
   return false if distance<=0
   # Event can't reach player if no coordinates coincide
   return false if event.x!=player.x && event.y!=player.y
   deltaX = (event.direction == 6 ? 1 : event.direction == 4 ? -1 : 0)
-  deltaY =  (event.direction == 2 ? 1 : event.direction == 8 ? -1 : 0)
+  deltaY = (event.direction == 2 ? 1 : event.direction == 8 ? -1 : 0)
   # Check for existence of player
   curx=event.x
   cury=event.y
@@ -2443,9 +2356,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Event movement
-################################################################################
+#===============================================================================
 def pbTurnTowardEvent(event,otherEvent)
   sx=0
   sy=0
@@ -2612,9 +2525,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Screen effects
-################################################################################
+#===============================================================================
 def pbToneChangeAll(tone, duration)
   $game_screen.start_tone_change(tone,duration * 2)
   for picture in $game_screen.pictures
@@ -2665,9 +2578,9 @@ end
 
 
 
-################################################################################
+#===============================================================================
 # Events
-################################################################################
+#===============================================================================
 class Game_Event
   def cooledDown?(seconds)
     if !(expired?(seconds) && tsOff?("A"))
@@ -2691,7 +2604,7 @@ end
 
 
 module InterpreterFieldMixin
-  # Used in boulder events.  Allows an event to be pushed.  To be used in
+  # Used in boulder events. Allows an event to be pushed. To be used in
   # a script event command.
   def pbPushThisEvent
     event=get_character(0)

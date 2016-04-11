@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: route
     pitch: 100
-  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -555,7 +554,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::CHERIBERRY,2)
+          - pbPickBerry(:CHERIBERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -651,7 +650,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::ORANBERRY,2)
+          - pbPickBerry(:ORANBERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -849,7 +848,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::CHESTOBERRY,2)
+          - pbPickBerry(:CHESTOBERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -945,7 +944,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::PECHABERRY,2)
+          - pbPickBerry(:PECHABERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1041,7 +1040,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::RAWSTBERRY,2)
+          - pbPickBerry(:RAWSTBERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1137,7 +1136,7 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - pbPickBerry(PBItems::ASPEARBERRY,2)
+          - pbPickBerry(:ASPEARBERRY,2)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -1322,6 +1321,7 @@ root: !ruby/object:RPG::Map
       y: 10
       x: 10
       id: 10
+  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

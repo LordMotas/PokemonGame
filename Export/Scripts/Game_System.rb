@@ -45,15 +45,20 @@ class Game_System
     @bgs_position=0
   end
 
+################################################################################
+
   def bgm_play(bgm) 
     bgm_play_internal(bgm,0)
   end
 
   def bgm_play_internal2(name,volume,pitch,position) # :nodoc:
+    vol=volume
+    vol*=($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
+    vol=vol.to_i
     begin
-      Audio.bgm_play(name,volume,pitch,position)
+      Audio.bgm_play(name,vol,pitch,position)
     rescue ArgumentError
-      Audio.bgm_play(name,volume,pitch)
+      Audio.bgm_play(name,vol,pitch)
     end
   end
 
@@ -90,21 +95,9 @@ class Game_System
     @bgm_paused=true
   end
 
-  def bgs_pause(fadetime=0.0) # :nodoc:
-    if fadetime>0.0
-      self.bgs_fade(fadetime)
-    else
-      self.bgs_stop
-    end
-    @bgs_paused=true
-  end
-
-  def bgm_unpause;  # :nodoc:
-    @bgm_position=0; @bgm_paused=false; 
-  end
-
-  def bgs_unpause;  # :nodoc:
-    @bgs_paused=false
+  def bgm_unpause  # :nodoc:
+    @bgm_position=0
+    @bgm_paused=false
   end
 
   def bgm_resume(bgm) # :nodoc:
@@ -112,13 +105,6 @@ class Game_System
       self.bgm_play_internal(bgm,@bgm_position)
       @bgm_position=0
       @bgm_paused=false
-    end
-  end
-
-  def bgs_resume(bgs) # :nodoc:
-    if @bgs_paused
-      self.bgs_play(bgs)
-      @bgs_paused=false
     end
   end
 
@@ -138,9 +124,8 @@ class Game_System
     Audio.bgm_fade((time * 1000).floor) if !@defaultBGM
   end
 
-  # Returns an RPG::AudioFile object for the currently playing background music
-  def getPlayingBGM
-    return @playing_bgm ? @playing_bgm.clone : nil
+  def playing_bgm
+    return @playing_bgm
   end
 
   # Saves the currently playing background music for later playback.
@@ -153,42 +138,9 @@ class Game_System
     bgm_play(@memorized_bgm)
   end
 
-  def bgs_play(bgs)
-    @playing_bgs = bgs==nil ? nil : bgs.clone
-    if bgs != nil and bgs.name != ""
-      if FileTest.audio_exist?("Audio/BGS/"+ bgs.name)
-        Audio.bgs_play("Audio/BGS/" + bgs.name, bgs.volume, bgs.pitch)
-      end
-    else
-      @bgs_position=0
-      @playing_bgs=nil
-      Audio.bgs_stop
-    end
-    Graphics.frame_reset
-  end
-
-  def bgs_fade(time)
-    @bgs_position=0
-    @playing_bgs = nil
-    Audio.bgs_fade((time * 1000).floor)
-  end
-
-  def bgs_stop
-    @bgs_position=0
-    @playing_bgs = nil
-    Audio.bgs_stop
-  end
-
-  def getPlayingBGS
-    return @playing_bgs ? @playing_bgs.clone : nil 
-  end
-
-  def bgs_memorize
-    @memorized_bgs = @playing_bgs
-  end
-
-  def bgs_restore
-    bgs_play(@memorized_bgs)
+  # Returns an RPG::AudioFile object for the currently playing background music
+  def getPlayingBGM
+    return @playing_bgm ? @playing_bgm.clone : nil
   end
 
   def setDefaultBGM(bgm,volume=80,pitch=100)
@@ -205,13 +157,18 @@ class Game_System
     end
   end
 
+################################################################################
+
   def me_play(me)
     if me.is_a?(String)
       me=RPG::AudioFile.new(me)
     end
     if me != nil and me.name != ""
       if FileTest.audio_exist?("Audio/ME/"+me.name)
-        Audio.me_play("Audio/ME/" + me.name, me.volume, me.pitch)
+        vol=me.volume
+        vol*=($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
+        vol=vol.to_i
+        Audio.me_play("Audio/ME/" + me.name, vol, me.pitch)
       end
     else
       Audio.me_stop
@@ -219,13 +176,85 @@ class Game_System
     Graphics.frame_reset
   end
 
+################################################################################
+
+  def bgs_play(bgs)
+    @playing_bgs = bgs==nil ? nil : bgs.clone
+    if bgs != nil and bgs.name != ""
+      if FileTest.audio_exist?("Audio/BGS/"+ bgs.name)
+        vol=bgs.volume
+        vol*=($PokemonSystem.sevolume/100.0) if $PokemonSystem
+        vol=vol.to_i
+        Audio.bgs_play("Audio/BGS/" + bgs.name, vol, bgs.pitch)
+      end
+    else
+      @bgs_position=0
+      @playing_bgs=nil
+      Audio.bgs_stop
+    end
+    Graphics.frame_reset
+  end
+
+  def bgs_pause(fadetime=0.0) # :nodoc:
+    if fadetime>0.0
+      self.bgs_fade(fadetime)
+    else
+      self.bgs_stop
+    end
+    @bgs_paused=true
+  end
+
+  def bgs_unpause  # :nodoc:
+    @bgs_paused=false
+  end
+
+  def bgs_resume(bgs) # :nodoc:
+    if @bgs_paused
+      self.bgs_play(bgs)
+      @bgs_paused=false
+    end
+  end
+
+  def bgs_stop
+    @bgs_position=0
+    @playing_bgs = nil
+    Audio.bgs_stop
+  end
+
+  def bgs_fade(time)
+    @bgs_position=0
+    @playing_bgs = nil
+    Audio.bgs_fade((time * 1000).floor)
+  end
+
+  def playing_bgs
+    return @playing_bgs
+  end
+
+  def bgs_memorize
+    @memorized_bgs = @playing_bgs
+  end
+
+  def bgs_restore
+    bgs_play(@memorized_bgs)
+  end
+
+  def getPlayingBGS
+    return @playing_bgs ? @playing_bgs.clone : nil 
+  end
+
+################################################################################
+
   def se_play(se)
     if se.is_a?(String)
       se=RPG::AudioFile.new(se)
     end    
     if se != nil and se.name != ""
       if FileTest.audio_exist?("Audio/SE/"+ se.name)
-        Audio.se_play("Audio/SE/" + se.name, se.volume, se.pitch)
+        vol=se.volume
+        vol*=($PokemonSystem.sevolume/100.0) if $PokemonSystem
+        vol=vol.to_i
+        Audio.se_play("Audio/SE/" + se.name, vol, se.pitch)
       end
     end
   end
@@ -234,25 +263,7 @@ class Game_System
     Audio.se_stop
   end
 
-  def playing_bgm
-    return @playing_bgm
-  end
-
-  def playing_bgs
-    return @playing_bgs
-  end
-
-  def windowskin_name
-    if @windowskin_name == nil
-      return $data_system.windowskin_name
-    else
-      return @windowskin_name
-    end
-  end
-
-  def windowskin_name=(windowskin_name)
-    @windowskin_name = windowskin_name
-  end
+################################################################################
 
   def battle_bgm
     if @battle_bgm == nil
@@ -276,6 +287,20 @@ class Game_System
 
   def battle_end_me=(battle_end_me)
     @battle_end_me = battle_end_me
+  end
+
+################################################################################
+
+  def windowskin_name
+    if @windowskin_name == nil
+      return $data_system.windowskin_name
+    else
+      return @windowskin_name
+    end
+  end
+
+  def windowskin_name=(windowskin_name)
+    @windowskin_name = windowskin_name
   end
 
   def update

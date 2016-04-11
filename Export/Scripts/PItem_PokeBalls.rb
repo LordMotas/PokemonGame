@@ -1,33 +1,27 @@
 module BallHandlers
-  IsUnconditional=ItemHandlerHash.new
-  ModifyCatchRate=ItemHandlerHash.new
-  OnCatch=ItemHandlerHash.new
-  OnFailCatch=ItemHandlerHash.new
+  IsUnconditional = ItemHandlerHash.new
+  ModifyCatchRate = ItemHandlerHash.new
+  OnCatch         = ItemHandlerHash.new
+  OnFailCatch     = ItemHandlerHash.new
 
   def self.isUnconditional?(ball,battle,battler)
-    if !IsUnconditional[ball]
-      return false
-    end
+    return false if !IsUnconditional[ball]
     return IsUnconditional.trigger(ball,battle,battler)
   end
 
   def self.modifyCatchRate(ball,catchRate,battle,battler)
-    if !ModifyCatchRate[ball]
-      return catchRate
-    end
+    return catchRate if !ModifyCatchRate[ball]
     return ModifyCatchRate.trigger(ball,catchRate,battle,battler)
   end
 
   def self.onCatch(ball,battle,pokemon)
-    if OnCatch[ball]
-      OnCatch.trigger(ball,battle,pokemon)
-    end
+    return if !OnCatch[ball]
+    OnCatch.trigger(ball,battle,pokemon)
   end
 
-  def self.onFailCatch(ball,battle,pokemon)
-    if OnFailCatch[ball]
-      OnFailCatch.trigger(ball,battle,pokemon)
-    end
+  def self.onFailCatch(ball,battle,battler)
+    return if !OnFailCatch[ball]
+    OnFailCatch.trigger(ball,battle,battler)
   end
 end
 
@@ -79,16 +73,10 @@ $BallTypes={
    20=>:LOVEBALL,
    21=>:FRIENDBALL,
    22=>:MOONBALL,
-   23=>:SPORTBALL,
-   24=>:PARKBALL,
-   25=>:DREAMBALL
+   23=>:SPORTBALL
 }
 
 BallHandlers::ModifyCatchRate.add(:GREATBALL,proc{|ball,catchRate,battle,battler|
-   next (catchRate*3/2).floor
-})
-
-BallHandlers::ModifyCatchRate.add(:SAFARIBALL,proc{|ball,catchRate,battle,battler|
    next (catchRate*3/2).floor
 })
 
@@ -100,20 +88,8 @@ BallHandlers::IsUnconditional.add(:MASTERBALL,proc{|ball,battle,battler|
    next true
 })
 
-BallHandlers::IsUnconditional.add(:PARKBALL,proc{|ball,battle,battler|
-  if PALPARKIDS.include($game_map.id)
-    next true
-  else
-    next false
-  end
-})
-
-BallHandlers::IsUnconditional.add(:DREAMBALL,proc{|ball,battle,battler|
-  if DREAMWORLDIDS.include($game_map.id)
-    next true
-  else
-    next false
-  end
+BallHandlers::ModifyCatchRate.add(:SAFARIBALL,proc{|ball,catchRate,battle,battler|
+   next (catchRate*3/2).floor
 })
 
 BallHandlers::ModifyCatchRate.add(:NETBALL,proc{|ball,catchRate,battle,battler|
@@ -128,7 +104,7 @@ BallHandlers::ModifyCatchRate.add(:DIVEBALL,proc{|ball,catchRate,battle,battler|
 
 BallHandlers::ModifyCatchRate.add(:NESTBALL,proc{|ball,catchRate,battle,battler|
    if battler.level<=40
-     catchRate*=(41-battler.level)/10
+     catchRate*=[(41-battler.level)/10,1].max
    end
    next catchRate
 })
@@ -145,7 +121,7 @@ BallHandlers::ModifyCatchRate.add(:TIMERBALL,proc{|ball,catchRate,battle,battler
 })
 
 BallHandlers::ModifyCatchRate.add(:DUSKBALL,proc{|ball,catchRate,battle,battler|
-   catchRate*=7/2 if PBDayNight.isNight?(pbGetTimeNow)
+   catchRate*=7/2 if PBDayNight.isNight?
    next catchRate
 })
 
@@ -164,7 +140,7 @@ BallHandlers::ModifyCatchRate.add(:FASTBALL,proc{|ball,catchRate,battle,battler|
    basespeed=dexdata.fgetb
    dexdata.close
    catchRate*=4 if basespeed>=100
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::ModifyCatchRate.add(:LEVELBALL,proc{|ball,catchRate,battle,battler|
@@ -178,29 +154,29 @@ BallHandlers::ModifyCatchRate.add(:LEVELBALL,proc{|ball,catchRate,battle,battler
    elsif pbattler>battler.level
      catchRate*=2
    end
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::ModifyCatchRate.add(:LUREBALL,proc{|ball,catchRate,battle,battler|
    catchRate*=3 if $PokemonTemp.encounterType==EncounterTypes::OldRod ||
                    $PokemonTemp.encounterType==EncounterTypes::GoodRod ||
                    $PokemonTemp.encounterType==EncounterTypes::SuperRod
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::ModifyCatchRate.add(:HEAVYBALL,proc{|ball,catchRate,battle,battler|
    weight=battler.weight
-   if weight>4000
+   if weight>=4096
      catchRate+=40
-   elsif weight>3000
+   elsif weight>=3072
      catchRate+=30
-   elsif weight>=2050
+   elsif weight>=2048
      catchRate+=20
    else
      catchRate-=20
    end
    catchRate=[catchRate,1].max
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::ModifyCatchRate.add(:LOVEBALL,proc{|ball,catchRate,battle,battler|
@@ -215,7 +191,7 @@ BallHandlers::ModifyCatchRate.add(:LOVEBALL,proc{|ball,catchRate,battle,battler|
        (battler.gender==1 && pbattler2.gender==0))
      catchRate*=8
    end
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::OnCatch.add(:FRIENDBALL,proc{|ball,battle,pokemon|
@@ -241,7 +217,7 @@ BallHandlers::ModifyCatchRate.add(:MOONBALL,proc{|ball,catchRate,battle,battler|
       isConst?(battler.species,PBSpecies,:MUSHARNA)
      catchRate*=4
    end
-   next catchRate
+   next [catchRate,255].min
 })
 
 BallHandlers::ModifyCatchRate.add(:SPORTBALL,proc{|ball,catchRate,battle,battler|

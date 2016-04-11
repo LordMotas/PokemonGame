@@ -3,7 +3,6 @@ class PokeBattle_FakeBattler
     @pokemon=pokemon
     @index=index
     @owned=$Trainer.owned[pokemon.species]
-    @wasCaptured=false
   end
 
   def pokemon; @pokemon; end
@@ -16,11 +15,12 @@ class PokeBattle_FakeBattler
   def totalhp; @pokemon.totalhp; end
   def owned; return @owned; end
   def isFainted?; return false; end
+  def isShiny?; return @pokemon.isShiny?; end
   def isShadow?; return false; end
-  def isMega?; return false; end
   def hasMega?; return false; end
+  def isMega?; return false; end
+  def hasPrimal?; return false; end
   def isPrimal?; return false; end
-  attr_accessor :wasCaptured
 
   def index
     return @index
@@ -38,8 +38,7 @@ class PokeBattle_SafariZone
   attr_accessor :party1
   attr_accessor :party2
   attr_reader :player
-  attr_reader :skybattle
-  attr_reader :inverse
+  attr_accessor :battlescene
   include PokeBattle_BattleCommon
 
   def initialize(scene,player,party2)
@@ -53,11 +52,10 @@ class PokeBattle_SafariZone
        PokeBattle_FakeBattler.new(party2[0],2),
        PokeBattle_FakeBattler.new(party2[0],3)
     ]
+    @environment=PBEnvironment::None
+    @battlescene=true
     @decision=0
     @ballcount=0
-    @environment=PBEnvironment::None
-    @skybattle=false
-    @inverse=false
   end
 
   def pbIsOpposing?(index)
@@ -126,7 +124,7 @@ class PokeBattle_SafariZone
         case cmd
         when 0 # Ball
           if pbBoxesFull?
-            pbDisplay(_INTL("The boxes are full!  You can't catch any more Pokémon!"))
+            pbDisplay(_INTL("The boxes are full! You can't catch any more Pokémon!"))
             next
           end
           @ballcount-=1
@@ -157,7 +155,7 @@ class PokeBattle_SafariZone
         end
         if @decision==0
           if @ballcount<=0
-            pbDisplay(_INTL("PA:  You have no Safari Balls left!  Game over!")) 
+            pbDisplay(_INTL("PA:  You have no Safari Balls left! Game over!")) 
             @decision=2
           elsif pbRandom(100)<5*e
              pbDisplay(_INTL("{1} fled!",wildpoke.name))

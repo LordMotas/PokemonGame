@@ -28,19 +28,17 @@ class PokeBattle_BattleArena < PokeBattle_Battle
   def pbSwitch(favorDraws=false)
     if !favorDraws
       return if @decision>0
-      pbJudge()
-      return if @decision>0
     else
       return if @decision==5
-      pbJudge()
-      return if @decision>0
     end
+    pbJudge()
+    return if @decision>0
     switched=[]
     if @battlers[0].isFainted? && @partyindexes[0]+1<self.pbParty(0).length
       @partyindexes[0]+=1
       newpoke=@partyindexes[0]
       pbMessagesOnReplace(0,newpoke)
-      pbReplace(0,newpoke,false)
+      pbReplace(0,newpoke)
       pbOnActiveOne(@battlers[0])
       switched.push(0)
     end
@@ -48,7 +46,7 @@ class PokeBattle_BattleArena < PokeBattle_Battle
       @partyindexes[1]+=1  
       newenemy=@partyindexes[1]
       pbMessagesOnReplace(1,newenemy)
-      pbReplace(1,newenemy,false)
+      pbReplace(1,newenemy)
       pbOnActiveOne(@battlers[1])
       switched.push(1)
     end

@@ -4,7 +4,6 @@ root: !ruby/object:RPG::Map
     volume: 100
     name: gym
     pitch: 100
-  tileset_id: 14
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
@@ -199,7 +198,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Kernel.pbReceiveItem(PBItems::TM80)
+          - Kernel.pbReceiveItem(:TM80)
           indent: 1
           code: 355
         - !ruby/object:RPG::EventCommand
@@ -554,6 +553,7 @@ root: !ruby/object:RPG::Map
       y: 8
       x: 3
       id: 4
+  tileset_id: 14
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''
