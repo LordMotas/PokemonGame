@@ -1119,6 +1119,12 @@ class PokeBattle_Battle
       speeds[i]=@battlers[i].pbSpeed
       quickclaw[i]=false
       lagging[i]=false
+      # Sloth-Jitsu
+      if @battlers[i].hasWorkingAbility(:SLOTH_JITSU,true) &&
+           (@battlers[i].pbSpeed < @battlers[i].pbOpposing1.pbSpeed || 
+           @battlers[i].pbSpeed < @battlers[i].pbOpposing2.pbSpeed)
+           quickclaw[i]=true
+      end
       if !ignorequickclaw && @choices[i][0]==1 # Chose to use a move
         if !quickclaw[i] && @battlers[i].hasWorkingItem(:CUSTAPBERRY) &&
            !@battlers[i].pbOpposing1.hasWorkingAbility(:UNNERVE) &&
