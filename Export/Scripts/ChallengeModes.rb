@@ -225,44 +225,10 @@ class PokeBattle_Battle
   def pbEndOfBattle(canlose=false)
     nuzlocke_EndOfBattle
     if $PokemonGlobal.nuzlocke
-      if @decision == 4 #If a Pokemon was caught
+      if @decision == 4
         $PokemonGlobal.nuzlockeMaps.push([$game_map.map_id,2])
-      end #If a Pokemon wasn't caught
+      end
       if !@opponent && $PokemonGlobal.nuzlockeMapState($game_map.map_id) != 2
-        
-=begin
-        Steps (For evolution):
-        1. Send in battler[1].species
-        2. Continue checking until false
-        3. When false, check it on prestage until false
-=end
-=begin
-        # @battlers[1].species is the Pokemon you just battled
-        test = pbGetEvolvedFormData(@battlers[1].species)
-        for i in 0..5 # No Pokemon has more than 5 stages 
-          break if !test.any?
-          test = pbGetEvolvedFormData(test[0][2])
-          # Push the map if they don't have the Pokemon
-          $PokemonGlobal.nuzlockeMaps.push([$game_map.map_id,1]) if ($PokemonGlobal.dubiousClause  && !$Trainer.owned[test[0][2]])
-          # Leave the loop if the map was pushed
-          break if ($PokemonGlobal.dubiousClause  && !$Trainer.owned[test[0][2]])
-          # Quit if all evolutions have been checked (test is empty)
-          break if !test.any?
-        end
-=end
-      # Information Needed:
-      # The number of stages a Pokemon has and what number it is in those stages
-        # Make an array that has all of the Pokemon that is owned by you
-        # Make an array that has all stages of the Pokemon you just fought
-        # Compare the two arrays
-        # If they match anywhere, don't push the map
-        # Otherwise, push the map
-        
-        # This will get the prestage
-        #test = pbGetPreviousForm(@battlers[1].species)
-        #echo test
-        #echo true if @battlers[1].species == test
-        
         $PokemonGlobal.nuzlockeMaps.push([$game_map.map_id,1]) if !$PokemonGlobal.dubiousClause 
         $PokemonGlobal.nuzlockeMaps.push([$game_map.map_id,1]) if ($PokemonGlobal.dubiousClause  && !@battlers[1].owned)
       end

@@ -311,13 +311,6 @@ class PokeBattle_Move
       end
       return true
     end
-    #Rubber
-    if opponent.hasWorkingAbility(:RUBBER) && isConst?(type,PBTypes,:ELECTRIC)
-      PBDebug.log("[Ability triggered] #{opponent.pbThis}'s Rubber (made #{@name} ineffective)")
-      @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
-        opponent.pbThis,PBAbilities.getName(opponent.ability),self.name))
-      return true
-    end
     if (opponent.hasWorkingAbility(:DRYSKIN) && isConst?(type,PBTypes,:WATER)) ||
        (opponent.hasWorkingAbility(:VOLTABSORB) && isConst?(type,PBTypes,:ELECTRIC)) ||
        (opponent.hasWorkingAbility(:WATERABSORB) && isConst?(type,PBTypes,:WATER))
@@ -653,8 +646,7 @@ class PokeBattle_Move
       if @battle.pbCheckGlobalAbility(:AURABREAK)
         damagemult=(damagemult*2/3).round
       else
-        #Dark Aura change
-        damagemult=(damagemult*6/5).round
+        damagemult=(damagemult*4/3).round
       end
     end
     if !attacker.hasMoldBreaker
