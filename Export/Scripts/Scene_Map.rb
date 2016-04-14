@@ -182,12 +182,12 @@ class Scene_Map
     $game_player.straighten
     $game_map.update
   end
-
+  
   def call_menu
     $game_temp.menu_calling = false
     $game_player.straighten
     $game_map.update
-    sscene=Menu.new #JV
+    sscene=Menu.new
     sscreen=MenuScreen.new(sscene) 
     sscreen.pbNewMenu
   end

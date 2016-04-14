@@ -49,11 +49,11 @@ module PBEvolution
     "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
     "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
     "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
-		"HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
-     "HighestSpeed"
+    "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
+    "HighestSpeed"
   ]
 
-# 0 = no parameter
+  # 0 = no parameter
   # 1 = Positive integer
   # 2 = Item internal name
   # 3 = Move internal name
@@ -66,41 +66,10 @@ module PBEvolution
     2,2,2,2,3,    # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
     4,1,1,1,4,    # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
     3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
-    0,0,0,          # HappinessMale, HappinessFemale,
-    1,1,1,1,1,   # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
-    1            # HighestSpeed
+    0,0,0,        # HappinessMale, HappinessFemale,
+    1,1,1,1,1,    # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
+    1             # HighestSpeed
   ]
-end
-
-
-
-#===============================================================================
-# Evolution helper functions
-#===============================================================================
-def pbGetEvolvedFormData(species)
-  ret=[]
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVONEXTFORM=0x00
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if (evo&_EVODATAMASK)==_EVONEXTFORM
-           ret.push([evonib,level,poke])
-         end
-         i+=5
-       end
-     end
-  }
-  return ret
 end
 
 def pbEvoDebug()
@@ -130,31 +99,6 @@ def pbEvoDebug()
        end
      end
   }
-end
-
-def pbGetPreviousForm(species)
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVOPREVFORM=0x40
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if (evo&_EVODATAMASK)==_EVOPREVFORM
-           return poke
-         end
-         i+=5
-       end
-     end
-  }
-  return species
 end
 
 def pbGetMinimumLevel(species)
@@ -193,6 +137,44 @@ def pbGetMinimumLevel(species)
     end
   }
   return (ret==-1) ? 1 : ret
+end
+
+def pbGetPreviousForm(species,item1=-1,item2=-1)
+  ret=species
+  _EVOTYPEMASK=0x3F
+  _EVODATAMASK=0xC0
+  _EVOPREVFORM=0x40
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if poke<=PBSpecies.maxValue && (evo&_EVODATAMASK)==_EVOPREVFORM # evolved from
+           if item1>=0 && item2>=0
+             dexdata=pbOpenDexData
+             pbDexDataOffset(dexdata,poke,54)
+             incense=dexdata.fgetw
+             dexdata.close
+             ret=poke if item1==incense || item2==incense
+           else
+             ret=poke
+           end
+           break
+         end
+         i+=5
+       end
+     end
+  }
+  #if ret!=species
+    #ret=pbGetBabySpecies(ret)
+  #end
+  return ret
 end
 
 def pbGetBabySpecies(species,item1=-1,item2=-1)
@@ -905,30 +887,6 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level && pokemon.attack==pokemon.defense
   when PBEvolution::DefenseGreater # Hitmonchan
     return poke if pokemon.level>=level && pokemon.attack<pokemon.defense
-	when PBEvolution::HighestHP # Torling HP
-    return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
-    pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
-    pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
-  when PBEvolution::HighestAttack # Torling Atk
-    return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
-    pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
-    pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
-  when PBEvolution::HighestDefense # Torling Def
-    return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
-    pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
-    pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
-  when PBEvolution::HighestSpAttack # Torling SpAtk
-    return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
-    pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
-    pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
-  when PBEvolution::HighestSpDefense # Torling SpDef
-    return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
-    pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
-    pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
-  when PBEvolution::HighestSpeed # Torling Speed
-    return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
-    pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
-    pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
   when PBEvolution::Silcoon
     return poke if pokemon.level>=level && (((pokemon.personalID>>16)&0xFFFF)%10)<5
   when PBEvolution::Cascoon
@@ -1007,6 +965,30 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level
   when PBEvolution::Custom7
     # Add code for custom evolution type 7
+  when PBEvolution::HighestHP # Torling HP
+    return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
+    pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
+    pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
+  when PBEvolution::HighestAttack # Torling Atk
+    return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
+    pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
+    pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
+  when PBEvolution::HighestDefense # Torling Def
+    return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
+    pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
+    pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
+  when PBEvolution::HighestSpAttack # Torling SpAtk
+    return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
+    pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
+    pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
+  when PBEvolution::HighestSpDefense # Torling SpDef
+    return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
+    pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
+    pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
+  when PBEvolution::HighestSpeed # Torling Speed
+    return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
+    pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
+    pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
   end
   return -1
 end

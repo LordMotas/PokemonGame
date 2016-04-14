@@ -176,9 +176,9 @@
 35205096    Editor                                       Editor.rb
 66443344    Compiler                                     Compiler.rb
 30913346    ===CUSTOM SCRIPTS===                         EMPTY
-85156739    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
-85596521    ItemCrafter                                  ItemCrafter.rb
-33756233    UraniumCustomMenu                            UraniumCustomMenu.rb
+10488910    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
+61226699    ItemCrafter                                  ItemCrafter.rb
+6123542     UraniumCustomMenu                            UraniumCustomMenu.rb
 24216588    SkyInverseBattle                             SkyInverseBattle.rb
 51398100    ChallengeModes                               ChallengeModes.rb
 28946912    ChallengeSelection                           ChallengeSelection.rb
