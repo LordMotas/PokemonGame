@@ -3857,6 +3857,12 @@ class PokeBattle_Battle
           PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")
         end
       end
+      # Slothjitsu same as speed boost above
+      if i.turncount>0 && i.hasWorkingAbility(:SLOTHJITSU)
+        if i.pbReduceStatWithCause(PBStats::SPEED,1,i,PBAbilities.getName(i.ability))
+          PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")
+        end
+      end
       # Bad Dreams
       if i.status==PBStatuses::SLEEP && !i.hasWorkingAbility(:MAGICGUARD)
         if i.pbOpposing1.hasWorkingAbility(:BADDREAMS) ||

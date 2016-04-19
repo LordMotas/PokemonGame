@@ -32,7 +32,7 @@ root: !ruby/object:Hash
   5: !ruby/object:RPG::MapInfo
     scroll_x: 576
     name: Route 1
-    expanded: true
+    expanded: false
     order: 6
     scroll_y: 384
     parent_id: 0
@@ -151,11 +151,11 @@ root: !ruby/object:Hash
     scroll_y: 1800
     parent_id: 0
   22: !ruby/object:RPG::MapInfo
-    scroll_x: 0
+    scroll_x: 320
     name: MAP022
     expanded: false
     order: 70
-    scroll_y: 0
+    scroll_y: 320
     parent_id: 0
   23: !ruby/object:RPG::MapInfo
     scroll_x: 656
@@ -432,7 +432,7 @@ root: !ruby/object:Hash
   66: !ruby/object:RPG::MapInfo
     scroll_x: 352
     name: Safari Zone
-    expanded: false
+    expanded: true
     order: 61
     scroll_y: 336
     parent_id: 0
@@ -453,16 +453,16 @@ root: !ruby/object:Hash
   69: !ruby/object:RPG::MapInfo
     scroll_x: 736
     name: Route 8
-    expanded: true
+    expanded: false
     order: 64
     scroll_y: 560
     parent_id: 0
   70: !ruby/object:RPG::MapInfo
-    scroll_x: 736
+    scroll_x: 910
     name: Underwater
     expanded: false
     order: 65
-    scroll_y: 560
+    scroll_y: 808
     parent_id: 69
   71: !ruby/object:RPG::MapInfo
     scroll_x: 320
