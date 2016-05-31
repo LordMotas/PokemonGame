@@ -947,6 +947,8 @@ class PokeBattle_Battler
     if onactive
       if self.hasWorkingAbility(:PRIMORDIALSEA) && @battle.weather!=PBWeather::HEAVYRAIN
         @battle.weather=PBWeather::HEAVYRAIN
+        #Set evolution weather variable
+        $evoWeather=PBWeather::RAINDANCE
         @battle.weatherduration=-1
         @battle.pbCommonAnimation("HeavyRain",nil,nil)
         @battle.pbDisplay(_INTL("{1}'s {2} made a heavy rain begin to fall!",pbThis,PBAbilities.getName(self.ability)))
@@ -954,6 +956,8 @@ class PokeBattle_Battler
       end
       if self.hasWorkingAbility(:DESOLATELAND) && @battle.weather!=PBWeather::HARSHSUN
         @battle.weather=PBWeather::HARSHSUN
+        #Set evolution weather variable
+        $evoWeather=PBWeather::SUNNYDAY
         @battle.weatherduration=-1
         @battle.pbCommonAnimation("HarshSun",nil,nil)
         @battle.pbDisplay(_INTL("{1}'s {2} turned the sunlight extremely harsh!",pbThis,PBAbilities.getName(self.ability)))
@@ -961,6 +965,8 @@ class PokeBattle_Battler
       end
       if self.hasWorkingAbility(:DELTASTREAM) && @battle.weather!=PBWeather::STRONGWINDS
         @battle.weather=PBWeather::STRONGWINDS
+        #Set evolution weather variable
+        $evoWeather=0
         @battle.weatherduration=-1
         @battle.pbCommonAnimation("StrongWinds",nil,nil)
         @battle.pbDisplay(_INTL("{1}'s {2} caused a mysterious air current that protects Flying-type Pokémon!",pbThis,PBAbilities.getName(self.ability)))
@@ -971,6 +977,8 @@ class PokeBattle_Battler
          @battle.weather!=PBWeather::STRONGWINDS
         if self.hasWorkingAbility(:DRIZZLE) && (@battle.weather!=PBWeather::RAINDANCE || @battle.weatherduration!=-1)
           @battle.weather=PBWeather::RAINDANCE
+          #Set evolution weather variable
+          $evoWeather=PBWeather::RAINDANCE
           if USENEWBATTLEMECHANICS
             @battle.weatherduration=5
             @battle.weatherduration=8 if hasWorkingItem(:DAMPROCK)
@@ -983,6 +991,8 @@ class PokeBattle_Battler
         end
         if self.hasWorkingAbility(:DROUGHT) && (@battle.weather!=PBWeather::SUNNYDAY || @battle.weatherduration!=-1)
           @battle.weather=PBWeather::SUNNYDAY
+          #Set evolution weather variable
+          $evoWeather=PBWeather::SUNNYDAY
           if USENEWBATTLEMECHANICS
             @battle.weatherduration=5
             @battle.weatherduration=8 if hasWorkingItem(:HEATROCK)
@@ -995,6 +1005,8 @@ class PokeBattle_Battler
         end
         if self.hasWorkingAbility(:SANDSTREAM) && (@battle.weather!=PBWeather::SANDSTORM || @battle.weatherduration!=-1)
           @battle.weather=PBWeather::SANDSTORM
+          #Set evolution weather variable
+          $evoWeather=PBWeather::SANDSTORM
           if USENEWBATTLEMECHANICS
             @battle.weatherduration=5
             @battle.weatherduration=8 if hasWorkingItem(:SMOOTHROCK)
@@ -1007,6 +1019,8 @@ class PokeBattle_Battler
         end
         if self.hasWorkingAbility(:SNOWWARNING) && (@battle.weather!=PBWeather::HAIL || @battle.weatherduration!=-1)
           @battle.weather=PBWeather::HAIL
+          #Set evolution weather variable
+          $evoWeather=PBWeather::HAIL
           if USENEWBATTLEMECHANICS
             @battle.weatherduration=5
             @battle.weatherduration=8 if hasWorkingItem(:ICYROCK)

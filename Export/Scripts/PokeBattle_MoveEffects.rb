@@ -7271,6 +7271,8 @@ class PokeBattle_Move_0FF < PokeBattle_Move
     end
     pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
     @battle.weather=PBWeather::SUNNYDAY
+    #Set evolution weather variable
+    $evoWeather=PBWeather::SUNNYDAY
     @battle.weatherduration=5
     @battle.weatherduration=8 if attacker.hasWorkingItem(:HEATROCK)
     @battle.pbCommonAnimation("Sunny",nil,nil)
@@ -7302,6 +7304,8 @@ class PokeBattle_Move_100 < PokeBattle_Move
     end
     pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
     @battle.weather=PBWeather::RAINDANCE
+    #Set evolution weather variable
+    $evoWeather=PBWeather::RAINDANCE
     @battle.weatherduration=5
     @battle.weatherduration=8 if attacker.hasWorkingItem(:DAMPROCK)
     @battle.pbCommonAnimation("Rain",nil,nil)
@@ -7333,6 +7337,8 @@ class PokeBattle_Move_101 < PokeBattle_Move
     end
     pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
     @battle.weather=PBWeather::SANDSTORM
+    #Set evolution weather variable
+    $evoWeather=PBWeather::SANDSTORM
     @battle.weatherduration=5
     @battle.weatherduration=8 if attacker.hasWorkingItem(:SMOOTHROCK)
     @battle.pbCommonAnimation("Sandstorm",nil,nil)
@@ -7364,6 +7370,8 @@ class PokeBattle_Move_102 < PokeBattle_Move
     end
     pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
     @battle.weather=PBWeather::HAIL
+    #Set evolution weather variable
+    $evoWeather=PBWeather::HAIL
     @battle.weatherduration=5
     @battle.weatherduration=8 if attacker.hasWorkingItem(:ICYROCK)
     @battle.pbCommonAnimation("Hail",nil,nil)

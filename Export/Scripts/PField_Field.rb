@@ -1103,6 +1103,8 @@ def pbEvolutionCheck(currentlevels)
       end
     end
   end
+  #Reset the evolution weather variable to avoid problems
+  $evoWeather=0
 end
 
 def pbDynamicItemList(*args)

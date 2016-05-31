@@ -40,6 +40,9 @@ module PBEvolution
   HighestSpAtk      = 38
   HighestSpDef      = 39
   HighestSpeed      = 40
+  LevelSunny        = 41
+  LevelHail         = 42
+  LevelSandstorm    = 43
 
   EVONAMES=["Unknown",
     "Happiness","HappinessDay","HappinessNight","Level","Trade",
@@ -50,7 +53,7 @@ module PBEvolution
     "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
     "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
     "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
-    "HighestSpeed"
+    "HighestSpeed","LevelSunny","LevelHail","LevelSandstorm"
   ]
 
   # 0 = no parameter
@@ -68,7 +71,7 @@ module PBEvolution
     3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
     0,0,0,        # HappinessMale, HappinessFemale,
     1,1,1,1,1,    # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
-    1             # HighestSpeed
+    1,1,1,1       # HighestSpeed, LevelSunny, LevelHail, LevelSandstorm
   ]
 end
 
@@ -128,6 +131,8 @@ def pbGetMinimumLevel(species)
            PBEvolution::HighestHP,PBEvolution::HighestAtk,
            PBEvolution::HighestDef,PBEvolution::HighestSpAtk,
            PBEvolution::HighestSpDef,PBEvolution::HighestSpeed,
+           PBEvolution::LevelSunny,PBEvolution::LevelHail,
+           PBEvolution::LevelSandstorm,
            PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
           ret=(ret==-1) ? level : [ret,level].min
           break
@@ -907,19 +912,29 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     for i in $Trainer.party
       return poke if !i.isEgg? && i.species==level
     end
-  when PBEvolution::LevelDarkInParty
-    if pokemon.level>=level
-      for i in $Trainer.party
-        return poke if !i.isEgg? && i.hasType?(:DARK)
-      end
-    end
   when PBEvolution::Location
     return poke if $game_map.map_id==level
   when PBEvolution::LevelRain
     if pokemon.level>=level
-      if $game_screen && ($game_screen.weather==PBFieldWeather::Rain ||
-                          $game_screen.weather==PBFieldWeather::HeavyRain ||
-                          $game_screen.weather==PBFieldWeather::Storm)
+      if $game_screen && ($evoWeather==PBWeather::RAINDANCE)
+        return poke
+      end
+    end
+  when PBEvolution::LevelSunny
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::SUNNYDAY)
+        return poke
+      end
+    end
+  when PBEvolution::LevelHail
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::HAIL)
+        return poke
+      end
+    end
+  when PBEvolution::LevelSandstorm
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::SANDSTORM)
         return poke
       end
     end
@@ -955,8 +970,6 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     for i in $Trainer.party
       return poke if  pokemon.level>=level && !i.egg? && (i.type1==17 || i.type2==17)
     end 
-  when PBEvolution::LevelRain
-    return poke if  pokemon.level>=level && $game_screen && ($game_screen.weather==1 || $game_screen.weather==2)
   when PBEvolution::LevelDay
     return poke if pokemon.level>=level&& PBDayNight.isDay?(pbGetTimeNow)
   when PBEvolution::LevelNight
@@ -1019,6 +1032,33 @@ def pbCheckEvolutionEx(pokemon)
     ret=yield pokemon,form[0],form[1],form[2]
     break if ret>0
   end
+  return ret
+end
+
+#Retrieves the data from the evolutions.dat file to find the evolved Pokemon
+def pbGetEvolvedFormData(species)
+  ret=[]
+  _EVOTYPEMASK=0x3F
+  _EVODATAMASK=0xC0
+  _EVONEXTFORM=0x00
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if (evo&_EVODATAMASK)==_EVONEXTFORM
+           ret.push([evonib,level,poke])
+         end
+         i+=5
+       end
+     end
+  }
   return ret
 end
 
