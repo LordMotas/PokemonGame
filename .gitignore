@@ -1,2 +1,4 @@
 PokemonEssentials/*
+!PokemonEssentials/
+!/PokemonEssentials/PBS
 !/PokemonEssentials/PBS/*
