@@ -14,6 +14,7 @@
 #===============================================================================
 $Bubble = 0
 $islandCount = 0
+$tadpoiColor = 0
 $evoWeather = 0
 DEFAULTSCREENWIDTH   = 512
 DEFAULTSCREENHEIGHT  = 384

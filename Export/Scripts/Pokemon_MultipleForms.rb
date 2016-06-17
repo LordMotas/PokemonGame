@@ -485,6 +485,32 @@ MultipleForms.register(:SHELLOS,{
 }
 })
 
+MultipleForms.register(:TADPOI,{
+"getFormOnCreation"=>proc{|pokemon|
+  case rand(9)
+  when 1..3
+    $tadpoiColor=0
+    next 0
+  when 4..6
+    $tadpoiColor=1
+    next 1
+  when 7..9
+    $tadpoiColor=2
+    next 2
+  end
+},
+"evolutions"=>proc{|pokemon|
+  case $tadpoiColor
+  when 0
+    next "CRIMZOG,Level,25"
+  when 1
+    next "ELECTROG,Level,25"
+  when 2
+    next "SAPPHROG,Level,25"
+  end
+}
+})
+
 MultipleForms.copy(:SHELLOS,:GASTRODON)
 
 MultipleForms.register(:ROTOM,{

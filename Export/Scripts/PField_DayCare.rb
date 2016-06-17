@@ -191,7 +191,8 @@ def pbDayCareGenerateEgg
   # Inheriting form
   if isConst?(babyspecies,PBSpecies,:BURMY) ||
      isConst?(babyspecies,PBSpecies,:SHELLOS) ||
-     isConst?(babyspecies,PBSpecies,:BASCULIN)
+     isConst?(babyspecies,PBSpecies,:BASCULIN) ||
+     isConst?(babyspecies,PBSpecies,:TADPOI)
     egg.form=mother.form
   end
   # Inheriting Moves

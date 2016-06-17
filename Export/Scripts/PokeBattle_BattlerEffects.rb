@@ -704,7 +704,7 @@ class PokeBattle_Battler
     end
     return false
   end
-
+  
   def pbIncreaseStatWithCause(stat,increment,attacker,cause,showanim=true,showmessage=true,moldbreaker=false,ignoreContrary=false)
     if !moldbreaker
       if !attacker || attacker.index==self.index || !attacker.hasMoldBreaker
@@ -851,12 +851,38 @@ class PokeBattle_Battler
            _INTL("{1}'s {2} severely fell!",pbThis,PBStats.getName(stat))]
         @battle.pbDisplay(arrStatTexts[[increment-1,2].min])
         # Defiant
-        if hasWorkingAbility(:DEFIANT) && (!attacker || attacker.pbIsOpposing?(self))
+        if hasWorkingAbility(:DEFIANT)# && (!attacker) || attacker.pbIsOpposing?(self))
           pbIncreaseStatWithCause(PBStats::ATTACK,2,self,PBAbilities.getName(self.ability))
         end
         # Competitive
-        if hasWorkingAbility(:COMPETITIVE) && (!attacker || attacker.pbIsOpposing?(self))
+        if hasWorkingAbility(:COMPETITIVE)# && (!attacker || attacker.pbIsOpposing?(self))
           pbIncreaseStatWithCause(PBStats::SPATK,2,self,PBAbilities.getName(self.ability))
+        end
+        # Yin Yang
+        if hasWorkingAbility(:YINYANG)
+          case stat
+          when PBStats::ATTACK
+            #Decrease enemy defense one stage
+            attacker.pbReduceStat(PBStats::DEFENSE,increment,attacker,false,self)
+          when PBStats::DEFENSE
+            #Decrease enemy attack one stage
+            attacker.pbReduceStat(PBStats::ATTACK,increment,attacker,false,self)
+          when PBStats::SPATK
+            #Decrease enemy sp defense one stage
+            attacker.pbReduceStat(PBStats::SPDEF,increment,attacker,false,self)
+          when PBStats::SPDEF
+            #Decrease enemy sp attack one stage
+            attacker.pbReduceStat(PBStats::SPATK,increment,attacker,false,self)
+          when PBStats::SPEED
+            #Decrease enemy speed one stage
+            attacker.pbReduceStat(PBStats::SPEED,increment,attacker,false,self)
+          when PBStats::ACCURACY
+            #Decrease enemy evasion one stage
+            attacker.pbReduceStat(PBStats::EVASION,increment,attacker,false,self)
+          when PBStats::EVASION
+            #Decrease enemy accuracy one stage
+            attacker.pbReduceStat(PBStats::ACCURACY,increment,attacker,false,self)
+          end
         end
         return true
       end
@@ -894,11 +920,17 @@ class PokeBattle_Battler
         end
         @battle.pbDisplay(arrStatTexts[[increment-1,2].min]) if showmessage
         # Defiant
-        if hasWorkingAbility(:DEFIANT) && (!attacker || attacker.pbIsOpposing?(self))
-          pbIncreaseStatWithCause(PBStats::ATTACK,2,self,PBAbilities.getName(self.ability))
-        end
+        if !selfreduce && hasWorkingAbility(:DEFIANT) #JV and Joeyhugg 
+          @battle.pbDisplayEffect(self) if showMessages
+          pbIncreaseStat(PBStats::ATTACK,2,false)
+          if EFFECTMESSAGES
+            @battle.pbDisplay(_INTL("{1}'s Attack sharply rose!",pbThis))
+          else
+            @battle.pbDisplay(_INTL("Defiant sharply raised {1}'s Attack!", pbThis(true))) if showMessages
+          end
+        end        
         # Competitive
-        if hasWorkingAbility(:COMPETITIVE) && (!attacker || attacker.pbIsOpposing?(self))
+        if hasWorkingAbility(:COMPETITIVE)# && (!attacker || attacker.pbIsOpposing?(self))
           pbIncreaseStatWithCause(PBStats::SPATK,2,self,PBAbilities.getName(self.ability))
         end
         return true

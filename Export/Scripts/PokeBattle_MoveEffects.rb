@@ -9506,3 +9506,80 @@ end
 #===============================================================================
 # NOTE: If you're inventing new move effects, use function code 159 and onwards.
 #===============================================================================
+################################################################################
+# All enemy non-ghost types will faint after 3 more rounds. (Reap)
+################################################################################
+class PokeBattle_Move_159 < PokeBattle_Move
+  def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    failed=true
+    for i in 0...4
+      if @battle.battlers[i].effects[PBEffects::PerishSong]==0 &&
+         (attacker.hasMoldBreaker ||
+         !@battle.battlers[i].hasWorkingAbility(:SOUNDPROOF))
+        failed=false; break
+      end   
+    end
+    if failed
+      @battle.pbDisplay(_INTL("But it failed!"))
+      return -1
+    end
+    pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
+    @battle.pbDisplay(_INTL("All Pokémon hearing the song will faint in three turns!"))
+    for i in 0...4
+      if @battle.battlers[i].effects[PBEffects::PerishSong]==0
+        if !attacker.hasMoldBreaker && @battle.battlers[i].hasWorkingAbility(:SOUNDPROOF)
+          @battle.pbDisplay(_INTL("{1}'s {2} blocks {3}!",@battle.battlers[i].pbThis,
+             PBAbilities.getName(@battle.battlers[i].ability),@name))
+        else
+          @battle.battlers[i].effects[PBEffects::PerishSong]=4
+          @battle.battlers[i].effects[PBEffects::PerishSongUser]=attacker.index
+        end
+      end
+    end
+    return 0
+  end
+end
+
+################################################################################
+# Decreases one random stat of the enemy by 2 stages (except HP). (Shriek)
+################################################################################
+class PokeBattle_Move_15A < PokeBattle_Move
+  def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    if attacker.index!=opponent.index 
+      if (opponent.effects[PBEffects::Substitute]>0 && !ignoresSubstitute?(attacker)) ||
+         opponent.pbOwnSide.effects[PBEffects::CraftyShield]
+        @battle.pbDisplay(_INTL("But it failed!"))
+        return -1
+      end
+    end
+    array=[]
+    for i in [PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPEED,
+              PBStats::SPATK,PBStats::SPDEF,PBStats::ACCURACY,PBStats::EVASION]
+      array.push(i) if opponent.pbCanIncreaseStatStage?(i,attacker,false,self)
+    end
+    if array.length==0
+      @battle.pbDisplay(_INTL("{1}'s stats won't go any higher!",opponent.pbThis))
+      return -1
+    end
+    stat=array[@battle.pbRandom(array.length)]
+    pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
+    ret=opponent.pbIncreaseStat(stat,2,attacker,false,self)
+    return 0
+  end
+end
+
+################################################################################
+# Enemy switches out. Various effects affecting the enemy are passed to the
+# replacement. (Haunt)
+################################################################################
+class PokeBattle_Move_15B < PokeBattle_Move
+  def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    if !@battle.pbCanChooseNonActive?(attacker.index)
+      @battle.pbDisplay(_INTL("But it failed!"))
+      return -1
+    end
+    pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
+    attacker.effects[PBEffects::BatonPass]=true
+    return 0
+  end
+end
