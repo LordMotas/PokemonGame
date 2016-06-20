@@ -19598,7 +19598,7 @@ FormNames=Crimson,Electric,Sapphire
 BattlerPlayerY=0
 BattlerEnemyY=25
 BattlerAltitude=0
-Evolutions=IVYSAUR,Level,16
+Evolutions=CRIMZOG,LevelTadpoi,5,SAPPHROG,LevelTadpoi,5,ELECTROG,LevelTadpoi,5
 [723]
 Name=Ivysaur
 InternalName=CRIMZOG

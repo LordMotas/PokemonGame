@@ -39,10 +39,11 @@ module PBEvolution
   HighestDef        = 37
   HighestSpAtk      = 38
   HighestSpDef      = 39
-  HighestSpeed      = 40
+  HighestSpd      = 40
   LevelSunny        = 41
   LevelHail         = 42
   LevelSandstorm    = 43
+  LevelTadpoi       = 44
 
   EVONAMES=["Unknown",
     "Happiness","HappinessDay","HappinessNight","Level","Trade",
@@ -53,7 +54,7 @@ module PBEvolution
     "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
     "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
     "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
-    "HighestSpeed","LevelSunny","LevelHail","LevelSandstorm"
+    "HighestSpd","LevelSunny","LevelHail","LevelSandstorm", "LevelTadpoi"
   ]
 
   # 0 = no parameter
@@ -71,7 +72,7 @@ module PBEvolution
     3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
     0,0,0,        # HappinessMale, HappinessFemale,
     1,1,1,1,1,    # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
-    1,1,1,1       # HighestSpeed, LevelSunny, LevelHail, LevelSandstorm
+    1,1,1,1,1     # HighestSpd, LevelSunny, LevelHail, LevelSandstorm, LevelTadpoi
   ]
 end
 
@@ -130,9 +131,9 @@ def pbGetMinimumLevel(species)
            PBEvolution::LevelDay,PBEvolution::LevelNight,
            PBEvolution::HighestHP,PBEvolution::HighestAtk,
            PBEvolution::HighestDef,PBEvolution::HighestSpAtk,
-           PBEvolution::HighestSpDef,PBEvolution::HighestSpeed,
+           PBEvolution::HighestSpDef,PBEvolution::HighestSpd,
            PBEvolution::LevelSunny,PBEvolution::LevelHail,
-           PBEvolution::LevelSandstorm,
+           PBEvolution::LevelSandstorm,PBEvolution::LevelTadpoi,
            PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
           ret=(ret==-1) ? level : [ret,level].min
           break
@@ -863,6 +864,8 @@ end
 # Evolution methods
 #===============================================================================
 def pbMiniCheckEvolution(pokemon,evonib,level,poke)
+  #poke is simply the number of the Pokemon to evolve into
+  echo pokemon
   case evonib
   when PBEvolution::Happiness
     return poke if pokemon.happiness>=220
@@ -971,7 +974,7 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
       return poke if  pokemon.level>=level && !i.egg? && (i.type1==17 || i.type2==17)
     end 
   when PBEvolution::LevelDay
-    return poke if pokemon.level>=level&& PBDayNight.isDay?(pbGetTimeNow)
+    return poke if pokemon.level>=level && PBDayNight.isDay?(pbGetTimeNow)
   when PBEvolution::LevelNight
     return poke if pokemon.level>=level && PBDayNight.isNight?(pbGetTimeNow)
   when PBEvolution::UpsideDownLevel
@@ -982,26 +985,33 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
     pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
     pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
-  when PBEvolution::HighestAttack # Torling Atk
+  when PBEvolution::HighestAtk # Torling Atk
     return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
     pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
     pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
-  when PBEvolution::HighestDefense # Torling Def
+  when PBEvolution::HighestDef # Torling Def
     return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
     pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
     pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
-  when PBEvolution::HighestSpAttack # Torling SpAtk
+  when PBEvolution::HighestSpAtk # Torling SpAtk
     return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
     pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
     pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
-  when PBEvolution::HighestSpDefense # Torling SpDef
+  when PBEvolution::HighestSpDef # Torling SpDef
     return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
     pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
     pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
-  when PBEvolution::HighestSpeed # Torling Speed
+  when PBEvolution::HighestSpd # Torling Speed
     return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
     pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
     pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
+  when PBEvolution::LevelTadpoi # Tadpoi
+    #Crimzog
+    return 166 if pokemon.tadpoicolor==1 && pokemon.level>=level
+    #Electrog
+    return 167 if pokemon.tadpoicolor==2 && pokemon.level>=level
+    #Sapphrog
+    return 168 if pokemon.tadpoicolor==3 && pokemon.level>=level
   end
   return -1
 end
