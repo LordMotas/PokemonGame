@@ -108,6 +108,8 @@ begin
     WishAmount         = 104
     WishMaker          = 105
     Yawn               = 106
+		Reap               = 107
+    ReapUser           = 108
     
     ############################################################################
     # These effects apply to a side

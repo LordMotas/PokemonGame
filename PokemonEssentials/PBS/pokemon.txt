@@ -19572,7 +19572,7 @@ Evolutions=
 [722]
 Name=Bulbasaur
 InternalName=TADPOI
-Type1=GRASS
+Type1=GHOST
 Type2=POISON
 BaseStats=45,49,49,45,65,65
 GenderRate=FemaleOneEighth

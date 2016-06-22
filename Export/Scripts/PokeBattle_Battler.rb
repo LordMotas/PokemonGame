@@ -345,6 +345,8 @@ class PokeBattle_Battler
       @effects[PBEffects::MagnetRise]     = 0
       @effects[PBEffects::PerishSong]     = 0
       @effects[PBEffects::PerishSongUser] = -1
+			@effects[PBEffects::Reap]           = 0
+      @effects[PBEffects::ReapUser]       = -1
       @effects[PBEffects::PowerTrick]     = false
       @effects[PBEffects::Substitute]     = 0
       @effects[PBEffects::Telekinesis]    = 0

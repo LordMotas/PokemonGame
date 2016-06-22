@@ -9513,9 +9513,9 @@ class PokeBattle_Move_159 < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     failed=true
     for i in 0...4
-      if @battle.battlers[i].effects[PBEffects::PerishSong]==0 &&
+      if @battle.battlers[i].effects[PBEffects::Reap]==0 &&
          (attacker.hasMoldBreaker ||
-         !@battle.battlers[i].hasWorkingAbility(:SOUNDPROOF))
+         !@battle.battlers[i].pbHasType?(:GHOST))
         failed=false; break
       end   
     end
@@ -9524,16 +9524,12 @@ class PokeBattle_Move_159 < PokeBattle_Move
       return -1
     end
     pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
-    @battle.pbDisplay(_INTL("All Pokémon hearing the song will faint in three turns!"))
+    @battle.pbDisplay(_INTL("All Non-Ghost Pokémon will faint in three turns!"))
     for i in 0...4
-      if @battle.battlers[i].effects[PBEffects::PerishSong]==0
-        if !attacker.hasMoldBreaker && @battle.battlers[i].hasWorkingAbility(:SOUNDPROOF)
-          @battle.pbDisplay(_INTL("{1}'s {2} blocks {3}!",@battle.battlers[i].pbThis,
-             PBAbilities.getName(@battle.battlers[i].ability),@name))
-        else
-          @battle.battlers[i].effects[PBEffects::PerishSong]=4
-          @battle.battlers[i].effects[PBEffects::PerishSongUser]=attacker.index
-        end
+      if @battle.battlers[i].effects[PBEffects::Reap]==0 &&
+         !@battle.battlers[i].pbHasType?(:GHOST)
+      @battle.battlers[i].effects[PBEffects::Reap]=3
+      @battle.battlers[i].effects[PBEffects::ReapUser]=attacker.index
       end
     end
     return 0
@@ -9546,8 +9542,7 @@ end
 class PokeBattle_Move_15A < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     if attacker.index!=opponent.index 
-      if (opponent.effects[PBEffects::Substitute]>0 && !ignoresSubstitute?(attacker)) ||
-         opponent.pbOwnSide.effects[PBEffects::CraftyShield]
+      if (opponent.effects[PBEffects::Substitute]>0 && !ignoresSubstitute?(attacker))
         @battle.pbDisplay(_INTL("But it failed!"))
         return -1
       end
@@ -9555,15 +9550,15 @@ class PokeBattle_Move_15A < PokeBattle_Move
     array=[]
     for i in [PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPEED,
               PBStats::SPATK,PBStats::SPDEF,PBStats::ACCURACY,PBStats::EVASION]
-      array.push(i) if opponent.pbCanIncreaseStatStage?(i,attacker,false,self)
+      array.push(i) if opponent.pbCanReduceStatStage?(i,opponent,false,self)
     end
     if array.length==0
-      @battle.pbDisplay(_INTL("{1}'s stats won't go any higher!",opponent.pbThis))
+      @battle.pbDisplay(_INTL("{1}'s stats won't go any lower!",opponent.pbThis))
       return -1
     end
     stat=array[@battle.pbRandom(array.length)]
-    pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
-    ret=opponent.pbIncreaseStat(stat,2,attacker,false,self)
+    pbShowAnimation(@id,opponent,attacker,hitnum,alltargets,showanimation)
+    ret=opponent.pbReduceStat(stat,2,opponent,false,self)
     return 0
   end
 end

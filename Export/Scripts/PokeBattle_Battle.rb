@@ -3654,6 +3654,34 @@ class PokeBattle_Battle
       pbGainEXP
       return
     end
+		# Reap
+    reapUsers=[]
+    for i in priority
+      next if i.isFainted?
+      if i.effects[PBEffects::Reap]>0
+        i.effects[PBEffects::Reap]-=1
+        pbDisplay(_INTL("{1}'s Reap count fell to {2}!",i.pbThis,i.effects[PBEffects::Reap]))
+        PBDebug.log("[Lingering effect triggered] #{i.pbThis}'s Reap count dropped to #{i.effects[PBEffects::Reap]}")
+        if i.effects[PBEffects::Reap]==0
+          reapUsers.push(i.effects[PBEffects::ReapUser])
+          i.pbReduceHP(i.hp,true)
+        end
+      end
+      if i.isFainted?
+        return if !i.pbFaint
+      end
+    end
+    if reapUsers.length>0
+      # If all remaining Pokemon fainted by a Perish Song triggered by a single side
+      if (reapUsers.find_all{|item| pbIsOpposing?(item) }.length==reapUsers.length) ||
+         (pe.find_all{|item| !pbIsOpposing?(item) }.length==reapUsers.length)
+        pbJudgeCheckpoint(@battlers[reapUsers[0]])
+      end
+    end
+    if @decision>0
+      pbGainEXP
+      return
+    end
     # Reflect
     for i in 0...2
       if sides[i].effects[PBEffects::Reflect]>0
