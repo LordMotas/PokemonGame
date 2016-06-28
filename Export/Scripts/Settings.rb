@@ -50,7 +50,7 @@ POKERUSCHANCE      = 3
 #      as in older Gens (false).
 #===============================================================================
 POISONINFIELD         = true
-POISONFAINTINFIELD    = false
+POISONFAINTINFIELD    = true
 FISHINGAUTOHOOK       = false
 DIVINGSURFACEANYWHERE = false
 NEWBERRYPLANTS        = true

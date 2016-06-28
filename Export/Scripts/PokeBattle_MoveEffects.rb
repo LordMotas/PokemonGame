@@ -9568,13 +9568,37 @@ end
 # replacement. (Haunt)
 ################################################################################
 class PokeBattle_Move_15B < PokeBattle_Move
+  # TODO: Either choose to do this the Roar way or the Baton Pass way.
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
-    if !@battle.pbCanChooseNonActive?(attacker.index)
-      @battle.pbDisplay(_INTL("But it failed!"))
+    if !attacker.hasMoldBreaker && opponent.hasWorkingAbility(:SUCTIONCUPS)
+      @battle.pbDisplay(_INTL("{1} anchored itself with {2}!",opponent.pbThis,PBAbilities.getName(opponent.ability)))  
       return -1
     end
-    pbShowAnimation(@id,attacker,nil,hitnum,alltargets,showanimation)
-    attacker.effects[PBEffects::BatonPass]=true
-    return 0
+    if opponent.effects[PBEffects::Ingrain]
+      @battle.pbDisplay(_INTL("{1} anchored itself with its roots!",opponent.pbThis))  
+      return -1
+    end
+    if !@battle.opponent
+      pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
+      @battle.decision=3 # Set decision to escaped
+      return 0
+    else
+      choices=false
+      party=@battle.pbParty(opponent.index)
+      for i in 0...party.length
+        if @battle.pbCanSwitch?(opponent.index,i,false,true)
+          choices=true
+          break
+        end
+      end
+      if !choices
+        @battle.pbDisplay(_INTL("But it failed!"))
+        return -1
+      end
+      pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
+      opponent.effects[PBEffects::Roar]=true
+      opponent.effects[PBEffects::BatonPass]=true
+      return 0
+    end
   end
 end

@@ -623,4 +623,4 @@
 623,SHRIEK,Shriek,15A,0,GHOST,Status,100,30,0,04,0,bcek,"The user shrieks at the opponent, sharply lowering one of their stats."
 624,ASSASSINATE,Assassinate,070,1,DARK,Physical,30,5,0,00,0,abe,"A sneaky, sudden attack from the darkness. The target will faint instantly if this attack hits."
 625,DEVOUR,Devour,070,1,BUG,Physical,30,5,0,00,0,abe,"The user devours the opponent viscously. The target will faint instantly if this attack hits."
-626,HAUNT,Haunt,15B,0,GHOST,Status,0,40,0,10,0,,"The opponent is haunted and switches places with an enemy Pokémon in waiting, retaining any stat changes."
+626,HAUNT,Haunt,15B,0,GHOST,Status,0,20,0,00,-6,bcek,"The opponent is haunted and switches places with an enemy Pokémon in waiting, retaining any negative changes."
