@@ -105,7 +105,7 @@
 59741688    PField_EncounterModifiers                    PField_EncounterModifiers.rb
 36720388    PField_RoamingPokemon                        PField_RoamingPokemon.rb
 1874171     PField_RandomDungeons                        PField_RandomDungeons.rb
-99370154    PField_BerryPlants                           PField_BerryPlants.rb
+99622539    PField_BerryPlants                           PField_BerryPlants.rb
 85485371    PField_DayCare                               PField_DayCare.rb
 91453430    PField_DependentEvents                       PField_DependentEvents.rb
 41539190    PField_Time                                  PField_Time.rb

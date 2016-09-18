@@ -15,9 +15,9 @@ class Menu
  def pbInfo(item)
     case item
     when "Pokedex"
-      return "POKéDEX"
+      return "POKEDEX"
     when "Pokemon"
-      return "POKéMON"
+      return "POKEMON"
     when "Craft"
       return "CRAFT"
     when "Bag"

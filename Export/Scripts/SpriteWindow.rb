@@ -4684,5 +4684,6 @@ class Window_CommandPokemonEx < Window_CommandPokemon
 end
 
 
-class Window_AdvancedCommandPokemonEx < Window_AdvancedCommandPokemon
+
+class Window_AdvancedCommandPokemonEx < Window_AdvancedCommandPokemon
 end

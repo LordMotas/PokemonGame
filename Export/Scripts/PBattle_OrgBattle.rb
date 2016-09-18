@@ -20,6 +20,7 @@ class Array
 end
 
 
+
 module Enumerable
   def transform
     ret=[]
@@ -185,7 +186,7 @@ class PBPokemon
 
   def convertMove(move)
     if isConst?(move,PBMoves,:RETURN) && hasConst?(PBMoves,:FRUSTRATION)
-       move=getConst(PBMoves,:FRUSTRATION)
+      move=getConst(PBMoves,:FRUSTRATION)
     end
     return move
   end

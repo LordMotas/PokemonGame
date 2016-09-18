@@ -1,28 +1,28 @@
 module PBEvolution
-  Unknown          = 0 # Do not use
-  Happiness        = 1
+  Unknown           = 0 # Do not use
+  Happiness         = 1
   HappinessDay      = 2
   HappinessNight    = 3
-  Level            = 4
-  Trade            = 5
-  TradeItem        = 6
+  Level             = 4
+  Trade             = 5
+  TradeItem         = 6
   Item              = 7
-  AttackGreater    = 8
-  AtkDefEqual      = 9
+  AttackGreater     = 8
+  AtkDefEqual       = 9
   DefenseGreater    = 10
-  Silcoon          = 11
-  Cascoon          = 12
-  Ninjask          = 13
+  Silcoon           = 11
+  Cascoon           = 12
+  Ninjask           = 13
   Shedinja          = 14
   Beauty            = 15
   ItemMale          = 16
   ItemFemale        = 17
-  DayHoldItem      = 18
-  NightHoldItem    = 19
-  HasMove          = 20
+  DayHoldItem       = 18
+  NightHoldItem     = 19
+  HasMove           = 20
   HasInParty        = 21
-  LevelMale        = 22
-  LevelFemale      = 23
+  LevelMale         = 22
+  LevelFemale       = 23
   Location          = 24
   TradeSpecies      = 25
   HappinessMoveType = 26
@@ -46,11 +46,11 @@ module PBEvolution
   LevelTadpoi       = 44
 
   EVONAMES=["Unknown",
-    "Happiness","HappinessDay","HappinessNight","Level","Trade",
-    "TradeItem","Item","AttackGreater","AtkDefEqual","DefenseGreater",
-    "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
-    "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
-    "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
+     "Happiness","HappinessDay","HappinessNight","Level","Trade",
+     "TradeItem","Item","AttackGreater","AtkDefEqual","DefenseGreater",
+     "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
+     "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
+     "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
     "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
     "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
     "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
@@ -64,16 +64,47 @@ module PBEvolution
   # 4 = Species internal name
   # 5 = Type internal name
   EVOPARAM=[0,    # Unknown (do not use)
-    0,0,0,1,0,    # Happiness, HappinessDay, HappinessNight, Level, Trade
-    2,2,1,1,1,    # TradeItem, Item, AttackGreater, AtkDefEqual, DefenseGreater
-    1,1,1,1,1,    # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
-    2,2,2,2,3,    # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
-    4,1,1,1,4,    # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
+     0,0,0,1,0,   # Happiness, HappinessDay, HappinessNight, Level, Trade
+     2,2,1,1,1,   # TradeItem, Item, AttackGreater, AtkDefEqual, DefenseGreater
+     1,1,1,1,1,   # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
+     2,2,2,2,3,   # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
+     4,1,1,1,4,   # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
     3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
     0,0,0,        # HappinessMale, HappinessFemale,
     1,1,1,1,1,    # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
     1,1,1,1,1     # HighestSpd, LevelSunny, LevelHail, LevelSandstorm, LevelTadpoi
   ]
+end
+
+
+
+#===============================================================================
+# Evolution helper functions
+#===============================================================================
+def pbGetEvolvedFormData(species)
+  ret=[]
+  _EVOTYPEMASK=0x3F
+  _EVODATAMASK=0xC0
+  _EVONEXTFORM=0x00
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if (evo&_EVODATAMASK)==_EVONEXTFORM
+           ret.push([evonib,level,poke])
+         end
+         i+=5
+       end
+     end
+  }
+  return ret
 end
 
 def pbEvoDebug()
@@ -105,6 +136,31 @@ def pbEvoDebug()
   }
 end
 
+def pbGetPreviousForm(species)
+  _EVOTYPEMASK=0x3F
+  _EVODATAMASK=0xC0
+  _EVOPREVFORM=0x40
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if (evo&_EVODATAMASK)==_EVOPREVFORM
+           return poke
+         end
+         i+=5
+       end
+     end
+  }
+  return species
+end
+
 def pbGetMinimumLevel(species)
   ret=-1
   _EVOTYPEMASK=0x3F
@@ -129,11 +185,6 @@ def pbGetMinimumLevel(species)
            PBEvolution::Silcoon,PBEvolution::Cascoon,
            PBEvolution::Ninjask,PBEvolution::Shedinja,
            PBEvolution::LevelDay,PBEvolution::LevelNight,
-           PBEvolution::HighestHP,PBEvolution::HighestAtk,
-           PBEvolution::HighestDef,PBEvolution::HighestSpAtk,
-           PBEvolution::HighestSpDef,PBEvolution::HighestSpd,
-           PBEvolution::LevelSunny,PBEvolution::LevelHail,
-           PBEvolution::LevelSandstorm,PBEvolution::LevelTadpoi,
            PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
           ret=(ret==-1) ? level : [ret,level].min
           break
@@ -143,44 +194,6 @@ def pbGetMinimumLevel(species)
     end
   }
   return (ret==-1) ? 1 : ret
-end
-
-def pbGetPreviousForm(species,item1=-1,item2=-1)
-  ret=species
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVOPREVFORM=0x40
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if poke<=PBSpecies.maxValue && (evo&_EVODATAMASK)==_EVOPREVFORM # evolved from
-           if item1>=0 && item2>=0
-             dexdata=pbOpenDexData
-             pbDexDataOffset(dexdata,poke,54)
-             incense=dexdata.fgetw
-             dexdata.close
-             ret=poke if item1==incense || item2==incense
-           else
-             ret=poke
-           end
-           break
-         end
-         i+=5
-       end
-     end
-  }
-  #if ret!=species
-    #ret=pbGetBabySpecies(ret)
-  #end
-  return ret
 end
 
 def pbGetBabySpecies(species,item1=-1,item2=-1)
@@ -864,8 +877,6 @@ end
 # Evolution methods
 #===============================================================================
 def pbMiniCheckEvolution(pokemon,evonib,level,poke)
-  #poke is simply the number of the Pokemon to evolve into
-  echo pokemon
   case evonib
   when PBEvolution::Happiness
     return poke if pokemon.happiness>=220
@@ -915,21 +926,7 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     for i in $Trainer.party
       return poke if !i.isEgg? && i.species==level
     end
-  when PBEvolution::Location
-    return poke if $game_map.map_id==level
-  when PBEvolution::LevelRain
-    if pokemon.level>=level
-      if $game_screen && ($evoWeather==PBWeather::RAINDANCE)
-        return poke
-      end
-    end
-  when PBEvolution::LevelSunny
-    if pokemon.level>=level
-      if $game_screen && ($evoWeather==PBWeather::SUNNYDAY)
-        return poke
-      end
-    end
-  when PBEvolution::LevelHail
+  when PBEvolution::LevelDarkInParty
     if pokemon.level>=level
       if $game_screen && ($evoWeather==PBWeather::HAIL)
         return poke
@@ -1042,33 +1039,6 @@ def pbCheckEvolutionEx(pokemon)
     ret=yield pokemon,form[0],form[1],form[2]
     break if ret>0
   end
-  return ret
-end
-
-#Retrieves the data from the evolutions.dat file to find the evolved Pokemon
-def pbGetEvolvedFormData(species)
-  ret=[]
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVONEXTFORM=0x00
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if (evo&_EVODATAMASK)==_EVONEXTFORM
-           ret.push([evonib,level,poke])
-         end
-         i+=5
-       end
-     end
-  }
   return ret
 end
 

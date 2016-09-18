@@ -38,6 +38,7 @@ HiddenMoveHandlers.addUseMove(:CHATTER,proc {|item,pokemon|
 });
 
 
+
 class PokeBattle_Scene
   def pbChatter(attacker,opponent)
     if attacker.pokemon

@@ -234,10 +234,10 @@ def pbTrainerBattle(trainerid,trainername,endspeech,
    fullparty2=false
    if false
      if $PokemonTemp.waitingTrainer[0][2].length>3
-       raise _INTL("Opponent 1's party has more than three Pokémon, which is not allowed")
+       raise _INTL("Opponent 1's party has more than three PokÃ©mon, which is not allowed")
      end
      if trainer[2].length>3
-       raise _INTL("Opponent 2's party has more than three Pokémon, which is not allowed")
+       raise _INTL("Opponent 2's party has more than three PokÃ©mon, which is not allowed")
      end
    elsif $PokemonTemp.waitingTrainer[0][2].length>3 || trainer[2].length>3
      for i in 0...$PokemonTemp.waitingTrainer[0][2].length

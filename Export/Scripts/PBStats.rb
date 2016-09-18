@@ -21,7 +21,8 @@ begin
          _INTL("evasiveness")
       ]
       return names[id]
-    end  end
+    end
+  end
 
 rescue Exception
   if $!.is_a?(SystemExit) || "#{$!.class}"=="Reset"

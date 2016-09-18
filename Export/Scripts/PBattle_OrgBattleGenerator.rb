@@ -920,13 +920,12 @@ def pbDecideWinnerEffectiveness(move,otype1,otype2,ability,scores)
   return 0 if data.basedamage==0
   atype=data.type
   typemod=4
-  if isConst?(ability,PBAbilities,:LEVITATE) && 
-     isConst?(data.type,PBTypes,:GROUND)
+  if isConst?(ability,PBAbilities,:LEVITATE) && isConst?(data.type,PBTypes,:GROUND)
     typemod=4
   else
     mod1=PBTypes.getEffectiveness(atype,otype1)
     mod2=(otype1==otype2) ? 2 : PBTypes.getEffectiveness(atype,otype2)
-    if(isConst?(ability,PBAbilities,:WONDERGUARD))
+    if isConst?(ability,PBAbilities,:WONDERGUARD)
       mod1=2 if mod1!=4
       mod2=2 if mod2!=4
     end
