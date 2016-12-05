@@ -624,3 +624,5 @@
 624,ASSASSINATE,Assassinate,070,1,DARK,Physical,30,5,0,00,0,abe,"A sneaky, sudden attack from the darkness. The target will faint instantly if this attack hits."
 625,DEVOUR,Devour,070,1,BUG,Physical,30,5,0,00,0,abe,"The user devours the opponent viscously. The target will faint instantly if this attack hits."
 626,HAUNT,Haunt,15B,0,GHOST,Status,0,20,0,00,-6,bcek,"The opponent is haunted and switches places with an enemy Pokémon in waiting, retaining any negative changes."
+627,MUMMIFY,Mummify,15C,0,GHOST,Status,95,10,0,00,0,bde,"The user wraps the opponent in bandages, severely reducing their speed."
+628,SUPERNOVA,Supernova,15D,200,DRAGON,Special,100,5,0,08,0,be,"The user causes a supernova that deals massive damage to the opponent."

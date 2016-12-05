@@ -9549,3 +9549,35 @@ class PokeBattle_Move_15B < PokeBattle_Move
     end
   end
 end
+
+################################################################################
+# Decreases the target's Speed by 3 stages. (Mummify)
+################################################################################
+class PokeBattle_Move_15C < PokeBattle_Move
+  def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    return super(attacker,opponent,hitnum,alltargets,showanimation) if pbIsDamaging?
+    return -1 if !opponent.pbCanReduceStatStage?(PBStats::SPEED,attacker,true,self)
+    pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
+    ret=opponent.pbReduceStat(PBStats::SPEED,3,attacker,false,self)
+    return ret ? 0 : -1
+  end
+
+  def pbAdditionalEffect(attacker,opponent)
+    return if opponent.damagestate.substitute
+    if opponent.pbCanReduceStatStage?(PBStats::SPEED,attacker,false,self)
+      opponent.pbReduceStat(PBStats::SPEED,3,attacker,false,self)
+    end
+  end
+end
+
+################################################################################
+# Decreases user's health by 1/4. (Supernova)
+################################################################################
+class PokeBattle_Move_15D < PokeBattle_Move
+  def pbEffectAfterHit(attacker,opponent,turneffects)
+    if !attacker.isFainted? && turneffects[PBEffects::TotalDamage]>0
+      attacker.pbReduceHP((attacker.totalhp/4.0).round)
+      @battle.pbDisplay(_INTL("{1} lost a piece of itself!",attacker.pbThis))
+    end
+  end
+end
