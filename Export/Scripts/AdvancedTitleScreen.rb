@@ -18,7 +18,7 @@ SCREENSTYLE = 5
 # 6 - X/Y    <- Definitely the best one
 
 # Species for cry bein played
-SPECIES = PBSpecies::PIKACHU
+SPECIES = PBSpecies::METEOROS
 
 # BGM names for the different styles
 GEN_ONE_BGM = "title_frlg.ogg"
@@ -36,7 +36,7 @@ PLAY_ON_DEBUG = false
 #-------------------------------------------------------------------------------
 # The Following only applies if you're using the Gen 6 style + Elite Battle.
 # Species of the Pokemon displayed in the demo 
-EB_SPECIES = [PBSpecies::CHARMELEON,PBSpecies::IVYSAUR,PBSpecies::WARTORTLE]
+EB_SPECIES = [PBSpecies::METEOROS,PBSpecies::METEOROS,PBSpecies::METEOROS]
 # Battle backgrounds for different species
 EB_BG = ["City","Field","Water"]
 # Battle bases for different species

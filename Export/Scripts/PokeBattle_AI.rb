@@ -2795,7 +2795,8 @@ class PokeBattle_Battle
       elsif skill>=PBTrainerAI.mediumSkill && isConst?(move.type,PBTypes,:ELECTRIC) &&
             (opponent.hasWorkingAbility(:VOLTABSORB) ||
             opponent.hasWorkingAbility(:LIGHTNINGROD) ||
-            opponent.hasWorkingAbility(:MOTORDRIVE))
+            opponent.hasWorkingAbility(:MOTORDRIVE) ||
+            opponent.hasWorkingABility(:RUBBER))
         score=0
       else
         # Calculate how much damage the move will do (roughly)
@@ -3737,7 +3738,7 @@ class PokeBattle_Battle
     accuracy*=baseaccuracy/evasion
     # Accuracy modifiers
     if skill>=PBTrainerAI.mediumSkill
-      accuracy*=1.3 if attacker.hasWorkingAbility(:COMPOUNDEYES)
+      accuracy*=1.3 if attacker.hasWorkingAbility(:SEISMICSENSE)
       accuracy*=1.1 if attacker.hasWorkingAbility(:VICTORYSTAR)
       if skill>=PBTrainerAI.highSkill
         partner=attacker.pbPartner

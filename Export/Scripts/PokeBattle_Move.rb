@@ -294,6 +294,11 @@ class PokeBattle_Move
       end
       return true
     end
+    #Rubber
+    if (opponent.hasWorkingAbility(:RUBBER))
+      PBDebug.log("[Ability triggered] #{opponent.pbThis}'s #{PBAbilities.getName(opponent.ability)} (made #{@name} ineffective)")
+      return true
+    end
     if (opponent.hasWorkingAbility(:STORMDRAIN) && isConst?(type,PBTypes,:WATER)) ||
        (opponent.hasWorkingAbility(:LIGHTNINGROD) && isConst?(type,PBTypes,:ELECTRIC))
       PBDebug.log("[Ability triggered] #{opponent.pbThis}'s #{PBAbilities.getName(opponent.ability)} (made #{@name} ineffective)")
@@ -466,7 +471,7 @@ class PokeBattle_Move
                   @function==0xA9 || # Chip Away
                   attacker.hasWorkingAbility(:UNAWARE)
     evasion=(evastage>=0) ? (evastage+3)*100.0/3 : 300.0/(3-evastage)
-    if attacker.hasWorkingAbility(:COMPOUNDEYES)
+    if attacker.hasWorkingAbility(:SEISMICSENSE)
       accuracy*=1.3
     end
     if attacker.hasWorkingAbility(:HUSTLE) && pbIsDamaging? &&

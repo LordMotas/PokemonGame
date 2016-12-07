@@ -1448,6 +1448,13 @@ class PokeBattle_Battler
           target.pbPoison(user,_INTL("{1}'s {2} poisoned {3}!",user.pbThis,
              PBAbilities.getName(user.ability),target.pbThis(true)))
         end
+        #Combustion
+        if user.hasWorkingAbility(:COMBUSTION,true) &&
+           target.pbCanBurn?(nil,false) && @battle.pbRandom(10)<3
+          PBDebug.log("[Ability triggered] #{user.pbThis}'s Combustion")
+          target.pbBurn(user,_INTL("{1}'s {2} burned {3}!",user.pbThis,
+             PBAbilities.getName(user.ability),target.pbThis(true)))
+        end
       end
     end
     if damage>0

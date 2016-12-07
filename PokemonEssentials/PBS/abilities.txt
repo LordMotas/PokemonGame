@@ -11,7 +11,7 @@
 11,WATERABSORB,Water Absorb,"Restores HP if hit by a Water-type move."
 12,OBLIVIOUS,Oblivious,"Prevents it from becoming infatuated."
 13,CLOUDNINE,Cloud Nine,"Eliminates the effects of weather."
-14,COMPOUNDEYES,Compound Eyes,"The Pokémon's accuracy is boosted."
+14,SEISMICSENSE,Seismic Sense,"The Pokémon's accuracy is boosted."
 15,INSOMNIA,Insomnia,"Prevents the Pokémon from falling asleep."
 16,COLORCHANGE,Color Change,"Changes the Pokémon's type to the foe's move."
 17,IMMUNITY,Immunity,"Prevents the Pokémon from getting poisoned."

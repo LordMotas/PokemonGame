@@ -901,7 +901,7 @@ def pbGenerateWildPokemon(species,level,isroamer=false)
   firstpoke=$Trainer.firstParty
   chances=[50,5,1]
   chances=[60,20,5] if firstpoke && !firstpoke.isEgg? &&
-                       isConst?(firstpoke.ability,PBAbilities,:COMPOUNDEYES)
+                       isConst?(firstpoke.ability,PBAbilities,:SEISMICSENSE)
   itemrnd=rand(100)
   if itemrnd<chances[0] || (items[0]==items[1] && items[1]==items[2])
     genwildpoke.setItem(items[0])
