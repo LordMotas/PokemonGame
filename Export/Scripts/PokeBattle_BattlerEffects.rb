@@ -965,4 +965,38 @@ class PokeBattle_Battler
     end
     return pbReduceStatWithCause(PBStats::ATTACK,1,opponent,PBAbilities.getName(opponent.ability))
   end
+  
+  #Spook
+  def pbReduceSpAttackStatSpook(opponent)
+    return false if isFainted?
+    if effects[PBEffects::Substitute]>0
+      @battle.pbDisplay(_INTL("{1}'s substitute protected it from {2}'s {3}!",
+         pbThis,opponent.pbThis(true),PBAbilities.getName(opponent.ability)))
+      return false
+    end
+    if !opponent.hasWorkingAbility(:CONTRARY)
+      if pbOwnSide.effects[PBEffects::Mist]>0
+        @battle.pbDisplay(_INTL("{1} is protected from {2}'s {3} by Mist!",
+           pbThis,opponent.pbThis(true),PBAbilities.getName(opponent.ability)))
+        return false
+      end
+      if hasWorkingAbility(:CLEARBODY) || hasWorkingAbility(:WHITESMOKE) ||
+         hasWorkingAbility(:HYPERCUTTER) ||
+         (hasWorkingAbility(:FLOWERVEIL) && pbHasType?(:GRASS))
+        abilityname=PBAbilities.getName(self.ability)
+        oppabilityname=PBAbilities.getName(opponent.ability)
+        @battle.pbDisplay(_INTL("{1}'s {2} prevented {3}'s {4} from working!",
+           pbThis,abilityname,opponent.pbThis(true),oppabilityname))
+        return false
+      end
+      if pbPartner.hasWorkingAbility(:FLOWERVEIL) && pbHasType?(:GRASS)
+        abilityname=PBAbilities.getName(pbPartner.ability)
+        oppabilityname=PBAbilities.getName(opponent.ability)
+        @battle.pbDisplay(_INTL("{1}'s {2} prevented {3}'s {4} from working!",
+           pbPartner.pbThis,abilityname,opponent.pbThis(true),oppabilityname))
+        return false
+      end
+    end
+    return pbReduceStatWithCause(PBStats::SPATK,1,opponent,PBAbilities.getName(opponent.ability))
+  end
 end

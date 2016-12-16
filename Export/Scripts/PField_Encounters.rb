@@ -331,7 +331,8 @@ class PokemonEncounters
     encpoke=pbEncounteredPokemon(enctype)
     if encpoke && firstpoke && !firstpoke.isEgg?
       if isConst?(firstpoke.ability,PBAbilities,:INTIMIDATE) ||
-         isConst?(firstpoke.ability,PBAbilities,:KEENEYE)
+         isConst?(firstpoke.ability,PBAbilities,:KEENEYE) ||
+         isConst?(firstpoke.ability,PBAbilities,:SPOOK)
         if encpoke[1]<=firstpoke.level-5 && rand(2)==0
           encpoke=nil
         end

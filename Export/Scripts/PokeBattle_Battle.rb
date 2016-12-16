@@ -1079,6 +1079,14 @@ class PokeBattle_Battle
                   @choices[i][2].pbIsStatus?
         pri+=1 if @battlers[i].hasWorkingAbility(:GALEWINGS) &&
                   isConst?(@choices[i][2].type,PBTypes,:FLYING)
+        pri+=1 if @battlers[i].hasWorkingAbility(:BLAZEWINGS) &&
+                  isConst?(@choices[i][2].type,PBTypes,:FIRE)
+        pri+=1 if @battlers[i].hasWorkingAbility(:FROSTWINGS) &&
+                  isConst?(@choices[i][2].type,PBTypes,:ICE)
+        pri+=1 if @battlers[i].hasWorkingAbility(:THUNDERWINGS) &&
+                  isConst?(@choices[i][2].type,PBTypes,:ELECTRIC)
+        pri+=1 if @battlers[i].hasWorkingAbility(:STEELWINGS) &&
+                  isConst?(@choices[i][2].type,PBTypes,:STEEL)
       end
       priorities[i]=pri
       if i==0

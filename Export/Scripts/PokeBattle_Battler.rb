@@ -1090,6 +1090,15 @@ class PokeBattle_Battler
         end
       end
     end
+    #Spook
+    if self.hasWorkingAbility(:SPOOK) && onactive
+      PBDebug.log("[Ability triggered] #{pbThis}'s Spook")
+      for i in 0...4
+        if pbIsOpposing?(i) && !@battle.battlers[i].isFainted?
+          @battle.battlers[i].pbReduceSpAttackStatSpook(self)
+        end
+      end
+    end
     # Download
     if self.hasWorkingAbility(:DOWNLOAD) && onactive
       odef=ospdef=0
@@ -1408,7 +1417,14 @@ class PokeBattle_Battler
           PBDebug.log("[Ability triggered] #{target.pbThis}'s Poison Point")
           user.pbPoison(target,_INTL("{1}'s {2} poisoned {3}!",target.pbThis,
              PBAbilities.getName(target.ability),user.pbThis(true)))
-        end
+           end
+        #Hallucination
+        if target.hasWorkingAbility(:HALLUCINATION,true) && @battle.pbRandom(10)<3 &&
+           user.pbCanConfuse?(nil,false)
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Hallucination")
+          user.pbConfuse(target,_INTL("{1}'s {2} confused {3}!",target.pbThis,
+             PBAbilities.getName(target.ability),user.pbThis(true)))
+        end   
         if (target.hasWorkingAbility(:ROUGHSKIN,true) ||
            target.hasWorkingAbility(:IRONBARBS,true)) && !user.isFainted?
           if !user.hasWorkingAbility(:MAGICGUARD)
@@ -1454,6 +1470,21 @@ class PokeBattle_Battler
           PBDebug.log("[Ability triggered] #{user.pbThis}'s Combustion")
           target.pbBurn(user,_INTL("{1}'s {2} burned {3}!",user.pbThis,
              PBAbilities.getName(user.ability),target.pbThis(true)))
+        end
+        #Cursed Touch
+        if user.hasWorkingAbility(:CURSEDTOUCH,true)
+          PBDebug.log("[Ability triggered] #{user.pbThis}'s Cursed Touch")
+          array=[]
+          for i in [PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPEED,
+              PBStats::SPATK,PBStats::SPDEF,PBStats::ACCURACY,PBStats::EVASION]
+          array.push(i) if target.pbCanReduceStatStage?(i,user,false,self)
+          end
+          if array.length==0
+            @battle.pbDisplay(_INTL("{1}'s stats won't go any lower!",target.pbThis))
+          end
+          stat=array[@battle.pbRandom(array.length)]
+          pbShowAnimation(@id,user,target,hitnum,alltargets,showanimation)
+          target.pbReduceStatWithCause(stat,1,user,PBAbilities.getName(user.ability))
         end
       end
     end
@@ -2424,6 +2455,10 @@ class PokeBattle_Battler
     if USENEWBATTLEMECHANICS
       p+=1 if user.hasWorkingAbility(:PRANKSTER) && thismove.pbIsStatus?
       p+=1 if user.hasWorkingAbility(:GALEWINGS) && isConst?(thismove.type,PBTypes,:FLYING)
+      p+=1 if user.hasWorkingAbility(:BLAZEWINGS) && isConst?(thismove.type,PBTypes,:FIRE)
+      p+=1 if user.hasWorkingAbility(:FROSTWINGS) && isConst?(thismove.type,PBTypes,:ICE)
+      p+=1 if user.hasWorkingAbility(:THUNDERWINGS) && isConst?(thismove.type,PBTypes,:ELECTRIC)
+      p+=1 if user.hasWorkingAbility(:STEELWINGS) && isConst?(thismove.type,PBTypes,:STEEL)
     end
     if target.pbOwnSide.effects[PBEffects::QuickGuard] && thismove.canProtectAgainst? &&
        p>0 && !target.effects[PBEffects::ProtectNegation]

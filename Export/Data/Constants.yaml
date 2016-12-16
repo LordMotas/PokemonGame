@@ -1,6 +1,6 @@
 --- !ruby/object:Hash
 root:
-- - 98681911
+- - 46825180
   - PBTypes
   - !binary |-
     eJxlj8tqwzAQRfcC/YOXKZQSpa88mIViK7KIbbmS0uClW6uhkLghtqH9+46N
@@ -9,49 +9,50 @@ root:
     AGM9h1sLDNkiEaEzKgSG+NwWYdxnFKgQj1AQGS5RzlASIRFYL4l5pPfAULPh
     yhTAUFP5j78v3R18m5UnP/msbii5+La71MH5Tfo29U1THvxk3EN7uRzW7VD2
     dXWFCr+6ul0FI2c2XQVXrVP5/VoeO//fYouxNQxKfgH9G2WW
-- - 5383095
+- - 15288466
   - PBAbilities
   - !binary |-
-    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
-    v97+YXP5+R+G3vQ0
-- - 67309931
+    eJxtVsuO5DYSvDfQ/+CjDRhGqZ4qAzxQFCXRxYeWpEqjvrV3ao0BxmPD3QN4
+    /34jqCpjAfvSXZQoZmRkZCT//fn17e2bsZE/f/r86f3T7e35KWXt1SCq56c2
+    mpcXq8UWD0et2yaElMXu+amROVstowtR7PnFFNtFHPCFdKM4Pj9Z4xodxQnv
+    pG+v2lhRc5/MRonz89M12CybFGIjqs3z0yyzjo81AofGmqsJUxIVYisbptYb
+    r0WF2Emb5IxK2ic8QHTjU3DeSFEBgAo2RDVI3+MlgBjnJm/yIipg6axMQ2ci
+    XhHNYLRt2wkpVYAUZp+1G4PYAlCaVDbBq2lMYlsxRjbOtIAptmRjkG2Ys+zF
+    FohimPohXYwXW8CZg2917CcZW7EFIquvJpcPAUd3nVY5jQEYtmRnAdUxePOC
+    dc1UwWoTQOYWkLwEsdKqCbt3G7LaDxlE9DG0YleRi6i97qNU2EBcs+ky/jix
+    Ay41gIswDou1YkeirJ2c8cSyA7C8fgZUw9TrMcwo2A6YxmBS8PjrUeuauXsd
+    u6BQjR1AOdk7eS/9o3SlwPuqvPQ6jxMi7oknTL4dYwid2JMoaXxr0iD2+1UY
+    KUctndgDzRh1Skx0D0B5MOrSySz2wANG7NIY0LmvSw2dLgztASZOXs4S0gOS
+    iwYXixYH4BiWUUc1ZWATBwAZcd40isOOaU8SmR32zDtBxuJA3UxZQzbRiQPi
+    jxbJHhAbdPEX46JkSkIrhzOFjPOWIdhWHKmWQbel/keE7qecxHFLLsCLTUoi
+    xHHH6v1rMm0IKPURwcMVKolhFkeEb6zkY6YeImqaxZHqmAnoWFNi6jJoiXBn
+    tiUFl8UJoSU2S1RyFCfEptJsGk00eAsI82CyTi5ctDgBwQh+1zqf9gW1tWsh
+    T4AgTbSIIk4Egf6xuu20xjmkIQAW3OCKc4jGXKWNizgVKgCrIzE1mfBhRrvK
+    i6hJhUUFgl9EDSxsybiqqgaWyTcwDe1FzUJomVeZ1ECSjBvBWX1kqkshtgYI
+    dJzH0a2oKUo0TWcY9fxQLA6x4kxOWjnCXYxl35/ZJhdI3xp/EecttdFGye4W
+    Z9pJAAcrKWcgQYmgPOZ9BhIfopOWzXk+Mjkzctup6NyotcfPNffdfxdCJNRf
+    bQCEkvJGGemxrmgFsls3VhsAuYCeF/zckWDbNuiFC86vNizOhFB2Qj2qDYvT
+    QclOZtjy5kguIUAzrllUm9MqT6iFq5rkoitocxsAyqBctxZ+CW8Fqs5YtkVF
+    o002zAAcYYF0WqnzoGMOE/2/mC3q7lr2Lda0ELX2XkWvBXWmpTKxPK61JwT4
+    Ex4A0xDQj73kkXjAHoomcTMbV6uLRcfD4AHJTTajWCMQ0207y3r08DKstxw3
+    bUuj4O7d2swjwmq+XoVMg4qKn5cZ4NER0GdFy51oX1e+ooZ0Z9j9Fc0WC+iO
+    IqrotrDZxBnH9Oi21BOR02iBXPv2Xjs67Yxarb1T0Wqx97o4jdJjvb879WN9
+    uCe4WkG1K13+wah1nFa7dTJF/VgD2kDvKAsWUFuNWg/ARcd1oUCk3dJDVIBP
+    VnTbtQ3u1St+q3tYIsROmPTcxvQjiAePtFw6cJwSNx8fc6t0W0XblV7aheO6
+    ou1ydqSiNtouGhRQSQ6N13hK6h6G7usm54CQxuuQKHKm8f4EtzWd0WCQ5hvL
+    HYKLw72fGkwL1pAOnOSYzDiWEJxJUfrLPWK9Ir8XnHZMM2gwN5EX7fhFexda
+    zv9iiQq4FoocD4AII7UJq99WtGXePHgdwWrPDojGckJWtGUZg5NluFX0Zolp
+    XLoUS4BqMOb03bcqurSCEKHMwj+NWgU3agibvlnRrVsZLzwEK4oKlrvcl9uH
+    6tdodOtuuteWZt1DOjM6CynSrPsQNO80AIXpn3A7YwKnhzMVx6FTO40PJWgt
+    PUi/HjkxoMsG5cY1aMN2+nBPmZ6NdODo+JyeHTWE31NBfFv8QKJEj/tVXe5+
+    IL//Sc5YUlMzvHPNgf6dFteYkAxg08IzB5eycua6dCCugfdLQFWcPBr0VGsw
+    xTRooZu3mhaNHpAEXOycA+2KLHAKDR2DpNzhdtyMeVPQ0sz1h9EWIdDLW63C
+    mgi9XA0BSu/7aEY8ONGbNctGNzcKo50HPi6qlBCLuqWpQ/toKsi94c2Ytr4Y
+    v4AQLDhd4P6T4i2L3bKluXcRzbIWb0tvL+J7rHkRGya23uMJaRtDuOAncD0/
+    fbz95/8v6D/8cnv3r7/evv308bvnpz9u71//+PLN7z/3t3d3e3t7/eX27f1/
+    /u/vt7cff/zrw+/LB7cvH//xSPXb1y/vf51XQpetf9/86+uf19fPX2//sLn8
+    +R+HuQkD
+- - 99121885
   - PBMoves
   - !binary |-
     eJxtml2v47iRhu8PcP5DLhMgCKwPynYAXVASLXMsiQol2e1z19k5GwRIJkF6
@@ -159,7 +160,7 @@ root:
     U97ffvz87/0vfv7wl8+fp69///ztX3/83fvbvz5//uVfP/3mn3/uP38eP799
     +/qXz9+m/9f//efntz/+UV76vTz8+dOP/9FV+49ffvr51Y8M9x+P/f3r/9y/
     /u2Xz//nMfnn/wDd5tFZ
-- - 59861061
+- - 64862006
   - PBItems
   - !binary |-
     eJyVWl2P5DhyfG+g/8M9ngHDKH1LB+iBJbGquEWJOlHq6pq3sbd9MLC7PuzM
@@ -252,7 +253,7 @@ root:
     P8uHFqMtzeEj+uWCJrhfX37++Pf0vzv+5W8f3+evv378+T9+/qfXl98/vv/x
     +29/+vu/Xj++Tx/fvn3928ef47/bf//949tf/iKd/lke/vjt5/9lsOWXP37/
     +sv/Z8jQ4/8cePjPP377fownb/IPHvz163+9ff3lj49/8KD89T+xGVCK
-- - 39882808
+- - 163870
   - PBSpecies
   - !binary |-
     eJxtVkuP2zYYvBvwf8gxBYrCsmVZCsADJdES1xQpUJQd+bbtukGAvJDdBdp/
@@ -287,7 +288,7 @@ root:
     Li6hUQ4qKPT5BIYAnm5//vfb67cPtxf7+Pn29uPTL+vV99vL6/cvb7793t1e
     htvz8+OH29v7//D3t9vzu3f3Zb/Gz29fnn6yXfP19cvLj72i5E8+/Pz41/nx
     0+vtJx/GP/8AEZJwuQ==
-- - 7051995
+- - 97261462
   - PBTrainers
   - !binary |-
     eJxlVE1v4jAQvSPxH3rsSqsV+YZKc3CCCV4cB9lOK06rtLhsVBpWCay2/37H

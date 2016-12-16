@@ -148,7 +148,7 @@ root: !ruby/object:Hash
     name: Route 2
     expanded: false
     order: 21
-    scroll_y: 1800
+    scroll_y: 705
     parent_id: 0
   22: !ruby/object:RPG::MapInfo
     scroll_x: 320
@@ -217,11 +217,11 @@ root: !ruby/object:Hash
     scroll_y: 240
     parent_id: 28
   31: !ruby/object:RPG::MapInfo
-    scroll_x: 1174
+    scroll_x: 532
     name: Route 3
     expanded: true
     order: 30
-    scroll_y: 646
+    scroll_y: 482
     parent_id: 0
   34: !ruby/object:RPG::MapInfo
     scroll_x: 672
