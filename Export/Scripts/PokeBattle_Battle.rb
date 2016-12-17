@@ -1087,6 +1087,8 @@ class PokeBattle_Battle
                   isConst?(@choices[i][2].type,PBTypes,:ELECTRIC)
         pri+=1 if @battlers[i].hasWorkingAbility(:STEELWINGS) &&
                   isConst?(@choices[i][2].type,PBTypes,:STEEL)
+        pri+=1 if @battlers[i].hasWorkingAbility(:STEALTHSHADOW) &&
+                  isConst?(@choices[i][2].type,PBTypes,:DARK)
       end
       priorities[i]=pri
       if i==0
@@ -3835,7 +3837,23 @@ class PokeBattle_Battle
           PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")
         end
       end
-      # Slothjitsu same as speed boost above
+      # Sagacity
+      if i.turncount>0 && i.hasWorkingAbility(:SAGACITY)
+        array=[]
+        for i in [PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPEED,
+                  PBStats::SPATK,PBStats::SPDEF,PBStats::ACCURACY,PBStats::EVASION]
+          array.push(i) if i.pbCanIncreaseStatStage?(i,attacker,false,self)
+        end
+        if array.length==0
+          @battle.pbDisplay(_INTL("{1}'s stats won't go any higher!",i.pbThis))
+        else
+          stat=array[@battle.pbRandom(array.length)]
+          if i.pbIncreaseStatWithCause(stat,2,i,PBAbilities.getName(i.ability))
+            PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")
+          end
+        end
+      end
+      # Sloth-Jitsue
       if i.turncount>0 && i.hasWorkingAbility(:SLOTHJITSU)
         if i.pbReduceStatWithCause(PBStats::SPEED,1,i,PBAbilities.getName(i.ability))
           PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")

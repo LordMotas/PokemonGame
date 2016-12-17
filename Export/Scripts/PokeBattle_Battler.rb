@@ -1120,6 +1120,31 @@ class PokeBattle_Battler
         end
       end
     end
+    # Hack
+    if self.hasWorkingAbility(:HACK) && onactive
+      if pbOpposing1 && !pbOpposing1.isFainted?
+        if pbOpposing1.attack > pbOpposing1.spatk
+          if pbDecreaseStatWithCause(PBStats::ATTACK,1,pbOpposing1,PBAbilities.getName(ability))
+            PBDebug.log("[Ability triggered] #{pbThis}'s Hack (lowering Attack)")
+          end
+        elsif pbOpposing1.spatk > pbOpposing1.attack 
+          if pbDecreaseStatWithCause(PBStats::SPATK,1,pbOpposing1,PBAbilities.getName(ability))
+            PBDebug.log("[Ability triggered] #{pbThis}'s Hack (lowering Sp.Attack)")
+          end
+        end
+      end
+      if pbOpposing2 && !pbOpposing2.isFainted?
+        if pbOpposing2.attack > pbOpposing2.spatk
+          if pbDecreaseStatWithCause(PBStats::ATTACK,1,pbOpposing2,PBAbilities.getName(ability))
+            PBDebug.log("[Ability triggered] #{pbThis}'s Hack (lowering Attack)")
+          end
+        elsif pbOpposing2.spatk > pbOpposing2.attack 
+          if pbDecreaseStatWithCause(PBStats::SPATK,1,pbOpposing2,PBAbilities.getName(ability))
+            PBDebug.log("[Ability triggered] #{pbThis}'s Hack (lowering Sp.Attack)")
+          end
+        end
+      end
+    end
     # Frisk
     if self.hasWorkingAbility(:FRISK) && @battle.pbOwnedByPlayer?(@index) && onactive
       foes=[]
@@ -2459,6 +2484,7 @@ class PokeBattle_Battler
       p+=1 if user.hasWorkingAbility(:FROSTWINGS) && isConst?(thismove.type,PBTypes,:ICE)
       p+=1 if user.hasWorkingAbility(:THUNDERWINGS) && isConst?(thismove.type,PBTypes,:ELECTRIC)
       p+=1 if user.hasWorkingAbility(:STEELWINGS) && isConst?(thismove.type,PBTypes,:STEEL)
+      p+=1 if user.hasWorkingAbility(:STEALTHSHADOW) && isConst?(thismove.type,PBTypes,:DARK)
     end
     if target.pbOwnSide.effects[PBEffects::QuickGuard] && thismove.canProtectAgainst? &&
        p>0 && !target.effects[PBEffects::ProtectNegation]

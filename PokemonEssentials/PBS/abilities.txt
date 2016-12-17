@@ -206,3 +206,5 @@
 206,THUNDERWINGS,Thunder Wings,"Gives priority to Thunder-type moves."
 207,SPOOK,Spook,"Lowers the foe's Sp. Atk stat."
 208,STEELWINGS,Steel Wings,"Gives priority to Steel-type moves."
+209,HACK,Hack,"Lowers opponent' strength according to attack."
+210,STEALTHSHADOW,Stealth Shadow,"Give priority to Dark-type moves."
