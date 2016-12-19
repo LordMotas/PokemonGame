@@ -592,7 +592,24 @@ class PokeBattle_Move
       opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
     end
     ##### Calcuate base power of move #####
-    basedmg=@basedamage # Fron PBS file
+    basedmg=@basedamage # From PBS file
+    #Fencer
+    if attacker.hasWorkingAbility(:FENCER)
+      basedmg=basedmg+(100-@accuracy)
+    end
+    #Cornered
+    if attacker.hasWorkingAbility(:CORNERED)
+      corneredmult=0.00
+      multiplier=0.02
+      for i in 1..50
+        if attacker.hp<=attacker.totalhp*multiplier
+          corneredmult=corneredmult+0.01
+        end
+        multiplier=multiplier+0.02
+      end
+      @battle.pbDisplayPaused(_INTL("corneredmult is {1} and multiplier is {2}",corneredmult,multiplier))
+      basedmg=basedme+(basedmg*corneredmult)
+    end
     basedmg=pbBaseDamage(basedmg,attacker,opponent) # Some function codes alter base power
     damagemult=0x1000
     if attacker.hasWorkingAbility(:TECHNICIAN) && basedmg<=60 && @id>0
@@ -1150,6 +1167,9 @@ class PokeBattle_Move
     finaldamagemult=pbModifyDamage(finaldamagemult,attacker,opponent)
     damage=(damage*finaldamagemult*1.0/0x1000).round
     opponent.damagestate.calcdamage=damage
+    if attacker.hasWorkingAbility(:BRUTALITY)
+      damage=damage*2
+    end
     PBDebug.log("Move's damage calculated to be #{damage}")
     return damage
   end

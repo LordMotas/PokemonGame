@@ -2551,6 +2551,13 @@ class PokeBattle_Battler
       PBDebug.log("[Move failed] #{target.pbThis} is immune to powder-based moves somehow")
       return false
     end
+    #Superiority
+    if target.hasWorkingAbility(:SUPERIORITY) && (isConst?(type,PBTypes,:DRAGON) || 
+       isConst?(type,PBTypes,:ICE))
+      @battle.pbDisplay(_INTL("It doesn't affect\r\n{1}...",target.pbThis(true)))
+      PBDebug.log("[Move failed] #{target.pbThis} is immune to ice or dragon moves somehow")
+      return false
+    end
     if thismove.basedamage>0 && thismove.function!=0x02 && # Struggle
        thismove.function!=0x111 # Future Sight
       type=thismove.pbType(thismove.type,user,target)
