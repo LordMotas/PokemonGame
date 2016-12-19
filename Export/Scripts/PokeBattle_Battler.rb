@@ -1442,7 +1442,7 @@ class PokeBattle_Battler
           PBDebug.log("[Ability triggered] #{target.pbThis}'s Poison Point")
           user.pbPoison(target,_INTL("{1}'s {2} poisoned {3}!",target.pbThis,
              PBAbilities.getName(target.ability),user.pbThis(true)))
-           end
+        end
         #Hallucination
         if target.hasWorkingAbility(:HALLUCINATION,true) && @battle.pbRandom(10)<3 &&
            user.pbCanConfuse?(nil,false)

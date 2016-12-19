@@ -1190,6 +1190,13 @@ class PokeBattle_Move
         PBDebug.log("[End of effect] #{opponent.pbThis}'s Substitute faded")
       end
       opponent.damagestate.hplost=damage
+      #Hydra
+      if opponent.hasWorkingAbility(:HYDRA)
+        hprecover=damage*0.5
+        opponent.pbRecoverHP(hprecover)
+        @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
+          opponent.pbThis,PBAbilities.getName(opponent.ability)))
+      end
       damage=0
     else
       opponent.damagestate.substitute=false
