@@ -1107,6 +1107,14 @@ class PokeBattle_Move
     if opponent.hasWorkingAbility(:IMPENETRABLE) && isContactMove?
       finaldamagemult=(finaldamagemult*0.75).round
     end
+    #Barkskin
+    if opponent.hasWorkingAbility(:BARKSKIN)
+      if pbIsPhysical?(type)
+        finaldamagemult=(finaldamagemult*0.4).round
+      else
+        finaldamagemult=(finaldamagemult*0.8).round
+      end
+    end
     if attacker.hasWorkingAbility(:SNIPER) && opponent.damagestate.critical
       finaldamagemult=(finaldamagemult*1.5).round
     end

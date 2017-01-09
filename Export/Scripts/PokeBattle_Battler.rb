@@ -1407,6 +1407,15 @@ class PokeBattle_Battler
             end
           end
         end
+        #Hydra
+        if target.hasWorkingAbility(:HYDRA,true)
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Hydra")
+          hpgain=target.pbRecoverHP((turneffects[PBEffects::TotalDamage]/2).floor,true)
+          if hpgain>0
+            @battle.pbDisplay(_INTL("{1}'s {2} restored its health!",
+               target.pbThis, PBAbilities.getName(target.ability)))
+          end
+        end
         if target.hasWorkingAbility(:FLAMEBODY,true) && @battle.pbRandom(10)<3 &&
            user.pbCanBurn?(nil,false)
           PBDebug.log("[Ability triggered] #{target.pbThis}'s Flame Body")
@@ -1460,11 +1469,41 @@ class PokeBattle_Battler
                PBAbilities.getName(target.ability),user.pbThis(true)))
           end
         end
+        #Shard Skin
+        if target.hasWorkingAbility(:SHARDSKIN,true)
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Shard Skin")
+          @battle.scene.pbDamageAnimation(user,0)
+          user.pbReduceHP((user.totalhp/8).floor)
+          @battle.pbDisplay(_INTL("{1}'s {2} hurt {3}!",target.pbThis,
+               PBAbilities.getName(target.ability),user.pbThis(true)))
+          if target.pbCanIncreaseStatStage?(PBStats::SPEED,target)
+            target.pbIncreaseStatWithCause(PBStats::SPEED,1,target,PBAbilities.getName(target.ability))
+          else
+            @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+             user.pbThis,PBAbilities.getName(user.ability),self.name))
+          end
+          if target.pbCanIncreaseStatStage?(PBStats::ATTACK,target)
+            target.pbIncreaseStatWithCause(PBStats::ATTACK,1,target,PBAbilities.getName(target.ability))
+          else
+            @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+             user.pbThis,PBAbilities.getName(user.ability),self.name))
+          end 
+        end
         if target.hasWorkingAbility(:STATIC,true) && @battle.pbRandom(10)<3 &&
            user.pbCanParalyze?(nil,false)
           PBDebug.log("[Ability triggered] #{target.pbThis}'s Static")
           user.pbParalyze(target,_INTL("{1}'s {2} paralyzed {3}! It may be unable to move!",
              target.pbThis,PBAbilities.getName(target.ability),user.pbThis(true)))
+        end
+        #Static Field
+        if target.hasWorkingAbility(:STATICFIELD,true) && user.pbCanParalyze?(nil,false)
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Static Field")
+          user.pbParalyze(target,_INTL("{1}'s {2} paralyzed {3}! It may be unable to move!",
+             target.pbThis,PBAbilities.getName(target.ability),user.pbThis(true)))
+          @battle.scene.pbDamageAnimation(user,0)
+          user.pbReduceHP((user.totalhp/8).floor)
+          @battle.pbDisplay(_INTL("{1}'s {2} hurt {3}!",target.pbThis,
+               PBAbilities.getName(target.ability),user.pbThis(true)))
         end
         #Smoke Vents   
         if target.hasWorkingAbility(:SMOKEVENTS,true) && @battle.pbRandom(10)<2 &&
@@ -1481,6 +1520,17 @@ class PokeBattle_Battler
         if target.hasWorkingAbility(:GOOEY,true)
           if user.pbReduceStatWithCause(PBStats::SPEED,1,target,PBAbilities.getName(target.ability))
             PBDebug.log("[Ability triggered] #{target.pbThis}'s Gooey")
+          end
+        end
+        #Berry Pest
+        if user.hasWorkingAbility(:BERRYPEST,true) 
+          if user.hasMoldBreaker || !target.hasWorkingAbility(:STICKYHOLD)
+            item=target.item
+            itemname=PBItems.getName(item)
+            user.pbConsumeItem(false,false)
+            PBDebug.log("[Ability triggered] #{user.pbThis}'s Berry Pest")
+            @battle.pbDisplay(_INTL("{1} stole and ate its target's {2}!",user.pbThis,itemname))
+            user.pbActivateBerryEffect(item,false)
           end
         end
         if user.hasWorkingAbility(:POISONTOUCH,true) &&

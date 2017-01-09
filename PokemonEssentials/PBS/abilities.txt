@@ -212,3 +212,8 @@
 212,BRUTALITY,Brutality,"Doubles all damage done by this Pokemon."
 213,FENCER,Fencer,"Increases damage of moves that miss."
 214,CORNERED,Cornered,"Increases damage as health decreases."
+215,BERRYPEST,Berry Pest,"Contact moves eat the defender's berry."
+216,HYDRA,Hydra,"Recovers 1/2 of damage dealt."
+217,BARKSKIN,Bark Skin,"Resistant to physical and special moves."
+218,SHARDSKIN,Shard Skin,"Inflicts damage to the foe on contact and rasies SPD and ATK."
+219,STATICFIELD,Static Field,"Contact with the Pokémon causes damage and paralysis."
