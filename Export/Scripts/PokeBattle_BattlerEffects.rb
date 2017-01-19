@@ -650,6 +650,10 @@ class PokeBattle_Battler
         if hasWorkingAbility(:CONTRARY) && !ignoreContrary
           return pbCanReduceStatStage?(stat,attacker,showMessages,moldbreaker,true)
         end
+        if attacker.hasWorkingAbility(:SUPPRESSION,true)
+          @battle.pbDisplay(_INTL("{1}'s stats are being suppressed!",pbThis)) if showMessages
+          return false
+        end
       end
     end
     return false if isFainted?

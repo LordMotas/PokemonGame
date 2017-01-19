@@ -1459,6 +1459,13 @@ class PokeBattle_Battler
           user.pbConfuse(target,_INTL("{1}'s {2} confused {3}!",target.pbThis,
              PBAbilities.getName(target.ability),user.pbThis(true)))
         end   
+        #Reflection
+        if target.hasWorkingAbility(:REFLECTION,true)
+          PBDebug.log("[Ability triggered] #{target.pbThis}'s Reflection")
+          user.pbReduceHP((turneffects[PBEffects::TotalDamage]/8).floor)
+          @battle.pbDisplay(_INTL("{1}'s {2} caused {3} to attack it's own reflection!",target.pbThis,
+               PBAbilities.getName(target.ability),user.pbThis(true)))
+        end
         if (target.hasWorkingAbility(:ROUGHSKIN,true) ||
            target.hasWorkingAbility(:IRONBARBS,true)) && !user.isFainted?
           if !user.hasWorkingAbility(:MAGICGUARD)
@@ -1511,10 +1518,10 @@ class PokeBattle_Battler
            PBDebug.log("[Ability triggered] #{target.pbThis}'s Smoke Vents")
            user.pbReduceStatWithCause(PBStats::ACCURACY,1,target,PBAbilities.getName(target.ability))
         end
-        #Decorate   
-        if target.hasWorkingAbility(:DECORATE,true) && @battle.pbRandom(10)<2 &&
+        #Camouflage   
+        if target.hasWorkingAbility(:CAMOUFLAGE,true) && @battle.pbRandom(10)<2 &&
            target.pbCanIncreaseStatStage?(PBStats::EVASION)
-           PBDebug.log("[Ability triggered] #{target.pbThis}'s Descorate")
+           PBDebug.log("[Ability triggered] #{target.pbThis}'s Camouflage")
            target.pbIncreaseStatWithCause(PBStats::EVASION,1,user,PBAbilities.getName(target.ability))
         end
         if target.hasWorkingAbility(:GOOEY,true)
@@ -1538,6 +1545,18 @@ class PokeBattle_Battler
           PBDebug.log("[Ability triggered] #{user.pbThis}'s Poison Touch")
           target.pbPoison(user,_INTL("{1}'s {2} poisoned {3}!",user.pbThis,
              PBAbilities.getName(user.ability),target.pbThis(true)))
+        end
+        #Poison Spit
+        if user.hasWorkingAbility(:POISONSPIT,true) && 
+          isConst?(thismove.type,PBTypes,:POISON) && @battle.pbRandom(10)<3
+          PBDebug.log("[Ability triggered] #{user.pbThis}'s Poison Spit")
+          if target.status==PBStatuses::POISON
+            target.effects[PBEffects::Toxic] = 1
+            pbCureStatus(false)
+          else
+            target.pbPoison(user,_INTL("{1}'s {2} poisoned {3}!",user.pbThis,
+             PBAbilities.getName(user.ability),target.pbThis(true)))
+          end
         end
         #Combustion
         if user.hasWorkingAbility(:COMBUSTION,true) &&
@@ -1595,8 +1614,8 @@ class PokeBattle_Battler
             PBDebug.log("[Ability triggered] #{target.pbThis}'s Weak Armor (raise Speed)")
           end
         end
-        #Voltaic Touch
-        if user.hasWorkingAbility(:VOLTAICTOUCH,true) && @battle.pbRandom(10)<3 &&
+        #Static Touch
+        if user.hasWorkingAbility(:STATICTOUCH,true) && @battle.pbRandom(10)<3 &&
            target.pbCanParalyze?(nil,false) && move.pbIsPhysical?(movetype)
           target.pbParalyze(user,_INTL("{1}'s {2} paralyzed {3}! It may be unable to move!",
              user.pbThis,PBAbilities.getName(user.ability),target.pbThis(true)))

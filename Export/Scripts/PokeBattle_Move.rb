@@ -390,7 +390,7 @@ class PokeBattle_Move
       mod2=2 if mod2==0
       mod3=2 if mod3==0
     end
-    # Foresight
+    # Foresight/Aether Touch
     if attacker.hasWorkingAbility(:AETHERTOUCH) || opponent.effects[PBEffects::Foresight]
       mod1=2 if isConst?(otype1,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype1)
       mod2=2 if isConst?(otype2,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype2)
@@ -471,6 +471,7 @@ class PokeBattle_Move
                   @function==0xA9 || # Chip Away
                   attacker.hasWorkingAbility(:UNAWARE)
     evasion=(evastage>=0) ? (evastage+3)*100.0/3 : 300.0/(3-evastage)
+    #Seismic Sense
     if attacker.hasWorkingAbility(:SEISMICSENSE)
       accuracy*=1.3
     end

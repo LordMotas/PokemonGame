@@ -112,6 +112,7 @@ begin
     Yawn               = 108
     Reap               = 109
     ReapUser           = 110
+    FallOffSkin        = 111
     
     ############################################################################
     # These effects apply to a side
