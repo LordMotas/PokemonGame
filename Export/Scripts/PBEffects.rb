@@ -113,6 +113,8 @@ begin
     Reap               = 109
     ReapUser           = 110
     FallOffSkin        = 111
+    DarkOmen           = 112
+    DarkOmenUser       = 113
     
     ############################################################################
     # These effects apply to a side

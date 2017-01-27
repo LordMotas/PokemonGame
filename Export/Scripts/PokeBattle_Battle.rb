@@ -3462,6 +3462,8 @@ class PokeBattle_Battle
             pbCommonAnimation("Wrap",i,nil)
           elsif isConst?(i.effects[PBEffects::MultiTurnAttack],PBMoves,:INFESTATION)
             pbCommonAnimation("Infestation",i,nil)
+          elsif isConst?(i.effects[PBEffects::MultiTurnAttack],PBMoves,:BINDINGCHAINS)
+            pbCommonAnimation("BindingChains",i,nil)
           else
             pbCommonAnimation("Wrap",i,nil)
           end
@@ -3595,11 +3597,28 @@ class PokeBattle_Battle
         return if !i.pbFaint
       end
     end
-    if perishSongUsers.length>0
-      # If all remaining Pokemon fainted by a Perish Song triggered by a single side
-      if (perishSongUsers.find_all{|item| pbIsOpposing?(item) }.length==perishSongUsers.length) ||
-         (perishSongUsers.find_all{|item| !pbIsOpposing?(item) }.length==perishSongUsers.length)
-        pbJudgeCheckpoint(@battlers[perishSongUsers[0]])
+    # Dark Omen
+    darkOmenVictims=[]
+    for i in priority
+      next if i.isFainted?
+      if i.effects[PBEffects::DarkOmen]>0
+        i.effects[PBEffects::DarkOmen]-=1
+        pbDisplay(_INTL("{1}'s dark omen count fell to {2}!",i.pbThis,i.effects[PBEffects::DarkOmen]))
+        PBDebug.log("[Lingering effect triggered] #{i.pbThis}'s Dark Omen count dropped to #{i.effects[PBEffects::DarkOmen]}")
+        if i.effects[PBEffects::DarkOmen]==0
+          darkOmenVictims.push(i.effects[PBEffects::DarkOmenUser])
+          i.pbReduceHP(i.hp,true)
+        end
+      end
+      if i.isFainted?
+        return if !i.pbFaint
+      end
+    end
+    if darkOmenVictims.length>0
+      # If all remaining Pokemon fainted by a Dark Omen triggered by a single side
+      if (darkOmenVictims.find_all{|item| pbIsOpposing?(item) }.length==darkOmenVictims.length) ||
+         (darkOmenVictims.find_all{|item| !pbIsOpposing?(item) }.length==darkOmenVictims.length)
+        pbJudgeCheckpoint(@battlers[darkOmenVictims[0]])
       end
     end
     if @decision>0
@@ -3853,7 +3872,7 @@ class PokeBattle_Battle
           end
         end
       end
-      # Sloth-Jitsue
+      # Sloth-Jitsu
       if i.turncount>0 && i.hasWorkingAbility(:SLOTHJITSU)
         if i.pbReduceStatWithCause(PBStats::SPEED,1,i,PBAbilities.getName(i.ability))
           PBDebug.log("[Ability triggered] #{i.pbThis}'s #{PBAbilities.getName(i.ability)}")
@@ -3866,6 +3885,23 @@ class PokeBattle_Battle
           PBDebug.log("[Ability triggered] #{i.pbThis}'s opponent's Bad Dreams")
           hploss=i.pbReduceHP((i.totalhp/8).floor,true)
           pbDisplay(_INTL("{1} is having a bad dream!",i.pbThis)) if hploss>0
+        end
+      end
+      # Dreamcatcher
+      if i.status==PBStatuses::SLEEP && !i.hasWorkingAbility(:MAGICGUARD)
+        if i.pbOpposing1.hasWorkingAbility(:DREAMCATCHER) ||
+           i.pbOpposing2.hasWorkingAbility(:DREAMCATCHER)
+          PBDebug.log("[Ability triggered] #{i.pbThis}'s opponent's Dreamcatcher")
+          hploss=i.pbReduceHP((i.totalhp/8).floor,true)
+          if i.pbOpposing1.hasWorkingAbility(:DREAMCATCHER)
+            hpgain=i.pbOpposing1.pbRecoverHP((i.totalhp/8).floor,true)
+            pbDisplay(_INTL("{2} is catching {1}'s dreams!",i.pbThis,i.pbOpposing1)) if hploss>0
+          end
+          if i.pbOpposing2.hasWorkingAbility(:DREAMCATCHER)
+            hpgain=i.pbOpposing2.pbRecoverHP((i.totalhp/8).floor,true)
+            pbDisplay(_INTL("{2} is catching {1}'s dreams!",i.pbThis,i.pbOpposing2)) if hploss>0
+          end
+          
         end
       end
       if i.isFainted?

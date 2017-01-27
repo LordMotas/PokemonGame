@@ -626,3 +626,4 @@
 626,HAUNT,Haunt,15B,0,GHOST,Status,0,20,0,00,-6,bcek,"The opponent is haunted and switches places with an enemy Pokémon in waiting, retaining any negative changes."
 627,MUMMIFY,Mummify,15C,0,GHOST,Status,95,10,0,00,0,bde,"The user wraps the opponent in bandages, severely reducing their speed."
 628,SUPERNOVA,Supernova,15D,200,DRAGON,Special,100,5,0,08,0,be,"The user causes a supernova that deals massive damage to the opponent."
+629,BINDINGCHAINS,Binding Chains,0CF,35,STEEL,Special,85,15,0,00,0,bef,"Traps foes in binding chains for four to five turns."

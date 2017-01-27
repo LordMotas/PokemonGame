@@ -345,6 +345,8 @@ class PokeBattle_Battler
       @effects[PBEffects::MagnetRise]     = 0
       @effects[PBEffects::PerishSong]     = 0
       @effects[PBEffects::PerishSongUser] = -1
+      @effects[PBEffects::DarkOmen]     = @effects[PBEffects::DarkOmen].present? ? @effects[PBEffects::DarkOmen] : 0
+      @effects[PBEffects::DarkOmenUser] = @effects[PBEffects::DarkOmenUser].present? ? @effects[PBEffects::DarkOmenUser] : 0
       @effects[PBEffects::Reap]           = 0
       @effects[PBEffects::ReapUser]       = -1
       @effects[PBEffects::PowerTrick]     = false
@@ -1090,6 +1092,15 @@ class PokeBattle_Battler
         end
       end
     end
+    #Dark Omen
+    if self.hasWorkingAbility(:DARKOMEN) && onactive
+      PBDebug.log("[Ability triggered] #{pbThis}'s Dark Omen")
+      for i in 0...4
+        @battle.battlers[i].effects[PBEffects::DarkOmen]=4
+        @battle.battlers[i].effects[PBEffects::DarkOmenUser]=self.index
+      end
+      @battle.pbDisplay(_INTL("All Pokémon faint in three turns!"))
+    end
     #Spook
     if self.hasWorkingAbility(:SPOOK) && onactive
       PBDebug.log("[Ability triggered] #{pbThis}'s Spook")
@@ -1545,6 +1556,18 @@ class PokeBattle_Battler
           PBDebug.log("[Ability triggered] #{user.pbThis}'s Poison Touch")
           target.pbPoison(user,_INTL("{1}'s {2} poisoned {3}!",user.pbThis,
              PBAbilities.getName(user.ability),target.pbThis(true)))
+           end
+        # Binding Chains
+        if user.hasWorkingAbility(:BINDINGCHAINS,true)
+          PBDebug.log("[Ability triggered] #{user.pbThis}'s Binding Chains")
+          target.effects[PBEffects::MultiTurn]=5+@battle.pbRandom(2)
+          if user.hasWorkingItem(:GRIPCLAW)
+            target.effects[PBEffects::MultiTurn]=(USENEWBATTLEMECHANICS) ? 8 : 6
+          end
+          target.effects[PBEffects::MultiTurnAttack]=thismove.id
+          target.effects[PBEffects::MultiTurnUser]=user.index
+          @battle.pbDisplay(_INTL("{1} bound {2} with {3}!",user.pbThis,
+           target.pbThis(true),PBAbilities.getName(user.ability)))
         end
         #Poison Spit
         if user.hasWorkingAbility(:POISONSPIT,true) && 
