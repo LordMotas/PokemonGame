@@ -229,3 +229,4 @@
 229,REFLECTION,Reflection,"Some damage is also applied to the attacker's reflection."
 230,SUPPRESSION,Suppression,"Prevents other Pokémon from raising their stats."
 231,DREAMCATCHER,Dreamcatcher,"Consumes dreams of sleeping Pokemon."
+232,AUGMENTATION,Augmentation,"Adds the previously used type to the user."

@@ -32,7 +32,7 @@ root: !ruby/object:Hash
   5: !ruby/object:RPG::MapInfo
     scroll_x: 576
     name: Route 1
-    expanded: false
+    expanded: true
     order: 6
     scroll_y: 384
     parent_id: 0
@@ -148,7 +148,7 @@ root: !ruby/object:Hash
     name: Route 2
     expanded: false
     order: 21
-    scroll_y: 705
+    scroll_y: 504
     parent_id: 0
   22: !ruby/object:RPG::MapInfo
     scroll_x: 320

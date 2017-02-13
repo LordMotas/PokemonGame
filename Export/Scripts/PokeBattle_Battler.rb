@@ -3494,6 +3494,14 @@ class PokeBattle_Battler
       user.lastRegularMoveUsed=thismove.id
       user.movesUsed.push(thismove.id) if !user.movesUsed.include?(thismove.id) # For Last Resort
     end
+    if user.hasWorkingAbility(:AUGMENTATION, true)
+      newtype=user.lastMoveUsedType
+      user.type1=user.type2
+      user.type2=newtype
+      user.effects[PBEffects::Type3]=-1
+      typename=PBTypes.getName(newtype)
+      @battle.pbDisplay(_INTL("{1} augmented {2} to its type!",user.pbThis,typename))
+    end
     @battle.lastMoveUsed=thismove.id
     @battle.lastMoveUser=user.index
     # Gain Exp
