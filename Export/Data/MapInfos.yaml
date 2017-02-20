@@ -17,7 +17,7 @@ root: !ruby/object:Hash
   3: !ruby/object:RPG::MapInfo
     scroll_x: 496
     name: "\\PN's house"
-    expanded: true
+    expanded: false
     order: 3
     scroll_y: 240
     parent_id: 2
@@ -39,7 +39,7 @@ root: !ruby/object:Hash
   6: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Kurt's house
-    expanded: true
+    expanded: false
     order: 7
     scroll_y: 240
     parent_id: 5
@@ -90,7 +90,7 @@ root: !ruby/object:Hash
   13: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Game Corner
-    expanded: true
+    expanded: false
     order: 13
     scroll_y: 496
     parent_id: 7
@@ -176,7 +176,7 @@ root: !ruby/object:Hash
     scroll_x: 320
     name: !binary |-
       UG9rw6ltb24gRmFuIENsdWI=
-    expanded: true
+    expanded: false
     order: 25
     scroll_y: 240
     parent_id: 23
@@ -219,7 +219,7 @@ root: !ruby/object:Hash
   34: !ruby/object:RPG::MapInfo
     scroll_x: 672
     name: Ice Cave
-    expanded: true
+    expanded: false
     order: 31
     scroll_y: 656
     parent_id: 31
@@ -263,7 +263,7 @@ root: !ruby/object:Hash
   40: !ruby/object:RPG::MapInfo
     scroll_x: 528
     name: Route 4
-    expanded: true
+    expanded: false
     order: 37
     scroll_y: 336
     parent_id: 39
@@ -334,7 +334,7 @@ root: !ruby/object:Hash
     scroll_x: 320
     name: !binary |-
       QmF0dGxlIEZyb250aWVyIFBva8OpIENlbnRlcg==
-    expanded: true
+    expanded: false
     order: 48
     scroll_y: 240
     parent_id: 52
@@ -376,7 +376,7 @@ root: !ruby/object:Hash
   59: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Battle Palace arena
-    expanded: true
+    expanded: false
     order: 54
     scroll_y: 240
     parent_id: 58
@@ -418,7 +418,7 @@ root: !ruby/object:Hash
   65: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Battle Factory corridor
-    expanded: true
+    expanded: false
     order: 60
     scroll_y: 240
     parent_id: 62
@@ -432,7 +432,7 @@ root: !ruby/object:Hash
   67: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Safari Zone gate
-    expanded: true
+    expanded: false
     order: 62
     scroll_y: 240
     parent_id: 66
@@ -481,7 +481,7 @@ root: !ruby/object:Hash
   74: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Cycling Road gate
-    expanded: true
+    expanded: false
     order: 42
     scroll_y: 240
     parent_id: 44

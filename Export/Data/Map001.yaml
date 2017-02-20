@@ -715,21 +715,6 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'We will need you, \PN, to help us muster a strong '
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'enough force to return to those lands and take them '
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - back.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - 'We''re in the lab right now, I''ll explain the problem in '
           indent: 0
           code: 101
@@ -782,10 +767,10 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
-          - 3
-          - 25
-          - 6
-          - 2
+          - 4
+          - 11
+          - 7
+          - 8
           - 0
           indent: 0
           code: 201
