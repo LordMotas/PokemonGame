@@ -17,7 +17,7 @@ root: !ruby/object:Hash
   3: !ruby/object:RPG::MapInfo
     scroll_x: 496
     name: "\\PN's house"
-    expanded: false
+    expanded: true
     order: 3
     scroll_y: 240
     parent_id: 2
@@ -39,7 +39,7 @@ root: !ruby/object:Hash
   6: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Kurt's house
-    expanded: false
+    expanded: true
     order: 7
     scroll_y: 240
     parent_id: 5
@@ -90,7 +90,7 @@ root: !ruby/object:Hash
   13: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Game Corner
-    expanded: false
+    expanded: true
     order: 13
     scroll_y: 496
     parent_id: 7
@@ -150,13 +150,6 @@ root: !ruby/object:Hash
     order: 21
     scroll_y: 504
     parent_id: 0
-  22: !ruby/object:RPG::MapInfo
-    scroll_x: 320
-    name: MAP022
-    expanded: false
-    order: 70
-    scroll_y: 320
-    parent_id: 0
   23: !ruby/object:RPG::MapInfo
     scroll_x: 656
     name: Lerucean Town
@@ -183,7 +176,7 @@ root: !ruby/object:Hash
     scroll_x: 320
     name: !binary |-
       UG9rw6ltb24gRmFuIENsdWI=
-    expanded: false
+    expanded: true
     order: 25
     scroll_y: 240
     parent_id: 23
@@ -226,7 +219,7 @@ root: !ruby/object:Hash
   34: !ruby/object:RPG::MapInfo
     scroll_x: 672
     name: Ice Cave
-    expanded: false
+    expanded: true
     order: 31
     scroll_y: 656
     parent_id: 31
@@ -270,7 +263,7 @@ root: !ruby/object:Hash
   40: !ruby/object:RPG::MapInfo
     scroll_x: 528
     name: Route 4
-    expanded: false
+    expanded: true
     order: 37
     scroll_y: 336
     parent_id: 39
@@ -341,7 +334,7 @@ root: !ruby/object:Hash
     scroll_x: 320
     name: !binary |-
       QmF0dGxlIEZyb250aWVyIFBva8OpIENlbnRlcg==
-    expanded: false
+    expanded: true
     order: 48
     scroll_y: 240
     parent_id: 52
@@ -383,7 +376,7 @@ root: !ruby/object:Hash
   59: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Battle Palace arena
-    expanded: false
+    expanded: true
     order: 54
     scroll_y: 240
     parent_id: 58
@@ -425,7 +418,7 @@ root: !ruby/object:Hash
   65: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Battle Factory corridor
-    expanded: false
+    expanded: true
     order: 60
     scroll_y: 240
     parent_id: 62
@@ -439,7 +432,7 @@ root: !ruby/object:Hash
   67: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Safari Zone gate
-    expanded: false
+    expanded: true
     order: 62
     scroll_y: 240
     parent_id: 66
@@ -453,7 +446,7 @@ root: !ruby/object:Hash
   69: !ruby/object:RPG::MapInfo
     scroll_x: 736
     name: Route 8
-    expanded: false
+    expanded: true
     order: 64
     scroll_y: 560
     parent_id: 0
@@ -488,7 +481,7 @@ root: !ruby/object:Hash
   74: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Cycling Road gate
-    expanded: false
+    expanded: true
     order: 42
     scroll_y: 240
     parent_id: 44
