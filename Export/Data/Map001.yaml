@@ -776,13 +776,6 @@ root: !ruby/object:RPG::Map
           code: 201
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 3
-          - 3
-          - 0
-          indent: 0
-          code: 121
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - pbToneChangeAll(Tone.new(0,0,0,0),20)
           indent: 0
           code: 355

@@ -177,7 +177,6 @@
 66443344    Compiler                                     Compiler.rb
 30913346    ===CUSTOM SCRIPTS===                         EMPTY
 10488910    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
-16380984    Pokemon Starter Selection                    Pokemon_Starter_Selection.rb
 61226699    ItemCrafter                                  ItemCrafter.rb
 6123542     UraniumCustomMenu                            UraniumCustomMenu.rb
 24216588    SkyInverseBattle                             SkyInverseBattle.rb

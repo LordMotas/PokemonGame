@@ -35,9 +35,9 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
-          - 2
-          - 17
-          - 7
+          - 4
+          - 1
+          - 3
           - 0
           - 1
           indent: 0
