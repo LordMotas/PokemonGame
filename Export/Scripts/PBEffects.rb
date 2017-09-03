@@ -1,5 +1,6 @@
 begin
   module PBEffects
+    ############################################################################
     # These effects apply to a battler
     AquaRing           = 0
     Attract            = 1
@@ -110,11 +111,6 @@ begin
     WishAmount         = 106
     WishMaker          = 107
     Yawn               = 108
-    Reap               = 109
-    ReapUser           = 110
-    FallOffSkin        = 111
-    DarkOmen           = 112
-    DarkOmenUser       = 113
     
     ############################################################################
     # These effects apply to a side

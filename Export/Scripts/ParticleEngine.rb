@@ -10,22 +10,22 @@ class Particle_Engine
     @firsttime=true
     @effects={
        # PinkMan's Effects
-       "fire"=>Particle_Engine::Fire,
-       "smoke"=>Particle_Engine::Smoke,
-       "teleport"=>Particle_Engine::Teleport,
-       "spirit"=>Particle_Engine::Spirit,
-       "explosion"=>Particle_Engine::Explosion,
-       "aura"=>Particle_Engine::Aura,
+       "fire"         => Particle_Engine::Fire,
+       "smoke"        => Particle_Engine::Smoke,
+       "teleport"     => Particle_Engine::Teleport,
+       "spirit"       => Particle_Engine::Spirit,
+       "explosion"    => Particle_Engine::Explosion,
+       "aura"         => Particle_Engine::Aura,
        # BlueScope's Effects
-       "soot"=>Particle_Engine::Soot,
-       "sootsmoke"=>Particle_Engine::SootSmoke,
-       "rocket"=>Particle_Engine::Rocket,
-       "fixteleport"=>Particle_Engine::FixedTeleport,
-       "smokescreen"=>Particle_Engine::Smokescreen,
-       "flare"=>Particle_Engine::Flare,
-       "splash"=>Particle_Engine::Splash,
+       "soot"         => Particle_Engine::Soot,
+       "sootsmoke"    => Particle_Engine::SootSmoke,
+       "rocket"       => Particle_Engine::Rocket,
+       "fixteleport"  => Particle_Engine::FixedTeleport,
+       "smokescreen"  => Particle_Engine::Smokescreen,
+       "flare"        => Particle_Engine::Flare,
+       "splash"       => Particle_Engine::Splash,
        # By Peter O.
-       "starteleport"=>Particle_Engine::StarTeleport
+       "starteleport" => Particle_Engine::StarTeleport
     }
   end
 

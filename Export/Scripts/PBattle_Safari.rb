@@ -22,13 +22,13 @@ class SafariState
   def pbGoToStart
     if $scene.is_a?(Scene_Map)
       pbFadeOutIn(99999){
-         $game_temp.player_transferring = true
-         $game_temp.transition_processing = true
-         $game_temp.player_new_map_id = @start[0]
-         $game_temp.player_new_x = @start[1]
-         $game_temp.player_new_y = @start[2]
-         $game_temp.player_new_direction = 2
-         $scene.transfer_player
+        $game_temp.player_transferring   = true
+        $game_temp.transition_processing = true
+        $game_temp.player_new_map_id    = @start[0]
+        $game_temp.player_new_x         = @start[1]
+        $game_temp.player_new_y         = @start[2]
+        $game_temp.player_new_direction = 2
+        $scene.transfer_player
       }
     end
   end
@@ -109,7 +109,7 @@ def pbSafariBattle(species,level)
   battle.ballcount=pbSafariState.ballcount
   battle.environment=pbGetEnvironment
   decision=0
-  pbBattleAnimation(pbGetWildBattleBGM(species)) { 
+  pbBattleAnimation(pbGetWildBattleBGM(species),0,[genwildpoke]) { 
      pbSceneStandby {
         decision=battle.pbStartBattle
      }

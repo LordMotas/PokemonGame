@@ -1,3 +1,8 @@
+#==============================================================================#
+#                              Pokémon Essentials                              #
+#                                  Version 17                                  #
+#==============================================================================#
+
 #===============================================================================
 # * The default screen width (at a zoom of 1.0; size is half this at zoom 0.5).
 # * The default screen height (at a zoom of 1.0).
@@ -12,9 +17,6 @@
 #      added on to the screen height above, only if the border is turned on.
 # * Map view mode (0=original, 1=custom, 2=perspective).
 #===============================================================================
-$Bubble = 0
-$islandCount = 0
-$evoWeather = 0
 DEFAULTSCREENWIDTH   = 512
 DEFAULTSCREENHEIGHT  = 384
 DEFAULTSCREENZOOM    = 1.0
@@ -50,7 +52,7 @@ POKERUSCHANCE      = 3
 #      as in older Gens (false).
 #===============================================================================
 POISONINFIELD         = true
-POISONFAINTINFIELD    = true
+POISONFAINTINFIELD    = false
 FISHINGAUTOHOOK       = false
 DIVINGSURFACEANYWHERE = false
 NEWBERRYPLANTS        = true
@@ -87,6 +89,8 @@ NOSIGNPOSTS = []
 #      to be caught to provide the greatest critical capture chance of 2.5x),
 #      and there may be fewer species in your game.
 # * Whether Pokémon gain Exp for capturing a Pokémon (true) or not (false).
+# * An array of items which act as Mega Rings for the player (NPCs don't need a
+#      Mega Ring item, just a Mega Stone).
 #===============================================================================
 USEMOVECATEGORY       = true
 USENEWBATTLEMECHANICS = false
@@ -94,6 +98,7 @@ USESCALEDEXPFORMULA   = true
 NOSPLITEXP            = false
 USECRITICALCAPTURE    = false
 GAINEXPFORCAPTURE     = false
+MEGARINGS             = [:MEGARING,:MEGABRACELET,:MEGACUFF,:MEGACHARM]
 
 #===============================================================================
 # * The minimum number of badges required to boost each stat of a player's
@@ -130,8 +135,6 @@ BADGEFORWATERFALL      = 8
 # * The maximum number of items each slot in the Bag can hold.
 # * Whether each pocket in turn auto-sorts itself by item ID number. Ignore the
 #      first entry (the 0).
-# * The pocket number containing all berries. Is opened when choosing one to
-#      plant, and cannot view a different pocket while doing so.
 #===============================================================================
 def pbPocketNames; return ["",
    _INTL("Items"),
@@ -144,9 +147,8 @@ def pbPocketNames; return ["",
    _INTL("Key Items")
 ]; end
 MAXPOCKETSIZE  = [0,-1,-1,-1,-1,-1,-1,-1,-1]
-BAGMAXPERSLOT  = 99
+BAGMAXPERSLOT  = 999
 POCKETAUTOSORT = [0,false,false,false,true,true,false,false,false]
-BERRYPOCKET    = 5
 
 #===============================================================================
 # * The name of the person who created the Pokémon storage system.
@@ -194,10 +196,12 @@ DEXINDEXOFFSETS    = []
 # * The amount of money the player starts the game with.
 # * The maximum amount of money the player can have.
 # * The maximum number of Game Corner coins the player can have.
+# * The maximum length, in characters, that the player's name can be.
 #===============================================================================
-INITIALMONEY = 3000
-MAXMONEY     = 999999
-MAXCOINS     = 99999
+INITIALMONEY    = 3000
+MAXMONEY        = 999999
+MAXCOINS        = 99999
+PLAYERNAMELIMIT = 10
 
 #===============================================================================
 # * A set of arrays each containing a trainer type followed by a Global Variable
@@ -236,8 +240,8 @@ RoamingAreas = {
    69 => [5,21,28,31,39,41,44,47,66]
 }
 RoamingSpecies = [
-   [:LATIAS, 30, 53, 0, "002-Battle02x"],
-   [:LATIOS, 30, 53, 0, "002-Battle02x"],
+   [:LATIAS, 30, 53, 0, "Battle roaming"],
+   [:LATIOS, 30, 53, 0, "Battle roaming"],
    [:KYOGRE, 40, 54, 2, nil, {
        2  => [21,31],
        21 => [2,31,69],
@@ -347,9 +351,3 @@ LANGUAGES = [
 #  ["English","english.dat"],
 #  ["Deutsch","deutsch.dat"]
 ]
-
-#===============================================================================
-# * Whether names can be typed using the keyboard (true) or chosen letter by
-#      letter as in the official games (false).
-#===============================================================================
-USEKEYBOARDTEXTENTRY = true

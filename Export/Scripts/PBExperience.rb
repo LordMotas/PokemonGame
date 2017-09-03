@@ -1,5 +1,5 @@
 module PBExperience
-  @PBExpTable=[
+  @PBExpTable = [
   # Medium (Medium Fast)
      -1,0,8,27,64,125,216,343,512,729,
      1000,1331,1728,2197,2744,3375,4096,4913,5832,6859,
@@ -74,7 +74,7 @@ module PBExperience
      1250000
   ]
 
-  MAXLEVEL=MAXIMUMLEVEL # See the settings for changing the max level
+  MAXLEVEL = MAXIMUMLEVEL # See the settings for changing the max level
 
 # Erratic (600000):
 #   For levels 0-50: n**3([100-n]/50)
@@ -95,22 +95,22 @@ module PBExperience
         return level**3 
       when 1 # 600000 erratic
         # Different formula that causes 600000 EXP at level 100
-        return ( (level**3)*( (level * 6 / 10) / (100*1.0) ) ).floor
+        return ((level**3)*((level*6/10)/(100*1.0))).floor
       when 2 # 1640000 fluctuating
         # Different formula that causes 1640000 EXP at level 100
-        rate=82
+        rate = 82
         if level>100
           # Slow rate with increasing level
-          rate-=(level-100)/2
-          rate=40 if rate<40
+          rate -= (level-100)/2
+          rate = 40 if rate<40
         end
-        return ( (level**3)*( (level * rate / 100) / 50.0 ) ).floor
+        return ((level**3)*((level*rate/100)/50.0)).floor
       when 3 # 1059860 parabolic/medium slow
-        return (6*(level**3)/5) - 15*(level**2) + 100*level - 140
+        return (6*(level**3)/5)-15*(level**2)+100*level-140
       when 4 # 800000 fast
-        return ( 4*(level**3)/5 ).floor
+        return (4*(level**3)/5).floor
       when 5 # 1250000 slow
-        return ( 5*(level**3)/4 ).floor
+        return (5*(level**3)/4).floor
       else
         return 0
       end
@@ -139,7 +139,7 @@ module PBExperience
     if level<0
       return ArgumentError.new("The level is invalid.")
     end
-    level=MAXLEVEL if level>MAXLEVEL
+    level = MAXLEVEL if level>MAXLEVEL
     return pbGetExpInternal(level,growth)
   end
 
@@ -152,9 +152,9 @@ module PBExperience
     if growth>=6 || growth<0
       return ArgumentError.new("The growth rate is invalid.")
     end
-    exp=currexp+expgain
-    maxexp=pbGetExpInternal(MAXLEVEL,growth)
-    exp=maxexp if exp>maxexp
+    exp = currexp+expgain
+    maxexp = pbGetExpInternal(MAXLEVEL,growth)
+    exp = maxexp if exp>maxexp
     return exp
   end
 
@@ -164,14 +164,14 @@ module PBExperience
     if growth>=6 || growth<0
       return ArgumentError.new("The growth rate is invalid.")
     end
-    maxexp=pbGetExpInternal(MAXLEVEL,growth)
-    exp=maxexp if exp>maxexp
-    i=0
+    maxexp = pbGetExpInternal(MAXLEVEL,growth)
+    exp = maxexp if exp>maxexp
+    i = 0
     for j in 0..MAXLEVEL
-      currentExp=pbGetExpInternal(i,growth)
+      currentExp = pbGetExpInternal(i,growth)
       return i if exp==currentExp
       return i-1 if exp<currentExp
-      i+=1
+      i += 1
     end
     return MAXLEVEL
   end

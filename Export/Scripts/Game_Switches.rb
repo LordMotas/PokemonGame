@@ -17,7 +17,7 @@ class Game_Switches
   #     switch_id : switch ID
   #-----------------------------------------------------------------------------
   def [](switch_id)
-    if switch_id <= 5000 and @data[switch_id] != nil
+    if switch_id<=5000 and @data[switch_id]!=nil
       return @data[switch_id]
     else
       return false
@@ -29,7 +29,7 @@ class Game_Switches
   #     value     : ON (true) / OFF (false)
   #-----------------------------------------------------------------------------
   def []=(switch_id, value)
-    if switch_id <= 5000
+    if switch_id<=5000
       @data[switch_id] = value
     end
   end

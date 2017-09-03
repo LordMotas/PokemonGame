@@ -17,8 +17,7 @@ class Array
     end
     self
   end unless method_defined? :shuffle!
-end
-
+end
 
 
 module Enumerable
@@ -250,12 +249,6 @@ def pbGetBTPokemon(challengeID)
     end
   end
   return []
-end
-
-
-
-class Game_Map
-  attr_accessor :map_id
 end
 
 
@@ -763,15 +756,15 @@ def pbBattleChallengeBeginSpeech
 end
 
 def pbEntryScreen(*arg)
-  retval=false
+  retval = false
   pbFadeOutIn(99999){
-     scene=PokemonScreen_Scene.new
-     screen=PokemonScreen.new(scene,$Trainer.party)
-     ret=screen.pbPokemonMultipleEntryScreenEx(pbBattleChallenge.rules.ruleset)
-     # Set party
-     pbBattleChallenge.setParty(ret) if ret
-     # Continue (return true) if Pokémon were chosen
-     retval=(ret!=nil && ret.length>0)
+    scene = PokemonParty_Scene.new
+    screen = PokemonPartyScreen.new(scene,$Trainer.party)
+    ret = screen.pbPokemonMultipleEntryScreenEx(pbBattleChallenge.rules.ruleset)
+    # Set party
+    pbBattleChallenge.setParty(ret) if ret
+    # Continue (return true) if Pokémon were chosen
+    retval = (ret!=nil && ret.length>0)
   }
   return retval
 end
@@ -801,9 +794,9 @@ class BattleFactoryData
 
   def pbChooseRentals
     pbFadeOutIn(99999){
-       scene=BattleSwapScene.new
-      screen=BattleSwapScreen.new(scene)
-      @rentals=screen.pbStartRent(@rentals)
+      scene = BattleSwapScene.new
+      screen = BattleSwapScreen.new(scene)
+      @rentals = screen.pbStartRent(@rentals)
       @bcdata.pbAddSwap
       pbBattleChallenge.setParty(@rentals)
     }
@@ -832,15 +825,15 @@ class BattleFactoryData
   end
 
   def pbChooseSwaps
-    swapMade=true
+    swapMade = true
     pbFadeOutIn(99999){
-       scene=BattleSwapScene.new
-       screen=BattleSwapScreen.new(scene)
-       swapMade=screen.pbStartSwap(@rentals,@oldopponent)
-       if swapMade
-         @bcdata.pbAddSwap
-       end
-       @bcdata.setParty(@rentals)
+      scene = BattleSwapScene.new
+      screen = BattleSwapScreen.new(scene)
+      swapMade = screen.pbStartSwap(@rentals,@oldopponent)
+      if swapMade
+        @bcdata.pbAddSwap
+      end
+      @bcdata.setParty(@rentals)
     }
     return swapMade
   end
@@ -952,8 +945,7 @@ def pbGenerateBattleTrainer(trainerid,rule)
   if pokemonnumbers.length<rule.ruleset.suggestedNumber
     for n in pokemonnumbers
       rndpoke=btpokemon[n]
-      pkmn=rndpoke.createPokemon(
-         rule.ruleset.suggestedLevel,indvalues,opponent)
+      pkmn=rndpoke.createPokemon(rule.ruleset.suggestedLevel,indvalues,opponent)
       opponent.party.push(pkmn)
     end
     return opponent

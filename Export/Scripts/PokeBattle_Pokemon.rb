@@ -1,5 +1,5 @@
-# This class stores data on each Pokemon.  Refer to $Trainer.party for an array
-# of each Pokemon in the Trainer's current party.
+# This class stores data on each Pokémon. Refer to $Trainer.party for an array
+# of each Pokémon in the Trainer's current party.
 class PokeBattle_Pokemon
   attr_reader(:totalhp)       # Current Total HP
   attr_reader(:attack)        # Current Attack stat
@@ -14,8 +14,8 @@ class PokeBattle_Pokemon
   attr_accessor(:personalID)  # Personal ID
   attr_accessor(:trainerID)   # 32-bit Trainer ID (the secret ID is in the upper
                               #    16 bits)
-  attr_accessor(:hp)          # Current HP
-  attr_accessor(:pokerus)     # Pokérus strain and infection time
+  attr_reader(:hp)            # Current HP
+  attr_writer(:pokerus)       # Pokérus strain and infection time
   attr_accessor(:item)        # Held item
   attr_accessor(:itemRecycle) # Consumed held item (used in battle only)
   attr_accessor(:itemInitial) # Resulting held item (used in battle only)
@@ -44,16 +44,17 @@ class PokeBattle_Pokemon
   attr_accessor(:otgender)    # Original Trainer's gender:
                               #    0 - male, 1 - female, 2 - mixed, 3 - unknown
                               #    For information only, not used to verify
-                              #    ownership of the Pokemon
+                              #    ownership of the Pokémon
   attr_accessor(:abilityflag) # Forces the first/second/hidden (0/1/2) ability
   attr_accessor(:genderflag)  # Forces male (0) or female (1)
   attr_accessor(:natureflag)  # Forces a particular nature
   attr_accessor(:shinyflag)   # Forces the shininess (true/false)
   attr_accessor(:ribbons)     # Array of ribbons
-  attr_accessor :cool,:beauty,:cute,:smart,:tough,:sheen # Contest stats
+  attr_accessor :cool,:beauty,:cute,:smart,:tough,:sheen   # Contest stats
 
   EVLIMIT     = 510   # Max total EVs
   EVSTATLIMIT = 252   # Max EVs that a single stat can have
+  NAMELIMIT   = 10    # Maximum length a Pokémon's nickname can be
 
 ################################################################################
 # Ownership, obtained information
@@ -64,7 +65,7 @@ class PokeBattle_Pokemon
     return @otgender
   end
 
-# Returns whether the specified Trainer is NOT this Pokemon's original trainer.
+# Returns whether the specified Trainer is NOT this Pokémon's original trainer.
   def isForeign?(trainer)
     return @trainerID!=trainer.id || @ot!=trainer.name
   end
@@ -117,12 +118,12 @@ class PokeBattle_Pokemon
 ################################################################################
 # Level
 ################################################################################
-# Returns this Pokemon's level.
+# Returns this Pokémon's level.
   def level
     return PBExperience.pbGetLevelFromExperience(@exp,self.growthrate)
   end
 
-# Sets this Pokemon's level by changing its Exp. Points.
+# Sets this Pokémon's level by changing its Exp. Points.
   def level=(value)
     if value<1 || value>PBExperience::MAXLEVEL
       raise ArgumentError.new(_INTL("The level number ({1}) is invalid.",value))
@@ -130,14 +131,14 @@ class PokeBattle_Pokemon
     self.exp=PBExperience.pbGetStartExperience(value,self.growthrate) 
   end
 
-# Returns whether this Pokemon is an egg.
+# Returns whether this Pokémon is an egg.
   def isEgg?
     return @eggsteps>0
   end
 
   def egg?; return isEgg?; end
 
-# Returns this Pokemon's growth rate.
+# Returns this Pokémon's growth rate.
   def growthrate
     dexdata=pbOpenDexData
     pbDexDataOffset(dexdata,@species,20)
@@ -146,10 +147,10 @@ class PokeBattle_Pokemon
     return ret
   end
 
-# Returns this Pokemon's base Experience value.
+# Returns this Pokémon's base Experience value.
   def baseExp
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,38)
+    pbDexDataOffset(dexdata,self.fSpecies,38)
     ret=dexdata.fgetw
     dexdata.close
     return ret
@@ -158,7 +159,7 @@ class PokeBattle_Pokemon
 ################################################################################
 # Gender
 ################################################################################
-# Returns this Pokemon's gender. 0=male, 1=female, 2=genderless
+# Returns this Pokémon's gender. 0=male, 1=female, 2=genderless
   def gender
     return @genderflag if @genderflag!=nil
     dexdata=pbOpenDexData
@@ -231,7 +232,7 @@ class PokeBattle_Pokemon
     return abil
   end
 
-# Returns the ID of this Pokemon's ability.
+# Returns the ID of this Pokémon's ability.
   def ability
     abil=abilityIndex
     abils=getAbilityList
@@ -274,10 +275,10 @@ class PokeBattle_Pokemon
   def getAbilityList
     abils=[]; ret=[]
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,2)
+    pbDexDataOffset(dexdata,self.fSpecies,2)
     abils.push(dexdata.fgetw)
     abils.push(dexdata.fgetw)
-    pbDexDataOffset(dexdata,@species,40)
+    pbDexDataOffset(dexdata,self.fSpecies,40)
     abils.push(dexdata.fgetw)
     abils.push(dexdata.fgetw)
     abils.push(dexdata.fgetw)
@@ -324,7 +325,7 @@ class PokeBattle_Pokemon
 ################################################################################
 # Shininess
 ################################################################################
-# Returns whether this Pokemon is shiny (differently colored).
+# Returns whether this Pokémon is shiny (differently colored).
   def isShiny?
     return @shinyflag if @shinyflag!=nil
     a=@personalID^@trainerID
@@ -334,12 +335,12 @@ class PokeBattle_Pokemon
     return (d<SHINYPOKEMONCHANCE)
   end
 
-# Makes this Pokemon shiny.
+# Makes this Pokémon shiny.
   def makeShiny
     @shinyflag=true
   end
 
-# Makes this Pokemon not shiny.
+# Makes this Pokémon not shiny.
   def makeNotShiny
     @shinyflag=false
   end
@@ -347,7 +348,24 @@ class PokeBattle_Pokemon
 ################################################################################
 # Pokérus
 ################################################################################
-# Gives this Pokemon Pokérus (either the specified strain or a random one).
+# Returns the full value of this Pokémon's Pokérus.
+  def pokerus
+    return @pokerus
+  end
+
+# Returns the Pokérus infection stage for this Pokémon.
+  def pokerusStrain
+    return @pokerus/16
+  end
+
+# Returns the Pokérus infection stage for this Pokémon.
+  def pokerusStage
+    return 0 if !@pokerus || @pokerus==0        # Not infected
+    return 2 if @pokerus>0 && (@pokerus%16)==0  # Cured
+    return 1                                    # Infected
+  end
+
+# Gives this Pokémon Pokérus (either the specified strain or a random one).
   def givePokerus(strain=0)
     return if self.pokerusStage==2 # Can't re-infect a cured Pokémon
     if strain<=0 || strain>=16
@@ -358,7 +376,7 @@ class PokeBattle_Pokemon
     @pokerus|=strain<<4
   end
 
-# Resets the infection time for this Pokemon's Pokérus (even if cured).
+# Resets the infection time for this Pokémon's Pokérus (even if cured).
   def resetPokerusTime
     return if @pokerus==0
     strain=@pokerus%16
@@ -367,17 +385,10 @@ class PokeBattle_Pokemon
     @pokerus|=strain<<4
   end
 
-# Reduces the time remaining for this Pokemon's Pokérus (if infected).
+# Reduces the time remaining for this Pokémon's Pokérus (if infected).
   def lowerPokerusCount
     return if self.pokerusStage!=1
     @pokerus-=1
-  end
-
-# Returns the Pokérus infection stage for this Pokemon.
-  def pokerusStage
-    return 0 if !@pokerus || @pokerus==0        # Not infected
-    return 2 if @pokerus>0 && (@pokerus%16)==0  # Cured
-    return 1                                    # Infected
   end
 
 ################################################################################
@@ -395,7 +406,7 @@ class PokeBattle_Pokemon
 # Returns this Pokémon's first type.
   def type1
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,8)
+    pbDexDataOffset(dexdata,self.fSpecies,8)
     ret=dexdata.fgetb
     dexdata.close
     return ret
@@ -404,7 +415,7 @@ class PokeBattle_Pokemon
 # Returns this Pokémon's second type.
   def type2
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,9)
+    pbDexDataOffset(dexdata,self.fSpecies,9)
     ret=dexdata.fgetb
     dexdata.close
     return ret
@@ -440,8 +451,8 @@ class PokeBattle_Pokemon
   def getMoveList
     movelist=[]
     atkdata=pbRgssOpen("Data/attacksRS.dat","rb")
-    offset=atkdata.getOffset(@species-1)
-    length=atkdata.getLength(@species-1)>>1
+    offset=atkdata.getOffset(self.fSpecies-1)
+    length=atkdata.getLength(self.fSpecies-1)>>1
     atkdata.pos=offset
     for k in 0..length-1
       level=atkdata.fgetw
@@ -545,6 +556,20 @@ class PokeBattle_Pokemon
     end
   end
 
+  def pbAddFirstMove(move)
+    move = getID(PBMoves,move) if !move.is_a?(Integer)
+    @firstmoves.push(move) if move>0 && !@firstmoves.include?(move)
+  end
+
+  def pbRemoveFirstMove(move)
+    move = getID(PBMoves,move) if !move.is_a?(Integer)
+    @firstmoves.delete(move) if move>0
+  end
+
+  def pbClearFirstMoves
+    @firstmoves = []
+  end
+
   def isCompatibleWithMove?(move)
     return pbSpeciesCompatible?(self.species,move)
   end
@@ -559,7 +584,7 @@ class PokeBattle_Pokemon
   def tough; @tough ? @tough : 0; end
   def sheen; @sheen ? @sheen : 0; end
 
-# Returns the number of ribbons this Pokemon has.
+# Returns the number of ribbons this Pokémon has.
   def ribbonCount
     @ribbons=[] if !@ribbons
     return @ribbons.length
@@ -621,7 +646,7 @@ class PokeBattle_Pokemon
   end
 
 ################################################################################
-# Other
+# Items
 ################################################################################
 # Returns whether this Pokémon has a hold item.
   def hasItem?(value=0)
@@ -647,15 +672,12 @@ class PokeBattle_Pokemon
 # Returns the items this species can be found holding in the wild.
   def wildHoldItems
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,48)
+    pbDexDataOffset(dexdata,self.fSpecies,48)
     itemcommon=dexdata.fgetw
     itemuncommon=dexdata.fgetw
     itemrare=dexdata.fgetw
     dexdata.close
-    itemcommon=0 if !itemcommon
-    itemuncommon=0 if !itemuncommon
-    itemrare=0 if !itemrare
-    return [itemcommon,itemuncommon,itemrare]
+    return [itemcommon || 0,itemuncommon || 0,itemrare || 0]
   end
 
 # Returns this Pokémon's mail.
@@ -666,6 +688,14 @@ class PokeBattle_Pokemon
       return nil
     end
     return @mail
+  end
+
+################################################################################
+# Other
+################################################################################
+# Returns the species name of this Pokémon.
+  def speciesName
+    return PBSpecies.getName(@species)
   end
 
 # Returns this Pokémon's language.
@@ -685,16 +715,16 @@ class PokeBattle_Pokemon
 # Returns the height of this Pokémon.
   def height
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,33)
-    weight=dexdata.fgetw
+    pbDexDataOffset(dexdata,self.fSpecies,33)
+    height=dexdata.fgetw
     dexdata.close
-    return weight
+    return height
   end
 
 # Returns the weight of this Pokémon.
   def weight
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,35)
+    pbDexDataOffset(dexdata,self.fSpecies,35)
     weight=dexdata.fgetw
     dexdata.close
     return weight
@@ -704,7 +734,7 @@ class PokeBattle_Pokemon
   def evYield
     ret=[]
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,23)
+    pbDexDataOffset(dexdata,self.fSpecies,23)
     for i in 0...6
       v=dexdata.fgetb
       v=0 if !v
@@ -712,14 +742,6 @@ class PokeBattle_Pokemon
     end
     dexdata.close
     return ret
-  end
-
-  def kind
-    return pbGetMessage(MessageTypes::Kinds,@species)
-  end
-
-  def dexEntry
-    return pbGetMessage(MessageTypes::Entries,@species)
   end
 
 # Sets this Pokémon's HP.
@@ -730,6 +752,10 @@ class PokeBattle_Pokemon
       @status=0
       @statusCount=0
     end
+  end
+
+  def isFainted?
+    return !isEgg? && @hp<=0
   end
 
 # Heals all HP of this Pokémon.
@@ -774,7 +800,7 @@ class PokeBattle_Pokemon
       gain+=1 if @happiness<200
       gain+=1 if @obtainMap==$game_map.map_id
       luxury=true
-    when "level up"
+    when "levelup"
       gain=2
       gain=3 if @happiness<200
       gain=5 if @happiness<100
@@ -789,17 +815,17 @@ class PokeBattle_Pokemon
       gain=2
       gain=3 if @happiness<200
       gain=5 if @happiness<100
-    when "EV berry"
+    when "evberry"
       gain=2
       gain=5 if @happiness<200
       gain=10 if @happiness<100
     when "powder"
       gain=-10
       gain=-5 if @happiness<200
-    when "Energy Root"
+    when "energyroot"
       gain=-15
       gain=-10 if @happiness<200
-    when "Revival Herb"
+    when "revivalherb"
       gain=-20
       gain=-15 if @happiness<200
     else
@@ -819,7 +845,7 @@ class PokeBattle_Pokemon
 # Returns this Pokémon's base stats.  An array of six values.
   def baseStats
     dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,10)
+    pbDexDataOffset(dexdata,self.fSpecies,10)
     ret=[
        dexdata.fgetb, # HP
        dexdata.fgetb, # Attack
@@ -883,101 +909,80 @@ class PokeBattle_Pokemon
 #    withMoves - If false, this Pokémon has no moves.
   def initialize(species,level,player=nil,withMoves=true)
     if species.is_a?(String) || species.is_a?(Symbol)
-      species=getID(PBSpecies,species)
+      species = getID(PBSpecies,species)
     end
-    cname=getConstantName(PBSpecies,species) rescue nil
+    cname = getConstantName(PBSpecies,species) rescue nil
     if !species || species<1 || species>PBSpecies.maxValue || !cname
-      raise ArgumentError.new(_INTL("The species number (no. {1} of {2}) is invalid.",
-         species,PBSpecies.maxValue))
+      raise ArgumentError.new(_INTL("The species number (no. {1} of {2}) is invalid.",species,PBSpecies.maxValue))
       return nil
     end
-    time=pbGetTimeNow
-    @timeReceived=time.getgm.to_i # Use GMT
-    @species=species
-    # Individual Values
-    @personalID=rand(256)
-    @personalID|=rand(256)<<8
-    @personalID|=rand(256)<<16
-    @personalID|=rand(256)<<24
-    @hp=1
-    @totalhp=1
-    @ev=[0,0,0,0,0,0]
-    @iv=[]
-    @iv[0]=rand(32)
-    @iv[1]=rand(32)
-    @iv[2]=rand(32)
-    @iv[3]=rand(32)
-    @iv[4]=rand(32)
-    @iv[5]=rand(32)
+    @species       = species
+    @name          = PBSpecies.getName(@species)
+    @personalID    = rand(256)
+    @personalID    |= rand(256)<<8
+    @personalID    |= rand(256)<<16
+    @personalID    |= rand(256)<<24
+    @hp            = 1
+    @totalhp       = 1
+    @ev            = [0,0,0,0,0,0]
+    @iv            = []
+    for i in 0...6
+      @iv[i]       = rand(32)
+    end
+    @moves         = []
+    @status        = 0
+    @statusCount   = 0
+    @item          = 0
+    @mail          = nil
+    @fused         = nil
+    @ribbons       = []
+    @ballused      = 0
+    @eggsteps      = 0
     if player
-      @trainerID=player.id
-      @ot=player.name
-      @otgender=player.gender
-      @language=player.language
+      @trainerID   = player.id
+      @ot          = player.name
+      @otgender    = player.gender
+      @language    = player.language
     else
-      @trainerID=0
-      @ot=""
-      @otgender=2
+      @trainerID   = 0
+      @ot          = ""
+      @otgender    = 2
     end
-    dexdata=pbOpenDexData
-    pbDexDataOffset(dexdata,@species,19)
-    @happiness=dexdata.fgetb
-    dexdata.close
-    @name=PBSpecies.getName(@species)
-    @eggsteps=0
-    @status=0
-    @statusCount=0
-    @item=0
-    @mail=nil
-    @fused=nil
-    @ribbons=[]
-    @moves=[]
-    self.ballused=0
-    self.level=level
-    calcStats
-    @hp=@totalhp
     if $game_map
-      @obtainMap=$game_map.map_id
-      @obtainText=nil
-      @obtainLevel=level
+      @obtainMap   = $game_map.map_id
+      @obtainText  = nil
+      @obtainLevel = level
     else
-      @obtainMap=0
-      @obtainText=nil
-      @obtainLevel=level
+      @obtainMap   = 0
+      @obtainText  = nil
+      @obtainLevel = level
     end
-    @obtainMode=0   # Met
-    @obtainMode=4 if $game_switches && $game_switches[FATEFUL_ENCOUNTER_SWITCH]
-    @hatchedMap=0
-    @tadpoicolor=0
+    @obtainMode    = 0   # Met
+    @obtainMode    = 4 if $game_switches && $game_switches[FATEFUL_ENCOUNTER_SWITCH]
+    @hatchedMap    = 0
+    @timeReceived  = pbGetTimeNow.to_i
+    self.level     = level
+    calcStats
+    @hp            = @totalhp
+    dexdata = pbOpenDexData
+    pbDexDataOffset(dexdata,self.fSpecies,19)
+    @happiness     = dexdata.fgetb
+    dexdata.close
     if withMoves
-      atkdata=pbRgssOpen("Data/attacksRS.dat","rb")
-      offset=atkdata.getOffset(species-1)
-      length=atkdata.getLength(species-1)>>1
-      atkdata.pos=offset
-      # Generating move list
-      movelist=[]
-      for i in 0..length-1
-        alevel=atkdata.fgetw
-        move=atkdata.fgetw
-        if alevel<=level
-          movelist[movelist.length]=move
-        end
-      end
-      atkdata.close
-      movelist|=[] # Remove duplicates
-      # Use the last 4 items in the move list
-      listend=movelist.length-4
-      listend=0 if listend<0
-      j=0
-      for i in listend...listend+4
-        moveid=(i>=movelist.length) ? 0 : movelist[i]
-        @moves[j]=PBMove.new(moveid)
-        j+=1
-      end
+      self.resetMoves
     else
       for i in 0...4
-        @moves[i]=PBMove.new(0)
+        @moves[i] = PBMove.new(0)
       end
     end
   end
 end
+
+
+
+def pbGenPkmn(species,level,owner=nil)
+  owner = $Trainer if !owner
+  return PokeBattle_Pokemon.new(species,level,owner)
+end
+
+def pbGenPoke(species,level,owner=nil); return pbGenPkmn(species,level,owner); end

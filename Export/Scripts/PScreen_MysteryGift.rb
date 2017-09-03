@@ -40,8 +40,10 @@ def pbEditMysteryGift(type,item,id=0,giftname="")
       commands.push(_INTL("[Custom]"))
       loop do
         command=Kernel.pbMessage(
-           _INTL("Choose a phrase to be where the gift Pokémon was obtained from."),commands)
-        if command>=0 && command<commands.length-1
+           _INTL("Choose a phrase to be where the gift Pokémon was obtained from."),commands,-1)
+        if command<0
+          return nil if Kernel.pbConfirmMessage(_INTL("Stop editing this gift?"))
+        elsif command<commands.length-1
           item.obtainText=commands[command]
           break
         elsif command==commands.length-1
@@ -50,8 +52,6 @@ def pbEditMysteryGift(type,item,id=0,giftname="")
             item.obtainText=obtainname
             break
           end
-          return nil if Kernel.pbConfirmMessage(_INTL("Stop editing this gift?"))
-        elsif command==-1
           return nil if Kernel.pbConfirmMessage(_INTL("Stop editing this gift?"))
         end
       end
@@ -246,7 +246,7 @@ def pbRefreshMGCommands(master,online)
       itemname=PBItems.getName(gift[2])+sprintf(" x%d",gift[1])
     end
     ontext=["[  ]","[X]"][(online.include?(gift[0])) ? 1 : 0]
-    commands.push(_ISPRINTF("{1:s} {2:d}: {3:s} ({4:s})",ontext,gift[0],gift[3],itemname))
+    commands.push(_INTL("{1} {2}: {3} ({4})",ontext,gift[0],gift[3],itemname))
   end
   commands.push(_INTL("Export selected to file"))
   commands.push(_INTL("Cancel"))
@@ -297,9 +297,8 @@ def pbDownloadMysteryGift(trainer)
           isitem=false
           if gift[1]==0
             sprite=PokemonSprite.new(viewport)
+            sprite.setOffset(PictureOrigin::Center)
             sprite.setPokemonBitmap(gift[2])
-            sprite.ox=sprite.bitmap.width/2
-            sprite.oy=sprite.bitmap.height/2
             sprite.x=Graphics.width/2
             sprite.y=-sprite.bitmap.height/2
           else
@@ -314,7 +313,7 @@ def pbDownloadMysteryGift(trainer)
             sprite.update
             sprite.y+=4
           end while sprite.y<Graphics.height/2
-          pbMEPlay("Jingle - HMTM")
+          pbMEPlay("Battle capture success")
           3*Graphics.frame_rate.times do
             Graphics.update
             Input.update
@@ -408,7 +407,7 @@ def pbReceiveMysteryGift(id)
       gift[2].obtainLevel=gift[2].level
     end
     if pbAddPokemonSilent(gift[2])
-      Kernel.pbMessage(_INTL("{1} received {2}!\\se[ItemGet]\1",$Trainer.name,gift[2].name))
+      Kernel.pbMessage(_INTL("\\me[Pkmn get]{1} received {2}!",$Trainer.name,gift[2].name))
       $Trainer.mysterygift[index]=[id]
       return true
     end
@@ -417,15 +416,16 @@ def pbReceiveMysteryGift(id)
       $PokemonBag.pbStoreItem(gift[2],gift[1])
       item=gift[2]; qty=gift[1]
       itemname=(qty>1) ? PBItems.getNamePlural(item) : PBItems.getName(item)
-      if $ItemData[item][ITEMUSE]==3 || $ItemData[item][ITEMUSE]==4
-        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received \\c[1]{2}\\c[0]!\\nIt contained \\c[1]{3}\\c[0].\\wtnp[30]",
-           $Trainer.name,itemname,PBMoves.getName($ItemData[item][ITEMMACHINE])))
-      elsif isConst?(item,PBItems,:LEFTOVERS)
-        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received some \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
+      if isConst?(item,PBItems,:LEFTOVERS)
+        Kernel.pbMessage(_INTL("\\me[Item get]You obtained some \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
+      elsif pbIsMachine?(item)   # TM or HM
+        Kernel.pbMessage(_INTL("\\me[Item get]You obtained \\c[1]{1} {2}\\c[0]!\\wtnp[30]",itemname,PBMoves.getName(pbGetMachine(item))))
       elsif qty>1
-        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received {2} \\c[1]{3}\\c[0]!\\wtnp[30]",$Trainer.name,qty,itemname))
+        Kernel.pbMessage(_INTL("\\me[Item get]You obtained {1} \\c[1]{2}\\c[0]!\\wtnp[30]",qty,itemname))
+      elsif ['a','e','i','o','u'].include?(itemname[0,1].downcase)
+        Kernel.pbMessage(_INTL("\\me[Item get]You obtained an \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
       else
-        Kernel.pbMessage(_INTL("\\se[ItemGet]{1} received one \\c[1]{2}\\c[0]!\\wtnp[30]",$Trainer.name,itemname))
+        Kernel.pbMessage(_INTL("\\me[Item get]You obtained a \\c[1]{1}\\c[0]!\\wtnp[30]",itemname))
       end
       $Trainer.mysterygift[index]=[id]
       return true

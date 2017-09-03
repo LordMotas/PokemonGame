@@ -77,7 +77,6 @@ class Interpreter
   #     y     : y coordinate to scroll to and center on
   #     speed : (optional) scroll speed (from 1-6, default being 4)
   #-----------------------------------------------------------------------------
-
   def autoscroll(x,y,speed=SCROLL_SPEED_DEFAULT)
     if $game_map.scrolling?
       return false
@@ -178,46 +177,14 @@ class Game_Map
       distance = 2 ** @scroll_speed
       # Execute scrolling
       case @scroll_direction
-#-------------------------------------------------------------------------------
-# Begin Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 1 # down left
-        scroll_downleft(distance)
-#-------------------------------------------------------------------------------
-# End Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 2  # Down
-        scroll_down(distance)
-#-------------------------------------------------------------------------------
-# Begin Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 3 # down right
-        scroll_downright(distance)
-#-------------------------------------------------------------------------------
-# End Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 4  # Left
-        scroll_left(distance)
-      when 6  # Right
-        scroll_right(distance)
-#-------------------------------------------------------------------------------
-# Begin Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 7  # up left
-        scroll_upleft(distance)
-#-------------------------------------------------------------------------------
-# End Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 8  # Up
-        scroll_up(distance)
-#-------------------------------------------------------------------------------
-# Begin Map Autoscroll Edit
-#-------------------------------------------------------------------------------
-      when 9  # up right
-        scroll_upright(distance)                
-#-------------------------------------------------------------------------------
-# End Map Autoscroll Edit
-#-------------------------------------------------------------------------------
+      when 1; scroll_downleft(distance)
+      when 2; scroll_down(distance)
+      when 3; scroll_downright(distance)
+      when 4; scroll_left(distance)
+      when 6; scroll_right(distance)
+      when 7; scroll_upleft(distance)
+      when 8; scroll_up(distance)
+      when 9; scroll_upright(distance)                
       end
       # Subtract distance scrolled
       @scroll_rest -= distance

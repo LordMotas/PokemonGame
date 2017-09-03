@@ -272,7 +272,7 @@ class PurifyChamberPC
   end
 
   def access
-    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Purify Chamber."))
+    Kernel.pbMessage(_INTL("\\se[PC access]Accessed the Purify Chamber."))
     pbPurifyChamber()
   end
 end
@@ -559,7 +559,7 @@ class PurifyChamberScreen
       end
     end
     if pbCheckPurify()
-      @scene.pbDisplay(_INTL("There is a Pokemon that is ready to open its heart!\1"))
+      @scene.pbDisplay(_INTL("There is a Pokémon that is ready to open its heart!\1"))
       @scene.pbCloseSetDetail()
       pbDoPurify()
       return false
@@ -607,7 +607,7 @@ class PurifyChamberScreen
       pbStorePokemon(@chamber[set].shadow)
       @chamber.setShadow(set,nil) # Remove shadow Pokemon from set
       if (i+1)!=purifiables.length
-        @scene.pbDisplay(_INTL("There is another Pokemon that is ready to open its heart!"))  
+        @scene.pbDisplay(_INTL("There is another Pokémon that is ready to open its heart!"))  
         if !@scene.pbConfirm("Would you like to switch sets?")
           @scene.pbCloseSet()
           break
@@ -681,10 +681,10 @@ class Window_PurifyChamberSets < Window_DrawableCommand
     textpos=[]
     rect=drawCursor(index,rect)
     if index==@switching
-      textpos.push([_ISPRINTF("{1:d}",index+1),rect.x,
+      textpos.push([(index+1).to_s,rect.x,
          rect.y,false,Color.new(248,0,0),self.shadowColor])
     else
-      textpos.push([_ISPRINTF("{1:d}",index+1),rect.x,
+      textpos.push([(index+1).to_s,rect.x,
          rect.y,false,self.baseColor,self.shadowColor])
     end
     if @chamber.setCount(index)>0
@@ -1103,12 +1103,12 @@ end
 
 
 
-def pbPurifyChamber()
-   $PokemonGlobal.seenPurifyChamber=true
-   pbFadeOutIn(99999){
-      scene=PurifyChamberScene.new()
-      screen=PurifyChamberScreen.new(scene)
-      screen.pbStartPurify()
+def pbPurifyChamber
+  $PokemonGlobal.seenPurifyChamber = true
+  pbFadeOutIn(99999){
+    scene = PurifyChamberScene.new
+    screen = PurifyChamberScreen.new(scene)
+    screen.pbStartPurify
   }
 end
 
@@ -1229,17 +1229,14 @@ class PurifyChamberScene
            nextset=(@sprites["setview"].set==0) ? PurifyChamber::NUMSETS-1 : @sprites["setview"].set-1
            pbPlayCursorSE()
            return [1,nextset]
-         end
-         if Input.repeat?(Input::R)
+         elsif Input.repeat?(Input::R)
            nextset=(@sprites["setview"].set==PurifyChamber::NUMSETS-1) ? 0 : @sprites["setview"].set+1
            pbPlayCursorSE()
            return [1,nextset]
-         end
-         if Input.trigger?(Input::C)
+         elsif Input.trigger?(Input::C)
            pbPlayDecisionSE()
            return [0,@sprites["setview"].cursor]
-         end
-         if Input.trigger?(Input::B)
+         elsif Input.trigger?(Input::B)
            pbPlayCancelSE()
            return [3,0]
          end
@@ -1278,8 +1275,8 @@ class PurifyChamberScene
   def pbSummary(pos,heldpkmn)
     if heldpkmn
       oldsprites=pbFadeOutAndHide(@sprites)
-      scene=PokemonSummaryScene.new
-      screen=PokemonSummary.new(scene)
+      scene=PokemonSummary_Scene.new
+      screen=PokemonSummaryScreen.new(scene)
       screen.pbStartScreen([heldpkmn],0)
       pbFadeInAndShow(@sprites,oldsprites)
       return
@@ -1298,8 +1295,8 @@ class PurifyChamberScene
     end
     return if party.length==0
     oldsprites=pbFadeOutAndHide(@sprites)
-    scene=PokemonSummaryScene.new
-    screen=PokemonSummary.new(scene)
+    scene=PokemonSummary_Scene.new
+    screen=PokemonSummaryScreen.new(scene)
     selection=screen.pbStartScreen(party,startindex)
     @sprites["setview"].cursor=indexes[selection]
     pbFadeInAndShow(@sprites,oldsprites)

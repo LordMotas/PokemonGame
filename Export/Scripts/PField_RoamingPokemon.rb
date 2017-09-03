@@ -58,34 +58,38 @@ def pbRoamPokemon(ignoretrail=false)
   $PokemonGlobal.roamPokemon=[] if !$PokemonGlobal.roamPokemon
   # Roam each Pokémon in turn
   for i in 0...RoamingSpecies.length
-    poke=RoamingSpecies[i]
-    if $game_switches[poke[2]]
-      species=getID(PBSpecies,poke[0])
-      next if !species || species<=0
-      choices=[]
-      keys=pbRoamingAreas(i).keys
+    pbRoamPokemonOne(i,ignoretrail)
+  end
+end
+
+def pbRoamPokemonOne(i,ignoretrail=false)
+  poke=RoamingSpecies[i]
+  if $game_switches[poke[2]]
+    species=getID(PBSpecies,poke[0])
+    return if !species || species<=0
+    choices=[]
+    keys=pbRoamingAreas(i).keys
+    currentArea=$PokemonGlobal.roamPosition[i]
+    if !currentArea
+      $PokemonGlobal.roamPosition[i]=keys[rand(keys.length)]
       currentArea=$PokemonGlobal.roamPosition[i]
-      if !currentArea
-        $PokemonGlobal.roamPosition[i]=keys[rand(keys.length)]
-        currentArea=$PokemonGlobal.roamPosition[i]
-      end
-      newAreas=pbRoamingAreas(i)[currentArea]
-      next if !newAreas
-      for area in newAreas
-        inhistory=$PokemonGlobal.roamHistory.include?(area)
-        inhistory=false if ignoretrail
-        choices.push(area) if !inhistory
-      end
-      if rand(32)==0 && keys.length>0
-        area=keys[rand(keys.length)]
-        inhistory=$PokemonGlobal.roamHistory.include?(area)
-        inhistory=false if ignoretrail
-        choices.push(area) if !inhistory
-      end
-      if choices.length>0 
-        area=choices[rand(choices.length)]
-        $PokemonGlobal.roamPosition[i]=area
-      end
+    end
+    newAreas=pbRoamingAreas(i)[currentArea]
+    return if !newAreas
+    for area in newAreas
+      inhistory=$PokemonGlobal.roamHistory.include?(area)
+      inhistory=false if ignoretrail
+      choices.push(area) if !inhistory
+    end
+    if rand(32)==0 && keys.length>0
+      area=keys[rand(keys.length)]
+      inhistory=$PokemonGlobal.roamHistory.include?(area)
+      inhistory=false if ignoretrail
+      choices.push(area) if !inhistory
+    end
+    if choices.length>0 
+      area=choices[rand(choices.length)]
+      $PokemonGlobal.roamPosition[i]=area
     end
   end
 end
@@ -139,25 +143,11 @@ def pbRoamingPokemonBattle(species,level)
   battle.rules["alwaysflee"]=true
   pbPrepareBattle(battle)
   decision=0
-  pbBattleAnimation(pbGetWildBattleBGM(species)) { 
-     pbSceneStandby {
-        decision=battle.pbStartBattle
-     }
-     for i in $Trainer.party; (i.makeUnmega rescue nil); (i.makeUnprimal rescue nil); end
-     if $PokemonGlobal.partner
-       pbHealAll
-       for i in $PokemonGlobal.partner[3]
-         i.heal
-         i.makeUnmega rescue nil
-         i.makeUnprimal rescue nil
-       end
-     end
-#     if decision==2 || decision==5
-#       $game_system.bgm_unpause
-#       $game_system.bgs_unpause
-#       Kernel.pbStartOver
-#     end
-     Events.onEndBattle.trigger(nil,decision,false)
+  pbBattleAnimation(pbGetWildBattleBGM(species),0,[genwildpoke]) { 
+    pbSceneStandby {
+      decision = battle.pbStartBattle
+    }
+    pbAfterBattle(decision,false)
   }
   Input.update
   if decision==1 || decision==4   # Defeated or caught
@@ -216,6 +206,7 @@ EncounterModifier.register(proc {|encounter|
     if roamEncounter[3] && roamEncounter[3]!=""
       $PokemonGlobal.nextBattleBGM=roamEncounter[3]
     end
+    $PokemonTemp.forceSingleBattle = true
     return [roamEncounter[1],roamEncounter[2]]
   end
   return encounter

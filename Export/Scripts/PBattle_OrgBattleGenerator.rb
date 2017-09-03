@@ -1228,19 +1228,17 @@ end
 
 
 if $FAKERGSS
+  def Kernel.pbMessageDisplay(mw,txt,lbl)
+    puts txt
+  end
 
-def Kernel.pbMessageDisplay(mw,txt,lbl)
-  puts txt
-end
+  def _INTL(*arg)
+    return arg[0]
+  end
 
-def _INTL(*arg)
-  return arg[0]
-end
-
-def _ISPRINTF(*arg)
-  return arg[0]
-end
-
+  def _ISPRINTF(*arg)
+    return arg[0]
+  end
 end
 
 
@@ -1441,10 +1439,10 @@ def pbWriteCup(id,rules)
   end
   cmd=0
   if trlists.length!=0
-    cmd=Kernel.pbMessage(_INTL("Generate Pokemon teams for this challenge?"),
+    cmd=Kernel.pbMessage(_INTL("Generate Pokémon teams for this challenge?"),
        [_INTL("NO"),_INTL("YES, USE EXISTING"),_INTL("YES, USE NEW")],1)
   else
-    cmd=Kernel.pbMessage(_INTL("Generate Pokemon teams for this challenge?"),
+    cmd=Kernel.pbMessage(_INTL("Generate Pokémon teams for this challenge?"),
        [_INTL("YES"),_INTL("NO")],2)
     if cmd==0
       cmd=2
@@ -1456,7 +1454,7 @@ def pbWriteCup(id,rules)
   if cmd==1   # Yes, use existing
     cmd=Kernel.pbMessage(_INTL("Choose a challenge."),list,-1)
     if cmd>=0
-      Kernel.pbMessage(_INTL("This challenge will use the Pokemon list from {1}.",list[cmd]))
+      Kernel.pbMessage(_INTL("This challenge will use the Pokémon list from {1}.",list[cmd]))
       for i in 0...trlists.length
         tr=trlists[i]
         while !tr[5] && tr[2].include?(id)

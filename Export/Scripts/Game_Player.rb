@@ -8,16 +8,16 @@
 class Game_Player < Game_Character
   attr_accessor :bump_se
 
-  def map
-    @map=nil
-    return $game_map
-  end
-
   def initialize(*arg)
     super(*arg)
     @lastdir=0
     @lastdirframe=0
     @bump_se=0
+  end
+
+  def map
+    @map=nil
+    return $game_map
   end
 
   def bush_depth
@@ -60,9 +60,7 @@ class Game_Player < Game_Character
   end
 
   def move_down(turn_enabled = true)
-    if turn_enabled
-      turn_down
-    end
+    turn_down if turn_enabled
     if passable?(@x, @y, 2)
       return if pbLedge(0,1)
       return if pbEndSurf(0,1)
@@ -73,16 +71,14 @@ class Game_Player < Game_Character
     else
       if !check_event_trigger_touch(@x, @y+1)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump"); @bump_se=10
+          pbSEPlay("Player bump"); @bump_se = 10
         end
       end
     end
   end
 
   def move_left(turn_enabled = true)
-    if turn_enabled
-      turn_left
-    end
+    turn_left if turn_enabled
     if passable?(@x, @y, 4)
       return if pbLedge(-1,0)
       return if pbEndSurf(-1,0)
@@ -93,16 +89,14 @@ class Game_Player < Game_Character
     else
       if !check_event_trigger_touch(@x-1, @y)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump"); @bump_se=10
+          pbSEPlay("Player bump"); @bump_se = 10
         end
       end
     end
   end
 
   def move_right(turn_enabled = true)
-    if turn_enabled
-      turn_right
-    end
+    turn_right if turn_enabled
     if passable?(@x, @y, 6)
       return if pbLedge(1,0)
       return if pbEndSurf(1,0)
@@ -113,16 +107,14 @@ class Game_Player < Game_Character
     else
       if !check_event_trigger_touch(@x+1, @y)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump"); @bump_se=10
+          pbSEPlay("Player bump"); @bump_se = 10
         end
       end
     end
   end
 
   def move_up(turn_enabled = true)
-    if turn_enabled
-      turn_up
-    end
+    turn_up if turn_enabled
     if passable?(@x, @y, 8)
       return if pbLedge(0,-1)
       return if pbEndSurf(0,-1)
@@ -133,7 +125,7 @@ class Game_Player < Game_Character
     else
       if !check_event_trigger_touch(@x, @y-1)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump"); @bump_se=10
+          pbSEPlay("Player bump"); @bump_se = 10
         end
       end
     end
@@ -147,7 +139,7 @@ class Game_Player < Game_Character
     end
     # All event loops
     for event in $game_map.events.values
-      next if !event.name[/^Trainer\((\d+)\)$/]
+      next if !event.name[/Trainer\((\d+)\)/]
       distance=$~[1].to_i
       # If event coordinates and triggers are consistent
       if pbEventCanReachPlayer?(event,self,distance) and triggers.include?(event.trigger)
@@ -168,7 +160,7 @@ class Game_Player < Game_Character
     end
     # All event loops
     for event in $game_map.events.values
-      next if !event.name[/^Counter\((\d+)\)$/]
+      next if !event.name[/Counter\((\d+)\)/]
       distance=$~[1].to_i
       # If event coordinates and triggers are consistent
       if pbEventFacesPlayer?(event,self,distance) and triggers.include?(event.trigger)
@@ -334,8 +326,7 @@ class Game_Player < Game_Character
     # All event loops
     for event in $game_map.events.values
       # If event coordinates and triggers are consistent
-      if event.x == new_x and event.y == new_y and
-         triggers.include?(event.trigger)
+      if event.x == new_x and event.y == new_y and triggers.include?(event.trigger)
         # If starting determinant is front event (other than jumping)
         if not event.jumping? and !event.over_trigger?
           event.start
@@ -377,11 +368,11 @@ class Game_Player < Game_Character
     end
     # All event loops
     for event in $game_map.events.values
-      if event.name[/^Trainer\((\d+)\)$/]
+      if event.name[/Trainer\((\d+)\)/]
         distance=$~[1].to_i
         next if !pbEventCanReachPlayer?(event,self,distance)
       end
-      if event.name[/^Counter\((\d+)\)$/]
+      if event.name[/Counter\((\d+)\)/]
         distance=$~[1].to_i
         next if !pbEventFacesPlayer?(event,self,distance)
       end
@@ -411,25 +402,17 @@ class Game_Player < Game_Character
       # Move player in the direction the directional button is being pressed
       if dir==@lastdir && Graphics.frame_count-@lastdirframe>2
         case dir
-        when 2
-          move_down
-        when 4
-          move_left
-        when 6
-          move_right
-        when 8
-          move_up
+        when 2; move_down
+        when 4; move_left
+        when 6; move_right
+        when 8; move_up
         end
       elsif dir!=@lastdir
         case dir
-        when 2
-          turn_down
-        when 4
-          turn_left
-        when 6
-          turn_right
-        when 8
-          turn_up
+        when 2; turn_down
+        when 4; turn_left
+        when 6; turn_right
+        when 8; turn_up
         end
       end
     end
@@ -446,34 +429,28 @@ class Game_Player < Game_Character
               Game_Map::XSUBPIXEL   # Center screen x-coordinate * 4
     center_y = (Graphics.height/2 - Game_Map::TILEHEIGHT/2) * 
               Game_Map::YSUBPIXEL   # Center screen y-coordinate * 4
-    # If character moves down and is positioned lower than the center
-    # of the screen
+    # If character moves and is now positioned off-centre of the screen
     if @real_y > last_real_y and @real_y - $game_map.display_y > center_y
-      # Scroll map down
-      $game_map.scroll_down(@real_y - last_real_y)
+      $game_map.scroll_down(@real_y - last_real_y) # Scroll map down
     end
-    # If character moves left and is positioned more left on-screen than
-    # center
     if @real_x < last_real_x and @real_x - $game_map.display_x < center_x
-      # Scroll map left
-      $game_map.scroll_left(last_real_x - @real_x)
+      $game_map.scroll_left(last_real_x - @real_x) # Scroll map left
     end
-    # If character moves right and is positioned more right on-screen than
-    # center
     if @real_x > last_real_x and @real_x - $game_map.display_x > center_x
-      # Scroll map right
-      $game_map.scroll_right(@real_x - last_real_x)
+      $game_map.scroll_right(@real_x - last_real_x) # Scroll map right
     end
-    # If character moves up and is positioned higher than the center
-    # of the screen
     if @real_y < last_real_y and @real_y - $game_map.display_y < center_y
-      # Scroll map up
-      $game_map.scroll_up(last_real_y - @real_y)
+      $game_map.scroll_up(last_real_y - @real_y) # Scroll map up
     end
     # Count down the time between allowed bump sounds
-    @bump_se-=1 if @bump_se && @bump_se>0
+    @bump_se -= 1 if @bump_se && @bump_se>0
     # If not moving
     unless moving?
+      if $PokemonTemp.endSurf
+        Kernel.pbCancelVehicles
+        $PokemonTemp.surfJump = nil
+        $PokemonTemp.endSurf = false
+      end
       # If player was moving last time
       if last_moving
         $PokemonTemp.dependentEvents.pbTurnDependentEvents
@@ -491,4 +468,61 @@ class Game_Player < Game_Character
       end
     end
   end
+end
+
+
+
+def pbGetPlayerCharset(meta,charset,trainer=nil)
+  trainer=$Trainer if !trainer
+  outfit=trainer ? trainer.outfit : 0
+  ret=meta[charset]
+  ret=meta[1] if !ret || ret==""
+  if pbResolveBitmap("Graphics/Characters/"+ret+"_"+outfit.to_s)
+    ret=ret+"_"+outfit.to_s
+  end
+  return ret
+end
+
+def Kernel.pbUpdateVehicle
+  meta=pbGetMetadata(0,MetadataPlayerA+$PokemonGlobal.playerID)
+  if meta
+    if $PokemonGlobal.diving
+      $game_player.character_name=pbGetPlayerCharset(meta,5) # Diving graphic
+    elsif $PokemonGlobal.surfing
+      $game_player.character_name=pbGetPlayerCharset(meta,3) # Surfing graphic
+    elsif $PokemonGlobal.bicycle
+      $game_player.character_name=pbGetPlayerCharset(meta,2) # Bicycle graphic
+    else
+      $game_player.character_name=pbGetPlayerCharset(meta,1) # Regular graphic
+    end
+  end
+end
+
+def Kernel.pbCancelVehicles(destination=nil)
+  $PokemonGlobal.surfing = false
+  $PokemonGlobal.diving = false
+  $PokemonGlobal.bicycle = false if !destination || !pbCanUseBike?(destination)
+  Kernel.pbUpdateVehicle
+end
+
+def pbCanUseBike?(mapid)
+  return true if pbGetMetadata(mapid,MetadataBicycleAlways)
+  val = pbGetMetadata(mapid,MetadataBicycle)
+  val = pbGetMetadata(mapid,MetadataOutdoor) if val==nil
+  return (val) ? true : false 
+end
+
+def Kernel.pbMountBike
+  return if $PokemonGlobal.bicycle
+  $PokemonGlobal.bicycle = true
+  Kernel.pbUpdateVehicle
+  bikebgm = pbGetMetadata(0,MetadataBicycleBGM)
+  pbCueBGM(bikebgm,0.5) if bikebgm
+end
+
+def Kernel.pbDismountBike
+  return if !$PokemonGlobal.bicycle
+  $PokemonGlobal.bicycle = false
+  Kernel.pbUpdateVehicle
+  $game_map.autoplayAsCue
 end

@@ -44,8 +44,9 @@ class CustomTilemap
   attr_reader :tileset
   attr_reader :autotiles
   attr_reader :map_data
-  attr_accessor :flash_data
-  attr_accessor :priorities
+  attr_reader :flash_data
+  attr_reader :priorities
+  attr_reader :terrain_tags
   attr_reader :visible
   attr_accessor :ox
   attr_accessor :oy
@@ -62,26 +63,27 @@ class CustomTilemap
   end
 
   def initialize(viewport)
-    @tileset    = nil  # Refers to Map Tileset Name
-    @autotiles  = CustomTilemapAutotiles.new
-    @map_data   = nil  # Refers to 3D Array Of Tile Settings
-    @flash_data = nil  # Refers to 3D Array of Tile Flashdata
-    @priorities = nil  # Refers to Tileset Priorities
-    @visible    = true # Refers to Tileset Visibleness
-    @ox         = 0    # Bitmap Offsets
-    @oy         = 0    # bitmap Offsets
-    @plane      = false
-    @haveGraphicsWH=Graphics.width!=nil rescue false
+    @tileset      = nil  # Refers to Map Tileset Name
+    @autotiles    = CustomTilemapAutotiles.new
+    @map_data     = nil  # Refers to 3D Array Of Tile Settings
+    @flash_data   = nil  # Refers to 3D Array of Tile Flashdata
+    @priorities   = nil  # Refers to Tileset Priorities
+    @terrain_tags = nil  # Refers to Tileset Terrain Tags
+    @visible      = true # Refers to Tileset Visibleness
+    @ox           = 0    # Bitmap Offsets
+    @oy           = 0    # bitmap Offsets
+    @plane        = false
+    @haveGraphicsWH = (Graphics.width!=nil rescue false)
     if @haveGraphicsWH
-      @graphicsWidth=Graphics.width
-      @graphicsHeight=Graphics.height
+      @graphicsWidth  = Graphics.width
+      @graphicsHeight = Graphics.height
     else
-      @graphicsWidth=640
-      @graphicsHeight=480
+      @graphicsWidth  = 640
+      @graphicsHeight = 480
     end
-    @tileWidth = Game_Map::TILEWIDTH rescue 32
+    @tileWidth  = Game_Map::TILEWIDTH rescue 32
     @tileHeight = Game_Map::TILEHEIGHT rescue 32
-    @tileSrcWidth = 32
+    @tileSrcWidth  = 32
     @tileSrcHeight = 32
     @diffsizes=(@tileWidth!=@tileSrcWidth) || (@tileHeight!=@tileSrcHeight)
     @tone=Tone.new(0,0,0,0)
@@ -132,6 +134,21 @@ class CustomTilemap
   def flash_data=(value)
     @flash_data=value
     @flashChanged=true
+  end
+
+  def priorities=(value)
+    @priorities=value
+    @tilesetChanged=true
+  end
+
+  def terrain_tags=(value)
+    @terrain_tags=value
+    @tilesetChanged=true
+  end
+
+  def tileset=(value)
+    @tileset=value
+    @tilesetChanged=true
   end
 
   def update
@@ -191,16 +208,6 @@ class CustomTilemap
     @nowshown=false
     @autotiles.changed=false
     @tilesetChanged=false
-  end
-
-  def priorities=(value)
-    @priorities=value
-    @tilesetChanged=true
-  end
-
-  def tileset=(value)
-    @tileset=value
-    @tilesetChanged=true
   end
 
   def shown?
@@ -360,16 +367,12 @@ class CustomTilemap
        bltAutotile(bitmap,0,0,id,anim)
        @autotileInfo[id]=bitmap
     end
-    if sprite.bitmap!=bitmap
-      sprite.bitmap=bitmap
-    end
+    sprite.bitmap=bitmap if sprite.bitmap!=bitmap
   end
 
   def getRegularTile(sprite,id)
     if !@diffsizes
-      if sprite.bitmap!=@tileset
-        sprite.bitmap=@tileset
-      end
+      sprite.bitmap=@tileset if sprite.bitmap!=@tileset
       sprite.src_rect.set(((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
          @tileSrcWidth,@tileSrcHeight)
     else
@@ -381,9 +384,7 @@ class CustomTilemap
         bitmap.stretch_blt(Rect.new(0,0,@tileWidth,@tileHeight),@tileset,rect)
         @regularTileInfo[id]=bitmap
       end
-      if sprite.bitmap!=bitmap
-        sprite.bitmap=bitmap
-      end
+      sprite.bitmap=bitmap if sprite.bitmap!=bitmap
     end
   end
 
@@ -404,6 +405,7 @@ class CustomTilemap
       getRegularTile(sprite,id)
       spriteZ=(!@priorities[id] || @priorities[id]==0) ? 0 : ypos+@priorities[id]*32+32
       spriteZ=1 if @priorities[id]==4 && $PokemonGlobal && $PokemonGlobal.bridge>0
+      spriteZ=-100 if PBTerrain.hasReflections?(@terrain_tags[id])
       sprite.z=spriteZ
       count+=2
     else
@@ -422,6 +424,7 @@ class CustomTilemap
       getAutotile(sprite,id)
       spriteZ=(!@priorities[id] || @priorities[id]==0) ? 0 : ypos+@priorities[id]*32+32
       spriteZ=1 if @priorities[id]==4 && $PokemonGlobal && $PokemonGlobal.bridge>0
+      spriteZ=-100 if PBTerrain.hasReflections?(@terrain_tags[id])
       sprite.z=spriteZ
       count+=2
     end
@@ -429,7 +432,7 @@ class CustomTilemap
   end
 
   def refresh_tileset
-    i=0;len=@regularTileInfo.length;while i<len
+    i=0; len=@regularTileInfo.length; while i<len
       if @regularTileInfo[i]
         @regularTileInfo[i].dispose
         @regularTileInfo[i]=nil
@@ -449,7 +452,7 @@ class CustomTilemap
           for x in 0...xsize
             id = @map_data[x, y, z]
             next if id==0 || !@priorities[id]
-            next if @priorities[id]==0
+            next if @priorities[id]==0 && !PBTerrain.hasReflections?(@terrain_tags[id])
             @priotiles.push([x,y,z,id])
           end
         end
@@ -514,7 +517,8 @@ class CustomTilemap
             haveautotile=false
             for z in 0...zsize
               id = @map_data[x, y, z]
-              next if id==0 || id>=384 || @priorities[id]!=0 || !@priorities[id]
+              next if id==0 || id>=384 || !@priorities[id]
+              next if @priorities[id]!=0 || PBTerrain.hasReflections?(@terrain_tags[id])
               next if @framecount[id/48-1]<2
               haveautotile=true
               break
@@ -645,7 +649,7 @@ class CustomTilemap
               id = mapdata[x, y, z]
               next if !id || id<48 || id>=384
               prioid=@priorities[id]
-              next if prioid!=0 || !prioid
+              next if !prioid || prioid!=0 || PBTerrain.hasReflections?(@terrain_tags[id])
               fcount=@framecount[id/48-1]
               next if !fcount || fcount<2
               if !haveautotile
@@ -661,7 +665,7 @@ class CustomTilemap
               id = mapdata[x,y,z]
               next if !id || id<48
               prioid=@priorities[id]
-              next if !prioid || prioid!=0
+              next if !prioid || prioid!=0 || PBTerrain.hasReflections?(@terrain_tags[id])
               if overallcount>2000
                 xpos=(x*twidth)-@oxLayer0
                 ypos=(y*theight)-@oyLayer0
@@ -721,7 +725,7 @@ class CustomTilemap
             z+=1
             next if !id || id<48
             prioid=@priorities[id]
-            next if prioid!=0 || !prioid
+            next if !prioid || prioid!=0 || PBTerrain.hasReflections?(@terrain_tags[id])
             if id>=384
               temprect.set(((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                  @tileSrcWidth,@tileSrcHeight)
@@ -782,7 +786,8 @@ class CustomTilemap
           for x in xrange
             xpos=(x*twidth)-@oxLayer0
             id = mapdata[x, y, z]
-            next if id==0 || !@priorities[id] || @priorities[id]!=0
+            next if id==0 || !@priorities[id] || @priorities[id]!=0 ||
+               PBTerrain.hasReflections?(@terrain_tags[id])
             if id>=384
               tmprect.set( ((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                  @tileSrcWidth,@tileSrcHeight)
@@ -910,7 +915,7 @@ class CustomTilemap
               for x in minX..maxX
                 id = @map_data[x, y, z]
                 next if id==0 || !@priorities[id]
-                next if @priorities[id]==0
+                next if @priorities[id]==0 && !PBTerrain.hasReflections?(@terrain_tags[id])
                 @priotilesfast.push([x,y,z,id])
               end
             end

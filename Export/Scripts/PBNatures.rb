@@ -29,7 +29,7 @@ module PBNatures
   def PBNatures.getCount; 25; end
 
   def PBNatures.getName(id)
-    names=[
+    names = [
        _INTL("Hardy"),
        _INTL("Lonely"),
        _INTL("Brave"),

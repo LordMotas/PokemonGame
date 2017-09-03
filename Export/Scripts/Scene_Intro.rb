@@ -83,8 +83,8 @@ class IntroEventScene < EventScene
     pbBGMStop(1.0)
     pictureWait
     scene.dispose # Close the scene
-    sscene=PokemonLoadScene.new
-    sscreen=PokemonLoad.new(sscene)
+    sscene=PokemonLoad_Scene.new
+    sscreen=PokemonLoadScreen.new(sscene)
     sscreen.pbStartLoadScreen
   end
 
@@ -100,8 +100,8 @@ class IntroEventScene < EventScene
     pbBGMStop(1.0)
     pictureWait
     scene.dispose # Close the scene
-    sscene=PokemonLoadScene.new
-    sscreen=PokemonLoad.new(sscene)
+    sscene=PokemonLoad_Scene.new
+    sscreen=PokemonLoadScreen.new(sscene)
     sscreen.pbStartDeleteScreen
   end
 end

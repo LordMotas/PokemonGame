@@ -77,6 +77,7 @@ def pbDayCareGetCompat
     pokemon2=$PokemonGlobal.daycare[1][0]
     return 0 if (pokemon1.isShadow? rescue false)
     return 0 if (pokemon2.isShadow? rescue false)
+    # Insert code here if certain forms of certain species cannot breed
     dexdata=pbOpenDexData
     pbDexDataOffset(dexdata,pokemon1.species,31)
     compat10=dexdata.fgetb
@@ -149,9 +150,8 @@ def pbDayCareChoose(text,variable)
 end
 
 def pbDayCareGenerateEgg
-  if pbDayCareDeposited!=2
-    return
-  elsif $Trainer.party.length>=6
+  return if pbDayCareDeposited!=2
+  if $Trainer.party.length>=6
     raise _INTL("Can't store the egg")
   end
   pokemon0=$PokemonGlobal.daycare[0][0]
@@ -161,7 +161,7 @@ def pbDayCareGenerateEgg
   babyspecies=0
   ditto0=pbIsDitto?(pokemon0)
   ditto1=pbIsDitto?(pokemon1)
-  if (pokemon0.isFemale? || ditto0)
+  if pokemon0.isFemale? || ditto0
     babyspecies=(ditto0) ? pokemon1.species : pokemon0.species
     mother=pokemon0
     father=pokemon1
@@ -192,7 +192,10 @@ def pbDayCareGenerateEgg
   if isConst?(babyspecies,PBSpecies,:BURMY) ||
      isConst?(babyspecies,PBSpecies,:SHELLOS) ||
      isConst?(babyspecies,PBSpecies,:BASCULIN) ||
-     isConst?(babyspecies,PBSpecies,:TADPOI)
+     isConst?(babyspecies,PBSpecies,:FLABEBE) ||
+     isConst?(babyspecies,PBSpecies,:PUMPKABOO) ||
+     isConst?(babyspecies,PBSpecies,:ORICORIO) ||
+     isConst?(babyspecies,PBSpecies,:MINIOR)
     egg.form=mother.form
   end
   # Inheriting Moves
@@ -229,7 +232,7 @@ def pbDayCareGenerateEgg
   # Inheriting Egg Moves
   if movefather.isMale?
     pbRgssOpen("Data/eggEmerald.dat","rb"){|f|
-       f.pos=(babyspecies-1)*8
+       f.pos=(egg.fSpecies-1)*8
        offset=f.fgetdw
        length=f.fgetdw
        if length>0
@@ -244,7 +247,7 @@ def pbDayCareGenerateEgg
   end
   if USENEWBATTLEMECHANICS
     pbRgssOpen("Data/eggEmerald.dat","rb"){|f|
-       f.pos=(babyspecies-1)*8
+       f.pos=(egg.fSpecies-1)*8
        offset=f.fgetdw
        length=f.fgetdw
        if length>0
@@ -337,7 +340,7 @@ def pbDayCareGenerateEgg
   shinyretries=0
   shinyretries+=5 if father.language!=mother.language
   shinyretries+=2 if hasConst?(PBItems,:SHINYCHARM) &&
-                     $PokemonBag.pbQuantity(:SHINYCHARM)>0
+                     $PokemonBag.pbHasItem?(:SHINYCHARM)
   if shinyretries>0
     for i in 0...shinyretries
       break if egg.isShiny?
@@ -400,7 +403,7 @@ Events.onStepTaken+=proc {|sender,e|
      if $PokemonGlobal.daycareEggSteps==256
        $PokemonGlobal.daycareEggSteps=0
        compatval=[0,20,50,70][pbDayCareGetCompat]
-       if hasConst?(PBItems,:OVALCHARM) && $PokemonBag.pbQuantity(:OVALCHARM)>0
+       if hasConst?(PBItems,:OVALCHARM) && $PokemonBag.pbHasItem?(:OVALCHARM)
          compatval=[0,40,80,88][pbDayCareGetCompat]
        end
        rnd=rand(100)

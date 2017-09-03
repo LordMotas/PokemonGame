@@ -10,7 +10,7 @@ begin
     EVASION  = 7
 
     def PBStats.getName(id)
-      names=[
+      names = [
          _INTL("HP"),
          _INTL("Attack"),
          _INTL("Defense"),
@@ -21,8 +21,20 @@ begin
          _INTL("evasiveness")
       ]
       return names[id]
-    end
-  end
+    end
+    def PBStats.getNameBrief(id)
+      names = [
+         _INTL("HP"),
+         _INTL("Atk"),
+         _INTL("Def"),
+         _INTL("Spd"),
+         _INTL("SpAtk"),
+         _INTL("SpDef"),
+         _INTL("acc"),
+         _INTL("eva")
+      ]
+      return names[id]
+    end  end
 
 rescue Exception
   if $!.is_a?(SystemExit) || "#{$!.class}"=="Reset"

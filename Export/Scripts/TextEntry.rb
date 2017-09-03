@@ -1,3 +1,6 @@
+#===============================================================================
+# 
+#===============================================================================
 class Window_CharacterEntry < Window_DrawableCommand
   XSIZE=13
   YSIZE=4
@@ -63,11 +66,22 @@ end
 
 
 
+#===============================================================================
+# 
+#===============================================================================
 class CharacterEntryHelper
   attr_reader :text
   attr_reader :maxlength
   attr_reader :passwordChar 
   attr_accessor :cursor
+
+  def initialize(text)
+    @maxlength=-1
+    @text=text
+    @passwordChar=""
+    @cursor=text.scan(/./m).length
+    ensure
+  end
 
   def text=(value)
     @text=value
@@ -82,14 +96,6 @@ class CharacterEntryHelper
       }
     end
     return chars
-  end
-
-  def initialize(text)
-    @maxlength=-1
-    @text=text
-    @passwordChar=""
-    @cursor=text.scan(/./m).length
-    ensure
   end
 
   def passwordChar=(value)
@@ -158,6 +164,9 @@ end
 
 
 
+#===============================================================================
+# 
+#===============================================================================
 class Window_TextEntry < SpriteWindow_Base
   def initialize(text,x,y,width,height,heading=nil,usedarkercolor=false)
     super(x,y,width,height)
@@ -233,17 +242,14 @@ class Window_TextEntry < SpriteWindow_Base
         self.refresh
       end
       return
-    end
-    if Input.repeat?(Input::RIGHT) && Input.press?(Input::A)
+    elsif Input.repeat?(Input::RIGHT) && Input.press?(Input::A)
       if @helper.cursor < self.text.scan(/./m).length
         @helper.cursor+=1
         @frame=0
         self.refresh
       end
       return
-    end
-    # Backspace
-    if Input.repeat?(Input::B)
+    elsif Input.repeat?(Input::B) # Backspace
       self.delete if @helper.cursor > 0
       return
     end
@@ -298,6 +304,9 @@ end
 
 
 
+#===============================================================================
+# 
+#===============================================================================
 def getLineBrokenText(bitmap,value,width,dims)
   x=0
   y=0
@@ -351,9 +360,7 @@ def getLineBrokenText(bitmap,value,width,dims)
         x+=textwidth
         dims[0]=x if dims && dims[0]<x
       end
-      if textcols[i]
-        color=textcols[i]
-      end
+      color=textcols[i] if textcols[i]
     end
     position+=length
     column+=length
@@ -364,6 +371,9 @@ end
 
 
 
+#===============================================================================
+# 
+#===============================================================================
 class Window_MultilineTextEntry < SpriteWindow_Base
   def initialize(text,x,y,width,height)
     super(x,y,width,height)
@@ -592,14 +602,14 @@ class Window_MultilineTextEntry < SpriteWindow_Base
     self.refresh if ((@frame%10)==0)
     return if !self.active
     # Moving cursor
-    if Input.repeat?(Input::LEFT)
-      moveCursor(0,-1)
-      return
-    elsif Input.repeat?(Input::UP)
+    if Input.repeat?(Input::UP)
       moveCursor(-1,0)
       return
     elsif Input.repeat?(Input::DOWN)
       moveCursor(1,0)
+      return
+    elsif Input.repeat?(Input::LEFT)
+      moveCursor(0,-1)
       return
     elsif Input.repeat?(Input::RIGHT)
       moveCursor(0,1)
@@ -627,11 +637,10 @@ class Window_MultilineTextEntry < SpriteWindow_Base
       @cursorColumn=getColumnsInLine(@cursorLine)
       updateCursorPos(true)
       return
-    elsif Input.repeatex?(13)
+    elsif Input.repeatex?(0x0D) # Enter
       self.insert("\n")
       return
-    elsif Input.repeatex?(8) || Input.repeatex?(0x2E)
-      # Backspace
+    elsif Input.repeatex?(0x08) || Input.repeatex?(0x2E) # Backspace
       self.delete
       return
     end
@@ -639,7 +648,7 @@ class Window_MultilineTextEntry < SpriteWindow_Base
     for i in 65..90
       if Input.repeatex?(i)
         shift=(Input.press?(Input::SHIFT)) ? 0x41 : 0x61
-        insert((shift+(i-65)).chr)
+        insert((shift+i-65).chr)
         return
       end
     end
@@ -748,6 +757,9 @@ end
 
 
 
+#===============================================================================
+# 
+#===============================================================================
 class Window_TextEntry_Keyboard < Window_TextEntry
   def update
     @frame+=1
@@ -762,24 +774,23 @@ class Window_TextEntry_Keyboard < Window_TextEntry
         self.refresh
       end
       return
-    end
-    if Input.repeat?(Input::RIGHT)
+    elsif Input.repeat?(Input::RIGHT)
       if @helper.cursor < self.text.scan(/./m).length
         @helper.cursor+=1
         @frame=0
         self.refresh
       end
       return
-    end
-    # Backspace
-    if Input.repeatex?(8) || Input.repeatex?(0x2E)
-      self.delete if @helper.cursor > 0
+    elsif Input.repeatex?(0x08) || Input.repeatex?(0x2E) # Backspace
+      self.delete if @helper.cursor>0
+      return
+    elsif Input.triggerex?(0x0D) || Input.triggerex?(0x1B) # Enter, Esc
       return
     end
     if !@toUnicode
-      @toUnicode=Win32API.new("user32.dll","ToUnicode","iippii","i") rescue nil
-      @mapVirtualKey=Win32API.new("user32.dll","MapVirtualKey","ii","i") rescue nil
-      @getKeyboardState=Win32API.new("user32.dll","GetKeyboardState","p","i") rescue nil
+      @toUnicode        = Win32API.new("user32.dll","ToUnicode","iippii","i") rescue nil
+      @mapVirtualKey    = Win32API.new("user32.dll","MapVirtualKey","ii","i") rescue nil
+      @getKeyboardState = Win32API.new("user32.dll","GetKeyboardState","p","i") rescue nil
     end
     if @getKeyboardState
       kbs="\0"*256
@@ -814,7 +825,7 @@ class Window_TextEntry_Keyboard < Window_TextEntry
     for i in 65..90
       if Input.repeatex?(i)
         shift=(Input.press?(Input::SHIFT)) ? 0x41 : 0x61
-        insert((shift+(i-65)).chr)
+        insert((shift+i-65).chr)
         return
       end
     end
@@ -850,47 +861,6 @@ class Window_TextEntry_Keyboard < Window_TextEntry
       end
     end
   end
-end
-
-
-
-def Kernel.pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width=240)
-  window=Window_TextEntry_Keyboard.new(currenttext,0,0,width,64)
-  ret=""
-  window.maxlength=maxlength
-  window.visible=true
-  window.z=99999
-  pbPositionNearMsgWindow(window,msgwindow,:right)
-  window.text=currenttext
-  window.passwordChar="*" if passwordbox
-  loop do
-    Graphics.update
-    Input.update
-    if Input.triggerex?(0x1B)
-      ret=currenttext
-      break
-    end
-    if Input.triggerex?(13)
-      ret=window.text
-      break
-    end
-    window.update
-    msgwindow.update if msgwindow
-    yield if block_given?
-  end
-  window.dispose
-  Input.update
-  return ret
-end
-
-def Kernel.pbMessageFreeText(message,currenttext,passwordbox,maxlength,width=240,&block)
-  msgwindow=Kernel.pbCreateMessageWindow
-  retval=Kernel.pbMessageDisplay(msgwindow,message,true,
-     proc{|msgwindow|
-        next Kernel.pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width,&block)
-     },&block)
-  Kernel.pbDisposeMessageWindow(msgwindow)
-  return retval
 end
 
 
@@ -945,14 +915,14 @@ class PokemonEntryScene
     @sprites["helpwindow"].visible=USEKEYBOARD
     @sprites["helpwindow"].baseColor=Color.new(16,24,32)
     @sprites["helpwindow"].shadowColor=Color.new(168,184,184)
-    addBackgroundPlane(@sprites,"background","naming2bg",@viewport)
+    addBackgroundPlane(@sprites,"background","Naming/bg_2",@viewport)
     case subject
     when 1   # Player
       if $PokemonGlobal
         meta=pbGetMetadata(0,MetadataPlayerA+$PokemonGlobal.playerID)
         if meta
           @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-          @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+          @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
           @sprites["shadow"].x=33*2
           @sprites["shadow"].y=32*2
           filename=pbGetPlayerCharset(meta,1)
@@ -966,7 +936,7 @@ class PokemonEntryScene
     when 2   # Pokémon
       if pokemon
         @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-        @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+        @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
         @sprites["shadow"].x=33*2
         @sprites["shadow"].y=32*2
         @sprites["subject"]=PokemonIconSprite.new(pokemon,@viewport)
@@ -985,14 +955,9 @@ class PokemonEntryScene
         end
         pbDrawTextPositions(@sprites["gender"].bitmap,textpos)
       end
-    when 3   # Storage box
-      @sprites["subject"]=IconSprite.new(0,0,@viewport)
-      @sprites["subject"].setBitmap("Graphics/Pictures/namingStorage")
-      @sprites["subject"].x=68
-      @sprites["subject"].y=32
-    when 4   # NPC
+    when 3   # NPC
       @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-      @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+      @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
       @sprites["shadow"].x=33*2
       @sprites["shadow"].y=32*2
       @sprites["subject"]=TrainerWalkingCharSprite.new(pokemon.to_s,@viewport)
@@ -1000,6 +965,14 @@ class PokemonEntryScene
       charheight=@sprites["subject"].bitmap.height
       @sprites["subject"].x = 44*2 - charwidth/8
       @sprites["subject"].y = 38*2 - charheight/4
+    when 4   # Storage box
+      @sprites["subject"]=TrainerWalkingCharSprite.new(nil,@viewport)
+      @sprites["subject"].altcharset="Graphics/Pictures/Naming/icon_storage"
+      @sprites["subject"].animspeed=4
+      charwidth=@sprites["subject"].bitmap.width
+      charheight=@sprites["subject"].bitmap.height
+      @sprites["subject"].x = 44*2 - charwidth/8
+      @sprites["subject"].y = 26*2 - charheight/2
     end
     pbFadeInAndShow(@sprites)
   end
@@ -1009,11 +982,10 @@ class PokemonEntryScene
     loop do
       Graphics.update
       Input.update
-      if Input.triggerex?(0x1B) && @minlength==0
+      if Input.triggerex?(0x1B) && @minlength==0 # Esc
         ret=""
         break
-      end
-      if Input.triggerex?(13) && @sprites["entry"].text.length>=@minlength
+      elsif Input.triggerex?(0x0D) && @sprites["entry"].text.length>=@minlength # Enter
         ret=@sprites["entry"].text
         break
       end
@@ -1092,21 +1064,21 @@ class PokemonEntryScene2
      [("abcdefghij ,."+"klmnopqrst '-"+"uvwxyz     ♂♀"+"             "+"0123456789   ").scan(/./),_INTL("lower")],
      [(",.:;!?   ♂♀  "+"\"'()<>[]     "+"~@#%*&$      "+"+-=^_/\\|     "+"             ").scan(/./),_INTL("other")],
   ]
-  ROWS=13
-  COLUMNS=5
-  MODE1=-5
-  MODE2=-4
-  MODE3=-3
-  BACK=-2
-  OK=-1
+  ROWS    = 13
+  COLUMNS = 5
+  MODE1   = -5
+  MODE2   = -4
+  MODE3   = -3
+  BACK    = -2
+  OK      = -1
 
   class NameEntryCursor
     def initialize(viewport)
       @sprite=SpriteWrapper.new(viewport)
       @cursortype=0
-      @cursor1=AnimatedBitmap.new("Graphics/Pictures/NamingCursor1")
-      @cursor2=AnimatedBitmap.new("Graphics/Pictures/NamingCursor2")
-      @cursor3=AnimatedBitmap.new("Graphics/Pictures/NamingCursor3")
+      @cursor1=AnimatedBitmap.new("Graphics/Pictures/Naming/cursor_1")
+      @cursor2=AnimatedBitmap.new("Graphics/Pictures/Naming/cursor_2")
+      @cursor3=AnimatedBitmap.new("Graphics/Pictures/Naming/cursor_3")
       @cursorPos=0
       updateInternal
     end
@@ -1170,12 +1142,9 @@ class PokemonEntryScene2
       @cursor3.update
       updateCursorPos
       case @cursortype
-      when 0
-        @sprite.bitmap=@cursor1.bitmap
-      when 1
-        @sprite.bitmap=@cursor2.bitmap
-      when 2
-        @sprite.bitmap=@cursor3.bitmap
+      when 0; @sprite.bitmap=@cursor1.bitmap
+      when 1; @sprite.bitmap=@cursor2.bitmap
+      when 2; @sprite.bitmap=@cursor3.bitmap
       end
     end
 
@@ -1200,9 +1169,9 @@ class PokemonEntryScene2
     @helptext=helptext
     @helper=CharacterEntryHelper.new(initialText)
     @bitmaps=[
-       AnimatedBitmap.new("Graphics/Pictures/namingTab1"),
-       AnimatedBitmap.new("Graphics/Pictures/namingTab2"),
-       AnimatedBitmap.new("Graphics/Pictures/namingTab3")
+       AnimatedBitmap.new("Graphics/Pictures/Naming/overlay_tab_1"),
+       AnimatedBitmap.new("Graphics/Pictures/Naming/overlay_tab_2"),
+       AnimatedBitmap.new("Graphics/Pictures/Naming/overlay_tab_3")
     ]
     @bitmaps[3]=@bitmaps[0].bitmap.clone
     @bitmaps[4]=@bitmaps[1].bitmap.clone
@@ -1224,14 +1193,14 @@ class PokemonEntryScene2
     @bitmaps[6].fill_rect(2,2,22,4,Color.new(168,184,184))
     @bitmaps[6].fill_rect(0,0,22,4,Color.new(16,24,32))
     @sprites["bg"]=IconSprite.new(0,0,@viewport)
-    @sprites["bg"].setBitmap("Graphics/Pictures/namingbg")
+    @sprites["bg"].setBitmap("Graphics/Pictures/Naming/bg")
     case subject
     when 1   # Player
       if $PokemonGlobal
         meta=pbGetMetadata(0,MetadataPlayerA+$PokemonGlobal.playerID)
         if meta
           @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-          @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+          @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
           @sprites["shadow"].x=33*2
           @sprites["shadow"].y=32*2
           filename=pbGetPlayerCharset(meta,1)
@@ -1245,7 +1214,7 @@ class PokemonEntryScene2
     when 2   # Pokémon
       if pokemon
         @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-        @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+        @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
         @sprites["shadow"].x=33*2
         @sprites["shadow"].y=32*2
         @sprites["subject"]=PokemonIconSprite.new(pokemon,@viewport)
@@ -1264,17 +1233,9 @@ class PokemonEntryScene2
         end
         pbDrawTextPositions(@sprites["gender"].bitmap,textpos)
       end
-    when 3   # Storage box
-      @sprites["subject"]=TrainerWalkingCharSprite.new(nil,@viewport)
-      @sprites["subject"].altcharset="Graphics/Pictures/namingStorage"
-      @sprites["subject"].animspeed=4
-      charwidth=@sprites["subject"].bitmap.width
-      charheight=@sprites["subject"].bitmap.height
-      @sprites["subject"].x = 44*2 - charwidth/8
-      @sprites["subject"].y = 26*2 - charheight/2
-    when 4   # NPC
+    when 3   # NPC
       @sprites["shadow"]=IconSprite.new(0,0,@viewport)
-      @sprites["shadow"].setBitmap("Graphics/Pictures/namingShadow")
+      @sprites["shadow"].setBitmap("Graphics/Pictures/Naming/icon_shadow")
       @sprites["shadow"].x=33*2
       @sprites["shadow"].y=32*2
       @sprites["subject"]=TrainerWalkingCharSprite.new(pokemon.to_s,@viewport)
@@ -1282,6 +1243,14 @@ class PokemonEntryScene2
       charheight=@sprites["subject"].bitmap.height
       @sprites["subject"].x = 44*2 - charwidth/8
       @sprites["subject"].y = 38*2 - charheight/4
+    when 4   # Storage box
+      @sprites["subject"]=TrainerWalkingCharSprite.new(nil,@viewport)
+      @sprites["subject"].altcharset="Graphics/Pictures/Naming/icon_storage"
+      @sprites["subject"].animspeed=4
+      charwidth=@sprites["subject"].bitmap.width
+      charheight=@sprites["subject"].bitmap.height
+      @sprites["subject"].x = 44*2 - charwidth/8
+      @sprites["subject"].y = 26*2 - charheight/2
     end
     @sprites["bgoverlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     pbDoUpdateOverlay
@@ -1304,7 +1273,7 @@ class PokemonEntryScene2
     @sprites["toptab"].y=162
     @sprites["toptab"].bitmap=@bitmaps[1+3]
     @sprites["controls"]=IconSprite.new(0,0,@viewport)
-    @sprites["controls"].setBitmap("Graphics/Pictures/namingControls")
+    @sprites["controls"].setBitmap(_INTL("Graphics/Pictures/Naming/overlay_controls"))
     @sprites["controls"].x=16
     @sprites["controls"].y=96
     @init=true
@@ -1324,7 +1293,7 @@ class PokemonEntryScene2
   def pbDoUpdateOverlay2
     overlay=@sprites["overlay"].bitmap
     overlay.clear
-    modeIcon=[["Graphics/Pictures/namingMode",48+@mode*64,120,@mode*60,0,60,44]]
+    modeIcon=[[_INTL("Graphics/Pictures/Naming/icon_mode"),48+@mode*64,120,@mode*60,0,60,44]]
     pbDrawImagePositions(overlay,modeIcon)
   end
 
@@ -1347,6 +1316,7 @@ class PokemonEntryScene2
   end
 
   def pbChangeTab(newtab=@mode+1)
+    pbPlayCursorSE
     @sprites["cursor"].visible=false
     @sprites["toptab"].bitmap=@bitmaps[(newtab%3)+3]
     21.times do
@@ -1444,29 +1414,19 @@ class PokemonEntryScene2
     elsif Input.repeat?(Input::UP)
       if @cursorpos<0 # Controls
         case @cursorpos
-        when MODE1
-          @cursorpos=ROWS*(COLUMNS-1)
-        when MODE2
-          @cursorpos=ROWS*(COLUMNS-1)+2
-        when MODE3
-          @cursorpos=ROWS*(COLUMNS-1)+4
-        when BACK
-          @cursorpos=ROWS*(COLUMNS-1)+8
-        when OK
-          @cursorpos=ROWS*(COLUMNS-1)+11
+        when MODE1; @cursorpos=ROWS*(COLUMNS-1)
+        when MODE2; @cursorpos=ROWS*(COLUMNS-1)+2
+        when MODE3; @cursorpos=ROWS*(COLUMNS-1)+4
+        when BACK; @cursorpos=ROWS*(COLUMNS-1)+8
+        when OK; @cursorpos=ROWS*(COLUMNS-1)+11
         end
       elsif @cursorpos<ROWS # Top row of letters
         case @cursorpos
-        when 0,1
-          @cursorpos=MODE1
-        when 2,3
-          @cursorpos=MODE2
-        when 4,5,6
-          @cursorpos=MODE3
-        when 7,8,9,10
-          @cursorpos=BACK
-        when 11,12
-          @cursorpos=OK
+        when 0,1; @cursorpos=MODE1
+        when 2,3; @cursorpos=MODE2
+        when 4,5,6; @cursorpos=MODE3
+        when 7,8,9,10; @cursorpos=BACK
+        when 11,12; @cursorpos=OK
         end
       else
         cursordiv=wrapmod((cursordiv-1),COLUMNS)
@@ -1475,16 +1435,11 @@ class PokemonEntryScene2
     elsif Input.repeat?(Input::DOWN)
       if @cursorpos<0 # Controls
         case @cursorpos
-        when MODE1
-          @cursorpos=0
-        when MODE2
-          @cursorpos=2
-        when MODE3
-          @cursorpos=4
-        when BACK
-          @cursorpos=8
-        when OK
-          @cursorpos=11
+        when MODE1; @cursorpos=0
+        when MODE2; @cursorpos=2
+        when MODE3; @cursorpos=4
+        when BACK; @cursorpos=8
+        when OK; @cursorpos=11
         end
       elsif @cursorpos>=ROWS*(COLUMNS-1) # Bottom row of letters
         case @cursorpos
@@ -1525,21 +1480,22 @@ class PokemonEntryScene2
         pbPlayCancelSE()
         pbUpdateOverlay
       elsif Input.trigger?(Input::C)
-        if @cursorpos==BACK # Backspace
+        case @cursorpos
+        when BACK # Backspace
           @helper.delete
           pbPlayCancelSE()
           pbUpdateOverlay
-        elsif @cursorpos==OK # Done
+        when OK # Done
           pbPlayDecisionSE()
           if @helper.length>=@minlength
             ret=@helper.text
             break
           end
-        elsif @cursorpos==MODE1
+        when MODE1
           pbChangeTab(0) if @mode!=0
-        elsif @cursorpos==MODE2
+        when MODE2
           pbChangeTab(1) if @mode!=1
-        elsif @cursorpos==MODE3
+        when MODE3
           pbChangeTab(2) if @mode!=2
         else
           cursormod=@cursorpos%ROWS
@@ -1596,42 +1552,9 @@ end
 
 
 
-def pbEnterText(helptext,minlength,maxlength,initialText="",mode=0,pokemon=nil,nofadeout=false)
-  ret=""
-  if USEKEYBOARDTEXTENTRY
-    pbFadeOutIn(99999,nofadeout){
-       sscene=PokemonEntryScene.new
-       sscreen=PokemonEntry.new(sscene)
-       ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
-    }
-  else
-    pbFadeOutIn(99999,nofadeout){
-       sscene=PokemonEntryScene2.new
-       sscreen=PokemonEntry.new(sscene)
-       ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
-    }
-  end
-  return ret
-end
-
-def pbEnterPlayerName(helptext,minlength,maxlength,initialText="",nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,1,nil,nofadeout)
-end
-
-def pbEnterPokemonName(helptext,minlength,maxlength,initialText="",pokemon=nil,nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,2,pokemon,nofadeout)
-end
-
-def pbEnterBoxName(helptext,minlength,maxlength,initialText="",nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,3,nil,nofadeout)
-end
-
-def pbEnterNPCName(helptext,minlength,maxlength,initialText="",id=0,nofadeout=false)
-  return pbEnterText(helptext,minlength,maxlength,initialText,4,id,nofadeout)
-end
-
-
-
+#===============================================================================
+# Interpreter functions for naming the player
+#===============================================================================
 class Interpreter
   def command_303
     if $Trainer
@@ -1659,8 +1582,7 @@ end
 class Game_Interpreter
   def command_303
     if $Trainer
-       $Trainer.name=pbEnterPlayerName(_INTL("Your name?"),1,
-          @params[1],$Trainer.name)
+       $Trainer.name=pbEnterPlayerName(_INTL("Your name?"),1,@params[1],$Trainer.name)
       return true
     end
     if $game_actors && $data_actors && $data_actors[@params[0]] != nil
@@ -1676,4 +1598,82 @@ class Game_Interpreter
     end
     return true
   end
+end
+
+
+
+#===============================================================================
+# 
+#===============================================================================
+def pbEnterText(helptext,minlength,maxlength,initialText="",mode=0,pokemon=nil,nofadeout=false)
+  ret=""
+  if ($PokemonSystem.textinput==1 rescue false)   # Keyboard
+    pbFadeOutIn(99999,nofadeout){
+       sscene=PokemonEntryScene.new
+       sscreen=PokemonEntry.new(sscene)
+       ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
+    }
+  else   # Cursor
+    pbFadeOutIn(99999,nofadeout){
+       sscene=PokemonEntryScene2.new
+       sscreen=PokemonEntry.new(sscene)
+       ret=sscreen.pbStartScreen(helptext,minlength,maxlength,initialText,mode,pokemon)
+    }
+  end
+  return ret
+end
+
+def pbEnterPlayerName(helptext,minlength,maxlength,initialText="",nofadeout=false)
+  return pbEnterText(helptext,minlength,maxlength,initialText,1,nil,nofadeout)
+end
+
+def pbEnterPokemonName(helptext,minlength,maxlength,initialText="",pokemon=nil,nofadeout=false)
+  return pbEnterText(helptext,minlength,maxlength,initialText,2,pokemon,nofadeout)
+end
+
+def pbEnterNPCName(helptext,minlength,maxlength,initialText="",id=0,nofadeout=false)
+  return pbEnterText(helptext,minlength,maxlength,initialText,3,id,nofadeout)
+end
+
+def pbEnterBoxName(helptext,minlength,maxlength,initialText="",nofadeout=false)
+  return pbEnterText(helptext,minlength,maxlength,initialText,4,nil,nofadeout)
+end
+
+def Kernel.pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width=240)
+  window=Window_TextEntry_Keyboard.new(currenttext,0,0,width,64)
+  ret=""
+  window.maxlength=maxlength
+  window.visible=true
+  window.z=99999
+  pbPositionNearMsgWindow(window,msgwindow,:right)
+  window.text=currenttext
+  window.passwordChar="*" if passwordbox
+  loop do
+    Graphics.update
+    Input.update
+    if Input.triggerex?(0x1B)
+      ret=currenttext
+      break
+    end
+    if Input.triggerex?(13)
+      ret=window.text
+      break
+    end
+    window.update
+    msgwindow.update if msgwindow
+    yield if block_given?
+  end
+  window.dispose
+  Input.update
+  return ret
+end
+
+def Kernel.pbMessageFreeText(message,currenttext,passwordbox,maxlength,width=240,&block)
+  msgwindow=Kernel.pbCreateMessageWindow
+  retval=Kernel.pbMessageDisplay(msgwindow,message,true,
+     proc{|msgwindow|
+        next Kernel.pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width,&block)
+     },&block)
+  Kernel.pbDisposeMessageWindow(msgwindow)
+  return retval
 end

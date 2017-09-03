@@ -1,4 +1,5 @@
 module PBEggGroups
+  Undiscovered = 0 # NoEggs, None, NA
   Monster      = 1
   Water1       = 2
   Bug          = 3
@@ -13,13 +14,13 @@ module PBEggGroups
   Water2       = 12
   Ditto        = 13
   Dragon       = 14
-  Undiscovered = 15 # NoEggs, None, NA
 
-  def PBEggGroups.maxValue; 15; end
+  def PBEggGroups.maxValue; 14; end
   def PBEggGroups.getCount; 15; end
 
   def PBEggGroups.getName(id)
-    names=["",
+    names = [
+       _INTL("Undiscovered"),
        _INTL("Monster"),
        _INTL("Water 1"),
        _INTL("Bug"),
@@ -33,8 +34,7 @@ module PBEggGroups
        _INTL("Amorphous"),
        _INTL("Water 2"),
        _INTL("Ditto"),
-       _INTL("Dragon"),
-       _INTL("Undiscovered")
+       _INTL("Dragon")
     ]
     return names[id]
   end

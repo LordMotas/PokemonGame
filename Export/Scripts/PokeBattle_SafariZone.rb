@@ -111,7 +111,7 @@ class PokeBattle_SafariZone
       pbDisplayPaused(_INTL("Wild {1} appeared!",wildpoke.name))
       @scene.pbSafariStart
       dexdata=pbOpenDexData
-      pbDexDataOffset(dexdata,wildpoke.species,16)
+      pbDexDataOffset(dexdata,wildpoke.fSpecies,16)
       rareness=dexdata.fgetb # Get rareness from dexdata file
       dexdata.close
       g=(rareness*100)/1275

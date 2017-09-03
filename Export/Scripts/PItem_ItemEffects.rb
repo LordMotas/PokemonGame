@@ -1,103 +1,13 @@
 #===============================================================================
-# Custom Scripts:
-# HMs into Items
-# by FL
-#===============================================================================
-#===============================================================================
 # UseFromBag handlers
 # Return values: 0 = not used
 #                1 = used, item not consumed
 #                2 = close the Bag to use, item not consumed
 #                3 = used, item consumed
 #                4 = close the Bag to use, item consumed
+# If there is no UseFromBag handler for an item being used from the Bag (not on
+# a Pokémon and not a TM/HM), calls the UseInField handler for it instead.
 #===============================================================================
-
-def pbRepel(item,steps)
-  if $PokemonGlobal.repel>0
-    Kernel.pbMessage(_INTL("But the effects of a Repel lingered from earlier."))
-    return 0
-  else
-    Kernel.pbMessage(_INTL("{1} used the {2}.",$Trainer.name,PBItems.getName(item)))
-    $PokemonGlobal.repel=steps
-    return 3
-  end
-end
-
-ItemHandlers::UseFromBag.add(:REPEL,proc{|item| pbRepel(item,100) })
-
-ItemHandlers::UseFromBag.add(:SUPERREPEL,proc{|item| pbRepel(item,200) })
-
-ItemHandlers::UseFromBag.add(:MAXREPEL,proc{|item| pbRepel(item,250) })
-
-ItemHandlers::UseInField.add(:SCYTHE,proc{|item|
-  useMoveCut if canUseMoveCut?
-})
-
-ItemHandlers::UseFromBag.add(:SCYTHE,proc{|item|
-  next canUseMoveCut? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:SLEDGEHAMMER,proc{|item|
-  useMoveRockSmash if canUseMoveRockSmash?
-})
-
-ItemHandlers::UseFromBag.add(:SLEDGEHAMMER,proc{|item|
-  next canUseMoveRockSmash? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:PRYBAR,proc{|item|
-  useMoveStrength if canUseMoveStrength?
-})
-
-ItemHandlers::UseFromBag.add(:PRYBAR,proc{|item|
-  next canUseMoveStrength? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:LANTERN,proc{|item|
-  useMoveFlash if canUseMoveFlash?
-})
-
-ItemHandlers::UseFromBag.add(:LANTERN,proc{|item|
-  next canUseMoveFlash? ? 2 : 0
-})
-
-ItemHandlers::UseInField.add(:SCUBAMASK,proc{|item|
-  useMoveDive if canUseMoveDive?
-})
-
-ItemHandlers::UseFromBag.add(:SCUBAMASK,proc{|item|
-  next canUseMoveDive? ? 2 : 0
-})
-
-Events.onStepTaken+=proc {
-   if !PBTerrain.isIce?($game_player.terrain_tag)   # Shouldn't count down if on ice
-     if $PokemonGlobal.repel>0
-       $PokemonGlobal.repel-=1
-       if $PokemonGlobal.repel<=0
-         Kernel.pbMessage(_INTL("Repel's effect wore off..."))
-         ret=pbChooseItemFromList(_INTL("Do you want to use another Repel?"),1,
-            :REPEL,:SUPERREPEL,:MAXREPEL)
-         pbUseItem($PokemonBag,ret) if ret>0
-       end
-     end
-   end
-}
-
-ItemHandlers::UseFromBag.add(:BLACKFLUTE,proc{|item|
-   Kernel.pbMessage(_INTL("{1} used the {2}.",$Trainer.name,PBItems.getName(item)))
-   Kernel.pbMessage(_INTL("Wild Pokémon will be repelled."))
-   $PokemonMap.blackFluteUsed=true
-   $PokemonMap.whiteFluteUsed=false
-   next 1
-})
-
-ItemHandlers::UseFromBag.add(:WHITEFLUTE,proc{|item|
-   Kernel.pbMessage(_INTL("{1} used the {2}.",$Trainer.name,PBItems.getName(item)))
-   Kernel.pbMessage(_INTL("Wild Pokémon will be lured."))
-   $PokemonMap.blackFluteUsed=false
-   $PokemonMap.whiteFluteUsed=true
-   next 1
-})
 
 ItemHandlers::UseFromBag.add(:HONEY,proc{|item| next 4 })
 
@@ -114,40 +24,21 @@ ItemHandlers::UseFromBag.add(:ESCAPEROPE,proc{|item|
    end
 })
 
-ItemHandlers::UseFromBag.add(:SACREDASH,proc{|item|
-   revived=0
-   if $Trainer.pokemonCount==0
-     Kernel.pbMessage(_INTL("There is no Pokémon."))
-     next 0
-   end
-   pbFadeOutIn(99999){
-      scene=PokemonScreen_Scene.new
-      screen=PokemonScreen.new(scene,$Trainer.party)
-      screen.pbStartScene(_INTL("Using item..."),false)
-      for i in $Trainer.party
-       if i.hp<=0 && !i.isEgg?
-         revived+=1
-         i.heal
-         screen.pbDisplay(_INTL("{1}'s HP was restored.",i.name))
-       end
-     end
-     if revived==0
-       screen.pbDisplay(_INTL("It won't have any effect."))
-     end
-     screen.pbEndScene
-   }
-   next (revived==0) ? 0 : 3
-})
-
 ItemHandlers::UseFromBag.add(:BICYCLE,proc{|item|
-   next pbBikeCheck ? 2 : 0
+   next (pbBikeCheck) ? 2 : 0
 })
 
 ItemHandlers::UseFromBag.copy(:BICYCLE,:MACHBIKE,:ACROBIKE)
 
+ItemHandlers::UseText.add(:BICYCLE,proc{|item|
+   next ($PokemonGlobal.bicycle) ? _INTL("Walk") : _INTL("Use")
+})
+
+ItemHandlers::UseText.copy(:BICYCLE,:MACHBIKE,:ACROBIKE)
+
 ItemHandlers::UseFromBag.add(:OLDROD,proc{|item|
    terrain=Kernel.pbFacingTerrainTag
-   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
+   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction,$game_player)
    if (PBTerrain.isWater?(terrain) && !$PokemonGlobal.surfing && notCliff) ||
       (PBTerrain.isWater?(terrain) && $PokemonGlobal.surfing)
      next 2
@@ -163,59 +54,164 @@ ItemHandlers::UseFromBag.add(:ITEMFINDER,proc{|item| next 2 })
 
 ItemHandlers::UseFromBag.copy(:ITEMFINDER,:DOWSINGMCHN,:DOWSINGMACHINE)
 
-ItemHandlers::UseFromBag.add(:TOWNMAP,proc{|item|
-   pbShowMap(-1,false)
-   next 1 # Continue
-})
+#===============================================================================
+# ConfirmUseInField handlers
+# Return values: true/false
+# Called when an item is used from the Ready Menu.
+# If an item does not have this handler, it is treated as returning true.
+#===============================================================================
 
-ItemHandlers::UseFromBag.add(:COINCASE,proc{|item|
-   Kernel.pbMessage(_INTL("Coins: {1}",$PokemonGlobal.coins))
-   next 1 # Continue
-})
-
-ItemHandlers::UseFromBag.add(:EXPALL,proc{|item|
-   $PokemonBag.pbChangeItem(:EXPALL,:EXPALLOFF)
-   Kernel.pbMessage(_INTL("The Exp Share was turned off."))
-   next 1 # Continue
-})
-
-ItemHandlers::UseFromBag.add(:EXPALLOFF,proc{|item|
-   $PokemonBag.pbChangeItem(:EXPALLOFF,:EXPALL)
-   Kernel.pbMessage(_INTL("The Exp Share was turned on."))
-   next 1 # Continue
+ItemHandlers::ConfirmUseInField.add(:ESCAPEROPE,proc{|item|
+   escape = ($PokemonGlobal.escapePoint rescue nil)
+   if !escape || escape==[]
+     Kernel.pbMessage(_INTL("Can't use that here."))
+     next false
+   end
+   if $game_player.pbHasDependentEvents?
+     Kernel.pbMessage(_INTL("It can't be used when you have someone with you."))
+     next false
+   end
+   mapname = pbGetMapNameFromId(escape[0])
+   next Kernel.pbConfirmMessage(_INTL("Want to escape from here and return to {1}?",mapname))
 })
 
 #===============================================================================
 # UseInField handlers
+# Return values: 0 = not used
+#                1 = used, item not consumed
+#                3 = used, item consumed
+# Called if an item is used from the Bag (not on a Pokémon and not a TM/HM) and
+# there is no UseFromBag handler above.
+# If an item has this handler, it can be registered to the Ready Menu.
 #===============================================================================
 
+def pbRepel(item,steps)
+  if $PokemonGlobal.repel>0
+    Kernel.pbMessage(_INTL("But a repellent's effect still lingers from earlier."))
+    return 0
+  else
+    pbUseItemMessage(item)
+    $PokemonGlobal.repel=steps
+    return 3
+  end
+end
+
+ItemHandlers::UseInField.add(:REPEL,proc{|item| pbRepel(item,100) })
+
+ItemHandlers::UseInField.add(:SUPERREPEL,proc{|item| pbRepel(item,200) })
+
+ItemHandlers::UseInField.add(:MAXREPEL,proc{|item| pbRepel(item,250) })
+
+Events.onStepTaken+=proc {
+  if !PBTerrain.isIce?($game_player.terrain_tag) # Shouldn't count down if on ice
+    if $PokemonGlobal.repel>0
+      $PokemonGlobal.repel-=1
+      if $PokemonGlobal.repel<=0
+        if $PokemonBag.pbHasItem?(:REPEL) ||
+           $PokemonBag.pbHasItem?(:SUPERREPEL) ||
+           $PokemonBag.pbHasItem?(:MAXREPEL)
+          if Kernel.pbConfirmMessage(_INTL("The repellent's effect wore off!\r\nWould you like to use another one?"))
+            ret = 0
+            pbFadeOutIn(99999){
+              scene = PokemonBag_Scene.new
+              screen = PokemonBagScreen.new(scene,$PokemonBag)
+              ret = screen.pbChooseItemScreen(Proc.new{|item|
+                isConst?(item,PBItems,:REPEL) ||
+                isConst?(item,PBItems,:SUPERREPEL) ||
+                isConst?(item,PBItems,:MAXREPEL)
+              })
+            }
+            pbUseItem($PokemonBag,ret) if ret>0
+          end
+        else
+          Kernel.pbMessage(_INTL("The repellent's effect wore off!"))
+        end
+      end
+    end
+  end
+}
+
+ItemHandlers::UseInField.add(:BLACKFLUTE,proc{|item|
+   pbUseItemMessage(item)
+   Kernel.pbMessage(_INTL("Wild Pokémon will be repelled."))
+   $PokemonMap.blackFluteUsed=true
+   $PokemonMap.whiteFluteUsed=false
+   next 1
+})
+
+ItemHandlers::UseInField.add(:WHITEFLUTE,proc{|item|
+   pbUseItemMessage(item)
+   Kernel.pbMessage(_INTL("Wild Pokémon will be lured."))
+   $PokemonMap.blackFluteUsed=false
+   $PokemonMap.whiteFluteUsed=true
+   next 1
+})
+
 ItemHandlers::UseInField.add(:HONEY,proc{|item|  
-   Kernel.pbMessage(_INTL("{1} used the {2}.",$Trainer.name,PBItems.getName(item)))
+   pbUseItemMessage(item)
    pbSweetScent
+   next 3
 })
 
 ItemHandlers::UseInField.add(:ESCAPEROPE,proc{|item|
-   escape=($PokemonGlobal.escapePoint rescue nil)
+   escape = ($PokemonGlobal.escapePoint rescue nil)
    if !escape || escape==[]
      Kernel.pbMessage(_INTL("Can't use that here."))
-     next
+     next 0
    end
    if $game_player.pbHasDependentEvents?
      Kernel.pbMessage(_INTL("It can't be used when you have someone with you."))
-     next
+     next 0
    end
-   Kernel.pbMessage(_INTL("{1} used the {2}.",$Trainer.name,PBItems.getName(item)))
+   pbUseItemMessage(item)
    pbFadeOutIn(99999){
+      $game_temp.player_new_map_id    = escape[0]
+      $game_temp.player_new_x         = escape[1]
+      $game_temp.player_new_y         = escape[2]
+      $game_temp.player_new_direction = escape[3]
       Kernel.pbCancelVehicles
-      $game_temp.player_new_map_id=escape[0]
-      $game_temp.player_new_x=escape[1]
-      $game_temp.player_new_y=escape[2]
-      $game_temp.player_new_direction=escape[3]
       $scene.transfer_player
       $game_map.autoplay
       $game_map.refresh
    }
    pbEraseEscapePoint
+   next 3
+})
+
+ItemHandlers::UseInField.add(:SACREDASH,proc{|item|
+   if $Trainer.pokemonCount==0
+     Kernel.pbMessage(_INTL("There is no Pokémon."))
+     next 0
+   end
+   canrevive = false
+   for i in $Trainer.pokemonParty
+     if i.isFainted?
+       canrevive = true; break
+     end
+   end
+   if !canrevive
+     Kernel.pbMessage(_INTL("It won't have any effect."))
+     next 0
+   end
+   revived = 0
+   pbFadeOutIn(99999){
+      scene = PokemonParty_Scene.new
+      screen = PokemonPartyScreen.new(scene,$Trainer.party)
+      screen.pbStartScene(_INTL("Using item..."),false)
+      for i in 0...$Trainer.party.length
+        if $Trainer.party[i].isFainted?
+          revived += 1
+          $Trainer.party[i].heal
+          screen.pbRefreshSingle(i)
+          screen.pbDisplay(_INTL("{1}'s HP was restored.",$Trainer.party[i].name))
+        end
+      end
+      if revived==0
+        screen.pbDisplay(_INTL("It won't have any effect."))
+      end
+      screen.pbEndScene
+   }
+   next (revived==0) ? 0 : 3
 })
 
 ItemHandlers::UseInField.add(:BICYCLE,proc{|item|
@@ -225,54 +221,59 @@ ItemHandlers::UseInField.add(:BICYCLE,proc{|item|
      else
        Kernel.pbMountBike 
      end
+     next 1
    end
+   next 0
 })
 
 ItemHandlers::UseInField.copy(:BICYCLE,:MACHBIKE,:ACROBIKE)
 
 ItemHandlers::UseInField.add(:OLDROD,proc{|item|
    terrain=Kernel.pbFacingTerrainTag
-   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
+   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction,$game_player)
    if !PBTerrain.isWater?(terrain) || (!notCliff && !$PokemonGlobal.surfing)
      Kernel.pbMessage(_INTL("Can't use that here."))
-     next
+     next 0
    end
    encounter=$PokemonEncounters.hasEncounter?(EncounterTypes::OldRod)
    if pbFishing(encounter,1)
      pbEncounter(EncounterTypes::OldRod)
    end
+   next 1
 })
 
 ItemHandlers::UseInField.add(:GOODROD,proc{|item|
    terrain=Kernel.pbFacingTerrainTag
-   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
+   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction,$game_player)
    if !PBTerrain.isWater?(terrain) || (!notCliff && !$PokemonGlobal.surfing)
      Kernel.pbMessage(_INTL("Can't use that here."))
-     next
+     next 0
    end
    encounter=$PokemonEncounters.hasEncounter?(EncounterTypes::GoodRod)
    if pbFishing(encounter,2)
      pbEncounter(EncounterTypes::GoodRod)
    end
+   next 1
 })
 
 ItemHandlers::UseInField.add(:SUPERROD,proc{|item|
    terrain=Kernel.pbFacingTerrainTag
-   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction)
+   notCliff=$game_map.passable?($game_player.x,$game_player.y,$game_player.direction,$game_player)
    if !PBTerrain.isWater?(terrain) || (!notCliff && !$PokemonGlobal.surfing)
      Kernel.pbMessage(_INTL("Can't use that here."))
-     next
+     next 0
    end
    encounter=$PokemonEncounters.hasEncounter?(EncounterTypes::SuperRod)
    if pbFishing(encounter,3)
      pbEncounter(EncounterTypes::SuperRod)
    end
+   next 1
 })
 
 ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
    event=pbClosestHiddenItem
    if !event
-     Kernel.pbMessage(_INTL("... ... ... ...Nope!\r\nThere's no response."))
+     Kernel.pbMessage(_INTL("... \\wt[10]... \\wt[10]... \\wt[10]...\\wt[10]Nope!\r\nThere's no response."))
    else
      offsetX=event.x-$game_player.x
      offsetY=event.y-$game_player.y
@@ -283,7 +284,7 @@ ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
          $game_player.turn_right_90 if (i&7)==0
          pbUpdateSceneMap
        end
-       Kernel.pbMessage(_INTL("The {1}'s indicating something right underfoot!\1",PBItems.getName(item)))
+       Kernel.pbMessage(_INTL("The {1}'s indicating something right underfoot!",PBItems.getName(item)))
      else
        direction=$game_player.direction
        if offsetX.abs>offsetY.abs
@@ -306,50 +307,63 @@ ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
        Kernel.pbMessage(_INTL("There's an item buried around here!"))
      end
    end
+   next 1
 })
 
 ItemHandlers::UseInField.copy(:ITEMFINDER,:DOWSINGMCHN,:DOWSINGMACHINE)
 
 ItemHandlers::UseInField.add(:TOWNMAP,proc{|item|
    pbShowMap(-1,false)
+   next 1
 })
 
 ItemHandlers::UseInField.add(:COINCASE,proc{|item|
-   Kernel.pbMessage(_INTL("Coins: {1}",$PokemonGlobal.coins))
-   next 1 # Continue
+   Kernel.pbMessage(_INTL("Coins: {1}",pbCommaNumber($PokemonGlobal.coins)))
+   next 1
+})
+
+ItemHandlers::UseInField.add(:EXPALL,proc{|item|
+   $PokemonBag.pbChangeItem(:EXPALL,:EXPALLOFF)
+   Kernel.pbMessage(_INTL("The Exp Share was turned off."))
+   next 1
+})
+
+ItemHandlers::UseInField.add(:EXPALLOFF,proc{|item|
+   $PokemonBag.pbChangeItem(:EXPALLOFF,:EXPALL)
+   Kernel.pbMessage(_INTL("The Exp Share was turned on."))
+   next 1
 })
 
 #===============================================================================
 # UseOnPokemon handlers
 #===============================================================================
 
-ItemHandlers::UseOnPokemon.add(:FIRESTONE,proc{|item,pokemon,scene|
-   if (pokemon.isShadow? rescue false)
-     scene.pbDisplay(_INTL("It won't have any effect."))
-     next false
-   end
-   newspecies=pbCheckEvolution(pokemon,item)
-   if newspecies<=0
-     scene.pbDisplay(_INTL("It won't have any effect."))
-     next false
-   else
-     pbFadeOutInWithMusic(99999){
-        evo=PokemonEvolutionScene.new
-        evo.pbStartScreen(pokemon,newspecies)
-        evo.pbEvolution(false)
-        evo.pbEndScreen
-        if scene.is_a?(PokemonBag_Scene)
-          scene.pbRefreshAnnotations(proc{|p| pbCheckEvolution(p,item)>0 })
-          scene.pbRefresh
-        end
-     }
-     next true
-   end
+# Applies to all items defined as an evolution stone.
+# No need to add more code for new ones.
+ItemHandlers::UseOnPokemon.addIf(proc{|item| pbIsEvolutionStone?(item)},
+   proc{|item,pokemon,scene|
+     if (pokemon.isShadow? rescue false)
+       scene.pbDisplay(_INTL("It won't have any effect."))
+       next false
+     end
+     newspecies=pbCheckEvolution(pokemon,item)
+     if newspecies<=0
+       scene.pbDisplay(_INTL("It won't have any effect."))
+       next false
+     else
+       pbFadeOutInWithMusic(99999){
+          evo=PokemonEvolutionScene.new
+          evo.pbStartScreen(pokemon,newspecies)
+          evo.pbEvolution(false)
+          evo.pbEndScreen
+          if scene.is_a?(PokemonBag_Scene)
+            scene.pbRefreshAnnotations(proc{|p| pbCheckEvolution(p,item)>0 })
+            scene.pbRefresh
+          end
+       }
+       next true
+     end
 })
-
-ItemHandlers::UseOnPokemon.copy(:FIRESTONE,
-   :THUNDERSTONE,:WATERSTONE,:LEAFSTONE,:MOONSTONE,
-   :SUNSTONE,:DUSKSTONE,:DAWNSTONE,:SHINYSTONE)
 
 ItemHandlers::UseOnPokemon.add(:POTION,proc{|item,pokemon,scene|
    next pbHPItem(pokemon,20,scene)
@@ -541,7 +555,7 @@ ItemHandlers::UseOnPokemon.add(:ENERGYPOWDER,proc{|item,pokemon,scene|
 
 ItemHandlers::UseOnPokemon.add(:ENERGYROOT,proc{|item,pokemon,scene|
    if pbHPItem(pokemon,200,scene)
-     pokemon.changeHappiness("Energy Root")
+     pokemon.changeHappiness("energyroot")
      next true
    end
    next false
@@ -567,7 +581,7 @@ ItemHandlers::UseOnPokemon.add(:REVIVALHERB,proc{|item,pokemon,scene|
    else
      pokemon.healHP
      pokemon.healStatus
-     pokemon.changeHappiness("Revival Herb")
+     pokemon.changeHappiness("revivalherb")
      scene.pbRefresh
      scene.pbDisplay(_INTL("{1}'s HP was restored.",pokemon.name))
      next true
@@ -1197,7 +1211,7 @@ ItemHandlers::BattleUseOnPokemon.add(:ENERGYPOWDER,proc{|item,pokemon,battler,sc
 
 ItemHandlers::BattleUseOnPokemon.add(:ENERGYROOT,proc{|item,pokemon,battler,scene|
    if pbBattleHPItem(pokemon,battler,200,scene)
-     pokemon.changeHappiness("Energy Root")
+     pokemon.changeHappiness("energyroot")
      next true
    end
    next false
@@ -1231,7 +1245,7 @@ ItemHandlers::BattleUseOnPokemon.add(:REVIVALHERB,proc{|item,pokemon,battler,sce
          break
        end
      end
-     pokemon.changeHappiness("Revival Herb")
+     pokemon.changeHappiness("revivalherb")
      scene.pbRefresh
      scene.pbDisplay(_INTL("{1}'s HP was restored.",pokemon.name))
      next true
@@ -1329,11 +1343,10 @@ ItemHandlers::BattleUseOnBattler.add(:XATTACK,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbCanIncreaseStatStage?(PBStats::ATTACK,battler,false)
      battler.pbIncreaseStat(PBStats::ATTACK,1,battler,true)
-     return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
+     next true
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   next false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XATTACK2,proc{|item,battler,scene|
@@ -1342,10 +1355,9 @@ ItemHandlers::BattleUseOnBattler.add(:XATTACK2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::ATTACK,battler,false)
      battler.pbIncreaseStat(PBStats::ATTACK,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XATTACK3,proc{|item,battler,scene|
@@ -1354,10 +1366,9 @@ ItemHandlers::BattleUseOnBattler.add(:XATTACK3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::ATTACK,battler,false)
      battler.pbIncreaseStat(PBStats::ATTACK,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XATTACK6,proc{|item,battler,scene|
@@ -1365,10 +1376,9 @@ ItemHandlers::BattleUseOnBattler.add(:XATTACK6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::ATTACK,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XDEFEND,proc{|item,battler,scene|
@@ -1377,10 +1387,9 @@ ItemHandlers::BattleUseOnBattler.add(:XDEFEND,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::DEFENSE,battler,false)
      battler.pbIncreaseStat(PBStats::DEFENSE,1,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XDEFEND,:XDEFENSE)
@@ -1391,10 +1400,9 @@ ItemHandlers::BattleUseOnBattler.add(:XDEFEND2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::DEFENSE,battler,false)
      battler.pbIncreaseStat(PBStats::DEFENSE,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XDEFEND2,:XDEFENSE2)
@@ -1405,10 +1413,9 @@ ItemHandlers::BattleUseOnBattler.add(:XDEFEND3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::DEFENSE,battler,false)
      battler.pbIncreaseStat(PBStats::DEFENSE,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XDEFEND3,:XDEFENSE3)
@@ -1418,10 +1425,9 @@ ItemHandlers::BattleUseOnBattler.add(:XDEFEND6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::DEFENSE,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XDEFEND6,:XDEFENSE6)
@@ -1432,10 +1438,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPECIAL,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPATK,battler,false)
      battler.pbIncreaseStat(PBStats::SPATK,1,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XSPECIAL,:XSPATK)
@@ -1446,10 +1451,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPECIAL2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPATK,battler,false)
      battler.pbIncreaseStat(PBStats::SPATK,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XSPECIAL2,:XSPATK2)
@@ -1460,10 +1464,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPECIAL3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPATK,battler,false)
      battler.pbIncreaseStat(PBStats::SPATK,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XSPECIAL3,:XSPATK3)
@@ -1473,10 +1476,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPECIAL6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::SPATK,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:XSPECIAL6,:XSPATK6)
@@ -1487,10 +1489,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPDEF,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPDEF,battler,false)
      battler.pbIncreaseStat(PBStats::SPDEF,1,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPDEF2,proc{|item,battler,scene|
@@ -1499,10 +1500,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPDEF2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPDEF,battler,false)
      battler.pbIncreaseStat(PBStats::SPDEF,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPDEF3,proc{|item,battler,scene|
@@ -1511,10 +1511,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPDEF3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPDEF,battler,false)
      battler.pbIncreaseStat(PBStats::SPDEF,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPDEF6,proc{|item,battler,scene|
@@ -1522,10 +1521,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPDEF6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::SPDEF,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPEED,proc{|item,battler,scene|
@@ -1534,10 +1532,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPEED,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPEED,battler,false)
      battler.pbIncreaseStat(PBStats::SPEED,1,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPEED2,proc{|item,battler,scene|
@@ -1546,10 +1543,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPEED2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPEED,battler,false)
      battler.pbIncreaseStat(PBStats::SPEED,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPEED3,proc{|item,battler,scene|
@@ -1558,10 +1554,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPEED3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::SPEED,battler,false)
      battler.pbIncreaseStat(PBStats::SPEED,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XSPEED6,proc{|item,battler,scene|
@@ -1569,10 +1564,9 @@ ItemHandlers::BattleUseOnBattler.add(:XSPEED6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::SPEED,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XACCURACY,proc{|item,battler,scene|
@@ -1581,10 +1575,9 @@ ItemHandlers::BattleUseOnBattler.add(:XACCURACY,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::ACCURACY,battler,false)
      battler.pbIncreaseStat(PBStats::ACCURACY,1,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XACCURACY2,proc{|item,battler,scene|
@@ -1593,10 +1586,9 @@ ItemHandlers::BattleUseOnBattler.add(:XACCURACY2,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::ACCURACY,battler,false)
      battler.pbIncreaseStat(PBStats::ACCURACY,2,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XACCURACY3,proc{|item,battler,scene|
@@ -1605,10 +1597,9 @@ ItemHandlers::BattleUseOnBattler.add(:XACCURACY3,proc{|item,battler,scene|
    if battler.pbCanIncreaseStatStage?(PBStats::ACCURACY,battler,false)
      battler.pbIncreaseStat(PBStats::ACCURACY,3,battler,true)
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:XACCURACY6,proc{|item,battler,scene|
@@ -1616,10 +1607,9 @@ ItemHandlers::BattleUseOnBattler.add(:XACCURACY6,proc{|item,battler,scene|
    scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
    if battler.pbIncreaseStatWithCause(PBStats::ACCURACY,6,battler,PBItems.getName(item))
      return true
-   else
-     scene.pbDisplay(_INTL("But it had no effect!"))
-     return false  
    end
+   scene.pbDisplay(_INTL("But it had no effect!"))
+   return false  
 })
 
 ItemHandlers::BattleUseOnBattler.add(:DIREHIT,proc{|item,battler,scene|
@@ -1628,11 +1618,10 @@ ItemHandlers::BattleUseOnBattler.add(:DIREHIT,proc{|item,battler,scene|
    if battler.effects[PBEffects::FocusEnergy]>=1
      scene.pbDisplay(_INTL("But it had no effect!"))
      return false
-   else
-     battler.effects[PBEffects::FocusEnergy]=1
-     scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
-     return true
    end
+   battler.effects[PBEffects::FocusEnergy]=1
+   scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
+   return true
 })
 
 ItemHandlers::BattleUseOnBattler.add(:DIREHIT2,proc{|item,battler,scene|
@@ -1641,11 +1630,10 @@ ItemHandlers::BattleUseOnBattler.add(:DIREHIT2,proc{|item,battler,scene|
    if battler.effects[PBEffects::FocusEnergy]>=2
      scene.pbDisplay(_INTL("But it had no effect!"))
      return false
-   else
-     battler.effects[PBEffects::FocusEnergy]=2
-     scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
-     return true
    end
+   battler.effects[PBEffects::FocusEnergy]=2
+   scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
+   return true
 })
 
 ItemHandlers::BattleUseOnBattler.add(:DIREHIT3,proc{|item,battler,scene|
@@ -1654,11 +1642,10 @@ ItemHandlers::BattleUseOnBattler.add(:DIREHIT3,proc{|item,battler,scene|
    if battler.effects[PBEffects::FocusEnergy]>=3
      scene.pbDisplay(_INTL("But it had no effect!"))
      return false
-   else
-     battler.effects[PBEffects::FocusEnergy]=3
-     scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
-     return true
    end
+   battler.effects[PBEffects::FocusEnergy]=3
+   scene.pbDisplay(_INTL("{1} is getting pumped!",battler.pbThis))
+   return true
 })
 
 ItemHandlers::BattleUseOnBattler.add(:GUARDSPEC,proc{|item,battler,scene|
@@ -1667,15 +1654,14 @@ ItemHandlers::BattleUseOnBattler.add(:GUARDSPEC,proc{|item,battler,scene|
    if battler.pbOwnSide.effects[PBEffects::Mist]>0
      scene.pbDisplay(_INTL("But it had no effect!"))
      return false
-   else
-     battler.pbOwnSide.effects[PBEffects::Mist]=5
-     if !scene.pbIsOpposing?(attacker.index)
-       scene.pbDisplay(_INTL("Your team became shrouded in mist!"))
-     else
-       scene.pbDisplay(_INTL("The foe's team became shrouded in mist!"))
-     end
-     return true
    end
+   battler.pbOwnSide.effects[PBEffects::Mist]=5
+   if !scene.pbIsOpposing?(attacker.index)
+     scene.pbDisplay(_INTL("Your team became shrouded in mist!"))
+   else
+     scene.pbDisplay(_INTL("The foe's team became shrouded in mist!"))
+   end
+   return true
 })
 
 ItemHandlers::BattleUseOnBattler.add(:POKEDOLL,proc{|item,battler,scene|
@@ -1683,11 +1669,10 @@ ItemHandlers::BattleUseOnBattler.add(:POKEDOLL,proc{|item,battler,scene|
    if battle.opponent
      scene.pbDisplay(_INTL("Can't use that here."))
      return false
-   else
-     playername=battle.pbPlayer.name
-     scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
-     return true
    end
+   playername=battle.pbPlayer.name
+   scene.pbDisplay(_INTL("{1} used the {2}.",playername,PBItems.getName(item)))
+   return true
 })
 
 ItemHandlers::BattleUseOnBattler.copy(:POKEDOLL,:FLUFFYTAIL,:POKETOY)

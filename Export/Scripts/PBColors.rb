@@ -15,16 +15,17 @@ module PBColors
   def PBColors.getCount; 10; end
 
   def PBColors.getName(id)
-    names=[_INTL("Red"),
-           _INTL("Blue"),
-           _INTL("Yellow"),
-           _INTL("Green"),
-           _INTL("Black"),
-           _INTL("Brown"),
-           _INTL("Purple"),
-           _INTL("Gray"),
-           _INTL("White"),
-           _INTL("Pink")
+    names = [
+       _INTL("Red"),
+       _INTL("Blue"),
+       _INTL("Yellow"),
+       _INTL("Green"),
+       _INTL("Black"),
+       _INTL("Brown"),
+       _INTL("Purple"),
+       _INTL("Gray"),
+       _INTL("White"),
+       _INTL("Pink")
     ]
     return names[id]
   end

@@ -84,7 +84,7 @@ module PBRibbons
   def PBRibbons.getCount; 80; end
 
   def PBRibbons.getName(id)
-    names=["",
+    names = ["",
        _INTL("Cool Ribbon"),
        _INTL("Cool Ribbon Super"),
        _INTL("Cool Ribbon Hyper"),
@@ -170,7 +170,7 @@ module PBRibbons
   end
 
   def PBRibbons.getDescription(id)
-    desc=["",
+    desc = ["",
        _INTL("Hoenn Cool Contest Normal Rank winner!"),
        _INTL("Hoenn Cool Contest Super Rank winner!"),
        _INTL("Hoenn Cool Contest Hyper Rank winner!"),

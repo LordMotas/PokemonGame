@@ -127,10 +127,11 @@ end
 ###############################################
 
 class Draw_Tilemap          # This class controls a set of sprites, with
-  attr_accessor :tileset    # different Z values, arranged into horizontal bars
-  attr_accessor :map_data
-  attr_accessor :flash_data
-  attr_accessor :priorities
+  attr_reader :tileset    # different Z values, arranged into horizontal bars
+  attr_reader :map_data
+  attr_reader :flash_data
+  attr_reader :priorities
+  attr_reader :terrain_tags
   attr_reader :autotiles
   attr_accessor :bitmaps
   attr_accessor :pitch
@@ -149,6 +150,7 @@ class Draw_Tilemap          # This class controls a set of sprites, with
     @tileset=nil
     @map_data=nil
     @priorities=nil
+    @terrain_tags=nil
     @autotiles=[nil,nil,nil,nil,nil,nil,nil]
     @viewport=viewport
     @visible=true
@@ -184,6 +186,11 @@ class Draw_Tilemap          # This class controls a set of sprites, with
 
   def priorities=(value)
     @priorities=value
+    @doredraw=true
+  end
+
+  def terrain_tags=(value)
+    @terrain_tags=value
     @doredraw=true
   end
 

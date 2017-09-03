@@ -10,45 +10,45 @@ Audio.saw(durationInMs,freq,volume,async) - Generates a saw wave.
 Audio.noise(durationInMs,volume,async) - Generates white noise.
 Audio.playTone(toneFile,async) - Plays a tone in the Apple iPod alarm tone format.
 Parameters:
- durationInMs - duration of the sound in milliseconds.
-   The module Audio::NoteLength contains useful durations for tones.
-   If 0 or nil, the frequency is determined using the maximum duration
-   of the given sound envelopes.
- freq - the frequency of the sound in Hz. The higher the frequency,
-  the higher the pitch. If 0, no sound will be generated.
-  The module Audio::Note contains useful frequencies for tones.
-  freq can also be a SoundEnvelope or an array of two element arrays, 
-  as follows:
-   freq[0] - time in ms to apply the specified frequency
-   freq[1] - frequency to apply. In between, values will be interpolated
- volume - volume of the sound, from 0 through 100
-  volume can also be a SoundEnvelope.
- async - specifies whether the function will return immediately
-  without waiting for the sound to finish (stands for asynchronous)
- timbre - specifies the timbre of the tone; from 0.0 through 1.0
-  timbre can also be a SoundEnvelope or an array of two element arrays, 
-  as follows:
-   volume[0] - time in ms to apply the specified timbre
-   volume[1] - timbre to apply. In between, values will be interpolated
+  durationInMs - duration of the sound in milliseconds.
+     The module Audio::NoteLength contains useful durations for tones.
+     If 0 or nil, the frequency is determined using the maximum duration
+     of the given sound envelopes.
+  freq - the frequency of the sound in Hz. The higher the frequency,
+     the higher the pitch. If 0, no sound will be generated.
+     The module Audio::Note contains useful frequencies for tones.
+     freq can also be a SoundEnvelope or an array of two element arrays, 
+     as follows:
+        freq[0] - time in ms to apply the specified frequency
+        freq[1] - frequency to apply. In between, values will be interpolated
+  volume - volume of the sound, from 0 through 100
+     volume can also be a SoundEnvelope.
+  async - specifies whether the function will return immediately
+     without waiting for the sound to finish (stands for asynchronous)
+  timbre - specifies the timbre of the tone; from 0.0 through 1.0
+     timbre can also be a SoundEnvelope or an array of two element arrays, 
+     as follows:
+        volume[0] - time in ms to apply the specified timbre
+        volume[1] - timbre to apply. In between, values will be interpolated
 
 WaveData - A class for holding audio data in memory. This class
 is easy to serialize into the save file.
- intensity() - Calculates the intensity, or loudness of the data
-  Returns a value from 0 through 127.
- time() - Length of the data in seconds.
- play() - Plays the wave data
+  intensity() - Calculates the intensity, or loudness of the data
+     Returns a value from 0 through 127.
+  time() - Length of the data in seconds.
+  play() - Plays the wave data
 
 getPlayTime(filename) - Gets the length of an audio file in seconds.
-  Supports WAV, MP3, and OGG files.
+   Supports WAV, MP3, and OGG files.
 getWaveData(filename) - Creates wave data from the given WAV file path.
-  Returns a WaveData object or an integer: 1=not found; 2=invalid format;
-  3=format not supported; 4=no sound in the data (the last error is helpful
-  for diagnosing whether anything was recorded, since a recording device
-  can record even if no microphone is attached.)
+   Returns a WaveData object or an integer: 1=not found; 2=invalid format;
+   3=format not supported; 4=no sound in the data (the last error is helpful
+   for diagnosing whether anything was recorded, since a recording device
+   can record even if no microphone is attached.)
 
 beginRecord() - Starts recording.  Returns 0 if successful.
 getRecorderSample() - Gets a single sample from the microphone.
- The beginRecord function must have been called beforehand.
+   The beginRecord function must have been called beforehand.
 stopRecord() - Stops recording without saving the recording to a file.
 endRecord(file) - Stops recording and saves the recording to a file.
 =end
@@ -82,12 +82,12 @@ end
 # plays 8 bit mono sound data (default: 11025 Hz)
 def pbPlaySoundData(samples,volume,async=false,sampleFreq=11025)
   return if !samples || samples.length==0 || sampleFreq==0
-  waveOutOpen=Win32API.new("winmm.dll","waveOutOpen","plplll","l")
-  waveOutPrepareHeader=Win32API.new("winmm.dll","waveOutPrepareHeader","lpl","l")
-  waveOutWrite=Win32API.new("winmm.dll","waveOutWrite","lpl","l")
-  waveOutSetVolume=Win32API.new("winmm.dll","waveOutSetVolume","ll","l")
-  waveOutClose=Win32API.new("winmm.dll","waveOutClose","l","l")
-  waveOutGetNumDevs=Win32API.new("winmm.dll","waveOutGetNumDevs","","l")
+  waveOutOpen          = Win32API.new("winmm.dll","waveOutOpen","plplll","l")
+  waveOutPrepareHeader = Win32API.new("winmm.dll","waveOutPrepareHeader","lpl","l")
+  waveOutWrite         = Win32API.new("winmm.dll","waveOutWrite","lpl","l")
+  waveOutSetVolume     = Win32API.new("winmm.dll","waveOutSetVolume","ll","l")
+  waveOutClose         = Win32API.new("winmm.dll","waveOutClose","l","l")
+  waveOutGetNumDevs    = Win32API.new("winmm.dll","waveOutGetNumDevs","","l")
   getStringAddress=proc {|obj|
      return 0 if !obj
      buffer=" "*4
@@ -123,8 +123,7 @@ def pbPlaySoundData(samples,volume,async=false,sampleFreq=11025)
      thread.run
      sleep(length);
   }
-  waveHdr=[getStringAddress.call(samples),samples.length,
-     0,0,0,0,0,0].pack("V*")
+  waveHdr=[getStringAddress.call(samples),samples.length,0,0,0,0,0,0].pack("V*")
   # 8 bit mono sound data
   waveFormat=[0x01,0x01,sampleFreq,sampleFreq,1,8,0].pack("vvVVvvv")
   duration=samples.length
@@ -787,7 +786,7 @@ module Audio
     return x-x.floor
   end
 
-  TWOPI=Math::PI*2
+  TWOPI = Math::PI*2
   @@sineProc2=proc {|z,timbre|
      x=z<timbre ? (z*0.5/timbre) : ((z-timbre)*0.5/(1.0-timbre))+0.5
      next Math.sin(x*TWOPI)
@@ -886,8 +885,8 @@ end
 
 def ringtone(duration,volume=95)
   Audio.sine(duration,
-     SoundEnvelope.new.addValueChanges(
-        1209,500,1477,500,0,2000).repeat(duration),volume)
+     SoundEnvelope.new.addValueChanges(1209,500,1477,500,0,2000).repeat(duration),
+     volume)
 end
 
 def backspace(duration=50,volume=95)
@@ -900,10 +899,8 @@ end
 
 def callheld(duration,volume=95)
   Audio.doubleSine(duration,
-     SoundEnvelope.new.addValueChanges(
-        480,200,0,150,480,200,0,150,480,200,0,1950).repeat(duration),
-     SoundEnvelope.new.addValueChanges(
-        440,200,0,150,440,200,0,150,440,200,0,1950).repeat(duration),
+     SoundEnvelope.new.addValueChanges(480,200,0,150,480,200,0,150,480,200,0,1950).repeat(duration),
+     SoundEnvelope.new.addValueChanges(440,200,0,150,440,200,0,150,440,200,0,1950).repeat(duration),
      volume,volume)
 end
 
@@ -938,37 +935,37 @@ end
 
 def toneDE(toneType,duration,volume=95)
   case toneType
-  when 0: # dialtone
+  when 0 # dialtone
     Audio.sine(duration,425,volume)
-  when 1: # busy
+  when 1 # busy
     Audio.sine(duration,SoundEnvelope.blink(425,480,480,duration),volume)
-  when 2: # ringback
+  when 2 # ringback
     Audio.sine(duration,SoundEnvelope.blink(425,1000,4000,duration),volume)
-  when 3: # callfailed
+  when 3 # callfailed
     Audio.sine(duration,SoundEnvelope.blink(425,240,240,duration),volume)
   end
 end
 
 def toneFR(toneType,duration,volume=95)
   case toneType
-  when 0:
+  when 0
     Audio.sine(duration,440,volume)
-  when 1:
+  when 1
     Audio.sine(duration,SoundEnvelope.blink(440,500,500,duration),volume)
-  when 2:
+  when 2
     Audio.sine(duration,SoundEnvelope.blink(440,1500,3500,duration),volume)
-  when 3:
+  when 3
     Audio.sine(duration,SoundEnvelope.blink(440,250,250,duration),volume)
   end
 end
 
 def toneIsrael(toneType,duration,volume=95)
   case toneType
-  when 0:
+  when 0
     Audio.sine(duration,400,volume)
-  when 1:
+  when 1
     Audio.sine(duration,SoundEnvelope.blink(400,500,500,duration),volume)
-  when 2:
+  when 2
     Audio.sine(duration,SoundEnvelope.blink(400,1000,3000,duration),volume)
   when 3
     Audio.sine(duration,SoundEnvelope.blink(400,250,250,duration),volume)
@@ -977,29 +974,29 @@ end
 
 def toneNL(toneType,duration,volume=95)
   case toneType
-  when 0:
+  when 0
     Audio.sine(duration,425,volume)
-  when 1:
+  when 1
     Audio.sine(duration,SoundEnvelope.blink(425,500,500,duration),volume)
-  when 2:
+  when 2
     Audio.sine(duration,SoundEnvelope.blink(425,1000,4000,duration),volume)
-  when 3:
+  when 3
     Audio.sine(duration,SoundEnvelope.blink(425,250,250,duration),volume)
   end
 end
 
 def toneGB(toneType,duration,volume=95)
   case toneType
-  when 0:
+  when 0
     Audio.sine(duration,350,440,volume)
-  when 1:
+  when 1
     Audio.sine(duration,SoundEnvelope.blink(400,375,375,duration),volume)
-  when 2:
+  when 2
     Audio.doubleSine(duration,
        SoundEnvelope.new.addValueChanges(400,400,0,200,400,400,0,2000).repeat(duration),
        SoundEnvelope.new.addValueChanges(450,400,0,200,450,400,0,2000).repeat(duration),
        volume,volume)
-  when 3:
+  when 3
     Audio.sine(duration,
        SoundEnvelope.new.addValueChanges(400,400,0,350,400,225,0,525).repeat(duration),
        volume)
@@ -1294,11 +1291,11 @@ end
 ###############################
 
 begin
-  MciSendString = Win32API.new('winmm','mciSendString','%w(p,p,l,l)','l') 
+  MciSendString  = Win32API.new('winmm','mciSendString','%w(p,p,l,l)','l') 
   MciErrorString = Win32API.new('winmm','mciGetErrorString','%w(l,p,l)','l')
 rescue
-  MciSendString=nil
-  MciErrorString=nil
+  MciSendString  = nil
+  MciErrorString = nil
 end
 
 # Starts recording.  Returns 0 if successful.

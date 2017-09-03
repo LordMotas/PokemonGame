@@ -43,7 +43,7 @@ def pbPurify(pokemon,scene)
     speciesname=PBSpecies.getName(pokemon.species)
     if scene.pbConfirm(_INTL("Would you like to give a nickname to {1}?",speciesname))
       helptext=_INTL("{1}'s nickname?",speciesname)
-      newname=pbEnterPokemonName(helptext,0,10,"",pokemon)
+      newname=pbEnterPokemonName(helptext,0,PokeBattle_Pokemon::NAMELIMIT,"",pokemon)
       pokemon.name=newname if newname!=""
     end
   end
@@ -65,10 +65,10 @@ Events.onStartBattle+=proc {|sender,e|
 }
 
 Events.onEndBattle+=proc {|sender,e|
-   decision=e[0]
-   canlose=e[1]
+   decision = e[0]
+   canlose  = e[1]
    for i in 0...$PokemonTemp.heartgauges.length
-     pokemon=$Trainer.party[i]
+     pokemon = $Trainer.party[i]
      if pokemon && ($PokemonTemp.heartgauges[i] &&
         $PokemonTemp.heartgauges[i]!=0 && pokemon.heartgauge==0)
        pbReadyToPurify(pokemon)
@@ -160,11 +160,11 @@ end
 
 
 def pbRelicStoneScreen(pkmn)
-  retval=true
+  retval = true
   pbFadeOutIn(99999){
-     scene=RelicStoneScene.new
-     screen=RelicStoneScreen.new(scene)
-     retval=screen.pbStartScreen(pkmn)
+     scene = RelicStoneScene.new
+     screen = RelicStoneScreen.new(scene)
+     retval = screen.pbStartScreen(pkmn)
   }
   return retval
 end
@@ -184,7 +184,7 @@ end
 
 def pbRelicStone
   if pbHasPurifiableInParty()
-    Kernel.pbMessage(_INTL("There's a Pokemon that may open the door to its heart!"))
+    Kernel.pbMessage(_INTL("There's a Pokémon that may open the door to its heart!"))
     # Choose a purifiable Pokemon
     pbChoosePokemon(1,2,proc {|poke|
        !poke.isEgg? && poke.hp>0 && poke.isShadow? && poke.heartgauge==0
@@ -193,7 +193,7 @@ def pbRelicStone
       pbRelicStoneScreen($Trainer.party[$game_variables[1]])
     end
   else
-    Kernel.pbMessage(_INTL("You have no Pokemon that can be purified."))
+    Kernel.pbMessage(_INTL("You have no Pokémon that can be purified."))
   end
 end
 
@@ -504,7 +504,7 @@ class PokeBattle_Battle
        !isConst?(item,PBItems,:JOYSCENT) &&
        !isConst?(item,PBItems,:EXCITESCENT) &&
        !isConst?(item,PBItems,:VIVIDSCENT)
-      scene.pbDisplay(_INTL("This item can't be used on that Pokemon."))
+      scene.pbDisplay(_INTL("This item can't be used on that Pokémon."))
       return false
     end
     return __shadow_pbUseItemOnPokemon(item,pkmnIndex,userPkmn,scene,*arg)
@@ -668,7 +668,7 @@ class PokeBattle_Move_12C < PokeBattle_Move
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     return -1 if !opponent.pbCanReduceStatStage?(PBStats::EVASION,attacker,true,self)
     pbShowAnimation(@id,attacker,opponent,hitnum,alltargets,showanimation)
-    ret=opponent.pbReduceStat(PBStats::EVASION,2,false)
+    ret=opponent.pbReduceStat(PBStats::EVASION,2,attacker,false,self)
     attacker.pbHyperMode if ret
     return ret ? 0 : -1
   end
@@ -707,7 +707,7 @@ class PokeBattle_Move_12E < PokeBattle_Move
     for i in affected
       @battle.battlers[i].pbReduceHP((@battle.battlers[i].hp/2).floor)
     end
-    @battle.pbDisplay(_INTL("Each Pokemon's HP was halved!"))
+    @battle.pbDisplay(_INTL("Each Pokémon's HP was halved!"))
     attacker.effects[PBEffects::HyperBeam]=2
     attacker.currentMove=@id
     return 0

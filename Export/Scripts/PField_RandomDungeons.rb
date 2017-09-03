@@ -39,8 +39,8 @@ end
 
 
 class DungeonMaze
-  TILEWIDTH=13
-  TILEHEIGHT=13
+  TILEWIDTH  = 13
+  TILEHEIGHT = 13
 
   def self.paintRect(tile,x,y,w,h) # paints a room
     for j in 0...h
@@ -70,14 +70,14 @@ class DungeonMaze
     end
   end
 
-  MINWIDTH=5
-  MINHEIGHT=4
-  MAXWIDTH=11
-  MAXHEIGHT=10
-  None=0
-  TurnLeft=1
-  TurnRight=2
-  Turn180=3
+  MINWIDTH  = 5
+  MINHEIGHT = 4
+  MAXWIDTH  = 11
+  MAXHEIGHT = 10
+  None      = 0
+  TurnLeft  = 1
+  TurnRight = 2
+  Turn180   = 3
 
   def self.paintCell(dungeon,xDst,yDst,tile,rotation)
     return false if !tile
@@ -372,8 +372,8 @@ end
 
 class Dungeon
   attr_accessor :width,:height
-  XBUFFER=7
-  YBUFFER=5
+  XBUFFER = 7
+  YBUFFER = 5
 
   class DungeonTable
     def initialize(dungeon)

@@ -14,7 +14,7 @@
 # number using '$PokemonGlobal.hallOfFameLastNumber'.
 # 
 #===============================================================================
-class HallOfFameScene
+class HallOfFame_Scene
   # When true, all pokémon will be in one line
   # When false, all pokémon will be in two lines
   SINGLEROW = false
@@ -39,6 +39,9 @@ class HallOfFameScene
   FINALFADESPEED = 16
   # Sprites opacity value when them aren't selected
   OPACITY = 64
+  BASECOLOR   = Color.new(248,248,248)
+  SHADOWCOLOR = Color.new(0,0,0)
+
 
   def pbUpdate
     pbUpdateSpriteHash(@sprites)
@@ -190,8 +193,7 @@ class HallOfFameScene
   def saveHallEntry
     for i in 0...$Trainer.party.length
       # Clones every pokémon object
-      @hallEntry.push($Trainer.party[i].clone) if (
-        !$Trainer.party[i].isEgg? || ALLOWEGGS)
+      @hallEntry.push($Trainer.party[i].clone) if !$Trainer.party[i].isEgg? || ALLOWEGGS
     end
     # Update the global variables
     $PokemonGlobal.hallOfFame.push(@hallEntry)
@@ -255,6 +257,7 @@ class HallOfFameScene
       ypoint=ypointformula(i)
       pok=@hallEntry[i]
       @sprites["pokemon#{i}"]=PokemonSprite.new(@viewport)
+      @sprites["pokemon#{i}"].setOffset(PictureOrigin::TopLeft)
       @sprites["pokemon#{i}"].setPokemonBitmap(pok)
       # This method doesn't put the exact coordinates
       pbPositionPokemonSprite(@sprites["pokemon#{i}"],xpoint,ypoint)
@@ -351,9 +354,6 @@ class HallOfFameScene
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
         _INTL("League champion!\nCongratulations!\\^"))
   end  
-
-  BASECOLOR   = Color.new(248,248,248)
-  SHADOWCOLOR = Color.new(0,0,0)
 
   def writePokemonData(pokemon,hallNumber=-1)
     overlay=@sprites["overlay"].bitmap
@@ -466,7 +466,7 @@ class HallOfFamePC
   end
 
   def access
-    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Hall of Fame."))
+    Kernel.pbMessage(_INTL("\\se[PC access]Accessed the Hall of Fame."))
     pbHallOfFamePC
   end
 end
@@ -496,13 +496,13 @@ end
 
 
 def pbHallOfFameEntry
-  scene=HallOfFameScene.new
+  scene=HallOfFame_Scene.new
   screen=HallOfFameScreen.new(scene)
   screen.pbStartScreenEntry
 end
 
 def pbHallOfFamePC
-  scene=HallOfFameScene.new
+  scene=HallOfFame_Scene.new
   screen=HallOfFameScreen.new(scene)
   screen.pbStartScreenPC
 end

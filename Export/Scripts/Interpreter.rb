@@ -272,7 +272,7 @@ class Interpreter
       if event && $game_map
         mapname="???"
         mapname=$game_map.name rescue nil
-        raise "Script error within event #{event.id}, map #{$game_map.map_id} ".concat(
+        raise "Script error within event #{event.id} (coords #{event.x},#{event.y}), map #{$game_map.map_id} ".concat(
               "(#{mapname}):\r\n#{message}\r\n#{s}")
       elsif $game_map
         mapname="???"
