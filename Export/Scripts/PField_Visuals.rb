@@ -1,6 +1,73 @@
+#MARBLE
 #===============================================================================
 # Location signpost
 #===============================================================================
+class LocationWindow #Uranium
+  def initialize(name)
+    @currentmap=$game_map.map_id
+    @frames=0
+    mapname=$game_map.name
+    @overlay=BitmapSprite.new(Graphics.width,784,@viewport)
+    @overlay.z=99999
+    @overlay.y=18
+    @overlay.x = 520
+    overlay=@overlay.bitmap
+    overlay.clear
+    baseColor=Color.new(247,241,232)
+    shadowColor=Color.new(140,123,107)
+    pbSetSystemFont(@overlay.bitmap)
+   textPositions=[
+   [_INTL("{1}", mapname),512,0,1,baseColor,shadowColor]
+   ]
+   pbDrawTextPositions(overlay,textPositions)
+  
+  @panel = Sprite.new(@viewport)
+  @panel.bitmap=BitmapCache.load_bitmap("Graphics/Pictures/panel")
+  @panel.y = 16
+  @panel.zoom_x = 2.0
+  @panel.zoom_y = 2.0
+  @panel.opacity = 0
+  @panel.z=99998
+  end
+
+  def disposed?
+    @overlay.disposed?
+    @panel.disposed?
+  end
+
+  def dispose
+    @overlay.dispose
+    @panel.dispose
+  end
+
+  def update
+    return if @overlay.disposed?
+    return if @panel.disposed?
+    @overlay.update
+    @panel.update
+    if $game_temp.message_window_showing ||
+      @currentmap!=$game_map.map_id
+      @overlay.dispose 
+      @panel.dispose 
+      return
+    end
+    if @frames>100
+      @overlay.opacity -= 12 if @overlay.opacity != 0
+      if @panel.opacity != 0
+        @panel.opacity -= 6
+      end
+    else
+      if @panel.opacity != 160
+        @panel.opacity += 8
+      else
+        @overlay.x -= 20 if @overlay.x != -300
+      end
+      @frames+=1
+    end
+  end
+end
+
+=begin
 class LocationWindow
   def initialize(name)
     @window = Window_AdvancedTextPokemon.new(name)
@@ -38,7 +105,7 @@ class LocationWindow
     end
   end
 end
-
+=end
 
 
 #===============================================================================

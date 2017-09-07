@@ -25,16 +25,25 @@ module PBEvolution
   LevelFemale       = 23
   Location          = 24
   TradeSpecies      = 25
-  LevelDay          = 26
-  LevelNight        = 27
-  LevelDarkInParty  = 28
-  LevelRain         = 29
-  HappinessMoveType = 30
-  Custom1           = 31
-  Custom2           = 32
-  Custom3           = 33
-  Custom4           = 34
-  Custom5           = 35
+  HappinessMoveType = 26
+  TypeDark          = 27
+  LevelRain        = 28
+  LevelDay          = 29
+  LevelNight        = 30
+  UpsideDownLevel  = 31
+  HappinessMale    = 32
+  HappinessFemale  = 33
+  Custom7           = 34
+  HighestHP         = 35
+  HighestAtk        = 36
+  HighestDef        = 37
+  HighestSpAtk      = 38
+  HighestSpDef      = 39
+  HighestSpd      = 40
+  LevelSunny        = 41
+  LevelHail         = 42
+  LevelSandstorm    = 43
+  LevelTadpoi       = 44
 
   EVONAMES=["Unknown",
      "Happiness","HappinessDay","HappinessNight","Level","Trade",
@@ -42,8 +51,10 @@ module PBEvolution
      "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
      "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
      "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
-     "LevelDay","LevelNight","LevelDarkInParty","LevelRain","HappinessMoveType",
-     "Custom1","Custom2","Custom3","Custom4","Custom5"
+    "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
+    "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
+    "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
+    "HighestSpd","LevelSunny","LevelHail","LevelSandstorm", "LevelTadpoi"
   ]
 
   # 0 = no parameter
@@ -58,8 +69,10 @@ module PBEvolution
      1,1,1,1,1,   # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
      2,2,2,2,3,   # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
      4,1,1,1,4,   # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
-     1,1,1,1,5,   # LevelDay, LevelNight, LevelDarkInParty, LevelRain, HappinessMoveType
-     1,1,1,1,1    # Custom 1-5
+     3,1,1,1,1,1, # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
+     0,0,0,       # HappinessMale, HappinessFemale,
+     1,1,1,1,1,   # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
+     1,1,1,1,1    # HighestSpd, LevelSunny, LevelHail, LevelSandstorm, LevelTadpoi
   ]
 end
 
@@ -916,16 +929,61 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.beauty>=level
   when PBEvolution::Trade, PBEvolution::TradeItem, PBEvolution::TradeSpecies
     return -1
-  when PBEvolution::Custom1
-    # Add code for custom evolution type 1
-  when PBEvolution::Custom2
-    # Add code for custom evolution type 2
-  when PBEvolution::Custom3
-    # Add code for custom evolution type 3
-  when PBEvolution::Custom4
-    # Add code for custom evolution type 4
-  when PBEvolution::Custom5
-    # Add code for custom evolution type 5
+  when PBEvolution::LevelHail
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::HAIL)
+        return poke
+      end
+    end
+  when PBEvolution::LevelSandstorm
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::SANDSTORM)
+        return poke
+      end
+    end
+  when PBEvolution::LevelRain
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::RAINDANCE)
+        return poke
+      end
+    end
+  when PBEvolution::LevelSunny
+    if pokemon.level>=level
+      if $game_screen && ($evoWeather==PBWeather::SUNNYDAY)
+        return poke
+      end
+    end
+  when PBEvolution::HighestHP # Torling HP
+    return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
+    pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
+    pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
+  when PBEvolution::HighestAtk # Torling Atk
+    return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
+    pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
+    pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
+  when PBEvolution::HighestDef # Torling Def
+    return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
+    pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
+    pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
+  when PBEvolution::HighestSpAtk # Torling SpAtk
+    return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
+    pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
+    pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
+  when PBEvolution::HighestSpDef # Torling SpDef
+    return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
+    pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
+    pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
+  when PBEvolution::HighestSpd # Torling Speed
+    return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
+    pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
+    pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
+  when PBEvolution::LevelTadpoi # Tadpoi
+    #Crimzog
+    return 166 if pokemon.tadpoicolor==1 && pokemon.level>=level
+    #Electrog
+    return 167 if pokemon.tadpoicolor==2 && pokemon.level>=level
+    #Sapphrog
+    return 168 if pokemon.tadpoicolor==3 && pokemon.level>=level
   end
   return -1
 end

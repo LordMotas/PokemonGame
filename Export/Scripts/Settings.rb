@@ -17,6 +17,9 @@
 #      added on to the screen height above, only if the border is turned on.
 # * Map view mode (0=original, 1=custom, 2=perspective).
 #===============================================================================
+$Bubble = 0
+$islandCount = 0
+$evoWeather = 0
 DEFAULTSCREENWIDTH   = 512
 DEFAULTSCREENHEIGHT  = 384
 DEFAULTSCREENZOOM    = 1.0
@@ -52,7 +55,7 @@ POKERUSCHANCE      = 3
 #      as in older Gens (false).
 #===============================================================================
 POISONINFIELD         = true
-POISONFAINTINFIELD    = false
+POISONFAINTINFIELD    = true
 FISHINGAUTOHOOK       = false
 DIVINGSURFACEANYWHERE = false
 NEWBERRYPLANTS        = true
@@ -351,3 +354,8 @@ LANGUAGES = [
 #  ["English","english.dat"],
 #  ["Deutsch","deutsch.dat"]
 ]
+#===============================================================================
+# * Whether names can be typed using the keyboard (true) or chosen letter by
+#      letter as in the official games (false).
+#===============================================================================
+USEKEYBOARDTEXTENTRY = true
