@@ -44,7 +44,7 @@ class Game_Map
 
   def scroll_up(distance)
     self.display_y-=distance
-  end
+  end
   def start_scroll(direction, distance, speed)
     @scroll_direction = direction
     if direction==2 || direction==8     

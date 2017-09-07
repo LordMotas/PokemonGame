@@ -4,18 +4,16 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 021-Field04
     pitch: 100
-  tileset_id: 3
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - !ruby/object:RPG::AudioFile
             volume: 80
-            name: Door exit
+            name: Exit Door
             pitch: 100
           indent: 0
           code: 250
@@ -58,6 +56,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -68,7 +68,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -79,6 +78,7 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -87,7 +87,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -98,7 +97,6 @@ root: !ruby/object:RPG::Map
     2: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -109,6 +107,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -119,7 +119,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -130,6 +129,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -138,7 +138,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -149,7 +148,6 @@ root: !ruby/object:RPG::Map
     3: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -159,7 +157,7 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rAh, there you are! My husband was looking for "
+          - "\\rAh, there you are!  My husband was looking for "
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -194,8 +192,8 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJJJ20gdGhlIERheS1DYXJlIExhZHkuIFdlIGNhbiByYWlzZSBQb2vDqW1v
-            biBmb3Ig
+            XHJJJ20gdGhlIERheS1DYXJlIExhZHkuICBXZSBjYW4gcmFpc2UgUG9rw6lt
+            b24gZm9yIA==
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -231,15 +229,15 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJPaD8gQnV0IHlvdSBvbmx5IGhhdmUgb25lIFBva8OpbW9uIHdpdGggeW91
-            Lg==
+            XHJPaD8gIEJ1dCB5b3Ugb25seSBoYXZlIG9uZSBQb2vDqW1vbiB3aXRoIHlv
+            dS4=
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJZb3UgY2FuJ3QgZ28gb2ZmIHdpdGhvdXQgYSBQb2vDqW1vbi4gQ29tZSBi
-            YWNrIA==
+            XHJZb3UgY2FuJ3QgZ28gb2ZmIHdpdGhvdXQgYSBQb2vDqW1vbi4gIENvbWUg
+            YmFjayA=
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -354,8 +352,8 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJXZSBjYW4gcmFpc2UgdHdvIG9mIHlvdXIgUG9rw6ltb24uIFdvdWxkIHlv
-            dSBsaWtlIA==
+            XHJXZSBjYW4gcmFpc2UgdHdvIG9mIHlvdXIgUG9rw6ltb24uICBXb3VsZCB5
+            b3UgbGlrZSA=
           indent: 2
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -385,15 +383,15 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJPaD8gQnV0IHlvdSBvbmx5IGhhdmUgb25lIFBva8OpbW9uIHdpdGggeW91
-            Lg==
+            XHJPaD8gIEJ1dCB5b3Ugb25seSBoYXZlIG9uZSBQb2vDqW1vbiB3aXRoIHlv
+            dS4=
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJZb3UgY2FuJ3QgZ28gb2ZmIHdpdGhvdXQgYSBQb2vDqW1vbi4gQ29tZSBi
-            YWNrIA==
+            XHJZb3UgY2FuJ3QgZ28gb2ZmIHdpdGhvdXQgYSBQb2vDqW1vbi4gIENvbWUg
+            YmFjayA=
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -435,7 +433,7 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -532,7 +530,7 @@ root: !ruby/object:RPG::Map
           code: 411
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -584,7 +582,7 @@ root: !ruby/object:RPG::Map
           code: 411
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rAh, it's you! Good to see you. Now, about your "
+          - "\\rAh, it's you!  Good to see you.  Now, about your "
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -694,8 +692,8 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
-            XHJZb3VyIFBva8OpbW9uIHRlYW0gaXMgZnVsbC4gTWFrZSByb29tLCB0aGVu
-            IGNvbWUg
+            XHJZb3VyIFBva8OpbW9uIHRlYW0gaXMgZnVsbC4gIE1ha2Ugcm9vbSwgdGhl
+            biBjb21lIA==
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -736,7 +734,7 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -873,7 +871,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 6
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -894,7 +892,7 @@ root: !ruby/object:RPG::Map
           code: 411
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 5
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -917,7 +915,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -940,7 +938,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\rVery good. Come again."
+          - "\\rVery good.  Come again."
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -971,6 +969,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -981,7 +981,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -992,6 +991,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: NPC 11
@@ -1000,7 +1000,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1008,6 +1007,7 @@ root: !ruby/object:RPG::Map
       y: 4
       x: 4
       id: 3
+  tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

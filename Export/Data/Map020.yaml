@@ -2,20 +2,18 @@
 root: !ruby/object:RPG::Map
   bgm: !ruby/object:RPG::AudioFile
     volume: 80
-    name: Poke Mart
+    name: PokeMart
     pitch: 100
-  tileset_id: 10
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - !ruby/object:RPG::AudioFile
             volume: 80
-            name: Door exit
+            name: Exit Door
             pitch: 100
           indent: 0
           code: 250
@@ -198,6 +196,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -208,7 +208,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -219,6 +218,7 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -227,7 +227,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -238,7 +237,6 @@ root: !ruby/object:RPG::Map
     2: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -1102,6 +1100,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1112,7 +1112,6 @@ root: !ruby/object:RPG::Map
           variable_id: 30
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1123,6 +1122,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -1131,7 +1131,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1142,12 +1141,13 @@ root: !ruby/object:RPG::Map
     3: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1158,7 +1158,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1169,6 +1168,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: elevatorwall
@@ -1177,7 +1177,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1188,12 +1187,13 @@ root: !ruby/object:RPG::Map
     4: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1204,7 +1204,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1215,6 +1214,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: elevatorwall
@@ -1223,7 +1223,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1234,12 +1233,13 @@ root: !ruby/object:RPG::Map
     5: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1250,7 +1250,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1261,6 +1260,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: elevatorwall
@@ -1269,7 +1269,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1277,6 +1276,7 @@ root: !ruby/object:RPG::Map
       y: 2
       x: 3
       id: 5
+  tileset_id: 10
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''

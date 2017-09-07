@@ -202,5 +202,18 @@
 8665854     SpritePosEditor                              SpritePosEditor.rb
 44515027    BattleAnimationEditor                        BattleAnimationEditor.rb
 66443344    Compiler                                     Compiler.rb
-27847358    ================                             EMPTY
+30913346    ===CUSTOM SCRIPTS===                         EMPTY
+10488910    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
+61226699    ItemCrafter                                  ItemCrafter.rb
+6123542     UraniumCustomMenu                            EMPTY
+24216588    SkyInverseBattle                             SkyInverseBattle.rb
+51398100    ChallengeModes                               ChallengeModes.rb
+28946912    ChallengeSelection                           ChallengeSelection.rb
+23982061    Challenge_Selection                          Challenge_Selection.rb
+99152027    ChallengeSelectionAbility                    ChallengeSelectionAbility.rb
+26541381    ChallengeSelectionMoves                      ChallengeSelectionMoves.rb
+21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
+7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
+66124780    AdvancedTitleScreen                          EMPTY
+84706869    ================                             EMPTY
 76067044    Main                                         Main.rb

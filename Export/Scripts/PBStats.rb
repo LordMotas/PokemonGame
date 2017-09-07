@@ -21,7 +21,7 @@ begin
          _INTL("evasiveness")
       ]
       return names[id]
-    end
+    end
     def PBStats.getNameBrief(id)
       names = [
          _INTL("HP"),

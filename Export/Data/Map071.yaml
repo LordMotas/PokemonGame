@@ -4,21 +4,11 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: route
     pitch: 100
-  tileset_id: 15
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:RPG::AudioFile
-            volume: 80
-            name: Door exit
-            pitch: 100
-          indent: 0
-          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - !ruby/object:Tone
@@ -58,6 +48,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -68,7 +60,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -79,6 +70,7 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -87,12 +79,10 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -106,13 +96,6 @@ root: !ruby/object:RPG::Map
           - !ruby/object:RPG::MoveRoute
             list:
             - &1 !ruby/object:RPG::MoveCommand
-              parameters:
-              - !ruby/object:RPG::AudioFile
-                volume: 80
-                name: Door exit
-                pitch: 100
-              code: 44
-            - &2 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
             - !ruby/object:RPG::MoveCommand
@@ -125,11 +108,6 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - *1
-          indent: 1
-          code: 509
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - *2
           indent: 1
           code: 509
         - !ruby/object:RPG::EventCommand
@@ -153,6 +131,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -163,7 +143,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -174,6 +153,7 @@ root: !ruby/object:RPG::Map
         trigger: 3
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -182,7 +162,6 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -193,18 +172,17 @@ root: !ruby/object:RPG::Map
     2: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbHasItem?(:AURORATICKET)"
+          - "$PokemonBag.pbQuantity(:AURORATICKET)>0"
           indent: 0
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbHasItem?(:OLDSEAMAP)"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)>0"
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -374,7 +352,7 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbHasItem?(:OLDSEAMAP)"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)>0"
           indent: 1
           code: 111
         - !ruby/object:RPG::EventCommand
@@ -525,7 +503,7 @@ root: !ruby/object:RPG::Map
           code: 118
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bThe Tiall Region it is. All aboard!"
+          - "\\bThe Tiall Region it is.  All aboard!"
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -533,17 +511,17 @@ root: !ruby/object:RPG::Map
           - 2
           - !ruby/object:RPG::MoveRoute
             list:
-            - &3 !ruby/object:RPG::MoveCommand
+            - &2 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
-            - &4 !ruby/object:RPG::MoveCommand
+            - &3 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
-            - &5 !ruby/object:RPG::MoveCommand
+            - &4 !ruby/object:RPG::MoveCommand
               parameters:
               - 0
               code: 42
-            - &6 !ruby/object:RPG::MoveCommand
+            - &5 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -553,6 +531,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *2
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *3
@@ -570,24 +553,19 @@ root: !ruby/object:RPG::Map
           code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
-          - *6
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - -1
           - !ruby/object:RPG::MoveRoute
             list:
-            - &7 !ruby/object:RPG::MoveCommand
+            - &6 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
+            - &7 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 1
             - &8 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
             - &9 !ruby/object:RPG::MoveCommand
-              parameters: []
-              code: 1
-            - &10 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -597,6 +575,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *6
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *7
@@ -613,22 +596,9 @@ root: !ruby/object:RPG::Map
           indent: 0
           code: 509
         - !ruby/object:RPG::EventCommand
-          parameters:
-          - *10
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 210
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:RPG::AudioFile
-            volume: 80
-            name: Door exit
-            pitch: 100
-          indent: 0
-          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
@@ -690,7 +660,7 @@ root: !ruby/object:RPG::Map
           code: 118
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bBerth Island it is. All aboard!"
+          - "\\bBerth Island it is.  All aboard!"
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -705,17 +675,17 @@ root: !ruby/object:RPG::Map
           - 2
           - !ruby/object:RPG::MoveRoute
             list:
-            - &11 !ruby/object:RPG::MoveCommand
+            - &10 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
-            - &12 !ruby/object:RPG::MoveCommand
+            - &11 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
-            - &13 !ruby/object:RPG::MoveCommand
+            - &12 !ruby/object:RPG::MoveCommand
               parameters:
               - 0
               code: 42
-            - &14 !ruby/object:RPG::MoveCommand
+            - &13 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -725,6 +695,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *10
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *11
@@ -742,24 +717,19 @@ root: !ruby/object:RPG::Map
           code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
-          - *14
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - -1
           - !ruby/object:RPG::MoveRoute
             list:
-            - &15 !ruby/object:RPG::MoveCommand
+            - &14 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
+            - &15 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 1
             - &16 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
             - &17 !ruby/object:RPG::MoveCommand
-              parameters: []
-              code: 1
-            - &18 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -769,6 +739,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *14
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *15
@@ -785,22 +760,9 @@ root: !ruby/object:RPG::Map
           indent: 0
           code: 509
         - !ruby/object:RPG::EventCommand
-          parameters:
-          - *18
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 210
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:RPG::AudioFile
-            volume: 80
-            name: Door exit
-            pitch: 100
-          indent: 0
-          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
@@ -862,7 +824,7 @@ root: !ruby/object:RPG::Map
           code: 118
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bFaraday Island it is. All aboard!"
+          - "\\bFaraday Island it is.  All aboard!"
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -877,17 +839,17 @@ root: !ruby/object:RPG::Map
           - 2
           - !ruby/object:RPG::MoveRoute
             list:
-            - &19 !ruby/object:RPG::MoveCommand
+            - &18 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
-            - &20 !ruby/object:RPG::MoveCommand
+            - &19 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
-            - &21 !ruby/object:RPG::MoveCommand
+            - &20 !ruby/object:RPG::MoveCommand
               parameters:
               - 0
               code: 42
-            - &22 !ruby/object:RPG::MoveCommand
+            - &21 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -897,6 +859,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *18
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *19
@@ -914,24 +881,19 @@ root: !ruby/object:RPG::Map
           code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
-          - *22
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - -1
           - !ruby/object:RPG::MoveRoute
             list:
-            - &23 !ruby/object:RPG::MoveCommand
+            - &22 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 37
+            - &23 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 1
             - &24 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 1
             - &25 !ruby/object:RPG::MoveCommand
-              parameters: []
-              code: 1
-            - &26 !ruby/object:RPG::MoveCommand
               parameters: []
               code: 38
             - !ruby/object:RPG::MoveCommand
@@ -941,6 +903,11 @@ root: !ruby/object:RPG::Map
             repeat: false
           indent: 0
           code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *22
+          indent: 0
+          code: 509
         - !ruby/object:RPG::EventCommand
           parameters:
           - *23
@@ -957,22 +924,9 @@ root: !ruby/object:RPG::Map
           indent: 0
           code: 509
         - !ruby/object:RPG::EventCommand
-          parameters:
-          - *26
-          indent: 0
-          code: 509
-        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 210
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:RPG::AudioFile
-            volume: 80
-            name: Door exit
-            pitch: 100
-          indent: 0
-          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
@@ -1041,6 +995,8 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1051,7 +1007,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1062,6 +1017,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: trchar027
@@ -1070,7 +1026,6 @@ root: !ruby/object:RPG::Map
           direction: 8
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1081,32 +1036,13 @@ root: !ruby/object:RPG::Map
     3: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbHasItem?(:AURORATICKET)"
+          - "$PokemonBag.pbQuantity(:AURORATICKET)<=0"
           indent: 0
           code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\bI've already given you an Aurora Ticket. Have you "
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - gone to Berth Island yet?
-          indent: 1
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 411
         - !ruby/object:RPG::EventCommand
           parameters:
           - "\\bHere, have this Aurora Ticket."
@@ -1151,11 +1087,31 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\bI've already given you an Aurora Ticket.  Have you "
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - gone to Berth Island yet?
+          indent: 1
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
           code: 412
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1166,7 +1122,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1177,6 +1132,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: trchar027
@@ -1185,7 +1141,6 @@ root: !ruby/object:RPG::Map
           direction: 6
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1196,32 +1151,13 @@ root: !ruby/object:RPG::Map
     4: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
-        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - 12
-          - "$PokemonBag.pbHasItem?(:OLDSEAMAP)"
+          - "$PokemonBag.pbQuantity(:OLDSEAMAP)<=0"
           indent: 0
           code: 111
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\bI've already given you an Old Sea Map. Have you "
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - gone to Faraday Island yet?
-          indent: 1
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 1
-          code: 0
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 411
         - !ruby/object:RPG::EventCommand
           parameters:
           - "\\bHere, have this Old Sea Map."
@@ -1266,11 +1202,31 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\bI've already given you an Old Sea Map.  Have you "
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - gone to Faraday Island yet?
+          indent: 1
+          code: 401
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
           code: 412
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
+        move_type: 0
+        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1281,7 +1237,6 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
-        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1292,6 +1247,7 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
+        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: trchar027
@@ -1300,7 +1256,6 @@ root: !ruby/object:RPG::Map
           direction: 4
           blend_type: 0
           character_hue: 0
-        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1308,6 +1263,7 @@ root: !ruby/object:RPG::Map
       y: 5
       x: 10
       id: 4
+  tileset_id: 15
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''
