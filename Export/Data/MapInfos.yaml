@@ -150,6 +150,13 @@ root: !ruby/object:Hash
     order: 21
     scroll_y: 588
     parent_id: 0
+  22: !ruby/object:RPG::MapInfo
+    scroll_x: 0
+    name: MAP022
+    expanded: false
+    order: 70
+    scroll_y: 0
+    parent_id: 0
   23: !ruby/object:RPG::MapInfo
     scroll_x: 656
     name: Lerucean Town
