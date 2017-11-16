@@ -121,7 +121,7 @@ BADGESBOOSTDEFENSE     = 5
 BADGESBOOSTSPEED       = 3
 BADGESBOOSTSPATK       = 7
 BADGESBOOSTSPDEF       = 7
-HIDDENMOVESCOUNTBADGES = true
+HIDDENMOVESCOUNTBADGES = false
 BADGEFORCUT            = 1
 BADGEFORFLASH          = 2
 BADGEFORROCKSMASH      = 3
@@ -354,8 +354,3 @@ LANGUAGES = [
 #  ["English","english.dat"],
 #  ["Deutsch","deutsch.dat"]
 ]
-#===============================================================================
-# * Whether names can be typed using the keyboard (true) or chosen letter by
-#      letter as in the official games (false).
-#===============================================================================
-USEKEYBOARDTEXTENTRY = true
