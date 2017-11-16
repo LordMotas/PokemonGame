@@ -53,14 +53,10 @@ class BerryPlantMoistureSprite
 
   def updateGraphic
     case @oldmoisture
-    when -1
-      @light.setBitmap("")
-    when 0
-      @light.setBitmap("Graphics/Characters/berrytreeDry")
-    when 1
-      @light.setBitmap("Graphics/Characters/berrytreeDamp")
-    when 2
-      @light.setBitmap("Graphics/Characters/berrytreeWet")
+    when -1; @light.setBitmap("")
+    when 0; @light.setBitmap("Graphics/Characters/berrytreeDry")
+    when 1; @light.setBitmap("Graphics/Characters/berrytreeDamp")
+    when 2; @light.setBitmap("Graphics/Characters/berrytreeWet")
     end
   end
 
@@ -285,7 +281,7 @@ class BerryPlantSprite
         @event.character_name="Object ball"
       end
       if @oldstage!=berryData[0] && berryData.length>6   # Gen 4 growth mechanisms
-        $scene.spriteset.addUserAnimation(PLANT_SPARKLE_ANIMATION_ID,@event.x,@event.y) if $scene.spriteset
+        $scene.spriteset.addUserAnimation(PLANT_SPARKLE_ANIMATION_ID,@event.x,@event.y,false,1) if $scene.spriteset
       end
     end
     @oldstage=berryData[0]
@@ -334,19 +330,19 @@ p berryData if Input.trigger?(Input::CTRL)
         if cmd==0 # Fertilize
           ret=0
           pbFadeOutIn(99999){
-             scene=PokemonBag_Scene.new
-             screen=PokemonBagScreen.new(scene,$PokemonBag)
-             ret=screen.pbChooseItemScreen
+            scene = PokemonBag_Scene.new
+            screen = PokemonBagScreen.new(scene,$PokemonBag)
+            ret = screen.pbChooseItemScreen(Proc.new{|item| pbIsMulch?(item) })
           }
           if ret>0
             if pbIsMulch?(ret)
               berryData[7]=ret
-              Kernel.pbMessage(_INTL("The {1} was scattered on the soil.",PBItems.getName(ret)))
+              Kernel.pbMessage(_INTL("The {1} was scattered on the soil.\1",PBItems.getName(ret)))
               if Kernel.pbConfirmMessage(_INTL("Want to plant a Berry?"))
                 pbFadeOutIn(99999){
-                   scene=PokemonBag_Scene.new
-                   screen=PokemonBagScreen.new(scene,$PokemonBag)
-                   berry=screen.pbChooseBerryScreen
+                  scene = PokemonBag_Scene.new
+                  screen = PokemonBagScreen.new(scene,$PokemonBag)
+                  berry = screen.pbChooseItemScreen(Proc.new{|item| pbIsBerry?(item) })
                 }
                 if berry>0
                   timenow=pbGetTimeNow
@@ -370,9 +366,9 @@ p berryData if Input.trigger?(Input::CTRL)
           end
         elsif cmd==1 # Plant Berry
           pbFadeOutIn(99999){
-             scene=PokemonBag_Scene.new
-             screen=PokemonBagScreen.new(scene,$PokemonBag)
-             berry=screen.pbChooseBerryScreen
+            scene = PokemonBag_Scene.new
+            screen = PokemonBagScreen.new(scene,$PokemonBag)
+            berry = screen.pbChooseItemScreen(Proc.new{|item| pbIsBerry?(item) })
           }
           if berry>0
             timenow=pbGetTimeNow
@@ -391,12 +387,12 @@ p berryData if Input.trigger?(Input::CTRL)
           return
         end
       else
-        Kernel.pbMessage(_INTL("{1} has been laid down.",PBItems.getName(berryData[7])))
+        Kernel.pbMessage(_INTL("{1} has been laid down.\1",PBItems.getName(berryData[7])))
         if Kernel.pbConfirmMessage(_INTL("Want to plant a Berry?"))
           pbFadeOutIn(99999){
-             scene=PokemonBag_Scene.new
-             screen=PokemonBagScreen.new(scene,$PokemonBag)
-             berry=screen.pbChooseBerryScreen
+            scene = PokemonBag_Scene.new
+            screen = PokemonBagScreen.new(scene,$PokemonBag)
+            berry = screen.pbChooseItemScreen(Proc.new{|item| pbIsBerry?(item) })
           }
           if berry>0
             timenow=pbGetTimeNow
@@ -419,9 +415,9 @@ p berryData if Input.trigger?(Input::CTRL)
       # Gen 3 planting mechanics
       if Kernel.pbConfirmMessage(_INTL("It's soft, loamy soil.\nPlant a berry?"))
         pbFadeOutIn(99999){
-           scene=PokemonBag_Scene.new
-           screen=PokemonBagScreen.new(scene,$PokemonBag)
-           berry=screen.pbChooseBerryScreen
+          scene = PokemonBag_Scene.new
+          screen = PokemonBagScreen.new(scene,$PokemonBag)
+          berry = screen.pbChooseItemScreen(Proc.new{|item| pbIsBerry?(item) })
         }
         if berry>0
           timenow=pbGetTimeNow
@@ -464,7 +460,7 @@ p berryData if Input.trigger?(Input::CTRL)
       end
     end
   when 5  # X berries
-    berryvalues=$PokemonTemp.pbGetBerryPlantData(berryData[1])    
+    berryvalues=$PokemonTemp.pbGetBerryPlantData(berryData[1])
     # Get berry yield (berrycount)
     berrycount=1
     if berryData.length>6
@@ -481,28 +477,29 @@ p berryData if Input.trigger?(Input::CTRL)
     end
     itemname=(berrycount>1) ? PBItems.getNamePlural(berry) : PBItems.getName(berry)
     if berrycount>1
-      message=_INTL("There are {1} {2}!\nWant to pick them?",berrycount,itemname)
+      message=_INTL("There are {1} \\c[1]{2}\\c[0]!\nWant to pick them?",berrycount,itemname)
     else
-      message=_INTL("There is 1 {1}!\nWant to pick it?",itemname)
+      message=_INTL("There is 1 \\c[1]{1}\\c[0]!\nWant to pick it?",itemname)
     end
     if Kernel.pbConfirmMessage(message)
       if !$PokemonBag.pbCanStore?(berry,berrycount)
-        Kernel.pbMessage(_INTL("Too bad...\nThe bag is full."))
+        Kernel.pbMessage(_INTL("Too bad...\nThe Bag is full..."))
         return
       end
       $PokemonBag.pbStoreItem(berry,berrycount)
       if berrycount>1
-        Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",berrycount,itemname))
+        Kernel.pbMessage(_INTL("You picked the {1} \\c[1]{2}\\c[0].\\wtnp[30]",berrycount,itemname))
       else
-        Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",itemname))
+        Kernel.pbMessage(_INTL("You picked the \\c[1]{1}\\c[0].\\wtnp[30]",itemname))
       end
-      Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{BERRYPOCKET}>\\c[1]Berries\\c[0] Pocket.\1",
-         $Trainer.name,itemname))
+      pocket = pbGetPocket(berry)
+      Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket{3}>\\c[1]{4}\\c[0] Pocket.\1",
+         $Trainer.name,itemname,pocket,PokemonBag.pocketNames()[pocket]))
       if NEWBERRYPLANTS
-        Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state.\1"))
+        Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state."))
         berryData=[0,0,0,0,0,0,0,0]
       else
-        Kernel.pbMessage(_INTL("The soil returned to its soft and loamy state.\1"))
+        Kernel.pbMessage(_INTL("The soil returned to its soft and loamy state."))
         berryData=[0,0,false,0,0,0]
       end
       interp.setVariable(berryData)
@@ -511,7 +508,7 @@ p berryData if Input.trigger?(Input::CTRL)
   case berryData[0]
   when 1, 2, 3, 4
     for i in watering
-      if i!=0 && $PokemonBag.pbQuantity(i)>0
+      if i!=0 && $PokemonBag.pbHasItem?(i)
         if Kernel.pbConfirmMessage(_INTL("Want to sprinkle some water with the {1}?",PBItems.getName(i)))
           if berryData.length>6
             # Gen 4 berry watering mechanics
@@ -546,29 +543,29 @@ def pbPickBerry(berry,qty=1)
   end
   itemname=(qty>1) ? PBItems.getNamePlural(berry) : PBItems.getName(berry)
   if qty>1
-    message=_INTL("There are {1} {2}!\nWant to pick them?",qty,itemname)
+    message=_INTL("There are {1} \\c[1]{2}\\c[0]!\nWant to pick them?",qty,itemname)
   else
-    message=_INTL("There is 1 {1}!\nWant to pick it?",itemname)
+    message=_INTL("There is 1 \\c[1]{1}\\c[0]!\nWant to pick it?",itemname)
   end
   if Kernel.pbConfirmMessage(message)
     if !$PokemonBag.pbCanStore?(berry,qty)
-      Kernel.pbMessage(_INTL("Too bad...\nThe bag is full."))
+      Kernel.pbMessage(_INTL("Too bad...\nThe Bag is full..."))
       return
     end
     $PokemonBag.pbStoreItem(berry,qty)
-    pocket=pbGetPocket(berry)
     if qty>1
-      Kernel.pbMessage(_INTL("You picked the {1} {2}.\\wtnp[30]",qty,itemname))
+      Kernel.pbMessage(_INTL("You picked the {1} \\c[1]{2}\\c[0].\\wtnp[30]",qty,itemname))
     else
-      Kernel.pbMessage(_INTL("You picked the {1}.\\wtnp[30]",itemname))
+      Kernel.pbMessage(_INTL("You picked the \\c[1]{1}\\c[0].\\wtnp[30]",itemname))
     end
-    Kernel.pbMessage(_INTL("{1} put away the {2} in the <icon=bagPocket#{pocket}>\\c[1]Berries\\c[0] Pocket.\1",
-       $Trainer.name,itemname))
+    pocket = pbGetPocket(berry)
+    Kernel.pbMessage(_INTL("{1} put the \\c[1]{2}\\c[0]\r\nin the <icon=bagPocket{3}>\\c[1]{4}\\c[0] Pocket.\1",
+       $Trainer.name,itemname,pocket,PokemonBag.pocketNames()[pocket]))
     if NEWBERRYPLANTS
-      Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state.\1"))
+      Kernel.pbMessage(_INTL("The soil returned to its soft and earthy state."))
       berryData=[0,0,0,0,0,0,0,0]
     else
-      Kernel.pbMessage(_INTL("The soil returned to its soft and loamy state.\1"))
+      Kernel.pbMessage(_INTL("The soil returned to its soft and loamy state."))
       berryData=[0,0,false,0,0,0]
     end
     interp.setVariable(berryData)

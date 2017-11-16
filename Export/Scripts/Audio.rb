@@ -73,17 +73,18 @@ end
 module AudioState
   w32_LL = Win32API.new("kernel32.dll", "LoadLibrary", 'p', 'l') # :nodoc:
   w32_FL = Win32API.new("kernel32.dll", "FreeLibrary", 'p', 'l')# :nodoc:
+
   if safeExists?("audio.dll")
     @handle = w32_LL.call("audio.dll")
     at_exit { w32_FL.call(@handle) }
-    AudioContextIsActive=Win32API.new("audio.dll","AudioContextIsActive","l","l")# :nodoc:
-    AudioContextPlay=Win32API.new("audio.dll","AudioContextPlay","lpllll","")# :nodoc:
-    AudioContextStop=Win32API.new("audio.dll","AudioContextStop","l","")# :nodoc:
-    AudioContextFadeOut=Win32API.new("audio.dll","AudioContextFadeOut","ll","")# :nodoc:
-    AudioContextGetPosition=Win32API.new("audio.dll","AudioContextGetPosition","l","l")# :nodoc:
-    AudioContextFadeIn=Win32API.new("audio.dll","AudioContextFadeIn","ll","")# :nodoc:
-    AudioContextSetVolume=Win32API.new("audio.dll","AudioContextSetVolume","ll","")# :nodoc:
-    AudioContextSEPlay=Win32API.new("audio.dll","AudioContextSEPlay","lplll","")# :nodoc:
+    AudioContextIsActive    = Win32API.new("audio.dll","AudioContextIsActive","l","l")# :nodoc:
+    AudioContextPlay        = Win32API.new("audio.dll","AudioContextPlay","lpllll","")# :nodoc:
+    AudioContextStop        = Win32API.new("audio.dll","AudioContextStop","l","")# :nodoc:
+    AudioContextFadeOut     = Win32API.new("audio.dll","AudioContextFadeOut","ll","")# :nodoc:
+    AudioContextGetPosition = Win32API.new("audio.dll","AudioContextGetPosition","l","l")# :nodoc:
+    AudioContextFadeIn      = Win32API.new("audio.dll","AudioContextFadeIn","ll","")# :nodoc:
+    AudioContextSetVolume   = Win32API.new("audio.dll","AudioContextSetVolume","ll","")# :nodoc:
+    AudioContextSEPlay      = Win32API.new("audio.dll","AudioContextSEPlay","lplll","")# :nodoc:
     if !@MEContext
       @MEContext=AudioContext.new
       at_exit { @MEContext.dispose }
@@ -110,6 +111,7 @@ module AudioState
     AudioContextSetVolume   = nil # :nodoc:
     AudioContextSEPlay      = nil # :nodoc:
   end
+
   @channel   = nil
   @bgm       = nil
   @name      = ""
@@ -284,95 +286,90 @@ end
 
 ####################################################
 if safeExists?("audio.dll")
-
-module Graphics
-  if !defined?(audiomodule_update)
-    class << self
-      alias audiomodule_update update
-    end
-  end
-
-  def self.update
-    Audio.update
-    audiomodule_update
-  end
-end
-
-
-
-module Audio
-  @@musicstate=nil
-  @@soundstate=nil
-
-  def self.update
-    return if Graphics.frame_count%10!=0
-    if AudioState.waitingBGM && !AudioState.meActive?
-      waitbgm=AudioState.waitingBGM
-      AudioState.waitingBGM=nil
-      bgm_play(waitbgm[0],waitbgm[1],waitbgm[2],waitbgm[3])
-    end
-  end
-
-  def self.bgm_play(name,volume=80,pitch=100,position=nil)
-    begin
-      if position==nil || position==0
-        Kernel.Audio_bgm_play(name,volume,pitch,0)
-      else
-        Kernel.Audio_bgm_play(name,volume,pitch,position)
-        Kernel.Audio_bgm_fadein(500)
+  module Graphics
+    if !defined?(audiomodule_update)
+      class << self
+        alias audiomodule_update update
       end
-    rescue Hangup
-      bgm_play(name,volume,pitch,position)
+    end
+
+    def self.update
+      Audio.update
+      audiomodule_update
     end
   end
 
-  def self.bgm_fade(ms)
-    Kernel.Audio_bgm_fade(ms)
-  end
 
-  def self.bgm_stop
-    Kernel.Audio_bgm_stop()
-  end
 
-  def self.bgm_position
-    ret=Kernel.Audio_bgm_get_position
-    return ret
-  end
+  module Audio
+    @@musicstate = nil
+    @@soundstate = nil
 
-  def self.me_play(name,volume=80,pitch=100)
-    Kernel.Audio_me_play(name,volume,pitch,0)
-  end
+    def self.update
+      return if Graphics.frame_count%10!=0
+      if AudioState.waitingBGM && !AudioState.meActive?
+        waitbgm=AudioState.waitingBGM
+        AudioState.waitingBGM=nil
+        bgm_play(waitbgm[0],waitbgm[1],waitbgm[2],waitbgm[3])
+      end
+    end
 
-  def self.me_fade(ms)
-    Kernel.Audio_me_fade(ms)
-  end
+    def self.bgm_play(name,volume=80,pitch=100,position=nil)
+      begin
+        if position==nil || position==0
+          Kernel.Audio_bgm_play(name,volume,pitch,0)
+        else
+          Kernel.Audio_bgm_play(name,volume,pitch,position)
+          Kernel.Audio_bgm_fadein(500)
+        end
+      rescue Hangup
+        bgm_play(name,volume,pitch,position)
+      end
+    end
 
-  def self.me_stop
-    Kernel.Audio_me_stop()
-  end
+    def self.bgm_fade(ms)
+      Kernel.Audio_bgm_fade(ms)
+    end
 
-  def self.bgs_play(name,volume=80,pitch=100)
-    Kernel.Audio_bgs_play(name,volume,pitch,0)
-  end
+    def self.bgm_stop
+      Kernel.Audio_bgm_stop()
+    end
 
-  def self.bgs_fade(ms)
-    Kernel.Audio_bgs_fade(ms)
-  end
+    def self.bgm_position
+      return Kernel.Audio_bgm_get_position
+    end
 
-  def self.bgs_stop
-    Kernel.Audio_bgs_stop()
-  end
+    def self.me_play(name,volume=80,pitch=100)
+      Kernel.Audio_me_play(name,volume,pitch,0)
+    end
+
+    def self.me_fade(ms)
+      Kernel.Audio_me_fade(ms)
+    end
+
+    def self.me_stop
+      Kernel.Audio_me_stop()
+    end
+
+    def self.bgs_play(name,volume=80,pitch=100)
+      Kernel.Audio_bgs_play(name,volume,pitch,0)
+    end
+
+    def self.bgs_fade(ms)
+      Kernel.Audio_bgs_fade(ms)
+    end
+
+    def self.bgs_stop
+      Kernel.Audio_bgs_stop()
+    end
 
 =begin
-  def self.se_play(name,volume=80,pitch=100)
-    Kernel.Audio_se_play(name,volume,pitch,0)
-  end
+    def self.se_play(name,volume=80,pitch=100)
+      Kernel.Audio_se_play(name,volume,pitch,0)
+    end
 
-  def self.se_stop
-    Kernel.Audio_se_stop()
-  end
+    def self.se_stop
+      Kernel.Audio_se_stop()
+    end
 =end
-end
-
-
-end # safeExists?("audio.dll")
+  endend # safeExists?("audio.dll")

@@ -245,6 +245,7 @@ class MiningGameScene
       ptotal+=i[1]
     end
     numitems=2+rand(3)
+    tries = 0
     while numitems>0
       rnd=rand(ptotal)
       added=false
@@ -267,6 +268,8 @@ class MiningGameScene
         end
         break if added
       end
+      tries += 1
+      break if tries>=500
     end
     # Draw items on item layer
     layer=@sprites["itemlayer"].bitmap
@@ -282,6 +285,7 @@ class MiningGameScene
   def pbDistributeIron
     # Set iron to be buried (index in IRON, x coord, y coord)
     numitems=4+rand(3)
+    tries = 0
     while numitems>0
       rnd=rand(IRON.length)
       provx=rand(BOARDWIDTH-IRON[rnd][2]+1)
@@ -290,6 +294,8 @@ class MiningGameScene
         @iron.push([rnd,provx,provy])
         numitems-=1
       end
+      tries += 1
+      break if tries>=500
     end
     # Draw items on item layer
     layer=@sprites["itemlayer"].bitmap
@@ -378,7 +384,7 @@ class MiningGameScene
     end
     if @sprites["tile#{position}"].layer<=pattern[4] && pbIsIronThere?(position)
       @sprites["tile#{position}"].layer-=pattern[4]
-      pbSEPlay("MiningIron")
+      pbSEPlay("Mining iron")
       hittype=2
     else
       for i in 0..2
@@ -391,9 +397,9 @@ class MiningGameScene
         end
       end
       if @sprites["cursor"].mode==1   # Hammer
-        pbSEPlay("MiningHammer")
+        pbSEPlay("Mining hammer")
       else
-        pbSEPlay("MiningPick")
+        pbSEPlay("Mining pick")
       end
     end
     update
@@ -403,10 +409,10 @@ class MiningGameScene
     @sprites["cursor"].animate(hittype)
     revealed=pbCheckRevealed
     if revealed.length>0
-      pbSEPlay("MiningFullyRevealItem")
+      pbSEPlay("Mining reveal full")
       pbFlashItems(revealed)
     elsif hititem
-      pbSEPlay("MiningRevealItem")
+      pbSEPlay("Mining reveal")
     end
   end
 
@@ -490,7 +496,7 @@ class MiningGameScene
   end
 
   def pbMain
-    pbSEPlay("MiningPing")
+    pbSEPlay("Mining ping")
     Kernel.pbMessage(_INTL("Something pinged in the wall!\n{1} confirmed!",@items.length))
     loop do
       update
@@ -500,7 +506,7 @@ class MiningGameScene
       # Check end conditions
       if @sprites["crack"].hits>=49
         @sprites["cursor"].visible=false
-        pbSEPlay("MiningCollapse")
+        pbSEPlay("Mining collapse")
         collapseviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
         collapseviewport.z=99999
         @sprites["collapse"]=BitmapSprite.new(Graphics.width,Graphics.height,collapseviewport)
@@ -520,33 +526,33 @@ class MiningGameScene
       if foundall
         @sprites["cursor"].visible=false
         pbWait(30)
-        pbSEPlay("MiningAllFound")
+        pbSEPlay("Mining found all")
         Kernel.pbMessage(_INTL("Everything was dug up!"))
         break
       end
       # Input
       if Input.trigger?(Input::UP) || Input.repeat?(Input::UP)
         if @sprites["cursor"].position>=BOARDWIDTH
-          pbSEPlay("MiningMove")
+          pbSEPlay("Mining cursor")
           @sprites["cursor"].position-=BOARDWIDTH
         end
       elsif Input.trigger?(Input::DOWN) || Input.repeat?(Input::DOWN)
         if @sprites["cursor"].position<(BOARDWIDTH*(BOARDHEIGHT-1))
-          pbSEPlay("MiningMove")
+          pbSEPlay("Mining cursor")
           @sprites["cursor"].position+=BOARDWIDTH
         end
       elsif Input.trigger?(Input::LEFT) || Input.repeat?(Input::LEFT)
         if @sprites["cursor"].position%BOARDWIDTH>0
-          pbSEPlay("MiningMove")
+          pbSEPlay("Mining cursor")
           @sprites["cursor"].position-=1
         end
       elsif Input.trigger?(Input::RIGHT) || Input.repeat?(Input::RIGHT)
         if @sprites["cursor"].position%BOARDWIDTH<(BOARDWIDTH-1)
-          pbSEPlay("MiningMove")
+          pbSEPlay("Mining cursor")
           @sprites["cursor"].position+=1
         end
       elsif Input.trigger?(Input::A) # Change tool mode
-        pbSEPlay("MiningChangeTool")
+        pbSEPlay("Mining tool change")
         newmode=(@sprites["cursor"].mode+1)%2
         @sprites["cursor"].mode=newmode
         @sprites["tool"].src_rect.set(newmode*68,0,68,100)
@@ -564,7 +570,7 @@ class MiningGameScene
     if @itemswon.length>0
       for i in @itemswon
         if $PokemonBag.pbStoreItem(i)
-          Kernel.pbMessage(_INTL("One {1} was obtained.\\se[MiningItemGet]\\wtnp[30]",
+          Kernel.pbMessage(_INTL("One {1} was obtained.\\se[Mining item get]\\wtnp[30]",
              PBItems.getName(i)))
         else
           Kernel.pbMessage(_INTL("One {1} was found, but you have no room for it.",
@@ -598,9 +604,9 @@ end
 
 
 def pbMiningGame
-  scene=MiningGameScene.new
-  screen=MiningGame.new(scene)
-  pbFadeOutIn(99999) {
-     screen.pbStartScreen
+  pbFadeOutIn(99999){
+    scene = MiningGameScene.new
+    screen = MiningGame.new(scene)
+    screen.pbStartScreen
   }
 end

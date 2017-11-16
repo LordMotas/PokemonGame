@@ -4,10 +4,12 @@ root: !ruby/object:RPG::Map
     volume: 80
     name: 021-Field04
     pitch: 100
+  tileset_id: 1
   events: !ruby/object:Hash
     1: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -18,7 +20,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &2 !ruby/object:RPG::MoveCommand
@@ -262,8 +264,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -274,6 +274,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -284,7 +285,6 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors3
@@ -293,10 +293,12 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -318,7 +320,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &20 !ruby/object:RPG::MoveCommand
@@ -510,8 +512,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -522,6 +522,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -532,7 +533,6 @@ root: !ruby/object:RPG::Map
         trigger: 3
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors3
@@ -541,6 +541,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -552,6 +553,7 @@ root: !ruby/object:RPG::Map
     2: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -562,7 +564,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &35 !ruby/object:RPG::MoveCommand
@@ -806,8 +808,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -818,6 +818,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -828,7 +829,6 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors3
@@ -837,10 +837,12 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -862,7 +864,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &53 !ruby/object:RPG::MoveCommand
@@ -1054,8 +1056,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1066,6 +1066,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1076,7 +1077,6 @@ root: !ruby/object:RPG::Map
         trigger: 3
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors3
@@ -1085,6 +1085,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1095,6 +1096,7 @@ root: !ruby/object:RPG::Map
     3: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -1105,7 +1107,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &68 !ruby/object:RPG::MoveCommand
@@ -1349,8 +1351,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1361,6 +1361,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1371,7 +1372,6 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors1
@@ -1380,10 +1380,12 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -1405,7 +1407,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &86 !ruby/object:RPG::MoveCommand
@@ -1597,8 +1599,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1609,6 +1609,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1619,7 +1620,6 @@ root: !ruby/object:RPG::Map
         trigger: 3
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors1
@@ -1628,6 +1628,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -1638,6 +1639,7 @@ root: !ruby/object:RPG::Map
     4: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -1648,7 +1650,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &101 !ruby/object:RPG::MoveCommand
@@ -1892,8 +1894,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -1904,6 +1904,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -1914,7 +1915,6 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors4
@@ -1923,10 +1923,12 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -1948,7 +1950,7 @@ root: !ruby/object:RPG::Map
               parameters:
               - !ruby/object:RPG::AudioFile
                 volume: 100
-                name: Entering Door
+                name: Door enter
                 pitch: 100
               code: 44
             - &119 !ruby/object:RPG::MoveCommand
@@ -2140,8 +2142,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -2152,6 +2152,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -2162,7 +2163,6 @@ root: !ruby/object:RPG::Map
         trigger: 3
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: doors4
@@ -2171,6 +2171,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -2181,12 +2182,13 @@ root: !ruby/object:RPG::Map
     5: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
           - !ruby/object:RPG::AudioFile
             volume: 80
-            name: Exit Door
+            name: Door exit
             pitch: 100
           indent: 0
           code: 250
@@ -2229,8 +2231,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -2241,6 +2241,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -2251,7 +2252,6 @@ root: !ruby/object:RPG::Map
         trigger: 1
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -2260,6 +2260,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -2270,6 +2271,7 @@ root: !ruby/object:RPG::Map
     6: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -2343,7 +2345,7 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bYou have no room for it right now...  Come back "
+          - "\\bYou have no room for it right now... Come back "
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -2400,7 +2402,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bI really will keep it.  You do want this Egg, yes?"
+          - "\\bI really will keep it. You do want this Egg, yes?"
           indent: 2
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -2433,7 +2435,7 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bWell all right then, I'll take it.  Thank you."
+          - "\\bWell all right then, I'll take it. Thank you."
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -2443,7 +2445,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\bNo, no, I'm sure we'll find another one.  I'm definitely "
+          - "\\bNo, no, I'm sure we'll find another one. I'm definitely "
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -2707,8 +2709,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -2719,6 +2719,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -2729,7 +2730,6 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: NPC 18
@@ -2738,6 +2738,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -2748,6 +2749,7 @@ root: !ruby/object:RPG::Map
     7: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -2869,8 +2871,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -2881,6 +2881,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -2891,7 +2892,6 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: NPC 19
@@ -2900,6 +2900,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -2910,6 +2911,7 @@ root: !ruby/object:RPG::Map
     8: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
+        move_type: 0
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -2921,8 +2923,6 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 0
-        move_type: 0
-        direction_fix: false
         condition: !ruby/object:RPG::Event::Page::Condition
           switch2_valid: false
           self_switch_ch: A
@@ -2933,6 +2933,7 @@ root: !ruby/object:RPG::Map
           variable_id: 1
           variable_valid: false
           switch2_id: 1
+        direction_fix: false
         move_route: !ruby/object:RPG::MoveRoute
           list:
           - !ruby/object:RPG::MoveCommand
@@ -2943,7 +2944,6 @@ root: !ruby/object:RPG::Map
         trigger: 0
         step_anime: false
         move_frequency: 3
-        always_on_top: false
         graphic: !ruby/object:RPG::Event::Page::Graphic
           opacity: 255
           character_name: ''
@@ -2952,6 +2952,7 @@ root: !ruby/object:RPG::Map
           direction: 2
           blend_type: 0
           character_hue: 0
+        always_on_top: false
         walk_anime: true
         move_speed: 3
         through: false
@@ -2959,7 +2960,6 @@ root: !ruby/object:RPG::Map
       y: 18
       x: 22
       id: 8
-  tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
     name: ''
@@ -4846,9 +4846,9 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
-    - 0
+    - 1128
+    - 1129
+    - 1130
     - 1664
     - 0
     - 0
@@ -4887,9 +4887,9 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
+    - 1136
     - 0
-    - 0
-    - 0
+    - 1138
     - 1664
     - 0
     - 0
@@ -4929,8 +4929,8 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
+    - 1132
+    - 1138
     - 1664
     - 0
     - 0
@@ -4965,13 +4965,13 @@ root: !ruby/object:RPG::Map
     - 0
     - 1665
     - 0
-    - 1880
-    - 1884
-    - 1884
-    - 1884
-    - 1884
-    - 1885
     - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 1132
+    - 1138
     - 1664
     - 0
     - 0
@@ -6646,12 +6646,12 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1880
+    - 1884
+    - 1884
+    - 1884
+    - 1884
+    - 1885
     - 0
     - 0
     - 0

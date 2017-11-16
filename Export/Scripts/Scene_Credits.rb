@@ -1,6 +1,6 @@
 # Backgrounds to show in credits. Found in Graphics/Titles/ folder
 CreditsBackgroundList = ["credits1","credits2","credits3","credits4","credits5"]
-CreditsMusic          = "begin"
+CreditsMusic          = "Credits"
 CreditsScrollSpeed    = 1             # At least 1; keep below 5 for legibility.
 CreditsFrequency      = 8             # Number of seconds per credits slide.
 CREDITS_OUTLINE       = Color.new(0,0,128, 255)
@@ -64,12 +64,11 @@ Boushy<s>MiDas Mike
 Brother1440<s>Near Fantastica
 FL.<s>PinkMan
 Genzai Kawakami<s>Popper
-Harshboy<s>Rataime
-help-14<s>SoundSpawn
-IceGod64<s>the__end
-Jacob O. Wobbrock<s>Venom12
-KitsuneKouta<s>Wachunga
-Lisa Anthony<s>xLeD
+help-14<s>Rataime
+IceGod64<s>SoundSpawn
+Jacob O. Wobbrock<s>the__end
+KitsuneKouta<s>Venom12
+Lisa Anthony<s>Wachunga
 and everyone else who helped out
 
 
@@ -142,16 +141,16 @@ _END_
     @frame_index = 0
     @bg_index = 0
     @pixels_banked = 0
-    @zoom_adjustment = 1/$ResizeFactor
+    @zoom_adjustment = 1.0/$ResizeFactor
     @last_flag = false
 #--------
 # Setup
 #--------
     #Stops all audio but background music.
     previousBGM = $game_system.getPlayingBGM
-    pbMEStop()
-    pbBGSStop()
-    pbSEStop()
+    pbMEStop
+    pbBGSStop
+    pbSEStop
     pbBGMFade(2.0)
     pbBGMPlay(CreditsMusic)
     Graphics.transition

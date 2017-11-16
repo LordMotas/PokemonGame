@@ -7,10 +7,6 @@ module PokeBattle_SceneConstants
   MESSAGESHADOWCOLOR      = Color.new(160,160,168)
   MENUBASECOLOR           = MESSAGEBASECOLOR
   MENUSHADOWCOLOR         = MESSAGESHADOWCOLOR
-  #BOXTEXTBASECOLOR        = Color.new(72,72,72)
-  #BOXTEXTSHADOWCOLOR      = Color.new(184,184,184)
-  BOXTEXTBASECOLOR        = Color.new(255,255,255)
-  BOXTEXTSHADOWCOLOR      = Color.new(0,0,0)
   PPTEXTBASECOLOR         = MESSAGEBASECOLOR        # More than 1/2 of total PP
   PPTEXTSHADOWCOLOR       = MESSAGESHADOWCOLOR
   PPTEXTBASECOLORYELLOW   = Color.new(248,192,0)    # 1/2 of total PP or less
@@ -19,26 +15,6 @@ module PokeBattle_SceneConstants
   PPTEXTSHADOWCOLORORANGE = Color.new(144,72,24)
   PPTEXTBASECOLORRED      = Color.new(248,72,72)    # Zero PP
   PPTEXTSHADOWCOLORRED    = Color.new(136,48,48)
-
-  # HP bar colors
-  HPCOLORGREEN        = Color.new(24,192,32)
-  HPCOLORGREENDARK    = Color.new(0,144,0)
-  HPCOLORYELLOW       = Color.new(248,176,0)
-  HPCOLORYELLOWDARK   = Color.new(176,104,8)
-  HPCOLORRED          = Color.new(248,88,40)
-  HPCOLORREDDARK      = Color.new(168,48,56)
-
-  # Exp bar colors
-  EXPCOLORBASE       = Color.new(72,144,248)
-  EXPCOLORSHADOW     = Color.new(48,96,216)
-
-  # Position and width of HP/Exp bars
-  HPGAUGE_X    = 102
-  HPGAUGE_Y    = 40
-  HPGAUGESIZE  = 96
-  EXPGAUGE_X   = 6
-  EXPGAUGE_Y   = 76
-  EXPGAUGESIZE = 192
 
   # Coordinates of the top left of the player's data boxes
   PLAYERBOX_X   = Graphics.width - 244

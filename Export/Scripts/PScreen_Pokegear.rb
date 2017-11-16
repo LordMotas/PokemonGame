@@ -1,25 +1,24 @@
 class PokegearButton < SpriteWrapper
   attr_reader :index
   attr_reader :name
-  attr_accessor :selected
+  attr_reader :selected
 
-  def initialize(x,y,name="",index=0,viewport=nil)
+  def initialize(command,x,y,viewport=nil)
     super(viewport)
-    @index=index
-    @name=name
-    @selected=false
-    fembutton=pbResolveBitmap(sprintf("Graphics/Pictures/pokegearButtonf"))
-    if $Trainer.isFemale? && fembutton
-      @button=AnimatedBitmap.new("Graphics/Pictures/pokegearButtonf")
+    @image = command[0]
+    @name  = command[1]
+    @selected = false
+    if $Trainer.isFemale? && pbResolveBitmap(sprintf("Graphics/Pictures/Pokegear/icon_button_f"))
+      @button = AnimatedBitmap.new("Graphics/Pictures/Pokegear/icon_button_f")
     else
-      @button=AnimatedBitmap.new("Graphics/Pictures/pokegearButton")
+      @button = AnimatedBitmap.new("Graphics/Pictures/Pokegear/icon_button")
     end
-    @contents=BitmapWrapper.new(@button.width,@button.height)
-    self.bitmap=@contents
-    self.x=x
-    self.y=y
+    @contents = BitmapWrapper.new(@button.width,@button.height)
+    self.bitmap = @contents
+    self.x = x
+    self.y = y
+    pbSetSystemFont(self.bitmap)
     refresh
-    update
   end
 
   def dispose
@@ -28,137 +27,128 @@ class PokegearButton < SpriteWrapper
     super
   end
 
-  def refresh
-    self.bitmap.clear
-    self.bitmap.blt(0,0,@button.bitmap,Rect.new(0,0,@button.width,@button.height))
-    pbSetSystemFont(self.bitmap)
-    textpos=[          # Name is written on both unselected and selected buttons
-       [@name,self.bitmap.width/2,10,2,Color.new(248,248,248),Color.new(40,40,40)],
-       [@name,self.bitmap.width/2,62,2,Color.new(248,248,248),Color.new(40,40,40)]
-    ]
-    pbDrawTextPositions(self.bitmap,textpos)
-    icon=sprintf("Graphics/Pictures/pokegear"+@name)
-    imagepos=[         # Icon is put on both unselected and selected buttons
-       [icon,18,10,0,0,-1,-1],
-       [icon,18,62,0,0,-1,-1]
-    ]
-    pbDrawImagePositions(self.bitmap,imagepos)
+  def selected=(val)
+    oldsel = @selected
+    @selected = val
+    refresh if oldsel!=val
   end
 
-  def update
-    if self.selected
-      self.src_rect.set(0,self.bitmap.height/2,self.bitmap.width,self.bitmap.height/2)
-    else
-      self.src_rect.set(0,0,self.bitmap.width,self.bitmap.height/2)
-    end
-    super
+  def refresh
+    self.bitmap.clear
+    rect = Rect.new(0,0,@button.width,@button.height/2)
+    rect.y = @button.height/2 if @selected
+    self.bitmap.blt(0,0,@button.bitmap,rect)
+    textpos = [
+       [@name,self.bitmap.width/2,10,2,Color.new(248,248,248),Color.new(40,40,40)],
+    ]
+    pbDrawTextPositions(self.bitmap,textpos)
+    imagepos = [
+       [sprintf("Graphics/Pictures/Pokegear/icon_"+@image),18,10,0,0,-1,-1],
+    ]
+    pbDrawImagePositions(self.bitmap,imagepos)
   end
 end
 
 
 
-#===============================================================================
-# - Scene_Pokegear
-#-------------------------------------------------------------------------------
-# Modified By Harshboy
-# Modified by Peter O.
-# Also Modified By OblivionMew
-# Overhauled by Maruno
-#===============================================================================
-class Scene_Pokegear
-  #-----------------------------------------------------------------------------
-  # initialize
-  #-----------------------------------------------------------------------------
-  def initialize(menu_index = 0)
-    @menu_index = menu_index
+class PokemonPokegear_Scene
+  def pbUpdate
+    for i in 0...@commands.length
+      @sprites["button#{i}"].selected = (i==@index)
+    end
+    pbUpdateSpriteHash(@sprites)
   end
-  #-----------------------------------------------------------------------------
-  # main
-  #-----------------------------------------------------------------------------
-  def main
-    commands=[]
-# OPTIONS - If you change these, you should also change update_command below.
-    @cmdMap=-1
-    @cmdPhone=-1
-    @cmdJukebox=-1
-    commands[@cmdMap=commands.length]=_INTL("Map")
-    commands[@cmdPhone=commands.length]=_INTL("Phone") if $PokemonGlobal.phoneNumbers &&
-                                                          $PokemonGlobal.phoneNumbers.length>0
-    commands[@cmdJukebox=commands.length]=_INTL("Jukebox")
 
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z=99999
-    @button=AnimatedBitmap.new("Graphics/Pictures/pokegearButton")
-    @sprites={}
-    @sprites["background"] = IconSprite.new(0,0)
-    femback=pbResolveBitmap(sprintf("Graphics/Pictures/pokegearbgf"))
-    if $Trainer.isFemale? && femback
-      @sprites["background"].setBitmap("Graphics/Pictures/pokegearbgf")
+  def pbStartScene(commands)
+    @commands = commands
+    @index = 0
+    @viewport = Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z = 99999
+    @sprites = {}
+    @sprites["background"] = IconSprite.new(0,0,@viewport)
+    if $Trainer.isFemale? && pbResolveBitmap(sprintf("Graphics/Pictures/Pokegear/bg_f"))
+      @sprites["background"].setBitmap("Graphics/Pictures/Pokegear/bg_f")
     else
-      @sprites["background"].setBitmap("Graphics/Pictures/pokegearbg")
+      @sprites["background"].setBitmap("Graphics/Pictures/Pokegear/bg")
     end
-    @sprites["command_window"] = Window_CommandPokemon.new(commands,160)
-    @sprites["command_window"].visible = false
-    @sprites["command_window"].index = @menu_index
-    for i in 0...commands.length
-      x=118
-      y=196 - (commands.length*24) + (i*48)
-      @sprites["button#{i}"]=PokegearButton.new(x,y,commands[i],i,@viewport)
-      @sprites["button#{i}"].selected=(i==@sprites["command_window"].index)
-      @sprites["button#{i}"].update
+    for i in 0...@commands.length
+      y = 196 - (@commands.length*24) + (i*48)
+      @sprites["button#{i}"] = PokegearButton.new(@commands[i],118,y,@viewport)
     end
-    Graphics.transition
+    pbFadeInAndShow(@sprites) { pbUpdate }
+  end
+
+  def pbScene
+    ret = -1
     loop do
       Graphics.update
       Input.update
-      update
-      if $scene != self
+      pbUpdate
+      if Input.trigger?(Input::B)
         break
+      elsif Input.trigger?(Input::C)
+        ret = @index
+        break
+      elsif Input.trigger?(Input::UP)
+        @index -= 1
+        @index = @commands.length-1 if @index>=@commands.length
+        pbPlayCursorSE if @commands.length>1
+      elsif Input.trigger?(Input::DOWN)
+        @index += 1
+        @index = 0 if @index>=@commands.length
+        pbPlayCursorSE if @commands.length>1
       end
     end
-    Graphics.freeze
+    return ret
+  end
+
+  def pbEndScene
+    pbFadeOutAndHide(@sprites) { pbUpdate }
     pbDisposeSpriteHash(@sprites)
+    @viewport.dispose
   end
-  #-----------------------------------------------------------------------------
-  # update the scene
-  #-----------------------------------------------------------------------------
-  def update
-    for i in 0...@sprites["command_window"].commands.length
-      sprite=@sprites["button#{i}"]
-      sprite.selected=(i==@sprites["command_window"].index) ? true : false
-    end
-    pbUpdateSpriteHash(@sprites)
-    #update command window and the info if it's active
-    if @sprites["command_window"].active
-      update_command
-      return
-    end
+end
+
+
+
+class PokemonPokegearScreen
+  def initialize(scene)
+    @scene = scene
   end
-  #-----------------------------------------------------------------------------
-  # update the command window
-  #-----------------------------------------------------------------------------
-  def update_command
-    if Input.trigger?(Input::B)
-      pbPlayCancelSE()
-      $scene = Scene_Map.new
-      return
+
+  def pbStartScreen
+    commands = []
+    cmdMap     = -1
+    cmdPhone   = -1
+    cmdJukebox = -1
+    commands[cmdMap = commands.length]     = ["map",_INTL("Map")]
+    if $PokemonGlobal.phoneNumbers && $PokemonGlobal.phoneNumbers.length>0
+      commands[cmdPhone = commands.length] = ["phone",_INTL("Phone")]
     end
-    if Input.trigger?(Input::C)
-      if @cmdMap>=0 && @sprites["command_window"].index==@cmdMap
-        pbPlayDecisionSE()
+    commands[cmdJukebox = commands.length] = ["jukebox",_INTL("Jukebox")]
+    @scene.pbStartScene(commands)
+    loop do
+      cmd = @scene.pbScene
+      if cmd<0
+        pbPlayCancelSE
+        break
+      elsif cmdMap>=0 && cmd==cmdMap
+        pbPlayDecisionSE
         pbShowMap(-1,false)
-      end
-      if @cmdPhone>=0 && @sprites["command_window"].index==@cmdPhone
-        pbPlayDecisionSE()
-        pbFadeOutIn(99999) {
-           PokemonPhoneScene.new.start
+      elsif cmdPhone>=0 && cmd==cmdPhone
+        pbPlayDecisionSE
+        pbFadeOutIn(99999){
+          PokemonPhoneScene.new.start
+        }
+      elsif cmdJukebox>=0 && cmd==cmdJukebox
+        pbPlayDecisionSE
+        pbFadeOutIn(99999){
+          scene = PokemonJukebox_Scene.new
+          screen = PokemonJukeboxScreen.new(scene)
+          screen.pbStartScreen
         }
       end
-      if @cmdJukebox>=0 && @sprites["command_window"].index==@cmdJukebox
-        pbPlayDecisionSE()
-        $scene = Scene_Jukebox.new
-      end
-      return
     end
+    @scene.pbEndScene
   end
 end

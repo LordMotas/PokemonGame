@@ -1,58 +1,3 @@
-class PokemonSaveScene
-  def pbStartScreen
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z=99999
-    @sprites={}
-    totalsec = Graphics.frame_count / Graphics.frame_rate
-    hour = totalsec / 60 / 60
-    min = totalsec / 60 % 60
-    mapname=$game_map.name
-    textColor=["0070F8,78B8E8","E82010,F8A8B8","0070F8,78B8E8"][$Trainer.gender]
-    loctext=_INTL("<ac><c2=06644bd2>{1}</c2></ac>",mapname)
-    loctext+=_INTL("Player<r><c3={1}>{2}</c3><br>",textColor,$Trainer.name)
-    loctext+=_ISPRINTF("Time<r><c3={1:s}>{2:02d}:{3:02d}</c3><br>",textColor,hour,min)
-    loctext+=_INTL("Badges<r><c3={1}>{2}</c3><br>",textColor,$Trainer.numbadges)
-    if $Trainer.pokedex
-      loctext+=_INTL("Pokédex<r><c3={1}>{2}/{3}</c3>",textColor,$Trainer.pokedexOwned,$Trainer.pokedexSeen)
-    end
-    @sprites["locwindow"]=Window_AdvancedTextPokemon.new(loctext)
-    @sprites["locwindow"].viewport=@viewport
-    @sprites["locwindow"].x=0
-    @sprites["locwindow"].y=0
-    @sprites["locwindow"].width=228 if @sprites["locwindow"].width<228
-    @sprites["locwindow"].visible=true
-  end
-
-  def pbEndScreen
-    pbDisposeSpriteHash(@sprites)
-    @viewport.dispose
-  end
-end
-
-
-
-def pbEmergencySave
-  oldscene=$scene
-  $scene=nil
-  Kernel.pbMessage(_INTL("The script is taking too long. The game will restart."))
-  return if !$Trainer
-  if safeExists?(RTP.getSaveFileName("Game.rxdata"))
-    File.open(RTP.getSaveFileName("Game.rxdata"),  'rb') {|r|
-       File.open(RTP.getSaveFileName("Game.rxdata.bak"), 'wb') {|w|
-          while s = r.read(4096)
-            w.write s
-          end
-       }
-    }
-  end
-  if pbSave
-    Kernel.pbMessage(_INTL("\\se[]The game was saved.\\se[save]\\wtnp[30]"))
-  else
-    Kernel.pbMessage(_INTL("\\se[]Save failed.\\wtnp[30]"))
-  end
-  $scene=oldscene
-end
-
 def pbSave(safesave=false)
   $Trainer.metaID=$PokemonGlobal.playerID
   begin
@@ -87,9 +32,64 @@ def pbSave(safesave=false)
   return true
 end
 
+def pbEmergencySave
+  oldscene=$scene
+  $scene=nil
+  Kernel.pbMessage(_INTL("The script is taking too long. The game will restart."))
+  return if !$Trainer
+  if safeExists?(RTP.getSaveFileName("Game.rxdata"))
+    File.open(RTP.getSaveFileName("Game.rxdata"),  'rb') {|r|
+      File.open(RTP.getSaveFileName("Game.rxdata.bak"), 'wb') {|w|
+        while s = r.read(4096)
+          w.write s
+        end
+      }
+    }
+  end
+  if pbSave
+    Kernel.pbMessage(_INTL("\\se[]The game was saved.\\me[GUI save game]\\wtnp[30]"))
+  else
+    Kernel.pbMessage(_INTL("\\se[]Save failed.\\wtnp[30]"))
+  end
+  $scene=oldscene
+end
 
 
-class PokemonSave
+
+class PokemonSave_Scene
+  def pbStartScreen
+    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z=99999
+    @sprites={}
+    totalsec = Graphics.frame_count / Graphics.frame_rate
+    hour = totalsec / 60 / 60
+    min = totalsec / 60 % 60
+    mapname=$game_map.name
+    textColor=["0070F8,78B8E8","E82010,F8A8B8","0070F8,78B8E8"][$Trainer.gender]
+    loctext=_INTL("<ac><c2=06644bd2>{1}</c2></ac>",mapname)
+    loctext+=_INTL("Player<r><c3={1}>{2}</c3><br>",textColor,$Trainer.name)
+    loctext+=_ISPRINTF("Time<r><c3={1:s}>{2:02d}:{3:02d}</c3><br>",textColor,hour,min)
+    loctext+=_INTL("Badges<r><c3={1}>{2}</c3><br>",textColor,$Trainer.numbadges)
+    if $Trainer.pokedex
+      loctext+=_INTL("Pokédex<r><c3={1}>{2}/{3}</c3>",textColor,$Trainer.pokedexOwned,$Trainer.pokedexSeen)
+    end
+    @sprites["locwindow"]=Window_AdvancedTextPokemon.new(loctext)
+    @sprites["locwindow"].viewport=@viewport
+    @sprites["locwindow"].x=0
+    @sprites["locwindow"].y=0
+    @sprites["locwindow"].width=228 if @sprites["locwindow"].width<228
+    @sprites["locwindow"].visible=true
+  end
+
+  def pbEndScreen
+    pbDisposeSpriteHash(@sprites)
+    @viewport.dispose
+  end
+end
+
+
+
+class PokemonSaveScreen
   def initialize(scene)
     @scene=scene
   end
@@ -121,17 +121,11 @@ class PokemonSave
             @scene.pbEndScreen
             return false
           end
-        else
-          if !Kernel.pbConfirmMessage(
-             _INTL("There is already a saved file. Is it OK to overwrite it?"))
-            @scene.pbEndScreen
-            return false
-          end
         end
       end
       $PokemonTemp.begunNewGame=false
       if pbSave
-        Kernel.pbMessage(_INTL("\\se[]{1} saved the game.\\se[save]\\wtnp[30]",$Trainer.name))
+        Kernel.pbMessage(_INTL("\\se[]{1} saved the game.\\me[GUI save game]\\wtnp[30]",$Trainer.name))
         ret=true
       else
         Kernel.pbMessage(_INTL("\\se[]Save failed.\\wtnp[30]"))
@@ -141,4 +135,13 @@ class PokemonSave
     @scene.pbEndScreen
     return ret
   end
+end
+
+
+
+def pbSaveScreen
+  scene = PokemonSave_Scene.new
+  screen = PokemonSaveScreen.new(scene)
+  ret = screen.pbSaveScreen
+  return ret
 end

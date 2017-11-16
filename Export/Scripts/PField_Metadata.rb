@@ -80,7 +80,7 @@ class PokemonGlobalMetadata
     @daycare              = [[nil,0],[nil,0]]
     @daycareEgg           = false
     @daycareEggSteps      = 0
-    numRegions = 0
+    numRegions            = 0
     pbRgssOpen("Data/regionals.dat","rb"){|f| numRegions = f.fgetw }
     @pokedexUnlocked      = []
     @pokedexViable        = []
@@ -114,7 +114,7 @@ class PokemonGlobalMetadata
   end
 
   def bridge
-    @bridge=0 if !@bridge
+    @bridge = 0 if !@bridge
     return @bridge
   end
 end
@@ -138,28 +138,28 @@ class PokemonMapMetadata
   end
 
   def clear
-    @erasedEvents={}
-    @movedEvents={}
-    @strengthUsed=false
-    @blackFluteUsed=false
-    @whiteFluteUsed=false
+    @erasedEvents   = {}
+    @movedEvents    = {}
+    @strengthUsed   = false
+    @blackFluteUsed = false
+    @whiteFluteUsed = false
   end
 
   def addErasedEvent(eventID)
-    key=[$game_map.map_id,eventID]
-    @erasedEvents[key]=true
+    key = [$game_map.map_id,eventID]
+    @erasedEvents[key] = true
   end
 
   def addMovedEvent(eventID)
-    key=[$game_map.map_id,eventID]
-    event=$game_map.events[eventID]
-    @movedEvents[key]=[event.x,event.y,event.direction,event.through]
+    key               = [$game_map.map_id,eventID]
+    event             = $game_map.events[eventID]
+    @movedEvents[key] = [event.x,event.y,event.direction,event.through]
   end
 
   def updateMap
     for i in @erasedEvents
       if i[0][0]==$game_map.map_id && i[1]
-        event=$game_map.events[i[0][1]]
+        event = $game_map.events[i[0][1]]
         event.erase if event
       end
     end
@@ -168,18 +168,14 @@ class PokemonMapMetadata
         next if !$game_map.events[i[0][1]]
         $game_map.events[i[0][1]].moveto(i[1][0],i[1][1])
         case i[1][2]
-        when 2
-          $game_map.events[i[0][1]].turn_down
-        when 4
-          $game_map.events[i[0][1]].turn_left
-        when 6
-          $game_map.events[i[0][1]].turn_right
-        when 8
-          $game_map.events[i[0][1]].turn_up
+        when 2; $game_map.events[i[0][1]].turn_down
+        when 4; $game_map.events[i[0][1]].turn_left
+        when 6; $game_map.events[i[0][1]].turn_right
+        when 8; $game_map.events[i[0][1]].turn_up
         end
       end
       if i[1][3]!=nil
-        $game_map.events[i[0][1]].through=i[1][3]
+        $game_map.events[i[0][1]].through = i[1][3]
       end
     end
   end
@@ -199,10 +195,14 @@ class PokemonTemp
   attr_accessor :waitingTrainer
   attr_accessor :darknessSprite
   attr_accessor :pokemonDexData
+  attr_accessor :pokemonFormsData
   attr_accessor :pokemonMetadata
   attr_accessor :pokemonPhoneData
   attr_accessor :lastbattle
   attr_accessor :flydata
+  attr_accessor :surfJump
+  attr_accessor :endSurf
+  attr_accessor :forceSingleBattle
 
   def initialize
     @menuLastChoice         = 0
@@ -213,9 +213,13 @@ class PokemonTemp
     @waitingTrainer         = nil
     @darknessSprite         = nil
     @pokemonDexData         = nil
+    @pokemonFormsData       = nil
     @pokemonMetadata        = nil
     @pokemonPhoneData       = nil
     @lastbattle             = nil
     @flydata                = nil
+    @surfJump               = nil
+    @endSurf                = nil
+    @forceSingleBattle      = false
   end
 end

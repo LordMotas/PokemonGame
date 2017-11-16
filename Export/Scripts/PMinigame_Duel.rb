@@ -49,15 +49,15 @@ class PokemonDuel
     @sprites={}
     @event=event
     @sprites["player"]=IconSprite.new(-128-32,96,@viewport)
-    @sprites["opponent"]=IconSprite.new(Graphics.width+32,96,@viewport)
-    @sprites["playerwindow"]=DuelWindow.new($Trainer.name,false)
-    @sprites["opponentwindow"]=DuelWindow.new(opponent.name,true)
-    @sprites["playerwindow"].x=-@sprites["playerwindow"].width
-    @sprites["opponentwindow"].x=Graphics.width
-    @sprites["playerwindow"].viewport=@viewport
-    @sprites["opponentwindow"].viewport=@viewport
     @sprites["player"].setBitmap(pbTrainerSpriteFile($Trainer.trainertype))
+    @sprites["opponent"]=IconSprite.new(Graphics.width+32,96,@viewport)
     @sprites["opponent"].setBitmap(pbTrainerSpriteFile(opponent.trainertype))
+    @sprites["playerwindow"]=DuelWindow.new($Trainer.name,false)
+    @sprites["playerwindow"].x=-@sprites["playerwindow"].width
+    @sprites["playerwindow"].viewport=@viewport
+    @sprites["opponentwindow"]=DuelWindow.new(opponent.name,true)
+    @sprites["opponentwindow"].x=Graphics.width
+    @sprites["opponentwindow"].viewport=@viewport
     pbWait(20)
     while @sprites["player"].x<0
       @sprites["player"].x+=4
@@ -378,11 +378,14 @@ end
 
 
 # Starts a duel.
-# trainerid - ID of the opponent's trainer type.
+# trainerid - ID or symbol of the opponent's trainer type.
 # trainername - Name of the opponent
 # event - Game_Event object for the character's event
 # speeches - Array of 12 speeches
 def pbDuel(trainerid,trainername,event,speeches)
+  if trainerid.is_a?(String) || trainerid.is_a?(Symbol)
+    trainerid=getID(PBTrainers,trainerid)
+  end
   duel=PokemonDuel.new
   opponent=PokeBattle_Trainer.new(
      pbGetMessageFromHash(MessageTypes::TrainerNames,trainername),

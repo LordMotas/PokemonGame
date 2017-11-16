@@ -22,7 +22,7 @@ class ButtonEventScene < EventScene
        addImage(26*2,59*2,"Graphics/Pictures/helpCkey"),
        addImage(26*2,99*2,"Graphics/Pictures/helpXkey"),
        addImage(26*2,130*2,"Graphics/Pictures/helpZkey"),
-       addImage(26*2,154*2,"Graphics/Pictures/helpF5key")
+       addImage(26*2,154*2,"Graphics/Pictures/helpFkey")
     ]
     for key in @keys
       key.origin=PictureOrigin::Top

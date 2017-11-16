@@ -20,8 +20,7 @@ class Sprite_Timer
     return if disposed?
     if $game_system.timer_working
       if !@timer
-        @timer=Window_AdvancedTextPokemon.newWithSize("",
-           Graphics.width-120,0,120,64)
+        @timer=Window_AdvancedTextPokemon.newWithSize("",Graphics.width-120,0,120,64)
         @timer.width=@timer.borderX+96
         @timer.x=Graphics.width-@timer.width
         @timer.viewport=@viewport

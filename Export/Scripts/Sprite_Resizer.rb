@@ -17,7 +17,7 @@ if true   # Disables using Alt+Enter to go fullscreen
 end
 
 def pbSetResizeFactor(factor=1,norecalc=false)
-  factor=[0.5,1.0,1.5,2.0,-1][factor] if !norecalc
+  factor=[0.5,1.0,2.0,-1][factor] if !norecalc
   (factor<0) ? pbConfigureFullScreen : pbConfigureWindowedScreen(factor)
 end
 
@@ -77,9 +77,12 @@ def pbConfigureFullScreen
     fullgamew += BORDERWIDTH * 2
     fullgameh += BORDERHEIGHT * 2
   end
-  factor_x = ((2*params[0])/fullgamew).floor
-  factor_y = ((2*params[1])/fullgameh).floor
-  factor = [factor_x,factor_y].min/2.0
+#  factor_x = ((2*params[0])/fullgamew).floor
+#  factor_y = ((2*params[1])/fullgameh).floor
+#  factor = [factor_x,factor_y].min/2.0
+  factor_x = (params[0]/fullgamew).floor
+  factor_y = (params[1]/fullgameh).floor
+  factor = [factor_x,factor_y].min
   offset_x = (params[0]-gamew*factor)/(2*factor)
   offset_y = (params[1]-gameh*factor)/(2*factor)
   $ResizeOffsetX = offset_x
@@ -258,10 +261,10 @@ class Sprite
     alias _zoomy_SpriteResizer zoom_y
     alias _xeq_SpriteResizer x=
     alias _yeq_SpriteResizer y=
-    alias _zoomxeq_SpriteResizer zoom_x=
-    alias _zoomyeq_SpriteResizer zoom_y=
     alias _oxeq_SpriteResizer ox=
     alias _oyeq_SpriteResizer oy=
+    alias _zoomxeq_SpriteResizer zoom_x=
+    alias _zoomyeq_SpriteResizer zoom_y=
     alias _bushdeptheq_SpriteResizer bush_depth=
     @SpriteResizerMethodsAliased=true
   end
@@ -279,12 +282,80 @@ class Sprite
       _xeq_SpriteResizer($ResizeOffsetX*$ResizeFactorMul/100)
       _yeq_SpriteResizer($ResizeOffsetY*$ResizeFactorMul/100)
     end
-     _zoomxeq_SpriteResizer(@resizedZoomX*$ResizeFactorMul/100)
-     _zoomyeq_SpriteResizer(@resizedZoomY*$ResizeFactorMul/100)
-   end
+    _zoomxeq_SpriteResizer(@resizedZoomX*$ResizeFactorMul/100)
+    _zoomyeq_SpriteResizer(@resizedZoomY*$ResizeFactorMul/100)
+  end
+
+  def x
+    return @resizedX
+  end
+
+  def y
+    return @resizedY
+  end
+
+  def x=(val)
+    if $ResizeFactorMul!=100
+      offset=(self.viewport) ? 0 : $ResizeOffsetX
+      value=((val.to_i+offset)*$ResizeFactorMul/100)
+      _xeq_SpriteResizer(value.to_i)
+      @resizedX=val.to_i
+    elsif self.viewport
+      _xeq_SpriteResizer(val)
+      @resizedX=val
+    else
+      _xeq_SpriteResizer(val + $ResizeOffsetX)
+      @resizedX=val
+    end
+  end
+
+  def y=(val)
+    if $ResizeFactorMul!=100
+      offset=(self.viewport) ? 0 : $ResizeOffsetY
+      value=((val.to_i+offset)*$ResizeFactorMul/100)
+      _yeq_SpriteResizer(value.to_i)
+      @resizedY=val.to_i
+    elsif self.viewport
+      _yeq_SpriteResizer(val)
+      @resizedY=val
+    else
+      _yeq_SpriteResizer(val + $ResizeOffsetY)
+      @resizedY=val
+    end
+  end
+
+  def ox
+    return @resizedOx
+  end
+
+  def oy
+    return @resizedOy
+  end
+
+  def ox=(val)
+    if $ResizeFactor!=1.0
+      val=(val*$ResizeFactor).to_i
+      val=(val/$ResizeFactor).to_i
+    end
+    @resizedOx=val
+    _oxeq_SpriteResizer(val)
+  end
+
+  def oy=(val)
+    if $ResizeFactor!=1.0
+      val=(val*$ResizeFactor).to_i
+      val=(val/$ResizeFactor).to_i
+    end
+    @resizedOy=val
+    _oyeq_SpriteResizer(val)
+  end
 
   def zoom_x
     return @resizedZoomX
+  end
+
+  def zoom_y
+    return @resizedZoomY
   end
 
   def zoom_x=(val)
@@ -308,10 +379,6 @@ class Sprite
     @resizedZoomX=val
   end
 
-  def zoom_y
-    return @resizedZoomY
-  end
-
   def zoom_y=(val)
     value=val
     if $ResizeFactorMul!=100
@@ -333,78 +400,14 @@ class Sprite
     @resizedZoomY=val
   end
 
-  def x
-    return @resizedX
-  end
-
-  def x=(val)
-    if $ResizeFactorMul!=100
-      offset=(self.viewport) ? 0 : $ResizeOffsetX
-      value=((val.to_i+offset)*$ResizeFactorMul/100)
-      _xeq_SpriteResizer(value.to_i)
-      @resizedX=val.to_i
-    elsif self.viewport
-      _xeq_SpriteResizer(val)
-      @resizedX=val
-    else
-      _xeq_SpriteResizer(val + $ResizeOffsetX)
-      @resizedX=val
-    end
-  end
-
-  def y
-    return @resizedY
+  def bush_depth
+    return @resizedBushDepth
   end
 
   def bush_depth=(val)
     value=((val.to_i)*$ResizeFactorMul/100)
     _bushdeptheq_SpriteResizer(value.to_i)
     @resizedBushDepth=val.to_i
-  end
-
-  def bush_depth
-    return @resizedBushDepth
-  end
-
-  def y=(val)
-    if $ResizeFactorMul!=100
-      offset=(self.viewport) ? 0 : $ResizeOffsetY
-      value=((val.to_i+offset)*$ResizeFactorMul/100)
-      _yeq_SpriteResizer(value.to_i)
-      @resizedY=val.to_i
-    elsif self.viewport
-      _yeq_SpriteResizer(val)
-      @resizedY=val
-    else
-      _yeq_SpriteResizer(val + $ResizeOffsetY)
-      @resizedY=val
-    end
-  end
-
-  def ox=(val)
-    if $ResizeFactor!=1.0
-      val=(val*$ResizeFactor).to_i
-      val=(val/$ResizeFactor).to_i
-    end
-    @resizedOx=val
-    _oxeq_SpriteResizer(val)
-  end
-
-  def oy=(val)
-    if $ResizeFactor!=1.0
-      val=(val*$ResizeFactor).to_i
-      val=(val/$ResizeFactor).to_i
-    end
-    @resizedOy=val
-    _oyeq_SpriteResizer(val)
-  end
-
-  def ox
-    return @resizedOx
-  end
-
-  def oy
-    return @resizedOy
   end
 end
 
@@ -456,28 +459,26 @@ class Viewport
   def initialize(*arg)
     args=arg.clone
     @oldrect=Rect.new(0,0,100,100)
-    _initialize_SpriteResizer(
-       @oldrect
-    )
+    _initialize_SpriteResizer(@oldrect)
     newRect=NotifiableRect.new(0,0,0,0)
     @resizedRectProc=Proc.new {|r|
-       if $ResizeFactorMul==100
-         @oldrect.set(
-            r.x.to_i+$ResizeOffsetX,
-            r.y.to_i+$ResizeOffsetY,
-            r.width.to_i,
-            r.height.to_i
-         )
-         self._recteq_SpriteResizer(@oldrect)
-       else
-         @oldrect.set(
-            ((r.x+$ResizeOffsetX)*$ResizeFactorMul/100).to_i,
-            ((r.y+$ResizeOffsetY)*$ResizeFactorMul/100).to_i,
-            (r.width*$ResizeFactorMul/100).to_i,
-            (r.height*$ResizeFactorMul/100).to_i
-         )
-         self._recteq_SpriteResizer(@oldrect)
-       end
+      if $ResizeFactorMul==100
+        @oldrect.set(
+           r.x.to_i+$ResizeOffsetX,
+           r.y.to_i+$ResizeOffsetY,
+           r.width.to_i,
+           r.height.to_i
+        )
+        self._recteq_SpriteResizer(@oldrect)
+      else
+        @oldrect.set(
+           ((r.x+$ResizeOffsetX)*$ResizeFactorMul/100).to_i,
+           ((r.y+$ResizeOffsetY)*$ResizeFactorMul/100).to_i,
+           (r.width*$ResizeFactorMul/100).to_i,
+           (r.height*$ResizeFactorMul/100).to_i
+        )
+        self._recteq_SpriteResizer(@oldrect)
+      end
     }
     newRect.setNotifyProc(@resizedRectProc)
     if arg.length==1

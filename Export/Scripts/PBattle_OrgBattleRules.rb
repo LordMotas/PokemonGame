@@ -17,7 +17,7 @@ end
 
 def pbTooTall?(pokemon,maxHeightInMeters)
   dexdata=pbOpenDexData()
-  pbDexDataOffset(dexdata,pokemon.is_a?(Numeric) ? pokemon : pokemon.species,33)
+  pbDexDataOffset(dexdata,pokemon.is_a?(Numeric) ? pokemon : pokemon.fSpecies,33)
   height=dexdata.fgetw
   weight=dexdata.fgetw
   maxHeightInMeters=(maxHeightInMeters*10).round
@@ -27,7 +27,7 @@ end
 
 def pbTooHeavy?(pokemon,maxWeightInKg)
   dexdata=pbOpenDexData()
-  pbDexDataOffset(dexdata,pokemon.is_a?(Numeric) ? pokemon : pokemon.species,33)
+  pbDexDataOffset(dexdata,pokemon.is_a?(Numeric) ? pokemon : pokemon.fSpecies,33)
   height=dexdata.fgetw
   weight=dexdata.fgetw
   maxWeightInKg=(maxWeightInKg*10).round
@@ -407,14 +407,14 @@ class StandardRestriction
   def isValid?(pokemon)
     return false if !pokemon || pokemon.isEgg?
     dexdata=pbOpenDexData()
-    pbDexDataOffset(dexdata,pokemon.species,10)
+    pbDexDataOffset(dexdata,pokemon.fSpecies,10)
     basestatsum=dexdata.fgetb
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
     basestatsum+=dexdata.fgetb
-    pbDexDataOffset(dexdata,pokemon.species,2)
+    pbDexDataOffset(dexdata,pokemon.fSpecies,2)
     ability1=dexdata.fgetw
     ability2=dexdata.fgetw
     dexdata.close()
@@ -544,7 +544,7 @@ class TotalLevelRestriction
   end
 
   def errorMessage
-    return _ISPRINTF("The combined levels exceed {1:d}.",@level)
+    return _INTL("The combined levels exceed {1}.",@level)
   end
 end
 

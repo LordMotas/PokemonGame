@@ -13,9 +13,9 @@ def pbGetRelearnableMoves(pokemon)
   return [] if !pokemon || pokemon.isEgg? || (pokemon.isShadow? rescue false)
   moves=[]
   pbEachNaturalMove(pokemon){|move,level|
-     if level<=pokemon.level && !pokemon.hasMove?(move)
-       moves.push(move) if !moves.include?(move)
-     end
+    if level<=pokemon.level && !pokemon.hasMove?(move)
+      moves.push(move) if !moves.include?(move)
+    end
   }
   tmoves=[]
   if pokemon.firstmoves
@@ -32,7 +32,7 @@ end
 ################################################################################
 # Scene class for handling appearance of the screen
 ################################################################################
-class MoveRelearnerScene
+class MoveRelearner_Scene
   VISIBLEMOVES = 4
 
   def pbDisplay(msg,brief=false)
@@ -43,7 +43,6 @@ class MoveRelearnerScene
     UIHelper.pbConfirm(@sprites["msgwindow"],msg) { pbUpdate }
   end
 
-# Update the scene here, this is called once each frame
   def pbUpdate
     pbUpdateSpriteHash(@sprites)
   end
@@ -68,8 +67,8 @@ class MoveRelearnerScene
     @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     pbSetSystemFont(@sprites["overlay"].bitmap)
     @sprites["commands"]=Window_CommandPokemon.new(moveCommands,32)
-    @sprites["commands"].x=Graphics.width
     @sprites["commands"].height=32*(VISIBLEMOVES+1)
+    @sprites["commands"].visible=false
     @sprites["msgwindow"]=Window_AdvancedTextPokemon.new("")
     @sprites["msgwindow"].visible=false
     @sprites["msgwindow"].viewport=@viewport
@@ -109,7 +108,7 @@ class MoveRelearnerScene
           if movedata.totalpp>0
             textpos.push([_INTL("PP"),112,yPos+32,0,
                Color.new(64,64,64),Color.new(176,176,176)])
-            textpos.push([_ISPRINTF("{1:d}/{2:d}",
+            textpos.push([_INTL("{1}/{2}",
                movedata.totalpp,movedata.totalpp),230,yPos+32,1,
                Color.new(64,64,64),Color.new(176,176,176)])
           end
@@ -132,7 +131,7 @@ class MoveRelearnerScene
     textpos.push([basedamage<=1 ? basedamage==1 ? "???" : "---" : sprintf("%d",basedamage),
           468,146,2,Color.new(64,64,64),Color.new(176,176,176)])
     textpos.push([_INTL("ACCURACY"),272,178,0,Color.new(248,248,248),Color.new(0,0,0)])
-    textpos.push([accuracy==0 ? "---" : sprintf("%d",accuracy),
+    textpos.push([accuracy==0 ? "---" : sprintf("%d%",accuracy),
           468,178,2,Color.new(64,64,64),Color.new(176,176,176)])
     pbDrawTextPositions(overlay,textpos)
     imagepos.push(["Graphics/Pictures/category",436,116,0,category*28,64,28])
@@ -143,7 +142,7 @@ class MoveRelearnerScene
       imagepos.push(["Graphics/Pictures/reminderButtons",134,350,76,0,76,32])
     end
     pbDrawImagePositions(overlay,imagepos)
-    drawTextEx(overlay,272,210,238,5,
+    drawTextEx(overlay,272,210,230,5,
        pbGetMessage(MessageTypes::MoveDescriptions,@moves[@sprites["commands"].index]),
        Color.new(64,64,64),Color.new(176,176,176))
   end
@@ -215,11 +214,11 @@ end
 
 
 def pbRelearnMoveScreen(pokemon)
-  retval=true
+  retval = true
   pbFadeOutIn(99999){
-     scene=MoveRelearnerScene.new
-     screen=MoveRelearnerScreen.new(scene)
-     retval=screen.pbStartScreen(pokemon)
+    scene = MoveRelearner_Scene.new
+    screen = MoveRelearnerScreen.new(scene)
+    retval = screen.pbStartScreen(pokemon)
   }
   return retval
 end

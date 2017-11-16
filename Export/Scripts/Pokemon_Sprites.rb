@@ -28,23 +28,52 @@ class PokemonSprite < SpriteWrapper
     self.bitmap=nil
   end
 
+  def setOffset(offset=PictureOrigin::Center)
+    @offset=offset
+    changeOrigin
+  end
+
+  def changeOrigin
+    return if !self.bitmap
+    @offset=PictureOrigin::Center if !@offset
+    case @offset
+    when PictureOrigin::TopLeft, PictureOrigin::Top, PictureOrigin::TopRight
+      self.oy=0
+    when PictureOrigin::Left, PictureOrigin::Center, PictureOrigin::Right
+      self.oy=self.bitmap.height/2
+    when PictureOrigin::BottomLeft, PictureOrigin::Bottom, PictureOrigin::BottomRight
+      self.oy=self.bitmap.height
+    end
+    case @offset
+    when PictureOrigin::TopLeft, PictureOrigin::Left, PictureOrigin::BottomLeft
+      self.ox=0
+    when PictureOrigin::Top, PictureOrigin::Center, PictureOrigin::Bottom
+      self.ox=self.bitmap.width/2
+    when PictureOrigin::TopRight, PictureOrigin::Right, PictureOrigin::BottomRight
+      self.ox=self.bitmap.width
+    end
+  end
+
   def setPokemonBitmap(pokemon,back=false)
     @_iconbitmap.dispose if @_iconbitmap
     @_iconbitmap=pokemon ? pbLoadPokemonBitmap(pokemon,back) : nil
     self.bitmap=@_iconbitmap ? @_iconbitmap.bitmap : nil
     self.color=Color.new(0,0,0,0)
+    changeOrigin
   end
 
   def setPokemonBitmapSpecies(pokemon,species,back=false)
     @_iconbitmap.dispose if @_iconbitmap
     @_iconbitmap=pokemon ? pbLoadPokemonBitmapSpecies(pokemon,species,back) : nil
     self.bitmap=@_iconbitmap ? @_iconbitmap.bitmap : nil
+    changeOrigin
   end
 
   def setSpeciesBitmap(species,female=false,form=0,shiny=false,shadow=false,back=false,egg=false)
     @_iconbitmap.dispose if @_iconbitmap
     @_iconbitmap=pbLoadSpeciesBitmap(species,female,form,shiny,shadow,back,egg)
     self.bitmap=@_iconbitmap ? @_iconbitmap.bitmap : nil
+    changeOrigin
   end
 end
 
@@ -127,21 +156,27 @@ class PokemonBattlerSprite < RPG::Sprite
   end
 
   def update
-    @frame+=1
+    @frame = (@frame+1)%24
     @updating=true
     @spriteYExtra=0
     # Pokémon sprite bobbing while Pokémon is selected
-    if ((@frame/10).floor&1)==1 && @selected==1 # When choosing commands for this Pokémon
-      @spriteYExtra=2
+    if @selected==1 # When choosing commands for this Pokémon
+      if (@frame/6).floor==1
+        @spriteYExtra=2
+      elsif (@frame/6).floor==3
+        @spriteYExtra=-2
+      end
     end
     self.x=@spriteX
     self.y=@spriteY
     self.visible=@spriteVisible
     # Pokémon sprite blinking when targeted or damaged
-    if @spriteVisible && @selected==2 # When targeted
-      self.visible=(@frame%20<14)
-    elsif @spriteVisible && @selected==3 # When damaged
-      self.visible=(@frame%10<7)
+    if @spriteVisible
+      if @selected==2 # When targeted
+        self.visible=(@frame%12<8)
+      elsif @selected==3 # When damaged
+        self.visible=(@frame%12<8)
+      end
     end
     if @_iconbitmap
       @_iconbitmap.update
@@ -265,6 +300,8 @@ class PokemonSpeciesIconSprite < SpriteWrapper
   attr_reader :species
   attr_reader :gender
   attr_reader :form
+  attr_reader :x
+  attr_reader :y
 
   def initialize(species,viewport=nil)
     super(viewport)
@@ -309,9 +346,6 @@ class PokemonSpeciesIconSprite < SpriteWrapper
     @animbitmap.dispose if @animbitmap
     super
   end
-
-  def x; @x; end
-  def y; @y; end
 
   def x=(value)
     @x=value
@@ -360,50 +394,49 @@ end
 # Sprite position adjustments
 #===============================================================================
 def getBattleSpriteMetricOffset(species,index,metrics=nil)
-  metrics=load_data("Data/metrics.dat") if !metrics
-  ret=0
+  metrics = load_data("Data/metrics.dat") if !metrics
+  ret = 0
   if index==1 || index==3   # Foe Pokémon
-    ret+=(metrics[1][species] || 0)*2 # enemy Y
-    ret-=(metrics[2][species] || 0)*2 # altitude
+    ret += (metrics[1][species] || 0)*2 # enemy Y
+    ret -= (metrics[2][species] || 0)*2 # altitude
   else                      # Player's Pokémon
-    ret+=(metrics[0][species] || 0)*2
+    ret += (metrics[0][species] || 0)*2
   end
   return ret
 end
 
 def adjustBattleSpriteY(sprite,species,index,metrics=nil)
-  ret=0
-  spriteheight=(sprite.bitmap &&
-     !sprite.bitmap.disposed?) ? sprite.bitmap.height : 128
-  ret-=spriteheight
-  ret+=getBattleSpriteMetricOffset(species,index,metrics)
+  ret = 0
+  spriteheight = (sprite.bitmap && !sprite.bitmap.disposed?) ? sprite.bitmap.height : 128
+  ret -= spriteheight
+  ret += getBattleSpriteMetricOffset(species,index,metrics)
   return ret
 end
 
 def pbPositionPokemonSprite(sprite,left,top)
   if sprite.bitmap && !sprite.bitmap.disposed?
-    sprite.x=left+(128-sprite.bitmap.width)/2
-    sprite.y=top+(128-sprite.bitmap.height)/2
+    sprite.x = left+(128-sprite.bitmap.width)/2
+    sprite.y = top+(128-sprite.bitmap.height)/2
   else
-    sprite.x=left
-    sprite.y=top
+    sprite.x = left
+    sprite.y = top
   end
 end
 
 def pbSpriteSetCenter(sprite,cx,cy)
   return if !sprite
   if !sprite.bitmap
-    sprite.x=cx
-    sprite.y=cy
+    sprite.x = cx
+    sprite.y = cy
     return
   end
-  realwidth=sprite.bitmap.width*sprite.zoom_x
-  realheight=sprite.bitmap.height*sprite.zoom_y
-  sprite.x=cx-(realwidth/2)
-  sprite.y=cy-(realheight/2)
+  realwidth  = sprite.bitmap.width*sprite.zoom_x
+  realheight = sprite.bitmap.height*sprite.zoom_y
+  sprite.x = cx-(realwidth/2)
+  sprite.y = cy-(realheight/2)
 end
 
 def showShadow?(species)
-  metrics=load_data("Data/metrics.dat")
+  metrics = load_data("Data/metrics.dat")
   return metrics[2][species]>0
 end

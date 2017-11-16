@@ -324,7 +324,7 @@ class TextField < UIControl
       return
     end
     # Backspace
-    if Input.repeatex?(8) || Input.repeatex?(0x2E)
+    if Input.repeatex?(0x08) || Input.repeatex?(0x2E)
       self.delete if @cursor > 0
       return
     end
@@ -332,7 +332,7 @@ class TextField < UIControl
     for i in 65..90
       if Input.repeatex?(i)
         shift=(Input.press?(Input::SHIFT)) ? 0x41 : 0x61
-        insert((shift+(i-65)).chr)
+        insert((shift+i-65).chr)
         return
       end
     end
@@ -2267,16 +2267,16 @@ end
 def pbSelectSE(canvas,audio)
   filename=(audio.name!="") ? audio.name : ""
   displayname=(filename!="") ? filename : _INTL("<user's cry>")
-  cmdNone=-1
   animfiles=[]
-  animfiles[cmdNone=animfiles.length]=_INTL("[Play user's cry]")
   ret=false
-  pbRgssChdir(".\\Audio\\SE\\") {
+  pbRgssChdir(".\\Audio\\SE\\Anim\\") {
      animfiles.concat(Dir.glob("*.wav"))
      animfiles.concat(Dir.glob("*.mp3"))
      animfiles.concat(Dir.glob("*.ogg"))
      animfiles.concat(Dir.glob("*.wma"))
   }
+  animfiles.sort!{|a,b| a.upcase<=>b.upcase }
+  animfiles=[_INTL("[Play user's cry]")]+animfiles
   cmdwin=pbListWindow(animfiles,320)
   cmdwin.height=480
   cmdwin.opacity=200
@@ -2297,12 +2297,17 @@ def pbSelectSE(canvas,audio)
     cmdwin.update
     maxsizewindow.update
     if maxsizewindow.changed?(3) && animfiles.length>0 # Play Sound
-      pbSEPlay(RPG::AudioFile.new(filename,maxsizewindow.value(1),maxsizewindow.value(2)))
+      fname = (cmdwin.index==0) ? "Cries/001Cry" : "Anim/"+filename
+      pbSEPlay(RPG::AudioFile.new(fname,maxsizewindow.value(1),maxsizewindow.value(2)))
     end
     if maxsizewindow.changed?(4) && animfiles.length>0 # Stop Sound
-      pbSEStop()
+      pbSEStop
     end
     if maxsizewindow.changed?(5) # OK
+      filename = File.basename(filename,".wav")
+      filename = File.basename(filename,".mp3")
+      filename = File.basename(filename,".ogg")
+      filename = File.basename(filename,".wma")
       audio.name=filename
       audio.volume=maxsizewindow.value(1)
       audio.pitch=maxsizewindow.value(2)
@@ -2313,7 +2318,7 @@ def pbSelectSE(canvas,audio)
       break
     end
     if (Input.trigger?(Input::C) || (cmdwin.doubleclick? rescue false)) && animfiles.length>0
-      filename=(cmdwin.index==cmdNone) ? "" : cmdwin.commands[cmdwin.index]
+      filename=(cmdwin.index==0) ? "" : cmdwin.commands[cmdwin.index]
       displayname=(filename!="") ? filename : _INTL("<user's cry>")
       maxsizewindow.controls[0].text=_INTL("File: \"{1}\"",displayname)
     elsif Input.trigger?(Input::B)
@@ -3202,8 +3207,8 @@ def pbDefinePath(canvas)
   sliderwin2.viewport=canvas.viewport
   sliderwin2.addSlider(_INTL("Number of frames:"),2,500,20)
   sliderwin2.opacity=200
-  defcurvebutton=sliderwin2.addButton(_INTL("Define Curve"))
-  defpathbutton=sliderwin2.addButton(_INTL("Define Path"))
+  defcurvebutton=sliderwin2.addButton(_INTL("Define Smooth Curve"))
+  defpathbutton=sliderwin2.addButton(_INTL("Define Freehand Path"))
   okbutton=sliderwin2.addButton(_INTL("OK"))
   cancelbutton=sliderwin2.addButton(_INTL("Cancel"))
   points=[]
@@ -3212,7 +3217,7 @@ def pbDefinePath(canvas)
     Graphics.update
     Input.update
     sliderwin2.update
-    if sliderwin2.changed?(0)
+    if sliderwin2.changed?(0) # Number of frames
       if path
         path=path.smoothPointPath(sliderwin2.value(0),false)
         i=0
@@ -3232,30 +3237,7 @@ def pbDefinePath(canvas)
         points.compact!
 #       File.open("pointpath.txt","wb"){|f| f.write(path.inspect) }
       end
-    end
-    if sliderwin2.changed?(okbutton) && path
-#     File.open("pointpath.txt","wb"){|f| 
-#        f.write(path.inspect)
-#     }
-      neededsize=canvas.currentframe+sliderwin2.value(0)
-      if neededsize>canvas.animation.length
-        canvas.animation.resize(neededsize)
-      end
-      thiscel=canvas.currentCel
-      celnumber=canvas.currentcel
-      for i in canvas.currentframe...neededsize
-        cel=canvas.animation[i][celnumber]
-        if !canvas.animation[i][celnumber]
-          cel=pbCreateCel(0,0,thiscel[AnimFrame::PATTERN],canvas.animation.position)
-          canvas.animation[i][celnumber]=cel
-        end
-        cel[AnimFrame::X]=path[i-canvas.currentframe][0]
-        cel[AnimFrame::Y]=path[i-canvas.currentframe][1]
-      end
-      startframe=sliderwin2.value(0)
-      break
-    end
-    if sliderwin2.changed?(defcurvebutton)
+    elsif sliderwin2.changed?(defcurvebutton)
       for point in points
         point.dispose
       end
@@ -3403,8 +3385,28 @@ def pbDefinePath(canvas)
 #     File.open("pointpath.txt","wb"){|f| f.write(path.inspect) }
       sliderwin2.visible=true
       next
-    end
-    if sliderwin2.changed?(cancelbutton) || Input.trigger?(Input::B)
+    elsif sliderwin2.changed?(okbutton) && path
+#     File.open("pointpath.txt","wb"){|f| 
+#        f.write(path.inspect)
+#     }
+      neededsize=canvas.currentframe+sliderwin2.value(0)
+      if neededsize>canvas.animation.length
+        canvas.animation.resize(neededsize)
+      end
+      thiscel=canvas.currentCel
+      celnumber=canvas.currentcel
+      for i in canvas.currentframe...neededsize
+        cel=canvas.animation[i][celnumber]
+        if !canvas.animation[i][celnumber]
+          cel=pbCreateCel(0,0,thiscel[AnimFrame::PATTERN],canvas.animation.position)
+          canvas.animation[i][celnumber]=cel
+        end
+        cel[AnimFrame::X]=path[i-canvas.currentframe][0]
+        cel[AnimFrame::Y]=path[i-canvas.currentframe][1]
+      end
+      startframe=sliderwin2.value(0)
+      break
+    elsif sliderwin2.changed?(cancelbutton) || Input.trigger?(Input::B)
       break
     end
   end
@@ -3504,7 +3506,7 @@ end
 # Main
 ################################################################################
 def animationEditorMain(animation)
-  viewport=Viewport.new(0,0,512+288,384+288)
+  viewport=Viewport.new(0,0,(512+288)*$ResizeFactor,(384+288)*$ResizeFactor)
   viewport.z=99999
   # Canvas
   canvas=AnimationCanvas.new(animation[animation.selected],viewport)
@@ -3604,7 +3606,7 @@ def animationEditorMain(animation)
          _INTL("Paste"),
          _INTL("Delete"),
          _INTL("Renumber..."),
-         _INTL("Define Path...")
+         _INTL("Extrapolate Path...")
       ]
       hit=pbTrackPopupMenu(commands)
       case hit
@@ -3634,7 +3636,7 @@ def animationEditorMain(animation)
             canvas.swapCels(cel1,cel2)
           end
         end
-      when 6 # Define Path
+      when 6 # Extrapolate Path
         if canvas.currentCel
           pbDefinePath(canvas)
           sliderwin.invalidate
@@ -3738,93 +3740,16 @@ def pbAnimationEditor
     animation[0].graphic=""
   end
   oldsize=Win32API.client_size
+  oldzoom = $PokemonSystem.screensize
+  oldborder = $PokemonSystem.border
+  $PokemonSystem.border = 0
+  pbSetResizeFactor
   Win32API.SetWindowPos((512+288)*$ResizeFactor,(384+288)*$ResizeFactor)
   animationEditorMain(animation)
+  $PokemonSystem.border = oldborder
+  pbSetResizeFactor(oldzoom)
   Win32API.SetWindowPos(oldsize[0],oldsize[1])
   $game_map.autoplay if $game_map
-end
-
-################################################################################
-# Debug option for rearranging animations
-################################################################################
-def pbAnimationsOrganiser
-  list=tryLoadData("Data/PkmnAnimations.rxdata")
-  if !list || !list[0]
-    Kernel.pbMessage(_INTL("No animations exist."))
-    return
-  end
-  viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-  viewport.z=99999
-  cmdwin=pbListWindow([],256)
-  cmdwin.viewport=viewport
-  cmdwin.z=2
-  title=Window_UnformattedTextPokemon.new(_INTL("Animations Organiser"))
-  title.x=256
-  title.y=0
-  title.width=Graphics.width-256
-  title.height=64
-  title.viewport=viewport
-  title.z=2
-  info=Window_AdvancedTextPokemon.new(_INTL("Z+Up/Down: Swap\nZ+Left: Delete\nZ+Right: Insert"))
-  info.x=256
-  info.y=64
-  info.width=Graphics.width-256
-  info.height=Graphics.height-64
-  info.viewport=viewport
-  info.z=2
-  commands=[]
-  refreshlist=true; oldsel=-1
-  cmd=[0,0]
-  loop do
-    if refreshlist
-      commands=[]
-      for i in 0...list.length
-        commands.push(sprintf("%d: %s",i,list[i] ? list[i].name : "???"))
-      end
-    end
-    refreshlist=false; oldsel=-1
-    cmd=pbCommands3(cmdwin,commands,-1,cmd[1],true)
-    if cmd[0]==1   # Swap animation up
-      if cmd[1]>=0 && cmd[1]<commands.length-1
-        list[cmd[1]+1],list[cmd[1]]=list[cmd[1]],list[cmd[1]+1]
-        refreshlist=true
-      end
-    elsif cmd[0]==2   # Swap animation down
-      if cmd[1]>0
-        list[cmd[1]-1],list[cmd[1]]=list[cmd[1]],list[cmd[1]-1]
-        refreshlist=true
-      end
-    elsif cmd[0]==3   # Delete spot
-      list[cmd[1]]=nil
-      list.compact
-      cmd[1]=[cmd[1],list.length-1].min
-      refreshlist=true
-      pbWait(5)
-    elsif cmd[0]==4   # Insert spot
-      list[list.length]=PBAnimation.new
-      i=list.length-1
-      loop do break unless i>cmd[1]
-        list[i],list[i-1]=list[i-1],list[i]
-        i-=1
-      end
-      refreshlist=true
-    elsif cmd[0]==0
-      cmd2=Kernel.pbMessage(_INTL("Save changes?"),
-          [_INTL("Yes"),_INTL("No"),_INTL("Cancel")],3)
-      if cmd2==0 || cmd2==1
-        if cmd2==0
-          # Save animations here
-          save_data(list,"Data/PkmnAnimations.rxdata")
-          Kernel.pbMessage(_INTL("Data saved."))
-        end
-        break
-      end
-    end
-  end
-  title.dispose
-  info.dispose
-  cmdwin.dispose
-  viewport.dispose
 end
 
 def pbConvertAnimToNewFormat(textdata)

@@ -1,8 +1,8 @@
 class Scene_DebugIntro
   def main
     Graphics.transition(0)
-    sscene=PokemonLoadScene.new
-    sscreen=PokemonLoad.new(sscene)
+    sscene = PokemonLoad_Scene.new
+    sscreen = PokemonLoadScreen.new(sscene)
     sscreen.pbStartLoadScreen
     Graphics.freeze
   end
@@ -10,7 +10,7 @@ end
 
 
 
-def pbCallTitle #:nodoc:
+def pbCallTitle
   if $DEBUG
     return Scene_DebugIntro.new
   else
@@ -18,11 +18,11 @@ def pbCallTitle #:nodoc:
     # directory without a file extension, to show before the
     # actual title screen.  Second parameter is the actual
     # title screen filename, also in Titles with no extension.
-    return Scene_Intro.new(['intro1'], 'splash') 
+    return Scene_Intro.new(['intro1'], 'splash')
   end
 end
 
-def mainFunction #:nodoc:
+def mainFunction
   if $DEBUG
     pbCriticalCode { mainFunctionDebug }
   else
@@ -31,10 +31,10 @@ def mainFunction #:nodoc:
   return 1
 end
 
-def mainFunctionDebug #:nodoc:
+def mainFunctionDebug
   begin
-    getCurrentProcess=Win32API.new("kernel32.dll","GetCurrentProcess","","l")
-    setPriorityClass=Win32API.new("kernel32.dll","SetPriorityClass",%w(l i),"")
+    getCurrentProcess = Win32API.new("kernel32.dll","GetCurrentProcess","","l")
+    setPriorityClass  = Win32API.new("kernel32.dll","SetPriorityClass",%w(l i),"")
     setPriorityClass.call(getCurrentProcess.call(),32768) # "Above normal" priority class
     $data_animations    = pbLoadRxData("Data/Animations")
     $data_tilesets      = pbLoadRxData("Data/Tilesets")
@@ -45,7 +45,7 @@ def mainFunctionDebug #:nodoc:
     Graphics.update
     Graphics.freeze
     $scene = pbCallTitle
-    while $scene != nil
+    while $scene!=nil
       $scene.main
     end
     Graphics.transition(20)
@@ -56,7 +56,7 @@ def mainFunctionDebug #:nodoc:
 end
 
 loop do
-  retval=mainFunction
+  retval = mainFunction
   if retval==0 # failed
     loop do
       Graphics.update

@@ -1670,6 +1670,7 @@ class PokeBattle_Battle
     when 0x94
     when 0x95
     when 0x96
+      score-=90 if !pbIsBerry?(attacker.item)
     when 0x97
     when 0x98
     when 0x99
@@ -2640,7 +2641,7 @@ class PokeBattle_Battle
         score+=40 if attacker.hp<=(attacker.totalhp/2)
       end
     when 0x150
-      score+=20 if !attacker.pbTooHigh?(:ATTACK) && opponent.hp<=(opponent.totalhp/4)
+      score+=20 if !attacker.pbTooHigh?(PBStats::ATTACK) && opponent.hp<=(opponent.totalhp/4)
     when 0x151
       avg=opponent.stages[PBStats::ATTACK]*10
       avg+=opponent.stages[PBStats::SPATK]*10
@@ -2795,8 +2796,7 @@ class PokeBattle_Battle
       elsif skill>=PBTrainerAI.mediumSkill && isConst?(move.type,PBTypes,:ELECTRIC) &&
             (opponent.hasWorkingAbility(:VOLTABSORB) ||
             opponent.hasWorkingAbility(:LIGHTNINGROD) ||
-            opponent.hasWorkingAbility(:MOTORDRIVE) ||
-            opponent.hasWorkingABility(:RUBBER))
+            opponent.hasWorkingAbility(:MOTORDRIVE))
         score=0
       else
         # Calculate how much damage the move will do (roughly)
@@ -2892,7 +2892,7 @@ class PokeBattle_Battle
       mod3=2 if mod3==0
     end
     # Foresight
-    if (attacker.hasWorkingAbility(:AETHERTOUCH) rescue false) || opponent.effects[PBEffects::Foresight]
+    if (attacker.hasWorkingAbility(:SCRAPPY) rescue false) || opponent.effects[PBEffects::Foresight]
       mod1=2 if isConst?(otype1,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype1)
       mod2=2 if isConst?(otype2,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype2)
       mod3=2 if isConst?(otype3,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype3)
@@ -2930,8 +2930,8 @@ class PokeBattle_Battle
 
   def pbRoughStat(battler,stat,skill)
     return battler.pbSpeed if skill>=PBTrainerAI.highSkill && stat==PBStats::SPEED
-    stagemul=[2,2,2,2,2,2,2,3,4,5,6,7,8]
-    stagediv=[8,7,6,5,4,3,2,2,2,2,2,2,2]
+    stagemul=[10,10,10,10,10,10,10,15,20,25,30,35,40]
+    stagediv=[40,35,30,25,20,15,10,10,10,10,10,10,10]
     stage=battler.stages[stat]+6
     value=0
     case stat
@@ -2990,7 +2990,7 @@ class PokeBattle_Battle
     when 0x80 # Brine
       basedamage*=2 if opponent.hp<=(opponent.totalhp/2).floor
     when 0x85 # Retaliate
-      #TODO
+      # TODO
     when 0x86 # Acrobatics
       basedamage*=2 if attacker.item==0 || attacker.hasWorkingItem(:FLYINGGEM)
     when 0x87 # Weather Ball
@@ -3131,7 +3131,7 @@ class PokeBattle_Battle
     when 0xE1 # Final Gambit
       basedamage=attacker.hp
     when 0xF7 # Fling
-      #TODO
+      # TODO
     when 0x113 # Spit Up
       basedamage*=attacker.effects[PBEffects::Stockpile]
     when 0x144
@@ -3280,7 +3280,8 @@ class PokeBattle_Battle
        (attacker.hasWorkingItem(:MINDPLATE) && isConst?(type,PBTypes,:PSYCHIC)) ||
        (attacker.hasWorkingItem(:ICICLEPLATE) && isConst?(type,PBTypes,:ICE)) ||
        (attacker.hasWorkingItem(:DRACOPLATE) && isConst?(type,PBTypes,:DRAGON)) ||
-       (attacker.hasWorkingItem(:DREADPLATE) && isConst?(type,PBTypes,:DARK))
+       (attacker.hasWorkingItem(:DREADPLATE) && isConst?(type,PBTypes,:DARK)) ||
+       (attacker.hasWorkingItem(:PIXIEPLATE) && isConst?(type,PBTypes,:FAIRY))
       basedamage=(basedamage*1.2).round
     end
     if (attacker.hasWorkingItem(:NORMALGEM) && isConst?(type,PBTypes,:NORMAL)) ||
@@ -3299,7 +3300,8 @@ class PokeBattle_Battle
        (attacker.hasWorkingItem(:PSYCHICGEM) && isConst?(type,PBTypes,:PSYCHIC)) ||
        (attacker.hasWorkingItem(:ICEGEM) && isConst?(type,PBTypes,:ICE)) ||
        (attacker.hasWorkingItem(:DRAGONGEM) && isConst?(type,PBTypes,:DRAGON)) ||
-       (attacker.hasWorkingItem(:DARKGEM) && isConst?(type,PBTypes,:DARK))
+       (attacker.hasWorkingItem(:DARKGEM) && isConst?(type,PBTypes,:DARK)) ||
+       (attacker.hasWorkingItem(:FAIRYGEM) && isConst?(type,PBTypes,:FAIRY))
       basedamage=(basedamage*1.5).round
     end
     if attacker.hasWorkingItem(:ROCKINCENSE) && isConst?(type,PBTypes,:ROCK)
@@ -3534,7 +3536,7 @@ class PokeBattle_Battle
     # Defense-boosting items
     if skill>=PBTrainerAI.highSkill
       if opponent.hasWorkingItem(:EVIOLITE)
-        evos=pbGetEvolvedFormData(opponent.species)
+        evos=pbGetEvolvedFormData(opponent.pokemon.fSpecies)
         if evos && evos.length>0
           defense=(defense*1.5).round
         end
@@ -3554,6 +3556,7 @@ class PokeBattle_Battle
         defense=(defense*1.5).round
       end
     end
+    defense = [defense.round,1].max
     # Main damage calculation
     damage=(((2.0*attacker.level/5+2).floor*basedamage*atk/defense).floor/50).floor+2
     # Multi-targeting attacks
@@ -3738,7 +3741,7 @@ class PokeBattle_Battle
     accuracy*=baseaccuracy/evasion
     # Accuracy modifiers
     if skill>=PBTrainerAI.mediumSkill
-      accuracy*=1.3 if attacker.hasWorkingAbility(:SEISMICSENSE)
+      accuracy*=1.3 if attacker.hasWorkingAbility(:COMPOUNDEYES)
       accuracy*=1.1 if attacker.hasWorkingAbility(:VICTORYSTAR)
       if skill>=PBTrainerAI.highSkill
         partner=attacker.pbPartner
@@ -4073,15 +4076,19 @@ class PokeBattle_Battle
                     (battler.status>0 || battler.effects[PBEffects::Confusion]>0)
       elsif isConst?(i,PBItems,:XATTACK) ||
             isConst?(i,PBItems,:XDEFEND) ||
+            isConst?(i,PBItems,:XDEFENSE) ||
             isConst?(i,PBItems,:XSPEED) ||
             isConst?(i,PBItems,:XSPECIAL) ||
+            isConst?(i,PBItems,:XSPATK) ||
             isConst?(i,PBItems,:XSPDEF) ||
             isConst?(i,PBItems,:XACCURACY)
         stat=0
         stat=PBStats::ATTACK if isConst?(i,PBItems,:XATTACK)
         stat=PBStats::DEFENSE if isConst?(i,PBItems,:XDEFEND)
+        stat=PBStats::DEFENSE if isConst?(i,PBItems,:XDEFENSE)
         stat=PBStats::SPEED if isConst?(i,PBItems,:XSPEED)
         stat=PBStats::SPATK if isConst?(i,PBItems,:XSPECIAL)
+        stat=PBStats::SPATK if isConst?(i,PBItems,:XSPATK)
         stat=PBStats::SPDEF if isConst?(i,PBItems,:XSPDEF)
         stat=PBStats::ACCURACY if isConst?(i,PBItems,:XACCURACY)
         if stat>0 && !battler.pbTooHigh?(stat)

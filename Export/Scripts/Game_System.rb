@@ -24,25 +24,25 @@ class Game_System
 
   def initialize
     if $RPGVX
-      @map_interpreter = Game_Interpreter.new(0, true)
-      @battle_interpreter = Game_Interpreter.new(0, false)
+      @map_interpreter    = Game_Interpreter.new(0,true)
+      @battle_interpreter = Game_Interpreter.new(0,false)
     else
-      @map_interpreter = Interpreter.new(0, true)
-      @battle_interpreter = Interpreter.new(0, false)
+      @map_interpreter    = Interpreter.new(0,true)
+      @battle_interpreter = Interpreter.new(0,false)
     end
-    @timer = 0
-    @timer_working = false
-    @save_disabled = false
-    @menu_disabled = false
+    @timer              = 0
+    @timer_working      = false
+    @save_disabled      = false
+    @menu_disabled      = false
     @encounter_disabled = false
-    @message_position = 2
-    @message_frame = 0
-    @save_count = 0
-    @magic_number = 0
+    @message_position   = 2
+    @message_frame      = 0
+    @save_count         = 0
+    @magic_number       = 0
     @autoscroll_x_speed = 0
     @autoscroll_y_speed = 0
-    @bgm_position=0
-    @bgs_position=0
+    @bgm_position       = 0
+    @bgs_position       = 0
   end
 
 ################################################################################
@@ -52,9 +52,9 @@ class Game_System
   end
 
   def bgm_play_internal2(name,volume,pitch,position) # :nodoc:
-    vol=volume
-    vol*=($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
-    vol=vol.to_i
+    vol = volume
+    vol *= ($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
+    vol = vol.to_i
     begin
       Audio.bgm_play(name,vol,pitch,position)
     rescue ArgumentError
@@ -63,65 +63,57 @@ class Game_System
   end
 
   def bgm_play_internal(bgm,position) # :nodoc:
-    if !@bgm_paused
-      @bgm_position=position
-    end
-    @playing_bgm = bgm==nil ? nil : bgm.clone
-    if bgm != nil and bgm.name != ""
-      if FileTest.audio_exist?("Audio/BGM/"+ bgm.name)
-        bgm_play_internal2("Audio/BGM/" + bgm.name, bgm.volume, bgm.pitch, 
-          @bgm_position) if !@defaultBGM
+    @bgm_position = position if !@bgm_paused
+    @playing_bgm = (bgm==nil) ? nil : bgm.clone
+    if bgm!=nil and bgm.name!=""
+      if FileTest.audio_exist?("Audio/BGM/"+bgm.name)
+        bgm_play_internal2("Audio/BGM/"+bgm.name,
+           bgm.volume,bgm.pitch,@bgm_position) if !@defaultBGM
       end
     else
-      if !@bgm_paused
-        @bgm_position=position
-      end
-      @playing_bgm=nil
+      @bgm_position = position if !@bgm_paused
+      @playing_bgm = nil
       Audio.bgm_stop if !@defaultBGM
     end
     if @defaultBGM
       bgm_play_internal2("Audio/BGM/"+@defaultBGM.name,
-        @defaultBGM.volume,@defaultBGM.pitch,@bgm_position)
+         @defaultBGM.volume,@defaultBGM.pitch,@bgm_position)
     end
     Graphics.frame_reset
   end
 
   def bgm_pause(fadetime=0.0) # :nodoc:
-    pos=Audio.bgm_position rescue 0
+    pos = Audio.bgm_position rescue 0
     if fadetime>0.0
       self.bgm_fade(fadetime)
     end
-    @bgm_position=pos
-    @bgm_paused=true
+    @bgm_position = pos
+    @bgm_paused   = true
   end
 
   def bgm_unpause  # :nodoc:
-    @bgm_position=0
-    @bgm_paused=false
+    @bgm_position = 0
+    @bgm_paused   = false
   end
 
   def bgm_resume(bgm) # :nodoc:
     if @bgm_paused
       self.bgm_play_internal(bgm,@bgm_position)
-      @bgm_position=0
-      @bgm_paused=false
+      @bgm_position = 0
+      @bgm_paused   = false
     end
   end
 
   def bgm_stop # :nodoc:
-    if !@bgm_paused
-      @bgm_position=0
-    end
-    @playing_bgm = nil
+    @bgm_position = 0 if !@bgm_paused
+    @playing_bgm  = nil
     Audio.bgm_stop if !@defaultBGM
   end
 
   def bgm_fade(time) # :nodoc:
-    if !@bgm_paused
-      @bgm_position=0
-    end
+    @bgm_position = 0 if !@bgm_paused
     @playing_bgm = nil
-    Audio.bgm_fade((time * 1000).floor) if !@defaultBGM
+    Audio.bgm_fade((time*1000).floor) if !@defaultBGM
   end
 
   def playing_bgm
@@ -140,19 +132,19 @@ class Game_System
 
   # Returns an RPG::AudioFile object for the currently playing background music
   def getPlayingBGM
-    return @playing_bgm ? @playing_bgm.clone : nil
+    return (@playing_bgm) ? @playing_bgm.clone : nil
   end
 
   def setDefaultBGM(bgm,volume=80,pitch=100)
     if bgm.is_a?(String)
-      bgm=RPG::AudioFile.new(bgm,volume,pitch)
+      bgm = RPG::AudioFile.new(bgm,volume,pitch)
     end
-    if bgm != nil and bgm.name != ""
-      @defaultBGM=nil
+    if bgm!=nil and bgm.name!=""
+      @defaultBGM = nil
       self.bgm_play(bgm)
-      @defaultBGM=bgm.clone
+      @defaultBGM = bgm.clone
     else
-      @defaultBGM=nil
+      @defaultBGM = nil
       self.bgm_play(@playing_bgm)
     end
   end
@@ -161,14 +153,14 @@ class Game_System
 
   def me_play(me)
     if me.is_a?(String)
-      me=RPG::AudioFile.new(me)
+      me = RPG::AudioFile.new(me)
     end
-    if me != nil and me.name != ""
+    if me!=nil and me.name!=""
       if FileTest.audio_exist?("Audio/ME/"+me.name)
-        vol=me.volume
-        vol*=($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
-        vol=vol.to_i
-        Audio.me_play("Audio/ME/" + me.name, vol, me.pitch)
+        vol = me.volume
+        vol *= ($PokemonSystem.bgmvolume/100.0) if $PokemonSystem
+        vol = vol.to_i
+        Audio.me_play("Audio/ME/"+me.name,vol,me.pitch)
       end
     else
       Audio.me_stop
@@ -179,17 +171,17 @@ class Game_System
 ################################################################################
 
   def bgs_play(bgs)
-    @playing_bgs = bgs==nil ? nil : bgs.clone
-    if bgs != nil and bgs.name != ""
-      if FileTest.audio_exist?("Audio/BGS/"+ bgs.name)
-        vol=bgs.volume
-        vol*=($PokemonSystem.sevolume/100.0) if $PokemonSystem
-        vol=vol.to_i
-        Audio.bgs_play("Audio/BGS/" + bgs.name, vol, bgs.pitch)
+    @playing_bgs = (bgs==nil) ? nil : bgs.clone
+    if bgs!=nil and bgs.name!=""
+      if FileTest.audio_exist?("Audio/BGS/"+bgs.name)
+        vol = bgs.volume
+        vol *= ($PokemonSystem.sevolume/100.0) if $PokemonSystem
+        vol = vol.to_i
+        Audio.bgs_play("Audio/BGS/"+bgs.name,vol,bgs.pitch)
       end
     else
-      @bgs_position=0
-      @playing_bgs=nil
+      @bgs_position = 0
+      @playing_bgs  = nil
       Audio.bgs_stop
     end
     Graphics.frame_reset
@@ -201,30 +193,30 @@ class Game_System
     else
       self.bgs_stop
     end
-    @bgs_paused=true
+    @bgs_paused = true
   end
 
   def bgs_unpause  # :nodoc:
-    @bgs_paused=false
+    @bgs_paused = false
   end
 
   def bgs_resume(bgs) # :nodoc:
     if @bgs_paused
       self.bgs_play(bgs)
-      @bgs_paused=false
+      @bgs_paused = false
     end
   end
 
   def bgs_stop
-    @bgs_position=0
-    @playing_bgs = nil
+    @bgs_position = 0
+    @playing_bgs  = nil
     Audio.bgs_stop
   end
 
   def bgs_fade(time)
-    @bgs_position=0
-    @playing_bgs = nil
-    Audio.bgs_fade((time * 1000).floor)
+    @bgs_position = 0
+    @playing_bgs  = nil
+    Audio.bgs_fade((time*1000).floor)
   end
 
   def playing_bgs
@@ -240,21 +232,21 @@ class Game_System
   end
 
   def getPlayingBGS
-    return @playing_bgs ? @playing_bgs.clone : nil 
+    return (@playing_bgs) ? @playing_bgs.clone : nil 
   end
 
 ################################################################################
 
   def se_play(se)
     if se.is_a?(String)
-      se=RPG::AudioFile.new(se)
+      se = RPG::AudioFile.new(se)
     end    
-    if se != nil and se.name != ""
-      if FileTest.audio_exist?("Audio/SE/"+ se.name)
-        vol=se.volume
-        vol*=($PokemonSystem.sevolume/100.0) if $PokemonSystem
-        vol=vol.to_i
-        Audio.se_play("Audio/SE/" + se.name, vol, se.pitch)
+    if se!=nil and se.name!=""
+      if FileTest.audio_exist?("Audio/SE/"+se.name)
+        vol = se.volume
+        vol *= ($PokemonSystem.sevolume/100.0) if $PokemonSystem
+        vol = vol.to_i
+        Audio.se_play("Audio/SE/"+se.name,vol,se.pitch)
       end
     end
   end
@@ -266,7 +258,7 @@ class Game_System
 ################################################################################
 
   def battle_bgm
-    if @battle_bgm == nil
+    if @battle_bgm==nil
       return $data_system.battle_bgm
     else
       return @battle_bgm
@@ -278,7 +270,7 @@ class Game_System
   end
 
   def battle_end_me
-    if @battle_end_me == nil
+    if @battle_end_me==nil
       return $data_system.battle_end_me
     else
       return @battle_end_me
@@ -292,7 +284,7 @@ class Game_System
 ################################################################################
 
   def windowskin_name
-    if @windowskin_name == nil
+    if @windowskin_name==nil
       return $data_system.windowskin_name
     else
       return @windowskin_name
@@ -304,11 +296,11 @@ class Game_System
   end
 
   def update
-    if @timer_working and @timer > 0
+    if @timer_working and @timer>0
       @timer -= 1
     end
     if Input.trigger?(Input::F5) && pbCurrentEventCommentInput(1,"Cut Scene")
-      event=@map_interpreter.get_character(0)
+      event = @map_interpreter.get_character(0)
       @map_interpreter.pbSetSelfSwitch(event.id,"A",true)
       @map_interpreter.command_end
       event.start

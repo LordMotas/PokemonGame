@@ -240,8 +240,8 @@ def pbPlayCursorSE()
   elsif $data_system && $data_system.respond_to?("sounds") &&
      $data_system.sounds && $data_system.sounds[0] && $data_system.sounds[0].name!=""
     pbSEPlay($data_system.sounds[0])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
+  elsif FileTest.audio_exist?("Audio/SE/GUI sel cursor")
+    pbSEPlay("GUI sel cursor",80)
   end
 end
 
@@ -253,8 +253,8 @@ def pbPlayDecisionSE()
   elsif $data_system && $data_system.respond_to?("sounds") &&
      $data_system.sounds && $data_system.sounds[1] && $data_system.sounds[1].name!=""
     pbSEPlay($data_system.sounds[1])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
+  elsif FileTest.audio_exist?("Audio/SE/GUI sel decision")
+    pbSEPlay("GUI sel decision",80)
   end
 end
 
@@ -266,8 +266,8 @@ def pbPlayCancelSE()
   elsif $data_system && $data_system.respond_to?("sounds") &&
      $data_system.sounds && $data_system.sounds[2] && $data_system.sounds[2].name!=""
     pbSEPlay($data_system.sounds[2])
-  elsif FileTest.audio_exist?("Audio/SE/Choose")
-    pbSEPlay("Choose",80)
+  elsif FileTest.audio_exist?("Audio/SE/GUI sel cancel")
+    pbSEPlay("GUI sel cancel",80)
   end
 end
 
@@ -279,7 +279,7 @@ def pbPlayBuzzerSE()
   elsif $data_system && $data_system.respond_to?("sounds") &&
      $data_system.sounds && $data_system.sounds[3] && $data_system.sounds[3].name!=""
     pbSEPlay($data_system.sounds[3])
-  elsif FileTest.audio_exist?("Audio/SE/buzzer")
-    pbSEPlay("buzzer",80)
+  elsif FileTest.audio_exist?("Audio/SE/GUI sel buzzer")
+    pbSEPlay("GUI sel buzzer",80)
   end
 end

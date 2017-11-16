@@ -152,13 +152,13 @@ class BugContestState
     pbJudge
     if $scene.is_a?(Scene_Map)
       pbFadeOutIn(99999){
-         $game_temp.player_transferring = true
-         $game_temp.player_new_map_id = @start[0]
-         $game_temp.player_new_x = @start[1]
-         $game_temp.player_new_y = @start[2]
-         $game_temp.player_new_direction = @start[3]
-         $scene.transfer_player
-         $game_map.need_refresh=true # in case player moves to the same map
+        $game_temp.player_transferring = true
+        $game_temp.player_new_map_id    = @start[0]
+        $game_temp.player_new_x         = @start[1]
+        $game_temp.player_new_y         = @start[2]
+        $game_temp.player_new_direction = @start[3]
+        $scene.transfer_player
+        $game_map.need_refresh = true # in case player moves to the same map
       }
     end
   end
@@ -237,7 +237,7 @@ def pbBugContestScore(pokemon)
   ivscore=(ivscore*100/186).floor
   hpscore=(100*pokemon.hp/pokemon.totalhp).floor
   dexdata=pbOpenDexData
-  pbDexDataOffset(dexdata,pokemon.species,16)
+  pbDexDataOffset(dexdata,pokemon.fSpecies,16)
   rareness=dexdata.fgetb
   dexdata.close
   rarescore=60
@@ -419,7 +419,7 @@ def pbBugContestBattle(species,level)
   battle.ballcount=pbBugContestState.ballcount
   battle.internalbattle=true
   decision=0
-  pbBattleAnimation(pbGetWildBattleBGM(species)) { 
+  pbBattleAnimation(pbGetWildBattleBGM(species),0,[genwildpoke]) { 
      decision=battle.pbStartBattle
      Events.onEndBattle.trigger(nil,decision,true)
      if decision==2 || decision==5

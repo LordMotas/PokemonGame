@@ -9,7 +9,7 @@ def pbChatter(pokemon)
   iconwindow.x=(Graphics.width/2)-(iconwindow.width/2)
   iconwindow.y=((Graphics.height-96)/2)-(iconwindow.height/2)
   if pokemon.chatter
-    Kernel.pbMessage(_INTL("It will forget the song it knows."))
+    Kernel.pbMessage(_INTL("It will forget the song it knows.\1"))
     if !Kernel.pbConfirmMessage(_INTL("Are you sure you want to change it?"))
       iconwindow.dispose
       return
@@ -36,8 +36,7 @@ HiddenMoveHandlers.addUseMove(:CHATTER,proc {|item,pokemon|
    pbChatter(pokemon)
    return true
 });
-
-
+
 
 class PokeBattle_Scene
   def pbChatter(attacker,opponent)
