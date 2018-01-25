@@ -2477,7 +2477,7 @@ root: !ruby/object:RPG::Map
           code: 232
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Do you want 1?
+          - Do you want Eeland?
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -2493,6 +2493,11 @@ root: !ruby/object:RPG::Map
           - 'Yes'
           indent: 3
           code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbAddPokemon(:EELAND,5)
+          indent: 4
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 4

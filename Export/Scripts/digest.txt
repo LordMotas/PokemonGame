@@ -182,7 +182,6 @@
 24216588    SkyInverseBattle                             SkyInverseBattle.rb
 51398100    ChallengeModes                               ChallengeModes.rb
 28946912    ChallengeSelection                           ChallengeSelection.rb
-23982061    Challenge_Selection                          Challenge_Selection.rb
 99152027    ChallengeSelectionAbility                    ChallengeSelectionAbility.rb
 26541381    ChallengeSelectionMoves                      ChallengeSelectionMoves.rb
 21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
