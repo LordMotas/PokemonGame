@@ -1763,8 +1763,6 @@ def pbAddPokemon(pokemon,level=nil,seeform=true)
     pokemon=PokeBattle_Pokemon.new(pokemon,level,$Trainer)
   end
   speciesname=PBSpecies.getName(pokemon.species)
-  Kernel.pbMessage(_INTL("Species Name: {1}",speciesname))
-  Kernel.pbMessage(_INTL("pokemon: {1}",pokemon))
   Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[PokemonGet]\1",$Trainer.name,speciesname))
   pbNicknameAndStore(pokemon)
   pbSeenForm(pokemon) if seeform

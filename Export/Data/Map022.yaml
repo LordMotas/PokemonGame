@@ -285,17 +285,17 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Man: I will now test you on the fundamentals of '
+          - 'I will now test you on the fundamentals of Pokemon '
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Pokemon Battles.
+          - Battles.
           indent: 4
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Man: Prepare yourself!'
+          - Prepare yourself!
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -310,17 +310,12 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Man: You may now leave and report on your '
+          - You may now leave and report on your success.
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - success.
-          indent: 4
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'Man: We''re all counting on you!'
+          - We're all counting on you!
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand

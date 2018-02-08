@@ -59,6 +59,11 @@ root: !ruby/object:RPG::Map
           code: 106
         - !ruby/object:RPG::EventCommand
           parameters:
+          - Select Challenge Modes.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - ChallengeSelection.new
           indent: 0
           code: 355
@@ -660,14 +665,9 @@ root: !ruby/object:RPG::Map
           code: 404
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN, the regions round about Korros, including Kanto, "
+          - "\\PN, the other Pokemon regions round about Korros, "
           indent: 0
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'Johto, Hoenn, Sinnoh, Unova, Kalos, and even Alola '
-          indent: 0
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - are experiencing mass chaos.
@@ -675,42 +675,42 @@ root: !ruby/object:RPG::Map
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'They have been overrun by the combined forces of '
+          - 'They have been overrun by Team Rocket combined '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Teams Rocket, Magma, Aqua, Galactic, Plasma, Flare '
+          - 'with the various other criminal organzations found in '
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - and Skull.
+          - the respective regions.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'The Korros Region alone has withstood the '
+          - 'The Korros Region alone has been relatively '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - onslaught, but only for a little while longer.
+          - uneffected, but only for a little while longer.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'The treacherous conditions and incredibly powerful '
+          - 'The treacherous environmental conditions and '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Pokemon have caused them to fall back in their '
+          - 'incredibly powerful Pokemon have hindered the '
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - assaults.
+          - invasion of this area.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -720,7 +720,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'greater detail once you''re proven you''re up to the '
+          - 'greater detail once you''ve proven you''re up to the '
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
@@ -764,6 +764,16 @@ root: !ruby/object:RPG::Map
           - 3
           indent: 0
           code: 235
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbSetSelfSwitch2(4,2,"B",true)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbSetSelfSwitch2(4,3,"B",true)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 0
