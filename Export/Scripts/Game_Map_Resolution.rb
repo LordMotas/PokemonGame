@@ -1,8 +1,8 @@
 class Game_Map
   TILEWIDTH = 32
   TILEHEIGHT = 32
-  XSUBPIXEL = $RPGVX ? 8 : 4
-  YSUBPIXEL = $RPGVX ? 8 : 4
+  XSUBPIXEL = ($RPGVX) ? 8 : 4
+  YSUBPIXEL = ($RPGVX) ? 8 : 4
 
   def self.realResX
     return XSUBPIXEL * TILEWIDTH
@@ -30,22 +30,12 @@ class Game_Map
     $MapFactory.setMapsInRange if $MapFactory
   end
 
-  def start_scroll(direction, distance, speed)
-    @scroll_direction = direction
-    if direction==2 || direction==8     
-       @scroll_rest = distance * Game_Map.realResY
-    else
-       @scroll_rest = distance * Game_Map.realResX
-    end
-    @scroll_speed = speed
-  end
-
   def scroll_down(distance)
     self.display_y+=distance
   end
 
   def scroll_left(distance)
-   self.display_x-=distance
+    self.display_x-=distance
   end
 
   def scroll_right(distance)
@@ -53,6 +43,15 @@ class Game_Map
   end
 
   def scroll_up(distance)
-   self.display_y-=distance
+    self.display_y-=distance
+  end
+  def start_scroll(direction, distance, speed)
+    @scroll_direction = direction
+    if direction==2 || direction==8     
+      @scroll_rest = distance * Game_Map.realResY
+    else
+      @scroll_rest = distance * Game_Map.realResX
+    end
+    @scroll_speed = speed
   end
 end

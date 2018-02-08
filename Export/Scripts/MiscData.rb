@@ -75,42 +75,42 @@ MetadataMapSize             = 18
 
 
 module PokemonMetadata
-  GlobalTypes={
-     "Home"=>[MetadataHome,"uuuu"],
-     "WildBattleBGM"=>[MetadataWildBattleBGM,"s"],
-     "TrainerBattleBGM"=>[MetadataTrainerBattleBGM,"s"],
-     "WildVictoryME"=>[MetadataWildVictoryME,"s"],
-     "TrainerVictoryME"=>[MetadataTrainerVictoryME,"s"],
-     "SurfBGM"=>[MetadataSurfBGM,"s"],
-     "BicycleBGM"=>[MetadataBicycleBGM,"s"],
-     "PlayerA"=>[MetadataPlayerA,"esssssss",:PBTrainers],
-     "PlayerB"=>[MetadataPlayerB,"esssssss",:PBTrainers],
-     "PlayerC"=>[MetadataPlayerC,"esssssss",:PBTrainers],
-     "PlayerD"=>[MetadataPlayerD,"esssssss",:PBTrainers],
-     "PlayerE"=>[MetadataPlayerE,"esssssss",:PBTrainers],
-     "PlayerF"=>[MetadataPlayerF,"esssssss",:PBTrainers],
-     "PlayerG"=>[MetadataPlayerG,"esssssss",:PBTrainers],
-     "PlayerH"=>[MetadataPlayerH,"esssssss",:PBTrainers]
+  GlobalTypes = {
+     "Home"             => [MetadataHome,"uuuu"],
+     "WildBattleBGM"    => [MetadataWildBattleBGM,"s"],
+     "TrainerBattleBGM" => [MetadataTrainerBattleBGM,"s"],
+     "WildVictoryME"    => [MetadataWildVictoryME,"s"],
+     "TrainerVictoryME" => [MetadataTrainerVictoryME,"s"],
+     "SurfBGM"          => [MetadataSurfBGM,"s"],
+     "BicycleBGM"       => [MetadataBicycleBGM,"s"],
+     "PlayerA"          => [MetadataPlayerA,"esssssss",:PBTrainers],
+     "PlayerB"          => [MetadataPlayerB,"esssssss",:PBTrainers],
+     "PlayerC"          => [MetadataPlayerC,"esssssss",:PBTrainers],
+     "PlayerD"          => [MetadataPlayerD,"esssssss",:PBTrainers],
+     "PlayerE"          => [MetadataPlayerE,"esssssss",:PBTrainers],
+     "PlayerF"          => [MetadataPlayerF,"esssssss",:PBTrainers],
+     "PlayerG"          => [MetadataPlayerG,"esssssss",:PBTrainers],
+     "PlayerH"          => [MetadataPlayerH,"esssssss",:PBTrainers]
   }
-  NonGlobalTypes={
-     "Outdoor"=>[MetadataOutdoor,"b"],
-     "ShowArea"=>[MetadataShowArea,"b"],
-     "Bicycle"=>[MetadataBicycle,"b"],
-     "BicycleAlways"=>[MetadataBicycleAlways,"b"],
-     "HealingSpot"=>[MetadataHealingSpot,"uuu"],
-     "Weather"=>[MetadataWeather,"eu",:PBFieldWeather],
-     "MapPosition"=>[MetadataMapPosition,"uuu"],
-     "DiveMap"=>[MetadataDiveMap,"u"],
-     "DarkMap"=>[MetadataDarkMap,"b"],
-     "SafariMap"=>[MetadataSafariMap,"b"],
-     "SnapEdges"=>[MetadataSnapEdges,"b"],
-     "Dungeon"=>[MetadataDungeon,"b"],
-     "BattleBack"=>[MetadataBattleBack,"s"],
-     "WildBattleBGM"=>[MetadataMapWildBattleBGM,"s"],
-     "TrainerBattleBGM"=>[MetadataMapTrainerBattleBGM,"s"],
-     "WildVictoryME"=>[MetadataMapWildVictoryME,"s"],
-     "TrainerVictoryME"=>[MetadataMapTrainerVictoryME,"s"],
-     "MapSize"=>[MetadataMapSize,"us"],
+  NonGlobalTypes = {
+     "Outdoor"          => [MetadataOutdoor,"b"],
+     "ShowArea"         => [MetadataShowArea,"b"],
+     "Bicycle"          => [MetadataBicycle,"b"],
+     "BicycleAlways"    => [MetadataBicycleAlways,"b"],
+     "HealingSpot"      => [MetadataHealingSpot,"uuu"],
+     "Weather"          => [MetadataWeather,"eu",:PBFieldWeather],
+     "MapPosition"      => [MetadataMapPosition,"uuu"],
+     "DiveMap"          => [MetadataDiveMap,"u"],
+     "DarkMap"          => [MetadataDarkMap,"b"],
+     "SafariMap"        => [MetadataSafariMap,"b"],
+     "SnapEdges"        => [MetadataSnapEdges,"b"],
+     "Dungeon"          => [MetadataDungeon,"b"],
+     "BattleBack"       => [MetadataBattleBack,"s"],
+     "WildBattleBGM"    => [MetadataMapWildBattleBGM,"s"],
+     "TrainerBattleBGM" => [MetadataMapTrainerBattleBGM,"s"],
+     "WildVictoryME"    => [MetadataMapWildVictoryME,"s"],
+     "TrainerVictoryME" => [MetadataMapTrainerVictoryME,"s"],
+     "MapSize"          => [MetadataMapSize,"us"],
   }
 end
 
@@ -120,38 +120,38 @@ end
 # Manipulation methods for metadata, phone data and Pokémon species data
 #===============================================================================
 def pbLoadMetadata
-  $PokemonTemp=PokemonTemp.new if !$PokemonTemp
+  $PokemonTemp = PokemonTemp.new if !$PokemonTemp
   if !$PokemonTemp.pokemonMetadata
     if !pbRgssExists?("Data/metadata.dat")
-      $PokemonTemp.pokemonMetadata=[]
+      $PokemonTemp.pokemonMetadata = []
     else
-      $PokemonTemp.pokemonMetadata=load_data("Data/metadata.dat")
+      $PokemonTemp.pokemonMetadata = load_data("Data/metadata.dat")
     end
   end
   return $PokemonTemp.pokemonMetadata
 end
 
 def pbGetMetadata(mapid,metadataType)
-  meta=pbLoadMetadata
+  meta = pbLoadMetadata
   return meta[mapid][metadataType] if meta[mapid]
   return nil
 end
 
 def pbLoadPhoneData
-  $PokemonTemp=PokemonTemp.new if !$PokemonTemp
+  $PokemonTemp = PokemonTemp.new if !$PokemonTemp
   if !$PokemonTemp.pokemonPhoneData
     pbRgssOpen("Data/phone.dat","rb"){|f|
-       $PokemonTemp.pokemonPhoneData=Marshal.load(f)
+      $PokemonTemp.pokemonPhoneData = Marshal.load(f)
     }
   end
   return $PokemonTemp.pokemonPhoneData
 end
 
 def pbOpenDexData
-  $PokemonTemp=PokemonTemp.new if !$PokemonTemp
+  $PokemonTemp = PokemonTemp.new if !$PokemonTemp
   if !$PokemonTemp.pokemonDexData
     pbRgssOpen("Data/dexdata.dat","rb"){|f|
-       $PokemonTemp.pokemonDexData=f.read
+      $PokemonTemp.pokemonDexData = f.read
     }
   end
   if block_given?
@@ -162,23 +162,34 @@ def pbOpenDexData
 end
 
 def pbDexDataOffset(dexdata,species,offset)
-  dexdata.pos=76*(species-1)+offset
+  dexdata.pos = 76*(species-1)+offset
+end
+
+def pbLoadFormsData
+  $PokemonTemp = PokemonTemp.new if !$PokemonTemp
+  if !$PokemonTemp.pokemonFormsData
+    File.open("Data/formspecies.dat"){|f|
+      $PokemonTemp.pokemonFormsData = Marshal.load(f)
+    }
+  end
+  return $PokemonTemp.pokemonFormsData
 end
 
 def pbClearData
   if $PokemonTemp
-    $PokemonTemp.pokemonDexData=nil
-    $PokemonTemp.pokemonMetadata=nil
-    $PokemonTemp.pokemonPhoneData=nil
+    $PokemonTemp.pokemonDexData   = nil
+    $PokemonTemp.pokemonFormsData = nil
+    $PokemonTemp.pokemonMetadata  = nil
+    $PokemonTemp.pokemonPhoneData = nil
   end
   MapFactoryHelper.clear
   if $game_map && $PokemonEncounters
     $PokemonEncounters.setup($game_map.map_id)
   end
   if pbRgssExists?("Data/Tilesets.rxdata")
-    $data_tilesets=load_data("Data/Tilesets.rxdata")
+    $data_tilesets = load_data("Data/Tilesets.rxdata")
   end
   if pbRgssExists?("Data/Tilesets.rvdata")
-    $data_tilesets=load_data("Data/Tilesets.rvdata")
+    $data_tilesets = load_data("Data/Tilesets.rvdata")
   end
 end

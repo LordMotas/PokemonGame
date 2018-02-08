@@ -34,7 +34,7 @@ class PokeBattle_BattleArena < PokeBattle_Battle
     pbJudge()
     return if @decision>0
     switched=[]
-    if @battlers[0].isFainted? && @partyindexes[0]+1<self.pbParty(0).length
+    if @battlers[0].fainted? && @partyindexes[0]+1<self.pbParty(0).length
       @partyindexes[0]+=1
       newpoke=@partyindexes[0]
       pbMessagesOnReplace(0,newpoke)
@@ -42,7 +42,7 @@ class PokeBattle_BattleArena < PokeBattle_Battle
       pbOnActiveOne(@battlers[0])
       switched.push(0)
     end
-    if @battlers[1].isFainted? && @partyindexes[1]+1<self.pbParty(1).length
+    if @battlers[1].fainted? && @partyindexes[1]+1<self.pbParty(1).length
       @partyindexes[1]+=1  
       newenemy=@partyindexes[1]
       pbMessagesOnReplace(1,newenemy)
@@ -265,15 +265,15 @@ class PokeBattle_Scene
       end
       updateJudgment(infowindow,1,battler1,battler2,ratings1,ratings2)
       Kernel.pbMessageDisplay(msgwindow,
-         _INTL("REFEREE: Judging category 1, Mind!\nThe Pokemon showing the most guts!\\wtnp[40]")) { 
+         _INTL("REFEREE: Judging category 1, Mind!\nThe Pokémon showing the most guts!\\wtnp[40]")) { 
          pbUpdate; dimmingvp.update; infowindow.update } 
       updateJudgment(infowindow,2,battler1,battler2,ratings1,ratings2)
       Kernel.pbMessageDisplay(msgwindow,
-         _INTL("REFEREE: Judging category 2, Skill!\nThe Pokemon using moves the best!\\wtnp[40]")) { 
+         _INTL("REFEREE: Judging category 2, Skill!\nThe Pokémon using moves the best!\\wtnp[40]")) { 
          pbUpdate; dimmingvp.update; infowindow.update } 
       updateJudgment(infowindow,3,battler1,battler2,ratings1,ratings2)
       Kernel.pbMessageDisplay(msgwindow,
-         _INTL("REFEREE: Judging category 3, Body!\nThe Pokemon with the most vitality!\\wtnp[40]")) { 
+         _INTL("REFEREE: Judging category 3, Body!\nThe Pokémon with the most vitality!\\wtnp[40]")) { 
          pbUpdate; dimmingvp.update; infowindow.update }
       total1=0
       total2=0

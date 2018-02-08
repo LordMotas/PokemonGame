@@ -3,7 +3,7 @@ class PokeBattle_Battler
 # Sleep
 #===============================================================================
   def pbCanSleep?(attacker,showMessages,move=nil,ignorestatus=false)
-    return false if isFainted?
+    return false if fainted?
     selfsleep=(attacker && attacker.index==self.index)
     if !ignorestatus && status==PBStatuses::SLEEP
       @battle.pbDisplay(_INTL("{1} is already asleep!",pbThis)) if showMessages
@@ -114,7 +114,7 @@ class PokeBattle_Battler
 # Poison
 #===============================================================================
   def pbCanPoison?(attacker,showMessages,move=nil)
-    return false if isFainted?
+    return false if fainted?
     if status==PBStatuses::POISON
       @battle.pbDisplay(_INTL("{1} is already poisoned.",pbThis)) if showMessages
       return false
@@ -156,7 +156,7 @@ class PokeBattle_Battler
   end
 
   def pbCanPoisonSynchronize?(opponent)
-    return false if isFainted?
+    return false if fainted?
     if (pbHasType?(:POISON) || pbHasType?(:STEEL)) && !hasWorkingItem(:RINGTARGET)
       @battle.pbDisplay(_INTL("{1}'s {2} had no effect on {3}!",
          opponent.pbThis,PBAbilities.getName(opponent.ability),pbThis(true)))
@@ -182,7 +182,7 @@ class PokeBattle_Battler
   end
 
   def pbCanPoisonSpikes?(moldbreaker=false)
-    return false if isFainted?
+    return false if fainted?
     return false if self.status!=0
     return false if pbHasType?(:POISON) || pbHasType?(:STEEL)
     if !moldbreaker
@@ -197,7 +197,7 @@ class PokeBattle_Battler
     return true
   end
 
-  def pbPoison(attacker,msg=nil,toxic=false)
+  def pbPoison(attacker=nil,msg=nil,toxic=false)
     self.status=PBStatuses::POISON
     self.statusCount=(toxic) ? 1 : 0
     self.effects[PBEffects::Toxic]=0
@@ -230,7 +230,7 @@ class PokeBattle_Battler
 # Burn
 #===============================================================================
   def pbCanBurn?(attacker,showMessages,move=nil)
-    return false if isFainted?
+    return false if fainted?
     if self.status==PBStatuses::BURN
       @battle.pbDisplay(_INTL("{1} already has a burn.",pbThis)) if showMessages
       return false
@@ -272,7 +272,7 @@ class PokeBattle_Battler
   end
 
   def pbCanBurnSynchronize?(opponent)
-    return false if isFainted?
+    return false if fainted?
     return false if self.status!=0
     if pbHasType?(:FIRE) && !hasWorkingItem(:RINGTARGET)
        @battle.pbDisplay(_INTL("{1}'s {2} had no effect on {3}!",
@@ -297,7 +297,7 @@ class PokeBattle_Battler
     return true
   end
 
-  def pbBurn(attacker,msg=nil)
+  def pbBurn(attacker=nil,msg=nil)
     self.status=PBStatuses::BURN
     self.statusCount=0
     @battle.pbCommonAnimation("Burn",self,nil)
@@ -321,7 +321,7 @@ class PokeBattle_Battler
 # Paralyze
 #===============================================================================
   def pbCanParalyze?(attacker,showMessages,move=nil)
-    return false if isFainted?
+    return false if fainted?
     if status==PBStatuses::PARALYSIS
       @battle.pbDisplay(_INTL("{1} is already paralyzed!",pbThis)) if showMessages
       return false
@@ -384,7 +384,7 @@ class PokeBattle_Battler
     return true
   end
 
-  def pbParalyze(attacker,msg=nil)
+  def pbParalyze(attacker=nil,msg=nil)
     self.status=PBStatuses::PARALYSIS
     self.statusCount=0
     @battle.pbCommonAnimation("Paralysis",self,nil)
@@ -408,7 +408,7 @@ class PokeBattle_Battler
 # Freeze
 #===============================================================================
   def pbCanFreeze?(attacker,showMessages,move=nil)
-    return false if isFainted?
+    return false if fainted?
     if status==PBStatuses::FROZEN
       @battle.pbDisplay(_INTL("{1} is already frozen solid!",pbThis)) if showMessages
       return false
@@ -510,7 +510,7 @@ class PokeBattle_Battler
 # Confuse
 #===============================================================================
   def pbCanConfuse?(attacker=nil,showMessages=true,move=nil)
-    return false if isFainted?
+    return false if fainted?
     if effects[PBEffects::Confusion]>0
       @battle.pbDisplay(_INTL("{1} is already confused!",pbThis)) if showMessages
       return false
@@ -534,7 +534,7 @@ class PokeBattle_Battler
   end
 
   def pbCanConfuseSelf?(showMessages)
-    return false if isFainted?
+    return false if fainted?
     if effects[PBEffects::Confusion]>0
       @battle.pbDisplay(_INTL("{1} is already confused!",pbThis)) if showMessages
       return false
@@ -576,8 +576,8 @@ class PokeBattle_Battler
 # Attraction
 #===============================================================================
   def pbCanAttract?(attacker,showMessages=true)
-    return false if isFainted?
-    return false if !attacker || attacker.isFainted?
+    return false if fainted?
+    return false if !attacker || attacker.fainted?
     if @effects[PBEffects::Attract]>=0
       @battle.pbDisplay(_INTL("But it failed!")) if showMessages
       return false
@@ -631,7 +631,7 @@ class PokeBattle_Battler
 #===============================================================================
 # Flinching
 #===============================================================================
-  def pbFlinch(attacker)
+  def pbFlinch(attacker=nil)
     return false if (!attacker || !attacker.hasMoldBreaker) && hasWorkingAbility(:INNERFOCUS)
     @effects[PBEffects::Flinch]=true
     return true
@@ -650,13 +650,9 @@ class PokeBattle_Battler
         if hasWorkingAbility(:CONTRARY) && !ignoreContrary
           return pbCanReduceStatStage?(stat,attacker,showMessages,moldbreaker,true)
         end
-        if attacker.hasWorkingAbility(:SUPPRESSION,true)
-          @battle.pbDisplay(_INTL("{1}'s stats are being suppressed!",pbThis)) if showMessages
-          return false
-        end
       end
     end
-    return false if isFainted?
+    return false if fainted?
     if pbTooHigh?(stat)
       @battle.pbDisplay(_INTL("{1}'s {2} won't go any higher!",
          pbThis,PBStats.getName(stat))) if showMessages
@@ -725,7 +721,7 @@ class PokeBattle_Battler
       increment=pbIncreaseStatBasic(stat,increment,attacker,moldbreaker,ignoreContrary)
       if increment>0
         if ignoreContrary
-          @battle.pbDisplay(_INTL("{1}'s {2} activated!",pbThis,PBAbilities.getName(self.ability))) if upanim
+          @battle.pbDisplay(_INTL("{1}'s {2} activated!",pbThis,PBAbilities.getName(self.ability))) if showmessage
         end
         @battle.pbCommonAnimation("StatUp",self,nil) if showanim
         if attacker.index==self.index
@@ -762,7 +758,7 @@ class PokeBattle_Battler
         end
       end
     end
-    return false if isFainted?
+    return false if fainted?
     selfreduce=(attacker && attacker.index==self.index)
     if !selfreduce
       if @effects[PBEffects::Substitute]>0 && (!move || !move.ignoresSubstitute?(attacker))
@@ -862,32 +858,6 @@ class PokeBattle_Battler
         if hasWorkingAbility(:COMPETITIVE) && (!attacker || attacker.pbIsOpposing?(self.index))
           pbIncreaseStatWithCause(PBStats::SPATK,2,self,PBAbilities.getName(self.ability))
         end
-        # Yin Yang
-        if hasWorkingAbility(:YINYANG)
-          case stat
-          when PBStats::ATTACK
-            #Decrease enemy defense one stage
-            attacker.pbReduceStat(PBStats::DEFENSE,increment,attacker,false,self)
-          when PBStats::DEFENSE
-            #Decrease enemy attack one stage
-            attacker.pbReduceStat(PBStats::ATTACK,increment,attacker,false,self)
-          when PBStats::SPATK
-            #Decrease enemy sp defense one stage
-            attacker.pbReduceStat(PBStats::SPDEF,increment,attacker,false,self)
-          when PBStats::SPDEF
-            #Decrease enemy sp attack one stage
-            attacker.pbReduceStat(PBStats::SPATK,increment,attacker,false,self)
-          when PBStats::SPEED
-            #Decrease enemy speed one stage
-            attacker.pbReduceStat(PBStats::SPEED,increment,attacker,false,self)
-          when PBStats::ACCURACY
-            #Decrease enemy evasion one stage
-            attacker.pbReduceStat(PBStats::EVASION,increment,attacker,false,self)
-          when PBStats::EVASION
-            #Decrease enemy accuracy one stage
-            attacker.pbReduceStat(PBStats::ACCURACY,increment,attacker,false,self)
-          end
-        end
         return true
       end
     end
@@ -910,13 +880,13 @@ class PokeBattle_Battler
       increment=pbReduceStatBasic(stat,increment,attacker,moldbreaker,ignoreContrary)
       if increment>0
         if ignoreContrary
-          @battle.pbDisplay(_INTL("{1}'s {2} activated!",pbThis,PBAbilities.getName(self.ability))) if downanim
+          @battle.pbDisplay(_INTL("{1}'s {2} activated!",pbThis,PBAbilities.getName(self.ability))) if showmessage
         end
         @battle.pbCommonAnimation("StatDown",self,nil) if showanim
         if attacker.index==self.index
           arrStatTexts=[_INTL("{1}'s {2} lowered its {3}!",pbThis,cause,PBStats.getName(stat)),
              _INTL("{1}'s {2} harshly lowered its {3}!",pbThis,cause,PBStats.getName(stat)),
-             _INTL("{1}'s {2} severely lowered its {3}!",pbThis,PBStats.getName(stat))]
+             _INTL("{1}'s {2} severely lowered its {3}!",pbThis,cause,PBStats.getName(stat))]
         else
           arrStatTexts=[_INTL("{1}'s {2} lowered {3}'s {4}!",attacker.pbThis,cause,pbThis(true),PBStats.getName(stat)),
              _INTL("{1}'s {2} harshly lowered {3}'s {4}!",attacker.pbThis,cause,pbThis(true),PBStats.getName(stat)),
@@ -938,7 +908,7 @@ class PokeBattle_Battler
   end
 
   def pbReduceAttackStatIntimidate(opponent)
-    return false if isFainted?
+    return false if fainted?
     if effects[PBEffects::Substitute]>0
       @battle.pbDisplay(_INTL("{1}'s substitute protected it from {2}'s {3}!",
          pbThis,opponent.pbThis(true),PBAbilities.getName(opponent.ability)))
@@ -968,39 +938,5 @@ class PokeBattle_Battler
       end
     end
     return pbReduceStatWithCause(PBStats::ATTACK,1,opponent,PBAbilities.getName(opponent.ability))
-  end
-  
-  #Spook
-  def pbReduceSpAttackStatSpook(opponent)
-    return false if isFainted?
-    if effects[PBEffects::Substitute]>0
-      @battle.pbDisplay(_INTL("{1}'s substitute protected it from {2}'s {3}!",
-         pbThis,opponent.pbThis(true),PBAbilities.getName(opponent.ability)))
-      return false
-    end
-    if !opponent.hasWorkingAbility(:CONTRARY)
-      if pbOwnSide.effects[PBEffects::Mist]>0
-        @battle.pbDisplay(_INTL("{1} is protected from {2}'s {3} by Mist!",
-           pbThis,opponent.pbThis(true),PBAbilities.getName(opponent.ability)))
-        return false
-      end
-      if hasWorkingAbility(:CLEARBODY) || hasWorkingAbility(:WHITESMOKE) ||
-         hasWorkingAbility(:HYPERCUTTER) ||
-         (hasWorkingAbility(:FLOWERVEIL) && pbHasType?(:GRASS))
-        abilityname=PBAbilities.getName(self.ability)
-        oppabilityname=PBAbilities.getName(opponent.ability)
-        @battle.pbDisplay(_INTL("{1}'s {2} prevented {3}'s {4} from working!",
-           pbThis,abilityname,opponent.pbThis(true),oppabilityname))
-        return false
-      end
-      if pbPartner.hasWorkingAbility(:FLOWERVEIL) && pbHasType?(:GRASS)
-        abilityname=PBAbilities.getName(pbPartner.ability)
-        oppabilityname=PBAbilities.getName(opponent.ability)
-        @battle.pbDisplay(_INTL("{1}'s {2} prevented {3}'s {4} from working!",
-           pbPartner.pbThis,abilityname,opponent.pbThis(true),oppabilityname))
-        return false
-      end
-    end
-    return pbReduceStatWithCause(PBStats::SPATK,1,opponent,PBAbilities.getName(opponent.ability))
   end
 end

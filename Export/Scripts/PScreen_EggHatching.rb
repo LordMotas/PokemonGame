@@ -9,7 +9,7 @@
 # sprite sheet) with egg sprite height and 5 times the egg sprite width at
 # Graphics/Battlers/eggCracks.
 #===============================================================================
-class PokemonEggHatchScene
+class PokemonEggHatch_Scene
   def pbStartScene(pokemon)
     @sprites={}
     @pokemon=pokemon
@@ -19,11 +19,12 @@ class PokemonEggHatchScene
     addBackgroundOrColoredPlane(@sprites,"background","hatchbg",
        Color.new(248,248,248),@viewport)
     @sprites["pokemon"]=PokemonSprite.new(@viewport)
+    @sprites["pokemon"].setOffset(PictureOrigin::Bottom)
+    @sprites["pokemon"].x = Graphics.width/2
+    @sprites["pokemon"].y = 264+56 # 56 to offset the egg sprite
     @sprites["pokemon"].setSpeciesBitmap(@pokemon.species,@pokemon.isFemale?,
                                          (@pokemon.form rescue 0),@pokemon.isShiny?,
                                          false,false,true) # Egg sprite
-    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].bitmap.width/2
-    @sprites["pokemon"].y=48+(Graphics.height-@sprites["pokemon"].bitmap.height)/2
     @sprites["hatch"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     @sprites["overlay"].z=200
@@ -44,27 +45,27 @@ class PokemonEggHatchScene
     end
     crackfilename=pbResolveBitmap(crackfilename)
     hatchSheet=AnimatedBitmap.new(crackfilename)
-    pbBGMPlay("evolv")
+    pbBGMPlay("Evolution")
     # Egg animation
     updateScene(60)
     pbPositionHatchMask(hatchSheet,0)
-    pbSEPlay("ballshake")
+    pbSEPlay("Battle ball shake")
     swingEgg(2)
     updateScene(8)
     pbPositionHatchMask(hatchSheet,1)
-    pbSEPlay("ballshake")
+    pbSEPlay("Battle ball shake")
     swingEgg(2)
     updateScene(16)
     pbPositionHatchMask(hatchSheet,2)
-    pbSEPlay("ballshake")
+    pbSEPlay("Battle ball shake")
     swingEgg(4,2)
     updateScene(16)
     pbPositionHatchMask(hatchSheet,3)
-    pbSEPlay("ballshake")
+    pbSEPlay("Battle ball shake")
     swingEgg(8,4)
     updateScene(8)
     pbPositionHatchMask(hatchSheet,4)
-    pbSEPlay("recall")
+    pbSEPlay("Battle recall")
     # Fade and change the sprite
     fadeSpeed=15
     for i in 1..(255/fadeSpeed)
@@ -74,10 +75,9 @@ class PokemonEggHatchScene
     end
     updateScene(30)
     @sprites["pokemon"].setPokemonBitmap(@pokemon) # Pokémon sprite
-    @sprites["pokemon"].x=Graphics.width/2-@sprites["pokemon"].bitmap.width/2
-    @sprites["pokemon"].y=-8+(Graphics.height-@sprites["pokemon"].bitmap.height)/2
     metrics=load_data("Data/metrics.dat")
-    @sprites["pokemon"].y+=(metrics[1][@pokemon.species] || 0)*2 - (metrics[2][@pokemon.species] || 0)*2
+    @sprites["pokemon"].y = 264
+    @sprites["pokemon"].y += (metrics[1][@pokemon.species] || 0)*2 - (metrics[2][@pokemon.species] || 0)*2
     @sprites["hatch"].visible=false
     for i in 1..(255/fadeSpeed)
       @sprites["pokemon"].tone=Tone.new(255-i*fadeSpeed,255-i*fadeSpeed,255-i*fadeSpeed)
@@ -87,15 +87,16 @@ class PokemonEggHatchScene
     @sprites["pokemon"].tone=Tone.new(0,0,0)
     @sprites["overlay"].opacity=0
     # Finish scene
-    frames=pbCryFrameLength(@pokemon.species)
-    pbBGMStop()
+    frames=pbCryFrameLength(@pokemon)
     pbPlayCry(@pokemon)
     updateScene(frames)
-    pbMEPlay("EvolutionSuccess")
+    pbBGMStop()
+    pbMEPlay("Evolution success")
     Kernel.pbMessage(_INTL("\\se[]{1} hatched from the Egg!\\wt[80]",@pokemon.name)) { update }
     if Kernel.pbConfirmMessage(
         _INTL("Would you like to nickname the newly hatched {1}?",@pokemon.name)) { update }
-      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",@pokemon.name),0,10,"",@pokemon,true)
+      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",@pokemon.name),
+         0,PokeBattle_Pokemon::NAMELIMIT,"",@pokemon,true)
       @pokemon.name=nickname if nickname!=""
       @nicknamed=true
     end
@@ -106,8 +107,10 @@ class PokemonEggHatchScene
     frames = 5
     frameWidth = (hatchSheet.width/frames).floor
     rect = Rect.new(frameWidth*index,0,frameWidth,hatchSheet.height)
-    @sprites["hatch"].bitmap.blt(@sprites["pokemon"].x,@sprites["pokemon"].y,
-                                 hatchSheet.bitmap,rect)
+    @sprites["hatch"].bitmap.blt(
+       @sprites["pokemon"].x-@sprites["pokemon"].bitmap.width/2,
+       @sprites["pokemon"].y-@sprites["pokemon"].bitmap.height,
+       hatchSheet.bitmap,rect)
   end
 
   def swingEgg(speed,swingTimes=1) # Only accepts 2, 4 or 8 for speed.
@@ -165,24 +168,24 @@ end
 def pbHatchAnimation(pokemon)
   Kernel.pbMessage(_INTL("Huh?\1"))
   pbFadeOutInWithMusic(99999) {
-     scene=PokemonEggHatchScene.new
-     screen=PokemonEggHatchScreen.new(scene)
-     screen.pbStartScreen(pokemon)
+    scene=PokemonEggHatch_Scene.new
+    screen=PokemonEggHatchScreen.new(scene)
+    screen.pbStartScreen(pokemon)
   }
   return true
 end
 
 def pbHatch(pokemon)
-  speciesname=PBSpecies.getName(pokemon.species)
-  pokemon.name=speciesname
-  pokemon.trainerID=$Trainer.id
-  pokemon.ot=$Trainer.name
-  pokemon.happiness=120
-  pokemon.timeEggHatched=pbGetTimeNow
-  pokemon.obtainMode=1 # hatched from egg
-  pokemon.hatchedMap=$game_map.map_id
-  $Trainer.seen[pokemon.species]=true
-  $Trainer.owned[pokemon.species]=true
+  speciesname = PBSpecies.getName(pokemon.species)
+  pokemon.name           = speciesname
+  pokemon.trainerID      = $Trainer.id
+  pokemon.ot             = $Trainer.name
+  pokemon.happiness      = 120
+  pokemon.timeEggHatched = pbGetTimeNow
+  pokemon.obtainMode     = 1   # hatched from egg
+  pokemon.hatchedMap     = $game_map.map_id
+  $Trainer.seen[pokemon.species]  = true
+  $Trainer.owned[pokemon.species] = true
   pbSeenForm(pokemon)
   pokemon.pbRecordFirstMoves
   if !pbHatchAnimation(pokemon)
@@ -192,28 +195,29 @@ def pbHatch(pokemon)
     Kernel.pbMessage(_INTL("{1} hatched from the Egg!",speciesname))
     if Kernel.pbConfirmMessage(_INTL("Would you like to nickname the newly hatched {1}?",speciesname))
       species=PBSpecies.getName(pokemon.species)
-      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",speciesname),0,10,"",pokemon)
+      nickname=pbEnterPokemonName(_INTL("{1}'s nickname?",speciesname),
+         0,PokeBattle_Pokemon::NAMELIMIT,"",pokemon)
       pokemon.name=nickname if nickname!=""
     end
   end
 end
 
 Events.onStepTaken+=proc {|sender,e|
-   next if !$Trainer
-   for egg in $Trainer.party
-     if egg.eggsteps>0
-       egg.eggsteps-=1
-       for i in $Trainer.pokemonParty
-         if isConst?(i.ability,PBAbilities,:FLAMEBODY) ||
-            isConst?(i.ability,PBAbilities,:MAGMAARMOR)
-           egg.eggsteps-=1
-           break
-         end
-       end
-       if egg.eggsteps<=0
-         egg.eggsteps=0
-         pbHatch(egg)
-       end
-     end
-   end
+  next if !$Trainer
+  for egg in $Trainer.party
+    if egg.eggsteps>0
+      egg.eggsteps-=1
+      for i in $Trainer.pokemonParty
+        if isConst?(i.ability,PBAbilities,:FLAMEBODY) ||
+           isConst?(i.ability,PBAbilities,:MAGMAARMOR)
+          egg.eggsteps-=1
+          break
+        end
+      end
+      if egg.eggsteps<=0
+        egg.eggsteps=0
+        pbHatch(egg)
+      end
+    end
+  end
 }

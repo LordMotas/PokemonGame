@@ -152,7 +152,7 @@ class TilePuzzleScene
     else
       addBackgroundPlane(@sprites,"bg","Tile Puzzle/bg",@viewport)
     end
-    @tilebitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/Tile Puzzle/tiles#{@board}"))
+    @tilebitmap=AnimatedBitmap.new("Graphics/Pictures/Tile Puzzle/tiles#{@board}")
     @tilebitmap1=nil; @tilebitmap2=nil; @tilebitmap3=nil
     if pbResolveBitmap("Graphics/Pictures/Tile Puzzle/tiles#{@board}_1")
       @tilebitmap1=AnimatedBitmap.new("Graphics/Pictures/Tile Puzzle/tiles#{@board}_1")
@@ -502,12 +502,12 @@ class TilePuzzleScene
       if dir>0
         if @game==3 || (@game!=3 && @sprites["cursor"].selected)
           if pbCanMoveInDir?(@sprites["cursor"].position,dir,true)
-            pbSEPlay("TileGameMove")
+            pbSEPlay("Tile Game cursor")
             pbSwapTiles(dir)
           end
         else
           if pbCanMoveInDir?(@sprites["cursor"].position,dir,false)
-            pbSEPlay("TileGameMove")
+            pbSEPlay("Tile Game cursor")
             @sprites["cursor"].position=pbMoveCursor(@sprites["cursor"].position,dir)
           end
         end
@@ -548,11 +548,11 @@ end
 
 
 def pbTilePuzzle(game,board,width=0,height=0)
-  ret=false
-  scene=TilePuzzleScene.new(game,board,width,height)
-  screen=TilePuzzle.new(scene)
-  pbFadeOutIn(99999) {
-     ret=screen.pbStartScreen
+  ret = false
+  pbFadeOutIn(99999){
+    scene = TilePuzzleScene.new(game,board,width,height)
+    screen = TilePuzzle.new(scene)
+    ret = screen.pbStartScreen
   }
   return ret
 end

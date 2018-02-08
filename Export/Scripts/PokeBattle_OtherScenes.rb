@@ -1,22 +1,15 @@
 def pbPokemonString(pkmn)
-  if pkmn.is_a?(PokeBattle_Battler) && !pkmn.pokemon
-    return ""
-  end
+  return "" if pkmn.is_a?(PokeBattle_Battler) && !pkmn.pokemon
   status=""
   if pkmn.hp<=0
     status=" [FNT]"
   else
     case pkmn.status
-    when PBStatuses::SLEEP
-      status=" [SLP]"
-    when PBStatuses::FROZEN
-      status=" [FRZ]"
-    when PBStatuses::BURN
-      status=" [BRN]"
-    when PBStatuses::PARALYSIS
-      status=" [PAR]"
-    when PBStatuses::POISON
-      status=" [PSN]"
+    when PBStatuses::SLEEP;     status=" [SLP]"
+    when PBStatuses::FROZEN;    status=" [FRZ]"
+    when PBStatuses::BURN;      status=" [BRN]"
+    when PBStatuses::PARALYSIS; status=" [PAR]"
+    when PBStatuses::POISON;    status=" [PSN]"
     end
   end
   return "#{pkmn.name} (Lv. #{pkmn.level})#{status} HP: #{pkmn.hp}/#{pkmn.totalhp}"
@@ -341,6 +334,9 @@ class PokeBattle_DebugScene
     end
   end
 
+  def pbResetMoveIndex(index)
+  end
+
 # Use this method to display the inventory
 # The return value is the item chosen, or 0 if the choice was canceled.
   def pbItemMenu(index)
@@ -350,7 +346,7 @@ class PokeBattle_DebugScene
 
   def pbFirstTarget(index,targettype)
     for i in 0...4
-      if i!=index && !@battle.battlers[i].isFainted?
+      if i!=index && !@battle.battlers[i].fainted?
         return i
       end  
     end
@@ -360,7 +356,7 @@ class PokeBattle_DebugScene
   def pbNextTarget(cur,index)
     return -1 if cur>=3
     for i in cur+1..3
-      if i!=index && !@battle.battlers[i].isFainted?
+      if i!=index && !@battle.battlers[i].fainted?
         return i
       end  
     end
@@ -371,7 +367,7 @@ class PokeBattle_DebugScene
     return -1 if cur<=0
     ret=-1
     for i in 0..cur-1
-      if i!=index && !@battle.battlers[i].isFainted?
+      if i!=index && !@battle.battlers[i].fainted?
         ret=i
       end  
     end
@@ -590,7 +586,7 @@ class PokeBattle_SceneNonInteractive < PokeBattle_Scene
     targets=[]
     for i in 0...4
       if @battle.battlers[index].pbIsOpposing?(i) &&
-         !@battle.battlers[i].isFainted?
+         !@battle.battlers[i].fainted?
         targets.push(i)
       end  
     end
@@ -694,6 +690,9 @@ class PokeBattle_DebugSceneNoLogging
     return i
   end
 
+  def pbResetMoveIndex(index)
+  end
+
   def pbItemMenu(index)
     return -1
   end
@@ -702,7 +701,7 @@ class PokeBattle_DebugSceneNoLogging
     targets=[]
     for i in 0...4
       if @battle.battlers[index].pbIsOpposing?(i) &&
-         !@battle.battlers[i].isFainted?
+         !@battle.battlers[i].fainted?
         targets.push(i)
       end  
     end
@@ -788,8 +787,7 @@ class PokeBattle_DebugSceneNoLogging
   def pbAnimation(moveid,attacker,opponent,hitnum=0)
   end
 end
-
-
+
 
 class PokeBattle_DebugSceneNoGraphics
   def initialize
@@ -875,6 +873,9 @@ class PokeBattle_DebugSceneNoGraphics
     return i
   end
 
+  def pbResetMoveIndex(index)
+  end
+
   def pbItemMenu(index)
     return -1
   end
@@ -883,7 +884,7 @@ class PokeBattle_DebugSceneNoGraphics
     targets=[]
     for i in 0...4
       if @battle.battlers[index].pbIsOpposing?(i) &&
-         !@battle.battlers[i].isFainted?
+         !@battle.battlers[i].fainted?
         targets.push(i)
       end  
     end

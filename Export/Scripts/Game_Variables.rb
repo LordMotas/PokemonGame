@@ -17,7 +17,7 @@ class Game_Variables
   #     variable_id : variable ID
   #-----------------------------------------------------------------------------
   def [](variable_id)
-    if variable_id <= 5000 and @data[variable_id] != nil
+    if variable_id<=5000 and @data[variable_id]!=nil
       return @data[variable_id]
     else
       return 0
@@ -29,7 +29,7 @@ class Game_Variables
   #     value       : the variable's value
   #-----------------------------------------------------------------------------
   def []=(variable_id, value)
-    if variable_id <= 5000
+    if variable_id<=5000
       @data[variable_id] = value
     end
   end

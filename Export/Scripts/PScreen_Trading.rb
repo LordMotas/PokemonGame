@@ -1,4 +1,4 @@
-class PokemonTradeScene
+class PokemonTrade_Scene
   def pbUpdate
     pbUpdateSpriteHash(@sprites)
   end
@@ -33,23 +33,22 @@ class PokemonTradeScene
     @pokemon2=pokemon2
     @trader1=trader1
     @trader2=trader2
+    metrics=load_data("Data/metrics.dat")
     addBackgroundOrColoredPlane(@sprites,"background","tradebg",
        Color.new(248,248,248),@viewport)
-    rsprite1=PokemonSprite.new(@viewport)
-    rsprite1.setPokemonBitmap(@pokemon,false)
-    rsprite1.ox=rsprite1.bitmap.width/2
-    rsprite1.oy=rsprite1.bitmap.height/2
-    rsprite1.x=Graphics.width/2
-    rsprite1.y=(Graphics.height-96)*2/3
-    @sprites["rsprite1"]=rsprite1
-    rsprite2=PokemonSprite.new(@viewport)
-    rsprite2.setPokemonBitmap(@pokemon2,false)
-    rsprite2.ox=rsprite2.bitmap.width/2
-    rsprite2.oy=rsprite2.bitmap.height/2
-    rsprite2.x=Graphics.width/2
-    rsprite2.y=(Graphics.height-96)*2/3
-    rsprite2.visible=false
-    @sprites["rsprite2"]=rsprite2
+    @sprites["rsprite1"]=PokemonSprite.new(@viewport)
+    @sprites["rsprite1"].setPokemonBitmap(@pokemon,false)
+    @sprites["rsprite1"].setOffset(PictureOrigin::Bottom)
+    @sprites["rsprite1"].x=Graphics.width/2
+    @sprites["rsprite1"].y = 264
+    @sprites["rsprite1"].y += (metrics[1][@pokemon.species] || 0)*2 - (metrics[2][@pokemon.species] || 0)*2
+    @sprites["rsprite2"]=PokemonSprite.new(@viewport)
+    @sprites["rsprite2"].setPokemonBitmap(@pokemon2,false)
+    @sprites["rsprite2"].setOffset(PictureOrigin::Bottom)
+    @sprites["rsprite2"].x=Graphics.width/2
+    @sprites["rsprite2"].y = 264
+    @sprites["rsprite2"].y += (metrics[1][@pokemon2.species] || 0)*2 - (metrics[2][@pokemon2.species] || 0)*2
+    @sprites["rsprite2"].visible=false
     @sprites["msgwindow"]=Kernel.pbCreateMessageWindow(@viewport)
     pbFadeInAndShow(@sprites)
   end
@@ -60,29 +59,26 @@ class PokemonTradeScene
     picturePoke=PictureEx.new(0)
     # Starting position of ball
     pictureBall.moveVisible(1,true)
-    pictureBall.moveName(1,sprintf("Graphics/Pictures/ball%02d",@pokemon.ballused))
+    pictureBall.moveName(1,sprintf("Graphics/Pictures/Battle/ball_%02d",@pokemon.ballused))
     pictureBall.moveOrigin(1,PictureOrigin::Center)
     pictureBall.moveXY(0,1,Graphics.width/2,48)
     # Starting position of sprite
     picturePoke.moveVisible(1,true)
-    picturePoke.moveOrigin(1,PictureOrigin::Center)
-    rsprite1=@sprites["rsprite1"]
-    rsprite1.ox=0
-    rsprite1.oy=0
-    picturePoke.moveXY(0,1,rsprite1.x,rsprite1.y)
+    picturePoke.moveOrigin(1,PictureOrigin::Bottom)
+    picturePoke.moveXY(0,1,@sprites["rsprite1"].x,@sprites["rsprite1"].y)
     # Change sprite color
     delay=picturePoke.totalDuration+4
     picturePoke.moveColor(10,delay,Color.new(31*8,22*8,30*8,255))
     # Recall
     delay=picturePoke.totalDuration
-    picturePoke.moveSE(delay,"Audio/SE/recall")
-    pictureBall.moveName(delay,sprintf("Graphics/Pictures/ball%02d_open",@pokemon.ballused))
+    picturePoke.moveSE(delay,"Audio/SE/Battle recall")
+    pictureBall.moveName(delay,sprintf("Graphics/Pictures/Battle/ball_%02d_open",@pokemon.ballused))
     # Move sprite to ball
     picturePoke.moveZoom(15,delay,0)
     picturePoke.moveXY(15,delay,Graphics.width/2,48)
-    picturePoke.moveSE(delay+10,"Audio/SE/jumptoball")
+    picturePoke.moveSE(delay+10,"Audio/SE/Battle jump to ball")
     picturePoke.moveVisible(delay+15,false)
-    pictureBall.moveName(picturePoke.totalDuration+2,sprintf("Graphics/Pictures/ball%02d",@pokemon.ballused))
+    pictureBall.moveName(picturePoke.totalDuration+2,sprintf("Graphics/Pictures/Battle/ball_%02d",@pokemon.ballused))
     delay=picturePoke.totalDuration+20
     pictureBall.moveXY(12,delay,Graphics.width/2,-32)
     pbRunPictures(
@@ -98,39 +94,38 @@ class PokemonTradeScene
     picturePoke=PictureEx.new(0)
     # Starting position of ball
     pictureBall.moveVisible(1,true)
-    pictureBall.moveName(1,sprintf("Graphics/Pictures/ball%02d",@pokemon2.ballused))
+    pictureBall.moveName(1,sprintf("Graphics/Pictures/Battle/ball_%02d",@pokemon2.ballused))
     pictureBall.moveOrigin(1,PictureOrigin::Center)
     pictureBall.moveXY(0,1,Graphics.width/2,-32)
     # Starting position of sprite
     picturePoke.moveVisible(1,false)
-    picturePoke.moveOrigin(1,PictureOrigin::Center)
+    picturePoke.moveOrigin(1,PictureOrigin::Bottom)
     picturePoke.moveZoom(0,1,0)
     picturePoke.moveColor(0,1,Color.new(31*8,22*8,30*8,255))
     # Dropping ball
-    y=Graphics.height-96-16
+    y=Graphics.height-96-16-16
     delay=picturePoke.totalDuration+4
     pictureBall.moveXY(15,delay,Graphics.width/2,y)
-    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/balldrop")
+    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/Battle ball drop")
     pictureBall.moveXY(8,pictureBall.totalDuration+2,Graphics.width/2,y-60)
     pictureBall.moveXY(7,pictureBall.totalDuration+2,Graphics.width/2,y)
-    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/balldrop")
+    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/Battle ball drop")
     pictureBall.moveXY(6,pictureBall.totalDuration+2,Graphics.width/2,y-40)
     pictureBall.moveXY(5,pictureBall.totalDuration+2,Graphics.width/2,y)
-    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/balldrop")
+    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/Battle ball drop")
     pictureBall.moveXY(4,pictureBall.totalDuration+2,Graphics.width/2,y-20)
     pictureBall.moveXY(3,pictureBall.totalDuration+2,Graphics.width/2,y)
-    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/balldrop")
+    pictureBall.moveSE(pictureBall.totalDuration,"Audio/SE/Battle ball drop")
     picturePoke.moveXY(0,pictureBall.totalDuration,Graphics.width/2,y)
     delay=pictureBall.totalDuration+18
-    y=(Graphics.height-96)*2/3
-    picturePoke.moveSE(delay,"Audio/SE/recall")
+    picturePoke.moveSE(delay,"Audio/SE/Battle recall")
     cry=pbResolveAudioSE(pbCryFile(@pokemon2))
     picturePoke.moveSE(delay,cry) if cry
-    pictureBall.moveName(delay,sprintf("Graphics/Pictures/ball%02d_open",@pokemon2.ballused))
+    pictureBall.moveName(delay,sprintf("Graphics/Pictures/Battle/ball_%02d_open",@pokemon2.ballused))
     pictureBall.moveVisible(delay+10,false)
     picturePoke.moveVisible(delay,true)
     picturePoke.moveZoom(15,delay,100)
-    picturePoke.moveXY(15,delay,Graphics.width/2,y)
+    picturePoke.moveXY(15,delay,Graphics.width/2,@sprites["rsprite2"].y)
     delay=picturePoke.totalDuration
     picturePoke.moveColor(10,delay,Color.new(31*8,22*8,30*8,0))
     pbRunPictures(
@@ -155,7 +150,7 @@ class PokemonTradeScene
   end
 
   def pbTrade
-    pbBGMStop()
+    pbBGMStop
     pbPlayCry(@pokemon)
     speciesname1=PBSpecies.getName(@pokemon.species)
     speciesname2=PBSpecies.getName(@pokemon2.species)
@@ -163,7 +158,7 @@ class PokemonTradeScene
        _ISPRINTF("{1:s}\r\nID: {2:05d}   OT: {3:s}\\wtnp[0]",
        @pokemon.name,@pokemon.publicID,@pokemon.ot)) { pbUpdate }
     Kernel.pbMessageWaitForInput(@sprites["msgwindow"],100,true) { pbUpdate }
-    pbPlayDecisionSE()
+    pbPlayDecisionSE
     pbScene1
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
        _INTL("For {1}'s {2},\r\n{3} sends {4}.\1",@trader1,speciesname1,@trader2,speciesname2)) { pbUpdate }
@@ -207,7 +202,7 @@ def pbStartTrade(pokemonIndex,newpoke,nickname,trainerName,trainerGender=0)
   $Trainer.owned[yourPokemon.species]=true
   pbSeenForm(yourPokemon)
   pbFadeOutInWithMusic(99999){
-    evo=PokemonTradeScene.new
+    evo=PokemonTrade_Scene.new
     evo.pbStartScreen(myPokemon,yourPokemon,$Trainer.name,opponent.name)
     evo.pbTrade
     evo.pbEndScreen

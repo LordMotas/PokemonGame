@@ -37,7 +37,7 @@ class PokemonMartAdapter
   def getDisplayName(item)
     itemname=PBItems.getName(item)
     if pbIsMachine?(item)
-      machine=$ItemData[item][ITEMMACHINE]
+      machine=pbGetMachine(item)
       itemname=_INTL("{1} {2}",itemname,PBMoves.getName(machine))
     end
     return itemname
@@ -48,8 +48,8 @@ class PokemonMartAdapter
   end
 
   def getDisplayPrice(item,selling=false)
-    price=getPrice(item,selling)
-    return _ISPRINTF("$ {1:d}",price)
+    price=pbCommaNumber(getPrice(item,selling))
+    return _INTL("$ {1}",price)
   end
 
   def getDescription(item)
@@ -65,7 +65,7 @@ class PokemonMartAdapter
   end
 
   def canSell?(item)
-    return getPrice(item,true)>0 && !pbIsImportantItem?(item)
+    return (getPrice(item,true)>0 && !pbIsImportantItem?(item))
   end
 
   def showQuantity?(item)
@@ -152,7 +152,7 @@ class RpgxpMartAdapter
 
   def getDisplayPrice(item,selling=false)
     price=item.price
-    return _ISPRINTF("{1:d}",price)
+    return price.to_s
   end
 
   def getDescription(item)
@@ -219,7 +219,7 @@ end
 #===============================================================================
 # Buy and Sell adapters
 #===============================================================================
-class BuyAdapter # :nodoc:
+class BuyAdapter
   def initialize(adapter)
     @adapter=adapter
   end
@@ -239,7 +239,7 @@ end
 
 
 
-class SellAdapter # :nodoc:
+class SellAdapter
   def initialize(adapter)
     @adapter=adapter
   end
@@ -307,10 +307,10 @@ end
 
 
 
-class PokemonMartScene
+class PokemonMart_Scene
   def update
     pbUpdateSpriteHash(@sprites)
-    @subscene.update if @subscene
+    @subscene.pbUpdate if @subscene
   end
 
   def pbRefresh
@@ -321,7 +321,7 @@ class PokemonMartScene
          @adapter.getDescription(itemwindow.item)
       itemwindow.refresh
     end
-    @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",@adapter.getMoney())
+    @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",pbCommaNumber(@adapter.getMoney))
   end
 
   def pbStartBuyOrSellScene(buying,stock,adapter)
@@ -570,8 +570,8 @@ class PokemonMartScene
           inbagwindow.height=64
           inbagwindow.baseColor=Color.new(88,88,80)
           inbagwindow.shadowColor=Color.new(168,184,184)
-          inbagwindow.text=_ISPRINTF("In Bag:<r>{1:d}  ",qty)
-          numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+          inbagwindow.text=_INTL("In Bag:<r>{1}  ",qty)
+          numwindow.text=_INTL("x{1}<r>$ {2}",curnumber,pbCommaNumber(curnumber*itemprice))
           pbBottomRight(numwindow)
           numwindow.y-=helpwindow.height
           pbBottomLeft(inbagwindow)
@@ -586,22 +586,22 @@ class PokemonMartScene
               pbPlayCursorSE()
               curnumber-=10
               curnumber=1 if curnumber<1
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+              numwindow.text=_INTL("x{1}<r>$ {2}",curnumber,pbCommaNumber(curnumber*itemprice))
             elsif Input.repeat?(Input::RIGHT)
               pbPlayCursorSE()
               curnumber+=10
               curnumber=maximum if curnumber>maximum
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+              numwindow.text=_INTL("x{1}<r>$ {2}",curnumber,pbCommaNumber(curnumber*itemprice))
             elsif Input.repeat?(Input::UP)
               pbPlayCursorSE()
               curnumber+=1
               curnumber=1 if curnumber>maximum
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+              numwindow.text=_INTL("x{1}<r>$ {2}",curnumber,pbCommaNumber(curnumber*itemprice))
             elsif Input.repeat?(Input::DOWN)
               pbPlayCursorSE()
               curnumber-=1
               curnumber=maximum if curnumber<1
-              numwindow.text=_ISPRINTF("x{1:d}<r>$ {2:d}",curnumber,curnumber*itemprice)
+              numwindow.text=_INTL("x{1}<r>$ {2}",curnumber,pbCommaNumber(curnumber*itemprice))
             elsif Input.trigger?(Input::C)
               pbPlayDecisionSE()
               ret=curnumber
@@ -694,7 +694,7 @@ class PokemonMartScreen
         next
       end
       if pbIsImportantItem?(item)
-        if !pbConfirm(_INTL("Certainly. You want {1}.\r\nThat will be ${2}. OK?",itemname,price))
+        if !pbConfirm(_INTL("Certainly. You want {1}.\r\nThat will be ${2}. OK?",itemname,pbCommaNumber(price)))
           next
         end
         quantity=1
@@ -707,7 +707,7 @@ class PokemonMartScreen
           next
         end
         price*=quantity
-        if !pbConfirm(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,price))
+        if !pbConfirm(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,pbCommaNumber(price)))
           next
         end
       end
@@ -732,7 +732,7 @@ class PokemonMartScreen
       else
         @adapter.setMoney(@adapter.getMoney()-price)
         for i in 0...@stock.length
-          if pbIsImportantItem?(@stock[i]) && $PokemonBag.pbQuantity(@stock[i])>0
+          if pbIsImportantItem?(@stock[i]) && $PokemonBag.pbHasItem?(@stock[i])
             @stock[i]=nil
           end
         end
@@ -774,12 +774,12 @@ class PokemonMartScreen
       end
       price/=2
       price*=qty
-      if pbConfirm(_INTL("I can pay ${1}.\r\nWould that be OK?",price))
+      if pbConfirm(_INTL("I can pay ${1}.\r\nWould that be OK?",pbCommaNumber(price)))
         @adapter.setMoney(@adapter.getMoney()+price)
         for i in 0...qty
           @adapter.removeItem(item)
         end
-        pbDisplayPaused(_INTL("Turned over the {1} and received ${2}.",itemname,price))
+        pbDisplayPaused(_INTL("Turned over the {1} and received ${2}.",itemname,pbCommaNumber(price)))
       end
       @scene.pbHideMoney
     end
@@ -793,7 +793,7 @@ def pbPokemonMart(stock,speech=nil,cantsell=false)
   for i in 0...stock.length
     stock[i]=getID(PBItems,stock[i]) if !stock[i].is_a?(Integer)
     if !stock[i] || stock[i]==0 ||
-       (pbIsImportantItem?(stock[i]) && $PokemonBag.pbQuantity(stock[i])>0)
+       (pbIsImportantItem?(stock[i]) && $PokemonBag.pbHasItem?(stock[i]))
       stock[i]=nil
     end
   end
@@ -810,11 +810,11 @@ def pbPokemonMart(stock,speech=nil,cantsell=false)
      commands,cmdQuit+1)
   loop do
     if cmdBuy>=0 && cmd==cmdBuy
-      scene=PokemonMartScene.new
+      scene=PokemonMart_Scene.new
       screen=PokemonMartScreen.new(scene,stock)
       screen.pbBuyScreen
     elsif cmdSell>=0 && cmd==cmdSell
-      scene=PokemonMartScene.new
+      scene=PokemonMart_Scene.new
       screen=PokemonMartScreen.new(scene,stock)
       screen.pbSellScreen
     else
@@ -846,12 +846,9 @@ end
 
 class Interpreter
   def getItem(p)
-    if p[0]==0
-      return $data_items[p[1]]
-    elsif p[0]==1
-      return $data_weapons[p[1]]
-    elsif p[0]==2
-      return $data_armors[p[1]]
+    if p[0]==0; return $data_items[p[1]]
+    elsif p[0]==1; return $data_weapons[p[1]]
+    elsif p[0]==2; return $data_armors[p[1]]
     end
     return nil
   end
@@ -897,12 +894,9 @@ end
 
 class Game_Interpreter
   def getItem(p)
-    if p[0]==0
-      return $data_items[p[1]]
-    elsif p[0]==1
-      return $data_weapons[p[1]]
-    elsif p[0]==2
-      return $data_armors[p[1]]
+    if p[0]==0; return $data_items[p[1]]
+    elsif p[0]==1; return $data_weapons[p[1]]
+    elsif p[0]==2; return $data_armors[p[1]]
     end
     return nil
   end

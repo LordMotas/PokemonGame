@@ -100,36 +100,36 @@ class PokeBattle_BattlePalace < PokeBattle_Battle
        thispkmn.hp<=(thispkmn.totalhp/2).floor
       nature=thispkmn.nature
       thispkmn.effects[PBEffects::Pinch]=true
-      if nature==PBNatures::QUIET|| 
-         nature==PBNatures::BASHFUL||
-         nature==PBNatures::NAIVE||
-         nature==PBNatures::QUIRKY||
-         nature==PBNatures::HARDY||
-         nature==PBNatures::DOCILE||
+      if nature==PBNatures::QUIET || 
+         nature==PBNatures::BASHFUL ||
+         nature==PBNatures::NAIVE ||
+         nature==PBNatures::QUIRKY ||
+         nature==PBNatures::HARDY ||
+         nature==PBNatures::DOCILE ||
          nature==PBNatures::SERIOUS
         pbDisplay(_INTL("{1} is eager for more!",thispkmn.pbThis))
       end
-      if nature==PBNatures::CAREFUL||
-         nature==PBNatures::RASH||
-         nature==PBNatures::LAX||
-         nature==PBNatures::SASSY||
-         nature==PBNatures::MILD||
+      if nature==PBNatures::CAREFUL ||
+         nature==PBNatures::RASH ||
+         nature==PBNatures::LAX ||
+         nature==PBNatures::SASSY ||
+         nature==PBNatures::MILD ||
          nature==PBNatures::TIMID
         pbDisplay(_INTL("{1} began growling deeply!",thispkmn.pbThis))
       end
-      if nature==PBNatures::GENTLE||
-         nature==PBNatures::ADAMANT||
-         nature==PBNatures::HASTY||
-         nature==PBNatures::LONELY||
-         nature==PBNatures::RELAXED||
+      if nature==PBNatures::GENTLE ||
+         nature==PBNatures::ADAMANT ||
+         nature==PBNatures::HASTY ||
+         nature==PBNatures::LONELY ||
+         nature==PBNatures::RELAXED ||
          nature==PBNatures::NAUGHTY
         pbDisplay(_INTL("A glint appears in {1}'s eyes!",thispkmn.pbThis(true)))
       end
-      if nature==PBNatures::JOLLY||
-         nature==PBNatures::BOLD||
-         nature==PBNatures::BRAVE||
-         nature==PBNatures::CALM||
-         nature==PBNatures::IMPISH||
+      if nature==PBNatures::JOLLY ||
+         nature==PBNatures::BOLD ||
+         nature==PBNatures::BRAVE ||
+         nature==PBNatures::CALM ||
+         nature==PBNatures::IMPISH ||
          nature==PBNatures::MODEST
         pbDisplay(_INTL("{1} is getting into position!",thispkmn.pbThis))
       end
@@ -262,7 +262,7 @@ class PokeBattle_BattlePalace < PokeBattle_Battle
     super
     return if @decision!=0
     for i in 0...4
-      if !@battlers[i].isFainted?
+      if !@battlers[i].fainted?
         pbPinchChange(i)
       end
     end

@@ -25,25 +25,16 @@ module PBEvolution
   LevelFemale       = 23
   Location          = 24
   TradeSpecies      = 25
-  HappinessMoveType = 26
-  TypeDark          = 27
-  LevelRain        = 28
-  LevelDay          = 29
-  LevelNight        = 30
-  UpsideDownLevel  = 31
-  HappinessMale    = 32
-  HappinessFemale  = 33
-  Custom7           = 34
-  HighestHP         = 35
-  HighestAtk        = 36
-  HighestDef        = 37
-  HighestSpAtk      = 38
-  HighestSpDef      = 39
-  HighestSpd      = 40
-  LevelSunny        = 41
-  LevelHail         = 42
-  LevelSandstorm    = 43
-  LevelTadpoi       = 44
+  LevelDay          = 26
+  LevelNight        = 27
+  LevelDarkInParty  = 28
+  LevelRain         = 29
+  HappinessMoveType = 30
+  Custom1           = 31
+  Custom2           = 32
+  Custom3           = 33
+  Custom4           = 34
+  Custom5           = 35
 
   EVONAMES=["Unknown",
      "Happiness","HappinessDay","HappinessNight","Level","Trade",
@@ -51,10 +42,8 @@ module PBEvolution
      "Silcoon","Cascoon","Ninjask","Shedinja","Beauty",
      "ItemMale","ItemFemale","DayHoldItem","NightHoldItem","HasMove",
      "HasInParty","LevelMale","LevelFemale","Location","TradeSpecies",
-    "HappinessMoveType","TypeDark","LevelRain","LevelDay","LevelNight",
-    "UpsideDownLevel","HappinessMale","HappinessFemale","Custom 7",
-    "HighestHP","HighestAtk","HighestDef","HighestSpAtk","HighestSpDef",
-    "HighestSpd","LevelSunny","LevelHail","LevelSandstorm", "LevelTadpoi"
+     "LevelDay","LevelNight","LevelDarkInParty","LevelRain","HappinessMoveType",
+     "Custom1","Custom2","Custom3","Custom4","Custom5"
   ]
 
   # 0 = no parameter
@@ -69,10 +58,8 @@ module PBEvolution
      1,1,1,1,1,   # Silcoon, Cascoon, Ninjask, Shedinja, Beauty
      2,2,2,2,3,   # ItemMale, ItemFemale, DayHoldItem, NightHoldItem, HasMove
      4,1,1,1,4,   # HasInParty, LevelMale, LevelFemale, Location, TradeSpecies
-    3,1,1,1,1,1,  # HappinessMoveType, TypeDark, LevelRain, LevelDay, LevelNight, Upsidedown Level
-    0,0,0,        # HappinessMale, HappinessFemale,
-    1,1,1,1,1,    # HighestHP, HighestAtk, HighestDef, HighestSpAtk, HighestSpDef
-    1,1,1,1,1     # HighestSpd, LevelSunny, LevelHail, LevelSandstorm, LevelTadpoi
+     1,1,1,1,5,   # LevelDay, LevelNight, LevelDarkInParty, LevelRain, HappinessMoveType
+     1,1,1,1,1    # Custom 1-5
   ]
 end
 
@@ -83,8 +70,8 @@ end
 #===============================================================================
 def pbGetEvolvedFormData(species)
   ret=[]
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
+  _EVOTYPEMASK=0x7F
+  _EVODATAMASK=0x80
   _EVONEXTFORM=0x00
   pbRgssOpen("Data/evolutions.dat","rb"){|f|
      f.pos=(species-1)*8
@@ -107,11 +94,109 @@ def pbGetEvolvedFormData(species)
   return ret
 end
 
-def pbEvoDebug()
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
+def pbGetPreviousForm(species)   # Unused
+  _EVOTYPEMASK=0x7F
+  _EVODATAMASK=0x80
+  _EVOPREVFORM=0x80
   pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     for species in 1..PBSpecies.maxValue
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if (evo&_EVODATAMASK)==_EVOPREVFORM
+           return poke
+         end
+         i+=5
+       end
+     end
+  }
+  return species
+end
+
+def pbGetBabySpecies(species,item1=-1,item2=-1)
+  ret=species
+  _EVOTYPEMASK=0x7F
+  _EVODATAMASK=0x80
+  _EVOPREVFORM=0x80
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     f.pos=(species-1)*8
+     offset=f.fgetdw
+     length=f.fgetdw
+     if length>0
+       f.pos=offset
+       i=0; loop do break unless i<length
+         evo=f.fgetb
+         evonib=evo&_EVOTYPEMASK
+         level=f.fgetw
+         poke=f.fgetw
+         if poke<=PBSpecies.maxValueF && (evo&_EVODATAMASK)==_EVOPREVFORM # evolved from
+           if item1>=0 && item2>=0
+             dexdata=pbOpenDexData
+             pbDexDataOffset(dexdata,poke,54)
+             incense=dexdata.fgetw
+             dexdata.close
+             ret=poke if item1==incense || item2==incense
+           else
+             ret=poke
+           end
+           break
+         end
+         i+=5
+       end
+     end
+  }
+  if ret!=species
+    ret=pbGetBabySpecies(ret)
+  end
+  return ret
+end
+
+def pbGetMinimumLevel(species)
+  ret=-1
+  _EVOTYPEMASK=0x7F
+  _EVODATAMASK=0x80
+  _EVOPREVFORM=0x80
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+    f.pos=(species-1)*8
+    offset=f.fgetdw
+    length=f.fgetdw
+    if length>0
+      f.pos=offset
+      i=0; loop do break unless i<length
+        evo=f.fgetb
+        evonib=evo&_EVOTYPEMASK
+        level=f.fgetw
+        poke=f.fgetw
+        if poke<=PBSpecies.maxValueF && 
+           (evo&_EVODATAMASK)==_EVOPREVFORM && # evolved from
+           [PBEvolution::Level,PBEvolution::LevelMale,
+           PBEvolution::LevelFemale,PBEvolution::AttackGreater,
+           PBEvolution::AtkDefEqual,PBEvolution::DefenseGreater,
+           PBEvolution::Silcoon,PBEvolution::Cascoon,
+           PBEvolution::Ninjask,PBEvolution::Shedinja,
+           PBEvolution::LevelDay,PBEvolution::LevelNight,
+           PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
+          ret=(ret==-1) ? level : [ret,level].min
+          break
+        end
+        i+=5
+      end
+    end
+  }
+  return (ret==-1) ? 1 : ret
+end
+
+def pbEvoDebug   # Unused
+  _EVOTYPEMASK=0x7F
+  _EVODATAMASK=0x80
+  pbRgssOpen("Data/evolutions.dat","rb"){|f|
+     for species in 1..PBSpecies.maxValueF
        f.pos=(species-1)*8
        offset=f.fgetdw
        length=f.fgetdw
@@ -134,104 +219,6 @@ def pbEvoDebug()
        end
      end
   }
-end
-
-def pbGetPreviousForm(species)
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVOPREVFORM=0x40
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if (evo&_EVODATAMASK)==_EVOPREVFORM
-           return poke
-         end
-         i+=5
-       end
-     end
-  }
-  return species
-end
-
-def pbGetMinimumLevel(species)
-  ret=-1
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVOPREVFORM=0x40
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-    f.pos=(species-1)*8
-    offset=f.fgetdw
-    length=f.fgetdw
-    if length>0
-      f.pos=offset
-      i=0; loop do break unless i<length
-        evo=f.fgetb
-        evonib=evo&_EVOTYPEMASK
-        level=f.fgetw
-        poke=f.fgetw
-        if poke<=PBSpecies.maxValue && 
-           (evo&_EVODATAMASK)==_EVOPREVFORM && # evolved from
-           [PBEvolution::Level,PBEvolution::LevelMale,
-           PBEvolution::LevelFemale,PBEvolution::AttackGreater,
-           PBEvolution::AtkDefEqual,PBEvolution::DefenseGreater,
-           PBEvolution::Silcoon,PBEvolution::Cascoon,
-           PBEvolution::Ninjask,PBEvolution::Shedinja,
-           PBEvolution::LevelDay,PBEvolution::LevelNight,
-           PBEvolution::LevelDarkInParty,PBEvolution::LevelRain].include?(evonib)
-          ret=(ret==-1) ? level : [ret,level].min
-          break
-        end
-        i+=5
-      end
-    end
-  }
-  return (ret==-1) ? 1 : ret
-end
-
-def pbGetBabySpecies(species,item1=-1,item2=-1)
-  ret=species
-  _EVOTYPEMASK=0x3F
-  _EVODATAMASK=0xC0
-  _EVOPREVFORM=0x40
-  pbRgssOpen("Data/evolutions.dat","rb"){|f|
-     f.pos=(species-1)*8
-     offset=f.fgetdw
-     length=f.fgetdw
-     if length>0
-       f.pos=offset
-       i=0; loop do break unless i<length
-         evo=f.fgetb
-         evonib=evo&_EVOTYPEMASK
-         level=f.fgetw
-         poke=f.fgetw
-         if poke<=PBSpecies.maxValue && (evo&_EVODATAMASK)==_EVOPREVFORM # evolved from
-           if item1>=0 && item2>=0
-             dexdata=pbOpenDexData
-             pbDexDataOffset(dexdata,poke,54)
-             incense=dexdata.fgetw
-             dexdata.close
-             ret=poke if item1==incense || item2==incense
-           else
-             ret=poke
-           end
-           break
-         end
-         i+=5
-       end
-     end
-  }
-  if ret!=species
-    ret=pbGetBabySpecies(ret)
-  end
-  return ret
 end
 
 
@@ -498,39 +485,22 @@ class SpriteMetafilePlayer
         value=@metafile[j][1]
         for sprite in @sprites
           case code
-          when SpriteMetafile::X
-            sprite.x=value
-          when SpriteMetafile::Y
-            sprite.y=value
-          when SpriteMetafile::OX
-            sprite.ox=value
-          when SpriteMetafile::OY
-            sprite.oy=value
-          when SpriteMetafile::ZOOM_X
-            sprite.zoom_x=value
-          when SpriteMetafile::ZOOM_Y
-            sprite.zoom_y=value
-          when SpriteMetafile::SRC_RECT
-            sprite.src_rect=value
-          when SpriteMetafile::VISIBLE
-            sprite.visible=value
-          when SpriteMetafile::Z
-            sprite.z=value
-          # prevent crashes
-          when SpriteMetafile::ANGLE
-            sprite.angle=(value==180) ? 179.9 : value
-          when SpriteMetafile::MIRROR
-            sprite.mirror=value
-          when SpriteMetafile::BUSH_DEPTH
-            sprite.bush_depth=value
-          when SpriteMetafile::OPACITY
-            sprite.opacity=value
-          when SpriteMetafile::BLEND_TYPE
-            sprite.blend_type=value
-          when SpriteMetafile::COLOR
-            sprite.color=value
-          when SpriteMetafile::TONE
-            sprite.tone=value
+          when SpriteMetafile::X; sprite.x=value
+          when SpriteMetafile::Y; sprite.y=value
+          when SpriteMetafile::OX; sprite.ox=value
+          when SpriteMetafile::OY; sprite.oy=value
+          when SpriteMetafile::ZOOM_X; sprite.zoom_x=value
+          when SpriteMetafile::ZOOM_Y; sprite.zoom_y=value
+          when SpriteMetafile::SRC_RECT; sprite.src_rect=value
+          when SpriteMetafile::VISIBLE; sprite.visible=value
+          when SpriteMetafile::Z; sprite.z=value # prevent crashes
+          when SpriteMetafile::ANGLE; sprite.angle=(value==180) ? 179.9 : value
+          when SpriteMetafile::MIRROR; sprite.mirror=value
+          when SpriteMetafile::BUSH_DEPTH; sprite.bush_depth=value
+          when SpriteMetafile::OPACITY; sprite.opacity=value
+          when SpriteMetafile::BLEND_TYPE; sprite.blend_type=value
+          when SpriteMetafile::COLOR; sprite.color=value
+          when SpriteMetafile::TONE; sprite.tone=value
           end
         end
       end
@@ -660,7 +630,6 @@ class PokemonEvolutionScene
     @metafile2=sprite2
   end
 
-# Starts the evolution screen with the given Pokemon and new Pokemon species.
   public
 
   def pbUpdate(animating=false)
@@ -734,38 +703,36 @@ class PokemonEvolutionScene
   end
   
   def pbStartScreen(pokemon,newspecies)
-    @sprites={}
-    @bgviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @bgviewport.z=99999
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z=99999
-    @msgviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @msgviewport.z=99999
-    @pokemon=pokemon
-    @newspecies=newspecies
+    @pokemon = pokemon
+    @newspecies = newspecies
+    @sprites = {}
+    @bgviewport = Viewport.new(0,0,Graphics.width,Graphics.height)
+    @bgviewport.z = 99999
+    @viewport = Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z = 99999
+    @msgviewport = Viewport.new(0,0,Graphics.width,Graphics.height)
+    @msgviewport.z = 99999
     addBackgroundOrColoredPlane(@sprites,"background","evolutionbg",
        Color.new(248,248,248),@bgviewport)
-    rsprite1=PokemonSprite.new(@viewport)
-    rsprite2=PokemonSprite.new(@viewport)
+    rsprite1 = PokemonSprite.new(@viewport)
+    rsprite1.setOffset(PictureOrigin::Center)
     rsprite1.setPokemonBitmap(@pokemon,false)
+    rsprite1.x = Graphics.width/2
+    rsprite1.y = (Graphics.height-64)/2
+    rsprite2 = PokemonSprite.new(@viewport)
+    rsprite2.setOffset(PictureOrigin::Center)
     rsprite2.setPokemonBitmapSpecies(@pokemon,@newspecies,false)
-    rsprite1.ox=rsprite1.bitmap.width/2
-    rsprite1.oy=rsprite1.bitmap.height/2
-    rsprite2.ox=rsprite2.bitmap.width/2
-    rsprite2.oy=rsprite2.bitmap.height/2
-    rsprite1.x=Graphics.width/2
-    rsprite1.y=(Graphics.height-64)/2
-    rsprite2.x=rsprite1.x
-    rsprite2.y=rsprite1.y
-    rsprite2.opacity=0
-    @sprites["rsprite1"]=rsprite1
-    @sprites["rsprite2"]=rsprite2
+    rsprite2.x       = rsprite1.x
+    rsprite2.y       = rsprite1.y
+    rsprite2.opacity = 0
+    @sprites["rsprite1"] = rsprite1
+    @sprites["rsprite2"] = rsprite2
     pbGenerateMetafiles(rsprite1.ox,rsprite1.oy,rsprite2.ox,rsprite2.oy)
-    @sprites["msgwindow"]=Kernel.pbCreateMessageWindow(@msgviewport)
+    @sprites["msgwindow"] = Kernel.pbCreateMessageWindow(@msgviewport)
     pbFadeInAndShow(@sprites) { pbUpdate }
   end
 
-# Closes the evolution screen.
+  # Closes the evolution screen.
   def pbEndScreen
     Kernel.pbDisposeMessageWindow(@sprites["msgwindow"])
     pbFadeOutAndHide(@sprites) { pbUpdate }
@@ -775,22 +742,23 @@ class PokemonEvolutionScene
     @msgviewport.dispose
   end
 
-# Opens the evolution screen
+  # Opens the evolution screen
   def pbEvolution(cancancel=true)
-    metaplayer1=SpriteMetafilePlayer.new(@metafile1,@sprites["rsprite1"])
-    metaplayer2=SpriteMetafilePlayer.new(@metafile2,@sprites["rsprite2"])
+    metaplayer1 = SpriteMetafilePlayer.new(@metafile1,@sprites["rsprite1"])
+    metaplayer2 = SpriteMetafilePlayer.new(@metafile2,@sprites["rsprite2"])
     metaplayer1.play
     metaplayer2.play
-    pbBGMStop()
+    pbBGMStop
     pbPlayCry(@pokemon)
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
        _INTL("\\se[]What?\r\n{1} is evolving!\\^",@pokemon.name)) { pbUpdate }
     Kernel.pbMessageWaitForInput(@sprites["msgwindow"],100,true) { pbUpdate }
-    pbPlayDecisionSE()
-    oldstate=pbSaveSpriteState(@sprites["rsprite1"])
-    oldstate2=pbSaveSpriteState(@sprites["rsprite2"])
-    pbBGMPlay("evolv")
-    canceled=false
+    pbPlayDecisionSE
+    oldstate  = pbSaveSpriteState(@sprites["rsprite1"])
+    oldstate2 = pbSaveSpriteState(@sprites["rsprite2"])
+    pbMEPlay("Evolution start")
+    pbBGMPlay("Evolution")
+    canceled = false
     begin
       pbUpdateNarrowScreen
       metaplayer1.update
@@ -799,9 +767,9 @@ class PokemonEvolutionScene
       Input.update
       pbUpdate(true)
       if Input.trigger?(Input::B) && cancancel
-        pbBGMStop()
-        pbPlayCancelSE()
-        canceled=true
+        pbBGMStop
+        pbPlayCancelSE
+        canceled = true
         break
       end
     end while metaplayer1.playing? && metaplayer2.playing?
@@ -810,63 +778,76 @@ class PokemonEvolutionScene
       Kernel.pbMessageDisplay(@sprites["msgwindow"],
          _INTL("Huh?\r\n{1} stopped evolving!",@pokemon.name)) { pbUpdate }
     else
-      frames=pbCryFrameLength(@newspecies)
-      pbBGMStop()
-      pbPlayCry(@newspecies)
-      frames.times do
-        Graphics.update
-        pbUpdate
+      pbEvolutionSuccess
+    end
+  end
+
+  def pbEvolutionSuccess
+    # Play cry of evolved species
+    frames = pbCryFrameLength(@newspecies,@pokemon.form)
+    pbBGMStop
+    pbPlayCrySpecies(@newspecies,@pokemon.form)
+    frames.times do
+      Graphics.update
+      pbUpdate
+    end
+    # Success jingle/message
+    pbMEPlay("Evolution success")
+    newspeciesname = PBSpecies.getName(@newspecies)
+    oldspeciesname = PBSpecies.getName(@pokemon.species)
+    Kernel.pbMessageDisplay(@sprites["msgwindow"],
+       _INTL("\\se[]Congratulations! Your {1} evolved into {2}!\\wt[80]",
+       @pokemon.name,newspeciesname)) { pbUpdate }
+    @sprites["msgwindow"].text = ""
+    # Check for consumed item and Pokémon duplication (i.e. Shedinja)
+    removeItem = false
+    createSpecies = pbCheckEvolutionEx(@pokemon){|pokemon,evonib,level,poke|
+       case evonib
+       when PBEvolution::Shedinja
+         next poke if $PokemonBag.pbHasItem?(getConst(PBItems,:POKEBALL))
+       when PBEvolution::TradeItem,PBEvolution::DayHoldItem,PBEvolution::NightHoldItem
+         removeItem = true if poke==@newspecies   # Item is now consumed
+       end
+       next -1
+    }
+    @pokemon.setItem(0) if removeItem
+    # Modify Pokémon to make it evolved
+    @pokemon.species = @newspecies
+    @pokemon.name    = newspeciesname if @pokemon.name==oldspeciesname
+    @pokemon.form    = 0 if isConst?(@pokemon.species,PBSpecies,:MOTHIM)
+    @pokemon.calcStats
+    # See and own evolved species
+    $Trainer.seen[@newspecies]  = true
+    $Trainer.owned[@newspecies] = true
+    pbSeenForm(@pokemon)
+    # Learn moves upon evolution for evolved species
+    movelist = @pokemon.getMoveList
+    for i in movelist
+      if i[0]==0 || i[0]==@pokemon.level          # Learned a new move
+        pbLearnMove(@pokemon,i[1],true) { pbUpdate }
       end
-      pbMEPlay("EvolutionSuccess")
-      newspeciesname=PBSpecies.getName(@newspecies)
-      oldspeciesname=PBSpecies.getName(@pokemon.species)
-      Kernel.pbMessageDisplay(@sprites["msgwindow"],
-         _INTL("\\se[]Congratulations! Your {1} evolved into {2}!\\wt[80]",
-         @pokemon.name,newspeciesname)) { pbUpdate }
-      @sprites["msgwindow"].text=""
-      removeItem=false
-      createSpecies=pbCheckEvolutionEx(@pokemon){|pokemon,evonib,level,poke|
-         if evonib==PBEvolution::Shedinja
-           next poke if $PokemonBag.pbQuantity(getConst(PBItems,:POKEBALL))>0
-         elsif evonib==PBEvolution::TradeItem ||
-               evonib==PBEvolution::DayHoldItem ||
-               evonib==PBEvolution::NightHoldItem
-           removeItem=true if poke==@newspecies   # Item is now consumed
-         end
-         next -1
-      }
-      @pokemon.setItem(0) if removeItem
-      @pokemon.species=@newspecies
-      $Trainer.seen[@newspecies]=true
-      $Trainer.owned[@newspecies]=true
-      pbSeenForm(@pokemon)
-      @pokemon.name=newspeciesname if @pokemon.name==oldspeciesname
-      @pokemon.calcStats
-      # Check moves for new species
-      movelist=@pokemon.getMoveList
-      for i in movelist
-        if i[0]==@pokemon.level          # Learned a new move
-          pbLearnMove(@pokemon,i[1],true) { pbUpdate }
-        end
-      end
-      if createSpecies>0 && $Trainer.party.length<6
-        newpokemon=@pokemon.clone
-        newpokemon.iv=@pokemon.iv.clone
-        newpokemon.ev=@pokemon.ev.clone
-        newpokemon.species=createSpecies
-        newpokemon.name=PBSpecies.getName(createSpecies)
-        newpokemon.setItem(0)
-        newpokemon.clearAllRibbons
-        newpokemon.markings=0
-        newpokemon.ballused=0
-        newpokemon.calcStats
-        newpokemon.heal
-        $Trainer.party.push(newpokemon)
-        $Trainer.seen[createSpecies]=true
-        $Trainer.owned[createSpecies]=true
-        pbSeenForm(newpokemon)
-        $PokemonBag.pbDeleteItem(getConst(PBItems,:POKEBALL))
-      end
+    end
+    # Duplicate Pokémon (i.e. Shedinja)
+    if createSpecies>0 && $Trainer.party.length<6
+      newpokemon = @pokemon.clone
+      newpokemon.species = createSpecies
+      newpokemon.name    = PBSpecies.getName(createSpecies)
+      newpokemon.iv      = @pokemon.iv.clone
+      newpokemon.ev      = @pokemon.ev.clone
+      newpokemon.markings = 0
+      newpokemon.ballused = 0
+      newpokemon.setItem(0)
+      newpokemon.clearAllRibbons
+      newpokemon.calcStats
+      newpokemon.heal
+      # Add duplicate Pokémon to party
+      $Trainer.party.push(newpokemon)
+      # See and own duplicate Pokémon
+      $Trainer.seen[createSpecies]  = true
+      $Trainer.owned[createSpecies] = true
+      pbSeenForm(newpokemon)
+      # Consume Poké Ball
+      $PokemonBag.pbDeleteItem(getConst(PBItems,:POKEBALL))
     end
   end
 end
@@ -886,8 +867,8 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.happiness>=220 && PBDayNight.isNight?
   when PBEvolution::HappinessMoveType
     if pokemon.happiness>=220
-      for i in 0...4
-        return poke if pokemon.moves[i].id>0 && pokemon.moves[i].type==level
+      for m in pokemon.moves
+        return poke if m.id>0 && m.type==level
       end
     end
   when PBEvolution::Level
@@ -900,9 +881,9 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
     return poke if pokemon.level>=level && pokemon.isMale?
   when PBEvolution::LevelFemale
     return poke if pokemon.level>=level && pokemon.isFemale?
-  when PBEvolution::AttackGreater # Hitmonlee
+  when PBEvolution::AttackGreater  # Hitmonlee
     return poke if pokemon.level>=level && pokemon.attack>pokemon.defense
-  when PBEvolution::AtkDefEqual # Hitmontop
+  when PBEvolution::AtkDefEqual    # Hitmontop
     return poke if pokemon.level>=level && pokemon.attack==pokemon.defense
   when PBEvolution::DefenseGreater # Hitmonchan
     return poke if pokemon.level>=level && pokemon.attack<pokemon.defense
@@ -919,96 +900,43 @@ def pbMiniCheckEvolution(pokemon,evonib,level,poke)
   when PBEvolution::NightHoldItem
     return poke if pokemon.item==level && PBDayNight.isNight?
   when PBEvolution::HasMove
-    for i in 0...4
-      return poke if pokemon.moves[i].id==level
+    for m in pokemon.moves
+      return poke if m.id==level
     end
   when PBEvolution::HasInParty
-    for i in $Trainer.party
-      return poke if !i.isEgg? && i.species==level
+    for i in $Trainer.pokemonParty
+      return poke if i.species==level
     end
   when PBEvolution::LevelDarkInParty
     if pokemon.level>=level
-      if $game_screen && ($evoWeather==PBWeather::HAIL)
-        return poke
+      for i in $Trainer.pokemonParty
+        return poke if i.hasType?(:DARK)
       end
     end
-  when PBEvolution::LevelSandstorm
+  when PBEvolution::Location
+    return poke if $game_map.map_id==level
+  when PBEvolution::LevelRain
     if pokemon.level>=level
-      if $game_screen && ($evoWeather==PBWeather::SANDSTORM)
+      if $game_screen && ($game_screen.weather==PBFieldWeather::Rain ||
+                          $game_screen.weather==PBFieldWeather::HeavyRain ||
+                          $game_screen.weather==PBFieldWeather::Storm)
         return poke
       end
     end
-  when PBEvolution::Beauty # Feebas
+  when PBEvolution::Beauty   # Feebas
     return poke if pokemon.beauty>=level
   when PBEvolution::Trade, PBEvolution::TradeItem, PBEvolution::TradeSpecies
     return -1
-  when PBEvolution::DayHoldItem
-    return poke if pokemon.item==level && PBDayNight.isDay?(pbGetTimeNow)
-  when PBEvolution::NightHoldItem
-    return poke if pokemon.item==level && PBDayNight.isNight?(pbGetTimeNow)
-  when PBEvolution::HasMove
-    for i in 0...4
-      return poke if pokemon.moves[i].id==level
-    end
-  when PBEvolution::HasInParty
-    for i in $Trainer.party
-      return poke if !i.isEgg? && i.species==level
-    end
-  when PBEvolution::LevelMale
-    return poke if pokemon.level>=level && pokemon.isMale?
-  when PBEvolution::LevelFemale
-    return poke if pokemon.level>=level && pokemon.isFemale?
-  when PBEvolution::Location
-    return poke if $game_map.map_id==level
-  when PBEvolution::TradeSpecies
-    return -1
-  when PBEvolution::HappinessMoveType
-    for i in 0...4
-      return poke if pokemon.happiness>=220 && pokemon.moves[i].type==level
-    end
-  when PBEvolution::TypeDark
-    for i in $Trainer.party
-      return poke if  pokemon.level>=level && !i.egg? && (i.type1==17 || i.type2==17)
-    end 
-  when PBEvolution::LevelDay
-    return poke if pokemon.level>=level && PBDayNight.isDay?(pbGetTimeNow)
-  when PBEvolution::LevelNight
-    return poke if pokemon.level>=level && PBDayNight.isNight?(pbGetTimeNow)
-  when PBEvolution::UpsideDownLevel
-    return poke if pokemon.level>=level
-  when PBEvolution::Custom7
-    # Add code for custom evolution type 7
-  when PBEvolution::HighestHP # Torling HP
-    return poke if pokemon.level>=level && pokemon.hp>pokemon.defense &&
-    pokemon.hp>pokemon.attack && pokemon.hp>pokemon.spdef && 
-    pokemon.hp>pokemon.spatk && pokemon.hp>pokemon.speed
-  when PBEvolution::HighestAtk # Torling Atk
-    return poke if pokemon.level>=level && pokemon.attack>pokemon.defense &&
-    pokemon.attack>pokemon.hp && pokemon.attack>pokemon.spdef && 
-    pokemon.attack>pokemon.spatk && pokemon.attack>pokemon.speed
-  when PBEvolution::HighestDef # Torling Def
-    return poke if pokemon.level>=level && pokemon.defense>pokemon.hp &&
-    pokemon.defense>pokemon.attack && pokemon.defense>pokemon.spdef && 
-    pokemon.defense>pokemon.spatk && pokemon.defense>pokemon.speed
-  when PBEvolution::HighestSpAtk # Torling SpAtk
-    return poke if pokemon.level>=level && pokemon.spatk>pokemon.defense &&
-    pokemon.spatk>pokemon.attack && pokemon.spatk>pokemon.spdef && 
-    pokemon.spatk>pokemon.hp && pokemon.spatk>pokemon.speed
-  when PBEvolution::HighestSpDef # Torling SpDef
-    return poke if pokemon.level>=level && pokemon.spdef>pokemon.defense &&
-    pokemon.spdef>pokemon.attack && pokemon.spdef>pokemon.hp && 
-    pokemon.spdef>pokemon.spatk && pokemon.spdef>pokemon.speed
-  when PBEvolution::HighestSpd # Torling Speed
-    return poke if pokemon.level>=level && pokemon.speed>pokemon.defense &&
-    pokemon.speed>pokemon.attack && pokemon.speed>pokemon.spdef && 
-    pokemon.speed>pokemon.spatk && pokemon.speed>pokemon.hp
-  when PBEvolution::LevelTadpoi # Tadpoi
-    #Crimzog
-    return 166 if pokemon.tadpoicolor==1 && pokemon.level>=level
-    #Electrog
-    return 167 if pokemon.tadpoicolor==2 && pokemon.level>=level
-    #Sapphrog
-    return 168 if pokemon.tadpoicolor==3 && pokemon.level>=level
+  when PBEvolution::Custom1
+    # Add code for custom evolution type 1
+  when PBEvolution::Custom2
+    # Add code for custom evolution type 2
+  when PBEvolution::Custom3
+    # Add code for custom evolution type 3
+  when PBEvolution::Custom4
+    # Add code for custom evolution type 4
+  when PBEvolution::Custom5
+    # Add code for custom evolution type 5
   end
   return -1
 end
@@ -1030,13 +958,12 @@ end
 # with the following parameters:
 #  Pokemon to check; evolution type; level or other parameter; ID of the new Pokemon species
 def pbCheckEvolutionEx(pokemon)
-  return -1 if pokemon.species<=0 || pokemon.isEgg?
+  return -1 if pokemon.species<=0 || pokemon.egg?
+  return -1 if isConst?(pokemon.item,PBItems,:EVERSTONE)
   return -1 if isConst?(pokemon.species,PBSpecies,:PICHU) && pokemon.form==1
-  return -1 if isConst?(pokemon.item,PBItems,:EVERSTONE) &&
-               !isConst?(pokemon.species,PBSpecies,:KADABRA)
   ret=-1
-  for form in pbGetEvolvedFormData(pokemon.species)
-    ret=yield pokemon,form[0],form[1],form[2]
+  for form in pbGetEvolvedFormData(pbGetFSpeciesFromForm(pokemon.species,pokemon.form))
+    ret = yield pokemon,form[0],form[1],form[2]
     break if ret>0
   end
   return ret

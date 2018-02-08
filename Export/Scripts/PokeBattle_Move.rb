@@ -139,14 +139,14 @@ class PokeBattle_Move
     numtargets=0
     if @target==PBTargets::AllOpposing
       # TODO: should apply even if partner faints during an attack
-      numtargets+=1 if !attacker.pbOpposing1.isFainted?
-      numtargets+=1 if !attacker.pbOpposing2.isFainted?
+      numtargets+=1 if !attacker.pbOpposing1.fainted?
+      numtargets+=1 if !attacker.pbOpposing2.fainted?
       return numtargets>1
     elsif @target==PBTargets::AllNonUsers
       # TODO: should apply even if partner faints during an attack
-      numtargets+=1 if !attacker.pbOpposing1.isFainted?
-      numtargets+=1 if !attacker.pbOpposing2.isFainted?
-      numtargets+=1 if !attacker.pbPartner.isFainted?
+      numtargets+=1 if !attacker.pbOpposing1.fainted?
+      numtargets+=1 if !attacker.pbOpposing2.fainted?
+      numtargets+=1 if !attacker.pbPartner.fainted?
       return numtargets>1
     end
     return false
@@ -294,11 +294,6 @@ class PokeBattle_Move
       end
       return true
     end
-    #Rubber
-    if (opponent.hasWorkingAbility(:RUBBER))
-      PBDebug.log("[Ability triggered] #{opponent.pbThis}'s #{PBAbilities.getName(opponent.ability)} (made #{@name} ineffective)")
-      return true
-    end
     if (opponent.hasWorkingAbility(:STORMDRAIN) && isConst?(type,PBTypes,:WATER)) ||
        (opponent.hasWorkingAbility(:LIGHTNINGROD) && isConst?(type,PBTypes,:ELECTRIC))
       PBDebug.log("[Ability triggered] #{opponent.pbThis}'s #{PBAbilities.getName(opponent.ability)} (made #{@name} ineffective)")
@@ -324,16 +319,18 @@ class PokeBattle_Move
        (opponent.hasWorkingAbility(:VOLTABSORB) && isConst?(type,PBTypes,:ELECTRIC)) ||
        (opponent.hasWorkingAbility(:WATERABSORB) && isConst?(type,PBTypes,:WATER))
       PBDebug.log("[Ability triggered] #{opponent.pbThis}'s #{PBAbilities.getName(opponent.ability)} (made #{@name} ineffective)")
+      healed=false
       if opponent.effects[PBEffects::HealBlock]==0
         if opponent.pbRecoverHP((opponent.totalhp/4).floor,true)>0
           @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
              opponent.pbThis,PBAbilities.getName(opponent.ability)))
-        else
-          @battle.pbDisplay(_INTL("{1}'s {2} made {3} useless!",
-             opponent.pbThis,PBAbilities.getName(opponent.ability),@name))
         end
-        return true
       end
+      if !healed
+        @battle.pbDisplay(_INTL("{1}'s {2} made {3} useless!",
+           opponent.pbThis,PBAbilities.getName(opponent.ability),@name))
+      end
+      return true
     end
     if opponent.hasWorkingAbility(:FLASHFIRE) && isConst?(type,PBTypes,:FIRE)
       PBDebug.log("[Ability triggered] #{opponent.pbThis}'s Flash Fire (made #{@name} ineffective)")
@@ -390,8 +387,8 @@ class PokeBattle_Move
       mod2=2 if mod2==0
       mod3=2 if mod3==0
     end
-    # Foresight/Aether Touch
-    if attacker.hasWorkingAbility(:AETHERTOUCH) || opponent.effects[PBEffects::Foresight]
+    # Foresight
+    if attacker.hasWorkingAbility(:SCRAPPY) || opponent.effects[PBEffects::Foresight]
       mod1=2 if isConst?(otype1,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype1)
       mod2=2 if isConst?(otype2,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype2)
       mod3=2 if isConst?(otype3,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype3)
@@ -471,8 +468,7 @@ class PokeBattle_Move
                   @function==0xA9 || # Chip Away
                   attacker.hasWorkingAbility(:UNAWARE)
     evasion=(evastage>=0) ? (evastage+3)*100.0/3 : 300.0/(3-evastage)
-    #Seismic Sense
-    if attacker.hasWorkingAbility(:SEISMICSENSE)
+    if attacker.hasWorkingAbility(:COMPOUNDEYES)
       accuracy*=1.3
     end
     if attacker.hasWorkingAbility(:HUSTLE) && pbIsDamaging? &&
@@ -533,7 +529,6 @@ class PokeBattle_Move
   end
 
   def pbIsCritical?(attacker,opponent)
-    return false if $PokemonGlobal.nuzlocke
     if !attacker.hasMoldBreaker
       if opponent.hasWorkingAbility(:BATTLEARMOR) ||
          opponent.hasWorkingAbility(:SHELLARMOR)
@@ -593,24 +588,7 @@ class PokeBattle_Move
       opponent.damagestate.critical=pbIsCritical?(attacker,opponent)
     end
     ##### Calcuate base power of move #####
-    basedmg=@basedamage # From PBS file
-    #Fencer
-    if attacker.hasWorkingAbility(:FENCER)
-      basedmg=basedmg+(100-@accuracy)
-    end
-    #Cornered
-    if attacker.hasWorkingAbility(:CORNERED)
-      corneredmult=0.00
-      multiplier=0.02
-      for i in 1..50
-        if attacker.hp<=attacker.totalhp*multiplier
-          corneredmult=corneredmult+0.01
-        end
-        multiplier=multiplier+0.02
-      end
-      @battle.pbDisplayPaused(_INTL("corneredmult is {1} and multiplier is {2}",corneredmult,multiplier))
-      basedmg=basedme+(basedmg*corneredmult)
-    end
+    basedmg=@basedamage # Fron PBS file
     basedmg=pbBaseDamage(basedmg,attacker,opponent) # Some function codes alter base power
     damagemult=0x1000
     if attacker.hasWorkingAbility(:TECHNICIAN) && basedmg<=60 && @id>0
@@ -805,7 +783,7 @@ class PokeBattle_Move
     end
     if isConst?(type,PBTypes,:FIRE)
       for i in 0...4
-        if @battle.battlers[i].effects[PBEffects::WaterSport] && !@battle.battlers[i].isFainted?
+        if @battle.battlers[i].effects[PBEffects::WaterSport] && !@battle.battlers[i].fainted?
           damagemult=(damagemult*0.33).round
           break
         end
@@ -816,7 +794,7 @@ class PokeBattle_Move
     end
     if isConst?(type,PBTypes,:ELECTRIC)
       for i in 0...4
-        if @battle.battlers[i].effects[PBEffects::MudSport] && !@battle.battlers[i].isFainted?
+        if @battle.battlers[i].effects[PBEffects::MudSport] && !@battle.battlers[i].fainted?
           damagemult=(damagemult*0.33).round
           break
         end
@@ -977,9 +955,6 @@ class PokeBattle_Move
         defmult=(defmult*1.1).round
       end
     end
-    if @battle.field.effects[PBEffects::GrassyTerrain]>0
-      defmult=(defmult*1.5).round
-    end
     if !attacker.hasMoldBreaker
       if opponent.hasWorkingAbility(:MARVELSCALE) &&
          opponent.status>0 && pbIsPhysical?(type)
@@ -997,7 +972,7 @@ class PokeBattle_Move
       defmult=(defmult*1.5).round
     end
     if opponent.hasWorkingItem(:EVIOLITE)
-      evos=pbGetEvolvedFormData(opponent.species)
+      evos=pbGetEvolvedFormData(opponent.pokemon.fSpecies)
       if evos && evos.length>0
         defmult=(defmult*1.5).round
       end
@@ -1017,7 +992,7 @@ class PokeBattle_Move
        !@battle.rules["souldewclause"]
       defmult=(defmult*1.5).round
     end
-    defense=(defense*defmult*1.0/0x1000).round
+    defense=[(defense*defmult*1.0/0x1000).round,1].max
     ##### Main damage calculation #####
     damage=(((2.0*attacker.level/5+2).floor*basedmg*atk/defense).floor/50).floor+2
     # Multi-targeting attacks
@@ -1104,18 +1079,6 @@ class PokeBattle_Move
     if attacker.hasWorkingAbility(:TINTEDLENS) && opponent.damagestate.typemod<8
       finaldamagemult=(finaldamagemult*2.0).round
     end
-    #Impenetrable
-    if opponent.hasWorkingAbility(:IMPENETRABLE) && isContactMove?
-      finaldamagemult=(finaldamagemult*0.75).round
-    end
-    #Barkskin
-    if opponent.hasWorkingAbility(:BARKSKIN)
-      if pbIsPhysical?(type)
-        finaldamagemult=(finaldamagemult*0.4).round
-      else
-        finaldamagemult=(finaldamagemult*0.8).round
-      end
-    end
     if attacker.hasWorkingAbility(:SNIPER) && opponent.damagestate.critical
       finaldamagemult=(finaldamagemult*1.5).round
     end
@@ -1176,9 +1139,6 @@ class PokeBattle_Move
     finaldamagemult=pbModifyDamage(finaldamagemult,attacker,opponent)
     damage=(damage*finaldamagemult*1.0/0x1000).round
     opponent.damagestate.calcdamage=damage
-    if attacker.hasWorkingAbility(:BRUTALITY)
-      damage=damage*2
-    end
     PBDebug.log("Move's damage calculated to be #{damage}")
     return damage
   end
@@ -1199,13 +1159,6 @@ class PokeBattle_Move
         PBDebug.log("[End of effect] #{opponent.pbThis}'s Substitute faded")
       end
       opponent.damagestate.hplost=damage
-      #Hydra
-      if opponent.hasWorkingAbility(:HYDRA)
-        hprecover=damage*0.5
-        opponent.pbRecoverHP(hprecover)
-        @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
-          opponent.pbThis,PBAbilities.getName(opponent.ability)))
-      end
       damage=0
     else
       opponent.damagestate.substitute=false

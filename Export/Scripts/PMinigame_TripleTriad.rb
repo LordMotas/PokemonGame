@@ -202,7 +202,7 @@ class TriadScene
     @sprites["score"]=Sprite.new(@viewport)
     @sprites["score"].bitmap=BitmapWrapper.new(Graphics.width,Graphics.height)
     pbSetSystemFont(@sprites["score"].bitmap)
-    pbBGMPlay("021-Field04")
+    pbBGMPlay("Triple Triad")
     # Fade in all sprites
     pbFadeInAndShow(@sprites) { pbUpdate }
   end
@@ -1073,7 +1073,8 @@ def pbBuyTriads
       speciesname=PBSpecies.getName(i)
       next if !speciesname
       price=TriadCard.new(i).price
-      commands.push([price,speciesname,_INTL("{1} ${2}",speciesname,price),i])
+      visprice=pbCommaNumber(price)
+      commands.push([price,speciesname,_INTL("{1} ${2}",speciesname,visprice),i])
     end
   end
   if commands.length==0
@@ -1094,7 +1095,7 @@ def pbBuyTriads
   pbScrollMap(4,3,5)
   cmdwindow=Window_CommandPokemonEx.newWithSize(realcommands,0,0,256,Graphics.height)
   cmdwindow.z=99999
-  moneyString=_INTL("${1}",$Trainer.money)
+  moneyString=_INTL("${1}",pbCommaNumber($Trainer.money))
   goldwindow=Window_UnformattedTextPokemon.newWithSize(
      _INTL("Money:\n{1}",moneyString),0,0,32,32)
   goldwindow.resizeToFit(goldwindow.text,Graphics.width)
@@ -1134,7 +1135,7 @@ def pbBuyTriads
            _INTL("The {1} card?  Certainly.\r\nHow many would you like?",itemname),params)
         if quantity>0
           price*=quantity
-          if !Kernel.pbConfirmMessage(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,price))
+          if !Kernel.pbConfirmMessage(_INTL("{1}, and you want {2}.\r\nThat will be ${3}. OK?",itemname,quantity,pbCommaNumber(price)))
             break
           end
           if $Trainer.money<price
@@ -1146,7 +1147,7 @@ def pbBuyTriads
           else
             $PokemonGlobal.triads.pbStoreItem(item,quantity)
             $Trainer.money-=price
-            moneyString=_INTL("${1}",$Trainer.money)
+            moneyString=_INTL("${1}",pbCommaNumber($Trainer.money))
             goldwindow.text=_INTL("Money:\n{1}",moneyString)
             Kernel.pbMessage(_INTL("Here you are!\r\nThank you!"))
           end
@@ -1177,7 +1178,7 @@ def pbSellTriads
   pbScrollMap(4,3,5)
   cmdwindow=Window_CommandPokemonEx.newWithSize(commands,0,0,256,Graphics.height)
   cmdwindow.z=99999
-  moneyString=_INTL("${1}",$Trainer.money)
+  moneyString=_INTL("${1}",pbCommaNumber($Trainer.money))
   goldwindow=Window_UnformattedTextPokemon.newWithSize(
      _INTL("Money:\n{1}",moneyString),0,0,32,32)
   goldwindow.resizeToFit(goldwindow.text,Graphics.width)
@@ -1223,12 +1224,12 @@ def pbSellTriads
         if quantity>0
           price/=4
           price*=quantity
-          if Kernel.pbConfirmMessage(_INTL("I can pay ${1}. Would that be OK?",price))
+          if Kernel.pbConfirmMessage(_INTL("I can pay ${1}. Would that be OK?",pbCommaNumber(price)))
             $Trainer.money+=price
-            moneyString=_INTL("${1}",$Trainer.money)
+            moneyString=_INTL("${1}",pbCommaNumber($Trainer.money))
             goldwindow.text=_INTL("Money:\n{1}",moneyString)
             $PokemonGlobal.triads.pbDeleteItem(item,quantity)
-            Kernel.pbMessage(_INTL("Turned over the {1} card and received ${2}.",itemname,price))
+            Kernel.pbMessage(_INTL("Turned over the {1} card and received ${2}.",itemname,pbCommaNumber(price)))
             commands=[]
             for i in 0...$PokemonGlobal.triads.length
               item=$PokemonGlobal.triads[i]

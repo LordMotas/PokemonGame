@@ -23,7 +23,7 @@ class PokeBattle_Battle
     skill=PBTrainerAI.minimumSkill if skill<PBTrainerAI.minimumSkill
     score=100
     opponent=attacker.pbOppositeOpposing if !opponent
-    opponent=opponent.pbPartner if opponent && opponent.isFainted?
+    opponent=opponent.pbPartner if opponent && opponent.fainted?
 ##### Alter score depending on the move's function code ########################
     case move.function
     when 0x00 # No extra effect
@@ -1616,7 +1616,7 @@ class PokeBattle_Battle
     when 0x73
       score-=90 if opponent.effects[PBEffects::HyperBeam]>0
     when 0x74
-      score+=10 if !opponent.pbPartner.isFainted?
+      score+=10 if !opponent.pbPartner.fainted?
     when 0x75
     when 0x76
     when 0x77
@@ -1644,7 +1644,7 @@ class PokeBattle_Battle
       score+=20 if @doublebattle
     when 0x83
       if skill>=PBTrainerAI.mediumSkill
-        score+=20 if @doublebattle && !attacker.pbPartner.isFainted? &&
+        score+=20 if @doublebattle && !attacker.pbPartner.fainted? &&
                      attacker.pbPartner.pbHasMove?(move.id)
       end
     when 0x84
@@ -1670,13 +1670,14 @@ class PokeBattle_Battle
     when 0x94
     when 0x95
     when 0x96
+      score-=90 if !pbIsBerry?(attacker.item)
     when 0x97
     when 0x98
     when 0x99
     when 0x9A
     when 0x9B
     when 0x9C
-      score-=90 if attacker.pbPartner.isFainted?
+      score-=90 if attacker.pbPartner.fainted?
     when 0x9D
       score-=90 if attacker.effects[PBEffects::MudSport]
     when 0x9E
@@ -2260,7 +2261,7 @@ class PokeBattle_Battle
     when 0x117
       if !@doublebattle
         score-=100
-      elsif attacker.pbPartner.isFainted?
+      elsif attacker.pbPartner.fainted?
         score-=90
       end
     when 0x118
@@ -2433,14 +2434,14 @@ class PokeBattle_Battle
     when 0x137
       if attacker.pbTooHigh?(PBStats::DEFENSE) &&
          attacker.pbTooHigh?(PBStats::SPDEF) &&
-         !attacker.pbPartner.isFainted? &&
+         !attacker.pbPartner.fainted? &&
          attacker.pbPartner.pbTooHigh?(PBStats::DEFENSE) &&
          attacker.pbPartner.pbTooHigh?(PBStats::SPDEF)
         score-=90
       else
         score-=attacker.stages[PBStats::DEFENSE]*10
         score-=attacker.stages[PBStats::SPDEF]*10
-        if !attacker.pbPartner.isFainted?
+        if !attacker.pbPartner.fainted?
           score-=attacker.pbPartner.stages[PBStats::DEFENSE]*10
           score-=attacker.pbPartner.stages[PBStats::SPDEF]*10
         end
@@ -2448,7 +2449,7 @@ class PokeBattle_Battle
     when 0x138
       if !@doublebattle
         score-=100
-      elsif attacker.pbPartner.isFainted?
+      elsif attacker.pbPartner.fainted?
         score-=90
       else
         score-=attacker.pbPartner.stages[PBStats::SPDEF]*10
@@ -2640,7 +2641,7 @@ class PokeBattle_Battle
         score+=40 if attacker.hp<=(attacker.totalhp/2)
       end
     when 0x150
-      score+=20 if !attacker.pbTooHigh?(:ATTACK) && opponent.hp<=(opponent.totalhp/4)
+      score+=20 if !attacker.pbTooHigh?(PBStats::ATTACK) && opponent.hp<=(opponent.totalhp/4)
     when 0x151
       avg=opponent.stages[PBStats::ATTACK]*10
       avg+=opponent.stages[PBStats::SPATK]*10
@@ -2795,8 +2796,7 @@ class PokeBattle_Battle
       elsif skill>=PBTrainerAI.mediumSkill && isConst?(move.type,PBTypes,:ELECTRIC) &&
             (opponent.hasWorkingAbility(:VOLTABSORB) ||
             opponent.hasWorkingAbility(:LIGHTNINGROD) ||
-            opponent.hasWorkingAbility(:MOTORDRIVE) ||
-            opponent.hasWorkingABility(:RUBBER))
+            opponent.hasWorkingAbility(:MOTORDRIVE))
         score=0
       else
         # Calculate how much damage the move will do (roughly)
@@ -2892,7 +2892,7 @@ class PokeBattle_Battle
       mod3=2 if mod3==0
     end
     # Foresight
-    if (attacker.hasWorkingAbility(:AETHERTOUCH) rescue false) || opponent.effects[PBEffects::Foresight]
+    if (attacker.hasWorkingAbility(:SCRAPPY) rescue false) || opponent.effects[PBEffects::Foresight]
       mod1=2 if isConst?(otype1,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype1)
       mod2=2 if isConst?(otype2,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype2)
       mod3=2 if isConst?(otype3,PBTypes,:GHOST) && PBTypes.isIneffective?(atype,otype3)
@@ -2930,8 +2930,8 @@ class PokeBattle_Battle
 
   def pbRoughStat(battler,stat,skill)
     return battler.pbSpeed if skill>=PBTrainerAI.highSkill && stat==PBStats::SPEED
-    stagemul=[2,2,2,2,2,2,2,3,4,5,6,7,8]
-    stagediv=[8,7,6,5,4,3,2,2,2,2,2,2,2]
+    stagemul=[10,10,10,10,10,10,10,15,20,25,30,35,40]
+    stagediv=[40,35,30,25,20,15,10,10,10,10,10,10,10]
     stage=battler.stages[stat]+6
     value=0
     case stat
@@ -2990,7 +2990,7 @@ class PokeBattle_Battle
     when 0x80 # Brine
       basedamage*=2 if opponent.hp<=(opponent.totalhp/2).floor
     when 0x85 # Retaliate
-      #TODO
+      # TODO
     when 0x86 # Acrobatics
       basedamage*=2 if attacker.item==0 || attacker.hasWorkingItem(:FLYINGGEM)
     when 0x87 # Weather Ball
@@ -3112,7 +3112,7 @@ class PokeBattle_Battle
       party=pbParty(attacker.index)
       mult=0
       for i in 0...party.length
-        mult+=1 if party[i] && !party[i].isEgg? &&
+        mult+=1 if party[i] && !party[i].egg? &&
                    party[i].hp>0 && party[i].status==0
       end
       basedamage*=mult
@@ -3131,7 +3131,7 @@ class PokeBattle_Battle
     when 0xE1 # Final Gambit
       basedamage=attacker.hp
     when 0xF7 # Fling
-      #TODO
+      # TODO
     when 0x113 # Spit Up
       basedamage*=attacker.effects[PBEffects::Stockpile]
     when 0x144
@@ -3280,7 +3280,8 @@ class PokeBattle_Battle
        (attacker.hasWorkingItem(:MINDPLATE) && isConst?(type,PBTypes,:PSYCHIC)) ||
        (attacker.hasWorkingItem(:ICICLEPLATE) && isConst?(type,PBTypes,:ICE)) ||
        (attacker.hasWorkingItem(:DRACOPLATE) && isConst?(type,PBTypes,:DRAGON)) ||
-       (attacker.hasWorkingItem(:DREADPLATE) && isConst?(type,PBTypes,:DARK))
+       (attacker.hasWorkingItem(:DREADPLATE) && isConst?(type,PBTypes,:DARK)) ||
+       (attacker.hasWorkingItem(:PIXIEPLATE) && isConst?(type,PBTypes,:FAIRY))
       basedamage=(basedamage*1.2).round
     end
     if (attacker.hasWorkingItem(:NORMALGEM) && isConst?(type,PBTypes,:NORMAL)) ||
@@ -3299,7 +3300,8 @@ class PokeBattle_Battle
        (attacker.hasWorkingItem(:PSYCHICGEM) && isConst?(type,PBTypes,:PSYCHIC)) ||
        (attacker.hasWorkingItem(:ICEGEM) && isConst?(type,PBTypes,:ICE)) ||
        (attacker.hasWorkingItem(:DRAGONGEM) && isConst?(type,PBTypes,:DRAGON)) ||
-       (attacker.hasWorkingItem(:DARKGEM) && isConst?(type,PBTypes,:DARK))
+       (attacker.hasWorkingItem(:DARKGEM) && isConst?(type,PBTypes,:DARK)) ||
+       (attacker.hasWorkingItem(:FAIRYGEM) && isConst?(type,PBTypes,:FAIRY))
       basedamage=(basedamage*1.5).round
     end
     if attacker.hasWorkingItem(:ROCKINCENSE) && isConst?(type,PBTypes,:ROCK)
@@ -3352,7 +3354,7 @@ class PokeBattle_Battle
     if skill>=PBTrainerAI.mediumSkill
       if isConst?(type,PBTypes,:FIRE)
         for i in 0...4
-          if @battlers[i].effects[PBEffects::WaterSport] && !@battlers[i].isFainted?
+          if @battlers[i].effects[PBEffects::WaterSport] && !@battlers[i].fainted?
             basedamage=(basedamage*0.33).round
             break
           end
@@ -3363,7 +3365,7 @@ class PokeBattle_Battle
     if skill>=PBTrainerAI.mediumSkill
       if isConst?(type,PBTypes,:ELECTRIC)
         for i in 0...4
-          if @battlers[i].effects[PBEffects::MudSport] && !@battlers[i].isFainted?
+          if @battlers[i].effects[PBEffects::MudSport] && !@battlers[i].fainted?
             basedamage=(basedamage*0.33).round
             break
           end
@@ -3534,7 +3536,7 @@ class PokeBattle_Battle
     # Defense-boosting items
     if skill>=PBTrainerAI.highSkill
       if opponent.hasWorkingItem(:EVIOLITE)
-        evos=pbGetEvolvedFormData(opponent.species)
+        evos=pbGetEvolvedFormData(opponent.pokemon.fSpecies)
         if evos && evos.length>0
           defense=(defense*1.5).round
         end
@@ -3554,6 +3556,7 @@ class PokeBattle_Battle
         defense=(defense*1.5).round
       end
     end
+    defense = [defense.round,1].max
     # Main damage calculation
     damage=(((2.0*attacker.level/5+2).floor*basedamage*atk/defense).floor/50).floor+2
     # Multi-targeting attacks
@@ -3609,7 +3612,7 @@ class PokeBattle_Battle
     # Reflect
     if skill>=PBTrainerAI.highSkill
       if opponent.pbOwnSide.effects[PBEffects::Reflect]>0 && move.pbIsPhysical?(type)
-        if !opponent.pbPartner.isFainted?
+        if !opponent.pbPartner.fainted?
           damage=(damage*0.66).round
         else
           damage=(damage*0.5).round
@@ -3619,7 +3622,7 @@ class PokeBattle_Battle
     # Light Screen
     if skill>=PBTrainerAI.highSkill
       if opponent.pbOwnSide.effects[PBEffects::LightScreen]>0 && move.pbIsSpecial?(type)
-        if !opponent.pbPartner.isFainted?
+        if !opponent.pbPartner.fainted?
           damage=(damage*0.66).round
         else
           damage=(damage*0.5).round
@@ -3738,7 +3741,7 @@ class PokeBattle_Battle
     accuracy*=baseaccuracy/evasion
     # Accuracy modifiers
     if skill>=PBTrainerAI.mediumSkill
-      accuracy*=1.3 if attacker.hasWorkingAbility(:SEISMICSENSE)
+      accuracy*=1.3 if attacker.hasWorkingAbility(:COMPOUNDEYES)
       accuracy*=1.1 if attacker.hasWorkingAbility(:VICTORYSTAR)
       if skill>=PBTrainerAI.highSkill
         partner=attacker.pbPartner
@@ -3817,7 +3820,7 @@ class PokeBattle_Battle
     else
       skill=pbGetOwner(attacker.index).skill || 0
       opponent=attacker.pbOppositeOpposing
-      if @doublebattle && !opponent.isFainted? && !opponent.pbPartner.isFainted?
+      if @doublebattle && !opponent.fainted? && !opponent.pbPartner.fainted?
         # Choose a target and move.  Also care about partner.
         otheropp=opponent.pbPartner
         scoresAndTargets=[]
@@ -3827,7 +3830,7 @@ class PokeBattle_Battle
             score1=pbGetMoveScore(attacker.moves[i],attacker,opponent,skill)
             score2=pbGetMoveScore(attacker.moves[i],attacker,otheropp,skill)
             if (attacker.moves[i].target&0x20)!=0 # Target's user's side
-              if attacker.pbPartner.isFainted? # No partner
+              if attacker.pbPartner.fainted? # No partner
                 score1*=5/3
                 score2*=5/3
               else
@@ -3878,7 +3881,7 @@ class PokeBattle_Battle
         end
       else
         # Choose a move. There is only 1 opposing Pokémon.
-        if @doublebattle && opponent.isFainted?
+        if @doublebattle && opponent.fainted?
           opponent=opponent.pbPartner
         end
         for i in 0...4
@@ -4041,7 +4044,7 @@ class PokeBattle_Battle
     items=pbGetOwnerItems(index)
     return 0 if !items
     battler=@battlers[index]
-    return 0 if battler.isFainted? ||
+    return 0 if battler.fainted? ||
                 battler.effects[PBEffects::Embargo]>0
     hashpitem=false
     for i in items
@@ -4073,15 +4076,19 @@ class PokeBattle_Battle
                     (battler.status>0 || battler.effects[PBEffects::Confusion]>0)
       elsif isConst?(i,PBItems,:XATTACK) ||
             isConst?(i,PBItems,:XDEFEND) ||
+            isConst?(i,PBItems,:XDEFENSE) ||
             isConst?(i,PBItems,:XSPEED) ||
             isConst?(i,PBItems,:XSPECIAL) ||
+            isConst?(i,PBItems,:XSPATK) ||
             isConst?(i,PBItems,:XSPDEF) ||
             isConst?(i,PBItems,:XACCURACY)
         stat=0
         stat=PBStats::ATTACK if isConst?(i,PBItems,:XATTACK)
         stat=PBStats::DEFENSE if isConst?(i,PBItems,:XDEFEND)
+        stat=PBStats::DEFENSE if isConst?(i,PBItems,:XDEFENSE)
         stat=PBStats::SPEED if isConst?(i,PBItems,:XSPEED)
         stat=PBStats::SPATK if isConst?(i,PBItems,:XSPECIAL)
+        stat=PBStats::SPATK if isConst?(i,PBItems,:XSPATK)
         stat=PBStats::SPDEF if isConst?(i,PBItems,:XSPDEF)
         stat=PBStats::ACCURACY if isConst?(i,PBItems,:XACCURACY)
         if stat>0 && !battler.pbTooHigh?(stat)
@@ -4112,8 +4119,8 @@ class PokeBattle_Battle
     if @opponent && !shouldswitch && @battlers[index].turncount>0
       if skill>=PBTrainerAI.highSkill
         opponent=@battlers[index].pbOppositeOpposing
-        opponent=opponent.pbPartner if opponent.isFainted?
-        if !opponent.isFainted? && opponent.lastMoveUsed>0 && 
+        opponent=opponent.pbPartner if opponent.fainted?
+        if !opponent.fainted? && opponent.lastMoveUsed>0 && 
            (opponent.level-@battlers[index].level).abs<=6
           move=PBMoveData.new(opponent.lastMoveUsed)
           typemod=pbTypeModifier(move.type,@battlers[index],@battlers[index])
@@ -4161,12 +4168,12 @@ class PokeBattle_Battle
         scoreCount=0
         attacker=@battlers[index]
         encoreIndex=@battlers[index].effects[PBEffects::EncoreIndex]
-        if !attacker.pbOpposing1.isFainted?
+        if !attacker.pbOpposing1.fainted?
           scoreSum+=pbGetMoveScore(attacker.moves[encoreIndex],
              attacker,attacker.pbOpposing1,skill)
           scoreCount+=1
         end
-        if !attacker.pbOpposing2.isFainted?
+        if !attacker.pbOpposing2.fainted?
           scoreSum+=pbGetMoveScore(attacker.moves[encoreIndex],
              attacker,attacker.pbOpposing2,skill)
           scoreCount+=1
@@ -4177,7 +4184,7 @@ class PokeBattle_Battle
       end
     end
     if skill>=PBTrainerAI.highSkill
-      if !@doublebattle && !@battlers[index].pbOppositeOpposing.isFainted? 
+      if !@doublebattle && !@battlers[index].pbOppositeOpposing.fainted? 
         opp=@battlers[index].pbOppositeOpposing
         if (opp.effects[PBEffects::HyperBeam]>0 ||
            (opp.hasWorkingAbility(:TRUANT) &&
@@ -4273,8 +4280,8 @@ class PokeBattle_Battle
     $PokemonTemp=PokemonTemp.new if !$PokemonTemp
     o1=@battlers[index].pbOpposing1
     o2=@battlers[index].pbOpposing2
-    o1=nil if o1 && o1.isFainted?
-    o2=nil if o2 && o2.isFainted?
+    o1=nil if o1 && o1.fainted?
+    o2=nil if o2 && o2.fainted?
     best=-1
     bestSum=0
     for e in enemies

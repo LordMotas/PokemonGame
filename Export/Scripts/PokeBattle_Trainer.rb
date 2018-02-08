@@ -14,7 +14,6 @@ class PokeBattle_Trainer
   attr_accessor(:party)
   attr_accessor(:pokedex)    # Whether the Pokédex was obtained
   attr_accessor(:pokegear)   # Whether the Pokégear was obtained
-  attr_accessor(:itemCrafter)# Whether the Item Crafter was obtained
   attr_accessor(:language)
 
   def trainerTypeName   # Name of this trainer type (localized)
@@ -131,11 +130,11 @@ class PokeBattle_Trainer
   def isFemale?; return self.gender==1; end
 
   def pokemonParty
-    return @party.find_all {|item| item && !item.isEgg? }
+    return @party.find_all {|item| item && !item.egg? }
   end
 
   def ablePokemonParty
-    return @party.find_all {|item| item && !item.isEgg? && item.hp>0 }
+    return @party.find_all {|item| item && !item.egg? && item.hp>0 }
   end
 
   def partyCount
@@ -145,7 +144,7 @@ class PokeBattle_Trainer
   def pokemonCount
     ret=0
     for i in 0...@party.length
-      ret+=1 if @party[i] && !@party[i].isEgg?
+      ret+=1 if @party[i] && !@party[i].egg?
     end
     return ret
   end
@@ -153,7 +152,7 @@ class PokeBattle_Trainer
   def ablePokemonCount
     ret=0
     for i in 0...@party.length
-      ret+=1 if @party[i] && !@party[i].isEgg? && @party[i].hp>0
+      ret+=1 if @party[i] && !@party[i].egg? && @party[i].hp>0
     end
     return ret
   end
@@ -283,7 +282,6 @@ class PokeBattle_Trainer
     @metaID=0
     @outfit=0
     @pokegear=false
-    @itemCrafter=false
     @pokedex=false
     clearPokedex
     @shadowcaught=[]

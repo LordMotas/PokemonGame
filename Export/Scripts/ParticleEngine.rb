@@ -10,22 +10,22 @@ class Particle_Engine
     @firsttime=true
     @effects={
        # PinkMan's Effects
-       "fire"=>Particle_Engine::Fire,
-       "smoke"=>Particle_Engine::Smoke,
-       "teleport"=>Particle_Engine::Teleport,
-       "spirit"=>Particle_Engine::Spirit,
-       "explosion"=>Particle_Engine::Explosion,
-       "aura"=>Particle_Engine::Aura,
+       "fire"         => Particle_Engine::Fire,
+       "smoke"        => Particle_Engine::Smoke,
+       "teleport"     => Particle_Engine::Teleport,
+       "spirit"       => Particle_Engine::Spirit,
+       "explosion"    => Particle_Engine::Explosion,
+       "aura"         => Particle_Engine::Aura,
        # BlueScope's Effects
-       "soot"=>Particle_Engine::Soot,
-       "sootsmoke"=>Particle_Engine::SootSmoke,
-       "rocket"=>Particle_Engine::Rocket,
-       "fixteleport"=>Particle_Engine::FixedTeleport,
-       "smokescreen"=>Particle_Engine::Smokescreen,
-       "flare"=>Particle_Engine::Flare,
-       "splash"=>Particle_Engine::Splash,
+       "soot"         => Particle_Engine::Soot,
+       "sootsmoke"    => Particle_Engine::SootSmoke,
+       "rocket"       => Particle_Engine::Rocket,
+       "fixteleport"  => Particle_Engine::FixedTeleport,
+       "smokescreen"  => Particle_Engine::Smokescreen,
+       "flare"        => Particle_Engine::Flare,
+       "splash"       => Particle_Engine::Splash,
        # By Peter O.
-       "starteleport"=>Particle_Engine::StarTeleport
+       "starteleport" => Particle_Engine::StarTeleport
     }
   end
 
@@ -513,7 +513,7 @@ end
 class Particle_Engine::Smokescreen < ParticleEffect_Event
   def initialize(event,viewport)
     super
-    setParameters([0,0,0,450,0,0.2,-64,
+    setParameters([0,0,0,250,0,0.2,-64,
        Graphics.height,-64,Graphics.width,0.8,0.8,-5,-15,5,80])
     initParticles(nil,100)
     for i in 0...@maxparticless

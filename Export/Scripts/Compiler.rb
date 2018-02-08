@@ -7,54 +7,54 @@ end
 
 
 def pbGetExceptionMessage(e,script="")
-  emessage=e.message
+  emessage = e.message
   if e.is_a?(Hangup)
-    emessage="The script is taking too long. The game will restart."
+    emessage = "The script is taking too long. The game will restart."
   elsif e.is_a?(Errno::ENOENT)
-    filename=emessage.sub("No such file or directory - ", "")
-    emessage="File #{filename} not found."
+    filename = emessage.sub("No such file or directory - ", "")
+    emessage = "File #{filename} not found."
   end
   if emessage && !safeExists?("Game.rgssad") && !safeExists?("Game.rgss2a")
-    emessage=emessage.gsub(/uninitialized constant PBItems\:\:(\S+)/){
+    emessage = emessage.gsub(/uninitialized constant PBItems\:\:(\S+)/){
        "The item '#{$1}' is not valid. Please add the item\r\nto the list of items in the editor. See the wiki for more information." }
-    emessage=emessage.gsub(/undefined method `(\S+?)' for PBItems\:Module/){
+    emessage = emessage.gsub(/undefined method `(\S+?)' for PBItems\:Module/){
        "The item '#{$1}' is not valid. Please add the item\r\nto the list of items in the editor. See the wiki for more information." }
-    emessage=emessage.gsub(/uninitialized constant PBTypes\:\:(\S+)/){
+    emessage = emessage.gsub(/uninitialized constant PBTypes\:\:(\S+)/){
        "The type '#{$1}' is not valid. Please add the type\r\nto the PBS/types.txt file." }
-    emessage=emessage.gsub(/undefined method `(\S+?)' for PBTypes\:Module/){
+    emessage = emessage.gsub(/undefined method `(\S+?)' for PBTypes\:Module/){
        "The type '#{$1}' is not valid. Please add the type\r\nto the PBS/types.txt file." }
-    emessage=emessage.gsub(/uninitialized constant PBTrainers\:\:(\S+)$/){
+    emessage = emessage.gsub(/uninitialized constant PBTrainers\:\:(\S+)$/){
        "The trainer type '#{$1}' is not valid. Please add the trainer\r\nto the list of trainer types in the Editor. See the wiki for\r\nmore information." }
-    emessage=emessage.gsub(/undefined method `(\S+?)' for PBTrainers\:Module/){
+    emessage = emessage.gsub(/undefined method `(\S+?)' for PBTrainers\:Module/){
        "The trainer type '#{$1}' is not valid. Please add the trainer\r\nto the list of trainer types in the Editor. See the wiki for\r\nmore information." }
-    emessage=emessage.gsub(/uninitialized constant PBSpecies\:\:(\S+)$/){
+    emessage = emessage.gsub(/uninitialized constant PBSpecies\:\:(\S+)$/){
        "The Pokemon species '#{$1}' is not valid. Please\r\nadd the species to the PBS/pokemon.txt file.\r\nSee the wiki for more information." }
-    emessage=emessage.gsub(/undefined method `(\S+?)' for PBSpecies\:Module/){
+    emessage = emessage.gsub(/undefined method `(\S+?)' for PBSpecies\:Module/){
        "The Pokemon species '#{$1}' is not valid. Please\r\nadd the species to the PBS/pokemon.txt file.\r\nSee the wiki for more information." }
   end
+  emessage.gsub!(/Section(\d+)/){$RGSS_SCRIPTS[$1.to_i][1]}
   return emessage
 end
 
 def pbPrintException(e)
-  emessage=pbGetExceptionMessage(e)
-  btrace=""
+  emessage = pbGetExceptionMessage(e)
+  btrace = ""
   if e.backtrace
-    maxlength=$INTERNAL ? 25 : 10
+    maxlength = ($INTERNAL) ? 25 : 10
     e.backtrace[0,maxlength].each do |i|
-      btrace=btrace+"#{i}\r\n"
+      btrace = btrace+"#{i}\r\n"
     end
   end
   btrace.gsub!(/Section(\d+)/){$RGSS_SCRIPTS[$1.to_i][1]}
-  message="Exception: #{e.class}\r\nMessage: #{emessage}\r\n#{btrace}"
-  errorlog="errorlog.txt"
+  message = "[Pokémon Essentials version #{ESSENTIALSVERSION}]\r\n#{ERRORTEXT}Exception: #{e.class}\r\nMessage: #{emessage}\r\n#{btrace}"
+  errorlog = "errorlog.txt"
   if (Object.const_defined?(:RTP) rescue false)
-    errorlog=RTP.getSaveFileName("errorlog.txt")
+    errorlog = RTP.getSaveFileName("errorlog.txt")
   end
-  errorlogline=errorlog.sub(Dir.pwd+"\\","")
-  errorlogline=errorlogline.sub(Dir.pwd+"/","")
-  if errorlogline.length>20
-    errorlogline="\r\n"+errorlogline
-  end
+  errorlogline = errorlog.sub(Dir.pwd+"\\","")
+  errorlogline = errorlogline.sub(Dir.pwd+"/","")
+  errorlogline = errorlogline.gsub("/","\\")
+  errorlogline = "\r\n"+errorlogline if errorlogline.length>20
   File.open(errorlog,"ab"){|f| f.write(message) }
   if !e.is_a?(Hangup)
     print("#{message}\r\nThis exception was logged in #{errorlogline}.\r\nPress Ctrl+C to copy this message to the clipboard.")
@@ -62,18 +62,18 @@ def pbPrintException(e)
 end
 
 def pbCriticalCode
-  ret=0
+  ret = 0
   begin
     yield
-    ret=1
+    ret = 1
   rescue Exception
-    e=$!
+    e = $!
     if e.is_a?(Reset) || e.is_a?(SystemExit)
       raise
     else
       pbPrintException(e)
       if e.is_a?(Hangup)
-        ret=2
+        ret = 2
         raise Reset.new
       end
     end
@@ -87,28 +87,24 @@ end
 # File reading
 #===============================================================================
 module FileLineData
-  @file=""
-  @linedata=""
-  @lineno=0
-  @section=nil
-  @key=nil
-  @value=nil
+  @file     = ""
+  @linedata = ""
+  @lineno   = 0
+  @section  = nil
+  @key      = nil 
+  @value    = nil
 
-  def self.file
-    @file
-  end
+  def self.file; @file; end
 
-  def self.file=(value)
-    @file=value
-  end
+  def self.file=(value); @file = value; end
 
   def self.clear
-    @file=""
-    @linedata=""
-    @lineno=""
-    @section=nil
-    @key=nil
-    @value=nil
+    @file     = ""
+    @linedata = ""
+    @lineno   = ""
+    @section  = nil
+    @key      = nil
+    @value    = nil
   end
 
   def self.linereport
@@ -124,37 +120,33 @@ module FileLineData
   end
 
   def self.setSection(section,key,value)
-    @section=section
-    @key=key
+    @section = section
+    @key     = key
     if value && value.length>200
-      @value=_INTL("{1}...",value[0,200])
+      @value = _INTL("{1}...",value[0,200])
     else
-      @value=!value ? "" : value.clone
+      @value = (value) ? value.clone : ""
     end
   end
 
   def self.setLine(line,lineno)
-    @section=nil
-    if line && line.length>200
-      @linedata=_INTL("{1}...",line[0,200])
-    else
-      @linedata=line
-    end
-    @lineno=lineno
+    @section  = nil
+    @linedata = (line && line.length>200) ? _INTL("{1}...",line[0,200]) : line
+    @lineno   = lineno
   end
 end
 
 
 
 def findIndex(a)
-  index=-1
-  count=0
+  index = -1
+  count = 0
   a.each {|i|
-     if yield i
-       index=count
-       break
-     end
-     count+=1
+    if yield i
+      index = count
+      break
+    end
+    count += 1
   }
   return index
 end
@@ -166,23 +158,21 @@ def prepline(line)
 end
 
 def pbEachFileSectionEx(f)
-  lineno=1
-  havesection=false
-  sectionname=nil
-  lastsection={}
+  lineno      = 1
+  havesection = false
+  sectionname = nil
+  lastsection = {}
   f.each_line {|line|
-     if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-       line=line[3,line.length-3]
-     end
-     if !line[/^\#/] && !line[/^\s*$/]
-       if line[/^\s*\[\s*(.*)\s*\]\s*$/]
-         if havesection
-           yield lastsection,sectionname 
-         end
-         sectionname=$~[1]
-         havesection=true
-         lastsection={}
-       else
+    if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+      line = line[3,line.length-3]
+    end
+    if !line[/^\#/] && !line[/^\s*$/]
+      if line[/^\s*\[\s*(.*)\s*\]\s*$/]
+        yield lastsection,sectionname if havesection
+        sectionname = $~[1]
+        havesection = true
+        lastsection = {}
+      else
         if sectionname==nil
           FileLineData.setLine(line,lineno)
           raise _INTL("Expected a section at the beginning of the file. This error may also occur if the file was not saved in UTF-8.\r\n{1}",FileLineData.linereport)
@@ -191,125 +181,113 @@ def pbEachFileSectionEx(f)
           FileLineData.setSection(sectionname,nil,line)
           raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
         end
-        r1=$~[1]
-        r2=$~[2]
-        lastsection[r1]=r2.gsub(/\s+$/,"")
+        r1 = $~[1]
+        r2 = $~[2]
+        lastsection[r1] = r2.gsub(/\s+$/,"")
       end
     end
-    lineno+=1
-    if lineno%500==0
-      Graphics.update
-    end
-    if lineno%50==0
-      Win32API.SetWindowText(_INTL("Processing line {1}",lineno))
-    end
+    lineno += 1
+    Graphics.update if lineno%500==0
+    Win32API.SetWindowText(_INTL("Processing line {1}",lineno)) if lineno%50==0
   }
-  if havesection
-    yield lastsection,sectionname 
-  end
+  yield lastsection,sectionname  if havesection
 end
 
 def pbEachFileSection(f)
   pbEachFileSectionEx(f) {|section,name|
-     if block_given? && name[/^\d+$/]
-       yield section,name.to_i
-     end
+    yield section,name.to_i if block_given? && name[/^\d+$/]
+  }
+end
+
+def pbEachFileSection2(f)
+  pbEachFileSectionEx(f) {|section,name|
+    yield section,name if block_given? && name[/^\w+-{1}\d+$/]
   }
 end
 
 def pbEachSection(f)
-  lineno=1
-  havesection=false
-  sectionname=nil
-  lastsection=[]
+  lineno      = 1
+  havesection = false
+  sectionname = nil
+  lastsection = []
   f.each_line {|line|
-     if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-       line=line[3,line.length-3]
-     end
-     if !line[/^\#/] && !line[/^\s*$/]
-       if line[/^\s*\[\s*(.+?)\s*\]\s*$/]
-         if havesection
-           yield lastsection,sectionname 
-         end
-         sectionname=$~[1]
-         lastsection=[]
-         havesection=true
-       else
-         if sectionname==nil
-           raise _INTL("Expected a section at the beginning of the file (line {1}). Sections begin with '[name of section]'",lineno)
-         end
-         lastsection.push(line.gsub(/^\s+/,"").gsub(/\s+$/,""))
-       end
-     end
-     lineno+=1
-     if lineno%500==0
-       Graphics.update
-     end
+    if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+      line = line[3,line.length-3]
+    end
+    if !line[/^\#/] && !line[/^\s*$/]
+      if line[/^\s*\[\s*(.+?)\s*\]\s*$/]
+        yield lastsection,sectionname  if havesection
+        sectionname = $~[1]
+        lastsection = []
+        havesection = true
+      else
+        if sectionname==nil
+          raise _INTL("Expected a section at the beginning of the file (line {1}). Sections begin with '[name of section]'",lineno)
+        end
+        lastsection.push(line.gsub(/^\s+/,"").gsub(/\s+$/,""))
+      end
+    end
+    lineno += 1
+    Graphics.update if lineno%500==0
   }
-  if havesection
-    yield lastsection,sectionname 
-  end
+  yield lastsection,sectionname  if havesection
 end
 
 def pbEachCommentedLine(f)
-  lineno=1
+  lineno = 1
   f.each_line {|line|
-     if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-       line=line[3,line.length-3]
-     end
-     if !line[/^\#/] && !line[/^\s*$/]
-       yield line, lineno
-     end
-     lineno+=1
+    if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+      line = line[3,line.length-3]
+    end
+    yield line, lineno if !line[/^\#/] && !line[/^\s*$/]
+    lineno += 1
   }
 end
 
 def pbCompilerEachCommentedLine(filename)
   File.open(filename,"rb"){|f|
-     FileLineData.file=filename
-     lineno=1
-     f.each_line {|line|
-        if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-          line=line[3,line.length-3]
-        end
-        if !line[/^\#/] && !line[/^\s*$/]
-          FileLineData.setLine(line,lineno)
-          yield line, lineno
-        end
-        lineno+=1
-     }
+    FileLineData.file = filename
+    lineno = 1
+    f.each_line {|line|
+      if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+        line = line[3,line.length-3]
+      end
+      if !line[/^\#/] && !line[/^\s*$/]
+        FileLineData.setLine(line,lineno)
+        yield line, lineno
+      end
+      lineno += 1
+    }
   }
 end
 
 def pbEachPreppedLine(f)
-  lineno=1
+  lineno = 1
   f.each_line {|line|
-     if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-       line=line[3,line.length-3]
-     end
-     line=prepline(line)
-     if !line[/^\#/] && !line[/^\s*$/]
-       yield line, lineno
-     end
-     lineno+=1
+    if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+      line = line[3,line.length-3]
+    end
+    line = prepline(line)
+    yield line, lineno if !line[/^\#/] && !line[/^\s*$/]
+    lineno += 1
   }
 end
 
 def pbCompilerEachPreppedLine(filename)
   File.open(filename,"rb"){|f|
-     FileLineData.file=filename
-     lineno=1
-     f.each_line {|line|
-        if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-          line=line[3,line.length-3]
-        end
-        line=prepline(line)
-        if !line[/^\#/] && !line[/^\s*$/]
-          FileLineData.setLine(line,lineno)
-          yield line, lineno
-        end
-        lineno+=1
-     }
+    FileLineData.file = filename
+    lineno = 1
+    f.each_line {|line|
+      if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+        line = line[3,line.length-3]
+      end
+      line = prepline(line)
+      if !line[/^\#/] && !line[/^\s*$/]
+        FileLineData.setLine(line,lineno)
+        yield line, lineno
+      end
+      lineno += 1
+    }
   }
 end
 
@@ -318,29 +296,25 @@ end
 #===============================================================================
 def pbCheckByte(x,valuename)
   if x<0 || x>255
-    raise _INTL("The value \"{1}\" must be from 0 through 255 (0x00-0xFF in hex), got a value of {2}\r\n{3}",
-       valuename,x,FileLineData.linereport)
+    raise _INTL("The value \"{1}\" must be from 0 through 255 (0x00-0xFF in hex), got a value of {2}\r\n{3}",valuename,x,FileLineData.linereport)
   end
 end
 
 def pbCheckSignedByte(x,valuename)
   if x<-128 || x>127
-    raise _INTL("The value \"{1}\" must be from -128 through 127, got a value of {2}\r\n{3}",
-       valuename,x,FileLineData.linereport)
+    raise _INTL("The value \"{1}\" must be from -128 through 127, got a value of {2}\r\n{3}",valuename,x,FileLineData.linereport)
   end
 end
 
 def pbCheckWord(x,valuename)
   if x<0 || x>65535
-    raise _INTL("The value \"{1}\" must be from 0 through 65535 (0x0000-0xFFFF in hex), got a value of {2}\r\n{3}",
-       valuename,x,FileLineData.linereport)
+    raise _INTL("The value \"{1}\" must be from 0 through 65535 (0x0000-0xFFFF in hex), got a value of {2}\r\n{3}",valuename,x,FileLineData.linereport)
   end
 end
 
 def pbCheckSignedWord(x,valuename)
   if x<-32768 || x>32767
-    raise _INTL("The value \"{1}\" must be from -32768 through 32767, got a value of {2}\r\n{3}",
-       valuename,x,FileLineData.linereport)
+    raise _INTL("The value \"{1}\" must be from -32768 through 32767, got a value of {2}\r\n{3}",valuename,x,FileLineData.linereport)
   end
 end
 
@@ -348,34 +322,34 @@ end
 # Csv parsing
 #===============================================================================
 def csvfield!(str)
-  ret=""
+  ret = ""
   str.sub!(/^\s*/,"")
   if str[0,1]=="\""
-    str[0,1]=""
-    escaped=false
-    fieldbytes=0
+    str[0,1] = ""
+    escaped = false
+    fieldbytes = 0
     str.scan(/./) do |s|
-      fieldbytes+=s.length
+      fieldbytes += s.length
       break if s=="\"" && !escaped
       if s=="\\" && !escaped
-        escaped=true
+        escaped = true
       else
-        ret+=s
-        escaped=false
+        ret += s
+        escaped = false
       end
     end
-    str[0,fieldbytes]=""
+    str[0,fieldbytes] = ""
     if !str[/^\s*,/] && !str[/^\s*$/] 
       raise _INTL("Invalid quoted field (in: {1})\r\n{2}",str,FileLineData.linereport)
     end
-    str[0,str.length]=$~.post_match
+    str[0,str.length] = $~.post_match
   else
     if str[/,/]
-      str[0,str.length]=$~.post_match
-      ret=$~.pre_match
+      str[0,str.length] = $~.post_match
+      ret = $~.pre_match
     else
-      ret=str.clone
-      str[0,str.length]=""
+      ret = str.clone
+      str[0,str.length] = ""
     end
     ret.gsub!(/\s+$/,"")
   end
@@ -384,15 +358,15 @@ end
 
 def csvquote(str)
   return "" if !str || str==""
-  if str[/[,\"]/] #|| str[/^\s/] || str[/\s$/] || str[/^#/]
-    str=str.gsub(/[\"]/,"\\\"")
-    str="\"#{str}\""
+  if str[/[,\"]/] # || str[/^\s/] || str[/\s$/] || str[/^#/]
+    str = str.gsub(/[\"]/,"\\\"")
+    str = "\"#{str}\""
   end
   return str
 end
 
 def csvBoolean!(str,line=-1)
-  field=csvfield!(str)
+  field = csvfield!(str)
   if field[/^1|[Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]$/]
     return true
   elsif field[/^0|[Ff][Aa][Ll][Ss][Ee]|[Nn][Oo]$/]
@@ -404,7 +378,7 @@ def csvBoolean!(str,line=-1)
 end
 
 def csvInt!(str,line=-1)
-  ret=csvfield!(str)
+  ret = csvfield!(str)
   if !ret[/^\-?\d+$/]
     raise _INTL("Field {1} is not an integer\r\n{2}",ret,FileLineData.linereport)
   end
@@ -412,7 +386,7 @@ def csvInt!(str,line=-1)
 end
 
 def csvPosInt!(str,line=-1)
-  ret=csvfield!(str)
+  ret = csvfield!(str)
   if !ret[/^\d+$/]
     raise _INTL("Field {1} is not a positive integer\r\n{2}",ret,FileLineData.linereport)
   end
@@ -420,17 +394,17 @@ def csvPosInt!(str,line=-1)
 end
 
 def csvFloat!(str,key,section)
-  ret=csvfield!(str)
+  ret = csvfield!(str)
   return Float(ret) rescue raise _INTL("Field {1} is not a number\r\n{2}",ret,FileLineData.linereport)
 end
 
 def csvEnumField!(value,enumer,key,section)
-  ret=csvfield!(value)
+  ret = csvfield!(value)
   return checkEnumField(ret,enumer)
 end
 
 def csvEnumFieldOrInt!(value,enumer,key,section)
-  ret=csvfield!(value)
+  ret = csvfield!(value)
   if ret[/\-?\d+/]
     return ret.to_i
   end
@@ -448,7 +422,7 @@ def checkEnumField(ret,enumer)
     end
     return enumer.const_get(ret.to_sym)
   elsif enumer.is_a?(Symbol) || enumer.is_a?(String)
-    enumer=Object.const_get(enumer.to_sym)
+    enumer = Object.const_get(enumer.to_sym)
     begin
       if ret=="" || !enumer.const_defined?(ret)
         raise _INTL("Undefined value {1} in {2}\r\n{3}",ret,enumer.name,FileLineData.linereport)
@@ -458,13 +432,13 @@ def checkEnumField(ret,enumer)
     end
     return enumer.const_get(ret.to_sym)
   elsif enumer.is_a?(Array)
-    idx=findIndex(enumer){|item| ret==item}
+    idx = findIndex(enumer){|item| ret==item}
     if idx<0
       raise _INTL("Undefined value {1} (expected one of: {2})\r\n{3}",ret,enumer.inspect,FileLineData.linereport)
     end
     return idx
   elsif enumer.is_a?(Hash)
-    value=enumer[ret]
+    value = enumer[ret]
     if value==nil
       raise _INTL("Undefined value {1} (expected one of: {2})\r\n{3}",ret,enumer.keys.inspect,FileLineData.linereport)
     end
@@ -477,29 +451,27 @@ end
 # Csv record reading/writing
 #===============================================================================
 def pbGetCsvRecord(rec,lineno,schema)
-  record=[]
-  repeat=false
+  record = []
+  repeat = false
+  start = 0
   if schema[1][0,1]=="*"
-    repeat=true
-    start=1
-  else
-    repeat=false
-    start=0
+    repeat = true
+    start = 1
   end
   begin
     for i in start...schema[1].length
-      chr=schema[1][i,1]
+      chr = schema[1][i,1]
       case chr
       when "u"
         record.push(csvPosInt!(rec,lineno))
       when "v"
-        field=csvPosInt!(rec,lineno)
+        field = csvPosInt!(rec,lineno)
         raise _INTL("Field '{1}' must be greater than 0\r\n{2}",field,FileLineData.linereport) if field==0
         record.push(field)
       when "i"
         record.push(csvInt!(rec,lineno))
       when "U", "I"
-        field=csvfield!(rec)
+        field = csvfield!(rec)
         if field==""
           record.push(nil)
         elsif !field[/^\d+$/]
@@ -508,7 +480,7 @@ def pbGetCsvRecord(rec,lineno,schema)
           record.push(field.to_i)
         end
       when "x"
-        field=csvfield!(rec)     
+        field = csvfield!(rec)     
         if !field[/^[A-Fa-f0-9]+$/]
           raise _INTL("Field '{1}' is not a hexadecimal number\r\n{2}",field,FileLineData.linereport)
         end
@@ -516,20 +488,16 @@ def pbGetCsvRecord(rec,lineno,schema)
       when "s"
         record.push(csvfield!(rec))
       when "S"
-        field=csvfield!(rec)
-        if field==""
-          record.push(nil)
-        else
-          record.push(field)
-        end
+        field = csvfield!(rec)
+        record.push((field=="") ? nil : field)
       when "n" # Name
-        field=csvfield!(rec)
+        field = csvfield!(rec)
         if !field[/^(?![0-9])\w+$/]
           raise _INTL("Field '{1}' must contain only letters, digits, and\r\nunderscores and can't begin with a number.\r\n{2}",field,FileLineData.linereport)
         end
         record.push(field)
       when "N" # Optional name
-        field=csvfield!(rec)
+        field = csvfield!(rec)
         if field==""
           record.push(nil)
         else
@@ -550,13 +518,9 @@ def pbGetCsvRecord(rec,lineno,schema)
 end
 
 def pbWriteCsvRecord(record,file,schema)
-  if !record.is_a?(Array)
-    rec=[record]
-  else
-    rec=record.clone
-  end
+  rec = (record.is_a?(Array)) ? record.clone : [record]
   for i in 0...schema[1].length
-    chr=schema[1][i,1]
+    chr = schema[1][i,1]
     file.write(",") if i>0 
     if rec[i].nil?
       # do nothing
@@ -569,11 +533,11 @@ def pbWriteCsvRecord(record,file,schema)
     elsif rec[i].is_a?(Numeric)
       case chr
       when "e"
-        enumer=schema[2+i]
+        enumer = schema[2+i]
         if enumer.is_a?(Array)
           file.write(enumer[rec[i]])
         elsif enumer.is_a?(Symbol) || enumer.is_a?(String)
-          mod=Object.const_get(enumer.to_sym)
+          mod = Object.const_get(enumer.to_sym)
           if enumer.to_s=="PBTrainers" && !mod.respond_to?("getCount")
             file.write((getConstantName(mod,rec[i]) rescue pbGetTrainerConst(rec[i])))
           else
@@ -611,27 +575,27 @@ def intSize(value)
 end
 
 def encodeInt(strm,value)
-  num=0
+  num = 0
   loop do
     if value<0x80
       strm.fputb(value)
       return num+1
     end
     strm.fputb(0x80|(value&0x7F))
-    value>>=7
-    num+=1
+    value >>= 7
+    num += 1
   end
 end
 
 def decodeInt(strm)
-  bits=0
-  curbyte=0
-  ret=0
+  bits    = 0
+  curbyte = 0
+  ret = 0
   begin
-    curbyte=strm.fgetb
-    ret+=(curbyte&0x7F)<<bits
-    bits+=7
-  end while(((curbyte&0x80)>0)&&bits<0x1d)
+    curbyte = strm.fgetb
+    ret += (curbyte&0x7F)<<bits
+    bits += 7
+  end while ((curbyte&0x80)>0)&&bits<0x1d
   return ret
 end
 
@@ -645,50 +609,50 @@ def encodeString(strm,str)
 end
 
 def decodeString(strm)
-  len=decodeInt(strm)
+  len = decodeInt(strm)
   return strm.read(len)
 end
 
 def strsplit(str,re)
-  ret=[]
-  tstr=str
+  ret = []
+  tstr = str
   while re=~tstr
-    ret[ret.length]=$~.pre_match
-    tstr=$~.post_match
+    ret[ret.length] = $~.pre_match
+    tstr = $~.post_match
   end
-  ret[ret.length]=tstr if ret.length
+  ret[ret.length] = tstr if ret.length
   return ret
 end
 
 def canonicalize(c)
-  csplit=strsplit(c,/[\/\\]/)
-  pos=-1
-  ret=[]
-  retstr=""
+  csplit = strsplit(c,/[\/\\]/)
+  pos = -1
+  ret = []
+  retstr = ""
   for x in csplit
     if x=="."
     elsif x==".."
       ret.delete_at(pos) if pos>=0
-      pos-=1
+      pos -= 1
     else
       ret.push(x)
-      pos+=1
+      pos += 1
     end
   end
   for i in 0...ret.length
-    retstr+="/" if i>0
-    retstr+=ret[i]
+    retstr += "/" if i>0
+    retstr += ret[i]
   end
   return retstr
 end
 
 def frozenArrayValue(arr)
-  typestring=""
+  typestring = ""
   for i in 0...arr.length
     if i>0
-      typestring+=((i%20)==0) ? ",\r\n" : ","
+      typestring += ((i%20)==0) ? ",\r\n" : ","
     end
-    typestring+=arr[i].to_s
+    typestring += arr[i].to_s
   end
   return "["+typestring+"].freeze"
 end
@@ -697,9 +661,9 @@ end
 # Enum const manipulators and parsers
 #===============================================================================
 def pbGetConst(mod,item,err)
-  isdef=false
+  isdef = false
   begin
-    isdef=mod.const_defined?(item.to_sym)
+    isdef = mod.const_defined?(item.to_sym)
   rescue
     raise sprintf(err,item)
   end
@@ -732,39 +696,37 @@ def getConstantName(mod,value)
 end
 
 def parseItem(item)
-  clonitem=item.upcase
+  clonitem = item.upcase
   clonitem.sub!(/^\s*/){}
   clonitem.sub!(/\s*$/){}
-  return pbGetConst(PBItems,clonitem,
-     _INTL("Undefined item constant name: %s\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nMake sure the item is defined in\r\nPBS/items.txt.\r\n{1}",
-     FileLineData.linereport))
+  return pbGetConst(PBItems,clonitem,_INTL("Undefined item constant name: %s\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nMake sure the item is defined in\r\nPBS/items.txt.\r\n{1}",FileLineData.linereport))
 end
 
 def parseSpecies(item)
-  clonitem=item.upcase
+  clonitem = item.upcase
   clonitem.gsub!(/^[\s\n]*/){}
   clonitem.gsub!(/[\s\n]*$/){}
-  clonitem="NIDORANmA" if clonitem=="NIDORANMA"
-  clonitem="NIDORANfE" if clonitem=="NIDORANFE"
+  clonitem = "NIDORANmA" if clonitem=="NIDORANMA"
+  clonitem = "NIDORANfE" if clonitem=="NIDORANFE"
   return pbGetConst(PBSpecies,clonitem,_INTL("Undefined species constant name: [%s]\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nMake sure the name is defined in\r\nPBS/pokemon.txt.\r\n{1}",FileLineData.linereport))
 end
 
 def parseMove(item)
-  clonitem=item.upcase
+  clonitem = item.upcase
   clonitem.sub!(/^\s*/){}
   clonitem.sub!(/\s*$/){}
   return pbGetConst(PBMoves,clonitem,_INTL("Undefined move constant name: %s\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nMake sure the name is defined in\r\nPBS/moves.txt.\r\n{1}",FileLineData.linereport))
 end
 
 def parseNature(item)
-  clonitem=item.upcase
+  clonitem = item.upcase
   clonitem.sub!(/^\s*/){}
   clonitem.sub!(/\s*$/){}
   return pbGetConst(PBNatures,clonitem,_INTL("Undefined nature constant name: %s\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nMake sure the name is defined in\r\nthe script section PBNatures.\r\n{1}",FileLineData.linereport))
 end
 
 def parseTrainer(item)
-  clonitem=item.clone
+  clonitem = item.clone
   clonitem.sub!(/^\s*/){}
   clonitem.sub!(/\s*$/){}
   return pbGetConst(PBTrainers,clonitem,_INTL("Undefined Trainer constant name: %s\r\nName must consist only of letters, numbers, and\r\nunderscores and can't begin with a number.\r\nIn addition, the name must be defined\r\nin trainertypes.txt.\r\n{1}",FileLineData.linereport))
@@ -775,22 +737,22 @@ end
 #===============================================================================
 def pbFindScript(a,name)
   a.each{|i| 
-     next if !i
-     return i if i[1]==name
+    next if !i
+    return i if i[1]==name
   }
   return nil
 end
 
 def pbAddScript(script,sectionname)
   begin
-    scripts=load_data("Data/Constants.rxdata")
-    scripts=[] if !scripts
+    scripts = load_data("Data/Constants.rxdata")
+    scripts = [] if !scripts
   rescue
-    scripts=[]
+    scripts = []
   end
-  s=pbFindScript(scripts,sectionname)
-  if s
-    s[2]=Zlib::Deflate.deflate("#{script}\r\n")
+  s = pbFindScript(scripts,sectionname)
+  if false#s
+    s[2]+=Zlib::Deflate.deflate("#{script}\r\n")
   else
     scripts.push([rand(100000000),sectionname,Zlib::Deflate.deflate("#{script}\r\n")])
   end
@@ -812,15 +774,15 @@ class SerialRecord < Array
   end
 
   def self.bytesize(arr)
-    ret=0
+    ret = 0
     return 0 if !arr
     for field in arr
       if field==nil || field==true || field==false
-        ret+=1
+        ret += 1
       elsif field.is_a?(String)
-        ret+=strSize(field)+1
+        ret += strSize(field)+1
       elsif field.is_a?(Numeric)
-        ret+=intSize(field)+1
+        ret += intSize(field)+1
       end
     end
     return ret
@@ -846,21 +808,16 @@ class SerialRecord < Array
   end
 
   def self.decode(strm,offset,length)
-    ret=SerialRecord.new
-    strm.pos=offset
+    ret = SerialRecord.new
+    strm.pos = offset
     while strm.pos<offset+length
-      datatype=strm.read(1)
+      datatype = strm.read(1)
       case datatype
-      when "0"
-        ret.push(nil)
-      when "T"
-        ret.push(true)
-      when "F"
-        ret.push(false)
-      when "\""
-        ret.push(decodeString(strm))
-      when "i"
-        ret.push(decodeInt(strm))
+      when "0"; ret.push(nil)
+      when "T"; ret.push(true)
+      when "F"; ret.push(false)
+      when "\""; ret.push(decodeString(strm))
+      when "i"; ret.push(decodeInt(strm))
       end
     end
     return ret
@@ -870,37 +827,35 @@ end
 
 
 def readSerialRecords(filename)
-  ret=[]
-  if !pbRgssExists?(filename)
-    return ret
-  end
+  ret = []
+  return ret if !pbRgssExists?(filename)
   pbRgssOpen(filename,"rb"){|file|
-     numrec=file.fgetdw>>3
-     curpos=0
-     for i in 0...numrec
-       file.pos=curpos
-       offset=file.fgetdw
-       length=file.fgetdw
-       record=SerialRecord.decode(file,offset,length)
-       ret.push(record)
-       curpos+=8
-     end
+    numrec = file.fgetdw>>3
+    curpos = 0
+    for i in 0...numrec
+      file.pos = curpos
+      offset = file.fgetdw
+      length = file.fgetdw
+      record = SerialRecord.decode(file,offset,length)
+      ret.push(record)
+      curpos += 8
+    end
   }
   return ret
 end
 
 def writeSerialRecords(filename,records)
   File.open(filename,"wb"){|file|
-     totalsize=records.length*8
-     for record in records
-       file.fputdw(totalsize)
-       bytesize=record.bytesize
-       file.fputdw(bytesize)
-       totalsize+=bytesize
-     end
-     for record in records
-       record.encode(file)
-     end
+    totalsize = records.length*8
+    for record in records
+      file.fputdw(totalsize)
+      bytesize = record.bytesize
+      file.fputdw(bytesize)
+      totalsize += bytesize
+    end
+    for record in records
+      record.encode(file)
+    end
   }
 end
 
@@ -913,23 +868,18 @@ class ByteArray
   include Enumerable
 
   def initialize(data=nil)
-    @a=(data) ? data.unpack("C*") : []
+    @a = (data) ? data.unpack("C*") : []
   end
 
-  def []=(i,value)
-    @a[i]=value
-  end
-
-  def [](i)
-    return @a[i]
-  end
+  def [](i); return @a[i]; end
+  def []=(i,value); @a[i] = value; end
 
   def length; @a.length; end
   def size; @a.size; end
 
   def fillNils(length,value)
     for i in 0...length
-      @a[i]=value if !@a[i]
+      @a[i] = value if !@a[i]
     end
   end
 
@@ -952,23 +902,18 @@ class WordArray
   include Enumerable
 
   def initialize(data=nil)
-    @a=(data) ? data.unpack("v*") : []
+    @a = (data) ? data.unpack("v*") : []
   end
 
-  def []=(i,value)
-    @a[i]=value
-  end
-
-  def [](i)
-    return @a[i]
-  end
+  def [](i); return @a[i]; end
+  def []=(i,value); @a[i] = value; end
 
   def length; @a.length; end
   def size; @a.size; end
 
   def fillNils(length,value)
     for i in 0...length
-      @a[i]=value if !@a[i]
+      @a[i] = value if !@a[i]
     end
   end
 
@@ -991,16 +936,16 @@ class SignedWordArray
   include Enumerable
 
   def initialize(data=nil)
-    @a=(data) ? data.unpack("v*") : []
+    @a = (data) ? data.unpack("v*") : []
   end
 
   def []=(i,value)
-    @a[i]=value
+    @a[i] = value
   end
 
   def [](i)
-    v=@a[i]
-    return v<0x8000 ? v : -((~v)&0xFFFF)-1
+    v = @a[i]
+    return (v<0x8000) ? v : -((~v)&0xFFFF)-1
   end
 
   def length; @a.length; end
@@ -1008,7 +953,7 @@ class SignedWordArray
 
   def fillNils(length,value)
     for i in 0...length
-      @a[i]=value if !@a[i]
+      @a[i] = value if !@a[i]
     end
   end
 
@@ -1033,9 +978,9 @@ end
 def pbWriteDefaultTypes
   if !safeExists?("PBS/types.txt")
     File.open("PBS/types.txt","w"){|f|
-       f.write(0xEF.chr)
-       f.write(0xBB.chr)
-       f.write(0xBF.chr)
+      f.write(0xEF.chr)
+      f.write(0xBB.chr)
+      f.write(0xBF.chr)
 fx=<<END
 [0]
 Name=Normal
@@ -1158,81 +1103,81 @@ Resistances=GHOST,DARK
 Immunities=PSYCHIC
 
 END
-       f.write(fx)
+      f.write(fx)
     }
   end
 end
 
 def pbCompileTypes
   pbWriteDefaultTypes
-  sections=[]
-  typechart=[]
-  types=[]
-  nameToType={}
-  requiredtypes={
-     "Name"=>[1,"s"],
-     "InternalName"=>[2,"s"],
+  sections   = []
+  typechart  = []
+  types      = []
+  nameToType = {}
+  requiredtypes = {
+    "Name"          => [1,"s"],
+    "InternalName"  => [2,"s"],
   }
-  optionaltypes={
-     "IsPseudoType"=>[3,"b"],
-     "IsSpecialType"=>[4,"b"],
-     "Weaknesses"=>[5,"*s"],
-     "Resistances"=>[6,"*s"],
-     "Immunities"=>[7,"*s"]
+  optionaltypes = {
+    "IsPseudoType"  => [3,"b"],
+    "IsSpecialType" => [4,"b"],
+    "Weaknesses"    => [5,"*s"],
+    "Resistances"   => [6,"*s"],
+    "Immunities"    => [7,"*s"]
   }
-  currentmap=-1
-  foundtypes=[]
+  currentmap = -1
+  foundtypes = []
   pbCompilerEachCommentedLine("PBS/types.txt") {|line,lineno|
-     if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
-       sectionname=$~[1]
-       if currentmap>=0
-         for reqtype in requiredtypes.keys
-           if !foundtypes.include?(reqtype)
-             raise _INTL("Required value '{1}' not given in section '{2}'\r\n{3}",reqtype,currentmap,FileLineData.linereport)
-           end
-         end
-         foundtypes.clear
-       end
-       currentmap=sectionname.to_i
-       types[currentmap]=[currentmap,nil,nil,false,false,[],[],[]]
-     else
-       if currentmap<0
-         raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
-       end
-       if !line[/^\s*(\w+)\s*=\s*(.*)$/]
-         raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
-       end
-       matchData=$~
-       schema=nil
-       FileLineData.setSection(currentmap,matchData[1],matchData[2])
-       if requiredtypes.keys.include?(matchData[1])
-         schema=requiredtypes[matchData[1]]
-         foundtypes.push(matchData[1])
-       else
-         schema=optionaltypes[matchData[1]]
-       end
-       if schema
-         record=pbGetCsvRecord(matchData[2],lineno,schema)
-         types[currentmap][schema[0]]=record
-       end
-     end
+    if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
+      sectionname = $~[1]
+      if currentmap>=0
+        for reqtype in requiredtypes.keys
+          if !foundtypes.include?(reqtype)
+            raise _INTL("Required value '{1}' not given in section '{2}'\r\n{3}",reqtype,currentmap,FileLineData.linereport)
+          end
+        end
+        foundtypes.clear
+      end
+      currentmap = sectionname.to_i
+      types[currentmap] = [currentmap,nil,nil,false,false,[],[],[]]
+    else
+      if currentmap<0
+        raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
+      end
+      if !line[/^\s*(\w+)\s*=\s*(.*)$/]
+        raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
+      end
+      matchData = $~
+      schema = nil
+      FileLineData.setSection(currentmap,matchData[1],matchData[2])
+      if requiredtypes.keys.include?(matchData[1])
+        schema = requiredtypes[matchData[1]]
+        foundtypes.push(matchData[1])
+      else
+        schema = optionaltypes[matchData[1]]
+      end
+      if schema
+        record = pbGetCsvRecord(matchData[2],lineno,schema)
+        types[currentmap][schema[0]] = record
+      end
+    end
   }
   types.compact!
-  maxValue=0
-  for type in types; maxValue=[maxValue,type[0]].max; end
-  pseudotypes=[]
-  specialtypes=[]
-  typenames=[]
-  typeinames=[]
-  typehash={}
+  maxValue = 0
+  for type in types; maxValue = [maxValue,type[0]].max; end
+  pseudotypes  = []
+  specialtypes = []
+  typenames    = []
+  typeinames   = []
+  typehash     = {}
   for type in types
     pseudotypes.push(type[0]) if type[3]
-    typenames[type[0]]=type[1]
-    typeinames[type[0]]=type[2]
-    typehash[type[0]]=type
+    typenames[type[0]]  = type[1]
+    typeinames[type[0]] = type[2]
+    typehash[type[0]]   = type
   end
   for type in types
-    n=type[1]
+    n = type[1]
     for w in type[5]; if !typeinames.include?(w)
       raise _INTL("'{1}' is not a defined type (PBS/types.txt, {2}, Weaknesses)",w,n)
     end; end
@@ -1250,29 +1195,28 @@ def pbCompileTypes
   for type in types; specialtypes.push(type[0]) if type[4]; end
   specialtypes.sort!
   MessageTypes.setMessages(MessageTypes::Types,typenames)
-  code="class PBTypes\r\n"
+  code = "class PBTypes\r\n"
   for type in types
-    code+="#{type[2]}=#{type[0]}\r\n"
+    code += "#{type[2]}=#{type[0]}\r\n"
   end
-  code+="def PBTypes.getName(id)\r\nreturn pbGetMessage(MessageTypes::Types,id)\r\nend\r\n"
-  code+="def PBTypes.getCount; return #{types.length}; end\r\n"
-  code+="def PBTypes.maxValue; return #{maxValue}; end\r\n"
-  count=maxValue+1
+  code += "def PBTypes.getName(id)\r\nreturn pbGetMessage(MessageTypes::Types,id)\r\nend\r\n"
+  code += "def PBTypes.getCount; return #{types.length}; end\r\n"
+  code += "def PBTypes.maxValue; return #{maxValue}; end\r\n"
+  count = maxValue+1
   for i in 0...count
-    type=typehash[i]
-    j=0; k=i; while j<count
-      typechart[k]=2
-      atype=typehash[j]
+    type = typehash[i]
+    j = 0; k = i; while j<count
+      typechart[k] = 2
+      atype = typehash[j]
       if type && atype
-        typechart[k]=4 if type[5].include?(atype[2]) # weakness
-        typechart[k]=1 if type[6].include?(atype[2]) # resistance
-        typechart[k]=0 if type[7].include?(atype[2]) # immune
+        typechart[k] = 4 if type[5].include?(atype[2]) # weakness
+        typechart[k] = 1 if type[6].include?(atype[2]) # resistance
+        typechart[k] = 0 if type[7].include?(atype[2]) # immune
       end
-      j+=1
-      k+=count
+      j += 1; k += count
     end
   end
-  code+="end\r\n"
+  code += "end\r\n"
   eval(code)
   save_data([pseudotypes,specialtypes,typechart],"Data/types.dat")
   pbAddScript(code,"PBTypes")
@@ -1283,99 +1227,89 @@ end
 # Compile town map points
 #===============================================================================
 def pbCompileTownMap
-  nonglobaltypes={
-     "Name"=>[0,"s"],
-     "Filename"=>[1,"s"],
-     "Point"=>[2,"uussUUUU"]
+  nonglobaltypes = {
+    "Name"     => [0,"s"],
+    "Filename" => [1,"s"],
+    "Point"    => [2,"uussUUUU"]
   }
-  currentmap=-1
-  rgnnames=[]
-  placenames=[]
-  placedescs=[]
-  sections=[]
+  currentmap = -1
+  rgnnames   = []
+  placenames = []
+  placedescs = []
+  sections   = []
   pbCompilerEachCommentedLine("PBS/townmap.txt"){|line,lineno|
-     if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
-       currentmap=$~[1].to_i
-       sections[currentmap]=[]
-     else
-       if currentmap<0
-         raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
-       end
-       if !line[/^\s*(\w+)\s*=\s*(.*)$/]
-         raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
-       end
-       settingname=$~[1]
-       schema=nonglobaltypes[settingname]
-       if schema
-         record=pbGetCsvRecord($~[2],lineno,schema)
-         if settingname=="Name"
-           rgnnames[currentmap]=record
-         elsif settingname=="Point"
-           placenames.push(record[2])
-           placedescs.push(record[3])
-           sections[currentmap][schema[0]]=[] if !sections[currentmap][schema[0]]
-           sections[currentmap][schema[0]].push(record)
-         else   # Filename
-           sections[currentmap][schema[0]]=record
-         end
-       end
-     end
+    if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
+      currentmap = $~[1].to_i
+      sections[currentmap] = []
+    else
+      if currentmap<0
+        raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
+      end
+      if !line[/^\s*(\w+)\s*=\s*(.*)$/]
+        raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
+      end
+      settingname = $~[1]
+      schema = nonglobaltypes[settingname]
+      if schema
+        record = pbGetCsvRecord($~[2],lineno,schema)
+        if settingname=="Name"
+          rgnnames[currentmap] = record
+        elsif settingname=="Point"
+          placenames.push(record[2])
+          placedescs.push(record[3])
+          sections[currentmap][schema[0]] = [] if !sections[currentmap][schema[0]]
+          sections[currentmap][schema[0]].push(record)
+        else   # Filename
+          sections[currentmap][schema[0]]=record
+        end
+      end
+    end
   }
   File.open("Data/townmap.dat","wb"){|f|
-     Marshal.dump(sections,f)
+    Marshal.dump(sections,f)
   }
-  MessageTypes.setMessages(
-     MessageTypes::RegionNames,rgnnames
-  )
-  MessageTypes.setMessagesAsHash(
-     MessageTypes::PlaceNames,placenames
-  )
-  MessageTypes.setMessagesAsHash(
-     MessageTypes::PlaceDescriptions,placedescs
-  )
+  MessageTypes.setMessages(MessageTypes::RegionNames,rgnnames)
+  MessageTypes.setMessagesAsHash(MessageTypes::PlaceNames,placenames)
+  MessageTypes.setMessagesAsHash(MessageTypes::PlaceDescriptions,placedescs)
 end
 
 #===============================================================================
 # Compile map connections
 #===============================================================================
 def pbCompileConnections
-  records=[]
-  constants=""
-  itemnames=[]
+  records   = []
+  constants = ""
+  itemnames = []
   pbCompilerEachPreppedLine("PBS/connections.txt"){|line,lineno|
-     hashenum={
-        "N"=>"N","North"=>"N",
-        "E"=>"E","East"=>"E",
-        "S"=>"S","South"=>"S",
-        "W"=>"W","West"=>"W"
-     }
-     record=[]
-     thisline=line.dup
-     record.push(csvInt!(thisline,lineno))
-     record.push(csvEnumFieldOrInt!(thisline,hashenum,"",sprintf("(line %d)",lineno)))
-     record.push(csvInt!(thisline,lineno))
-     record.push(csvInt!(thisline,lineno))
-     record.push(csvEnumFieldOrInt!(thisline,hashenum,"",sprintf("(line %d)",lineno)))
-     record.push(csvInt!(thisline,lineno))          
-     if !pbRgssExists?(sprintf("Data/Map%03d.rxdata",record[0])) &&
-        !pbRgssExists?(sprintf("Data/Map%03d.rvdata",record[0]))
-       print _INTL("Warning: Map {1}, as mentioned in the map\r\nconnection data, was not found.\r\n{2}",record[0],FileLineData.linereport)
-     end
-     if !pbRgssExists?(sprintf("Data/Map%03d.rxdata",record[3])) &&
-        !pbRgssExists?(sprintf("Data/Map%03d.rvdata",record[3]))
-       print _INTL("Warning: Map {1}, as mentioned in the map\r\nconnection data, was not found.\r\n{2}",record[3],FileLineData.linereport)
-     end
-     case record[1]
-     when "N"
-       raise _INTL("North side of first map must connect with south side of second map\r\n{1}",FileLineData.linereport) if record[4]!="S"
-     when "S"
-       raise _INTL("South side of first map must connect with north side of second map\r\n{1}",FileLineData.linereport) if record[4]!="N"
-     when "E"
-       raise _INTL("East side of first map must connect with west side of second map\r\n{1}",FileLineData.linereport) if record[4]!="W"
-     when "W"
-       raise _INTL("West side of first map must connect with east side of second map\r\n{1}",FileLineData.linereport) if record[4]!="E"
-     end
-     records.push(record)
+    hashenum = {
+      "N" => "N","North" => "N",
+      "E" => "E","East"  => "E",
+      "S" => "S","South" => "S",
+      "W" => "W","West"  => "W"
+    }
+    record = []
+    thisline = line.dup
+    record.push(csvInt!(thisline,lineno))
+    record.push(csvEnumFieldOrInt!(thisline,hashenum,"",sprintf("(line %d)",lineno)))
+    record.push(csvInt!(thisline,lineno))
+    record.push(csvInt!(thisline,lineno))
+    record.push(csvEnumFieldOrInt!(thisline,hashenum,"",sprintf("(line %d)",lineno)))
+    record.push(csvInt!(thisline,lineno))          
+    if !pbRgssExists?(sprintf("Data/Map%03d.rxdata",record[0])) &&
+       !pbRgssExists?(sprintf("Data/Map%03d.rvdata",record[0]))
+      print _INTL("Warning: Map {1}, as mentioned in the map\r\nconnection data, was not found.\r\n{2}",record[0],FileLineData.linereport)
+    end
+    if !pbRgssExists?(sprintf("Data/Map%03d.rxdata",record[3])) &&
+       !pbRgssExists?(sprintf("Data/Map%03d.rvdata",record[3]))
+      print _INTL("Warning: Map {1}, as mentioned in the map\r\nconnection data, was not found.\r\n{2}",record[3],FileLineData.linereport)
+    end
+    case record[1]
+    when "N"; raise _INTL("North side of first map must connect with south side of second map\r\n{1}",FileLineData.linereport) if record[4]!="S"
+    when "S"; raise _INTL("South side of first map must connect with north side of second map\r\n{1}",FileLineData.linereport) if record[4]!="N"
+    when "E"; raise _INTL("East side of first map must connect with west side of second map\r\n{1}",FileLineData.linereport) if record[4]!="W"
+    when "W"; raise _INTL("West side of first map must connect with east side of second map\r\n{1}",FileLineData.linereport) if record[4]!="E"
+    end
+    records.push(record)
   }
   save_data(records,"Data/connections.dat")
   Graphics.update
@@ -1385,26 +1319,26 @@ end
 # Compile abilities
 #===============================================================================
 def pbCompileAbilities
-  records=[]
-  movenames=[]
-  movedescs=[]
-  maxValue=0
+  records   = []
+  movenames = []
+  movedescs = []
+  maxValue = 0
   pbCompilerEachPreppedLine("PBS/abilities.txt"){|line,lineno|
-     record=pbGetCsvRecord(line,lineno,[0,"vnss"])
-     movenames[record[0]]=record[2]
-     movedescs[record[0]]=record[3]
-     maxValue=[maxValue,record[0]].max
-     records.push(record)
+    record = pbGetCsvRecord(line,lineno,[0,"vnss"])
+    movenames[record[0]] = record[2]
+    movedescs[record[0]] = record[3]
+    maxValue = [maxValue,record[0]].max
+    records.push(record)
   }
   MessageTypes.setMessages(MessageTypes::Abilities,movenames)
   MessageTypes.setMessages(MessageTypes::AbilityDescs,movedescs)
-  code="class PBAbilities\r\n"
+  code = "class PBAbilities\r\n"
   for rec in records
-    code+="#{rec[1]}=#{rec[0]}\r\n"
+    code += "#{rec[1]}=#{rec[0]}\r\n"
   end
-  code+="\r\ndef PBAbilities.getName(id)\r\nreturn pbGetMessage(MessageTypes::Abilities,id)\r\nend"
-  code+="\r\ndef PBAbilities.getCount\r\nreturn #{records.length}\r\nend\r\n"
-  code+="\r\ndef PBAbilities.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
+  code += "\r\ndef PBAbilities.getName(id)\r\nreturn pbGetMessage(MessageTypes::Abilities,id)\r\nend"
+  code += "\r\ndef PBAbilities.getCount\r\nreturn #{records.length}\r\nend\r\n"
+  code += "\r\ndef PBAbilities.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
   eval(code)
   pbAddScript(code,"PBAbilities")
 end
@@ -1419,131 +1353,123 @@ class PBMoveDataOld
   attr_reader :category
 
   def initialize(moveid)
-    movedata=pbRgssOpen("Data/rsattacks.dat")
-    movedata.pos=moveid*9
-    @function=movedata.fgetb
-    @basedamage=movedata.fgetb
-    @type=movedata.fgetb
-    @accuracy=movedata.fgetb
-    @totalpp=movedata.fgetb
-    @addlEffect=movedata.fgetb
-    @target=movedata.fgetb
-    @priority=movedata.fgetsb
-    @flags=movedata.fgetb
+    movedata     = pbRgssOpen("Data/rsattacks.dat")
+    movedata.pos = moveid*9
+    @function   = movedata.fgetb
+    @basedamage = movedata.fgetb
+    @type       = movedata.fgetb
+    @accuracy   = movedata.fgetb
+    @totalpp    = movedata.fgetb
+    @addlEffect = movedata.fgetb
+    @target     = movedata.fgetb
+    @priority   = movedata.fgetsb
+    @flags      = movedata.fgetb
     movedata.close
   end
 
   def category
     return 2 if @basedamage==0
-    return @type<10 ? 0 : 1
+    return (@type<10) ? 0 : 1
   end
 end
 
 
 
 def pbCompileMoves
-  records=[]
-  movenames=[]
-  movedescs=[]
-  movedata=[]
-  maxValue=0
+  records   = []
+  movenames = []
+  movedescs = []
+  movedata  = []
+  maxValue = 0
   pbCompilerEachPreppedLine("PBS/moves.txt"){|line,lineno|
-     thisline=line.clone
-     record=[]
-     flags=0
-     begin
-       record=pbGetCsvRecord(line,lineno,[0,"vnsxueeuuuxiss",
-          nil,nil,nil,nil,nil,PBTypes,["Physical","Special","Status"],
-          nil,nil,nil,nil,nil,nil,nil
-       ])
-       pbCheckWord(record[3],_INTL("Function code"))
-       flags|=1 if record[12][/a/]
-       flags|=2 if record[12][/b/]
-       flags|=4 if record[12][/c/]
-       flags|=8 if record[12][/d/]
-       flags|=16 if record[12][/e/]
-       flags|=32 if record[12][/f/]
-       flags|=64 if record[12][/g/]
-       flags|=128 if record[12][/h/]
-       flags|=256 if record[12][/i/]
-       flags|=512 if record[12][/j/]
-       flags|=1024 if record[12][/k/]
-       flags|=2048 if record[12][/l/]
-       flags|=4096 if record[12][/m/]
-       flags|=8192 if record[12][/n/]
-       flags|=16384 if record[12][/o/]
-       flags|=32768 if record[12][/p/]
-     rescue
-       oldmessage=$!.message
-       raise if !pbRgssExists?("Data/rsattacks.dat")
-       begin
-         oldrecord=pbGetCsvRecord(thisline,lineno,[0,"unss",nil,nil,nil,nil])
-       rescue
-         raise $!.message+"\r\n"+oldmessage
-       end
-       oldmovedata=PBMoveDataOld.new(oldrecord[0])
-       flags=oldmovedata.flags
-       record=[oldrecord[0],oldrecord[1],oldrecord[2],
-          oldmovedata.function,
-          oldmovedata.basedamage,
-          oldmovedata.type,
-          oldmovedata.category,
-          oldmovedata.accuracy,
-          oldmovedata.totalpp,
-          oldmovedata.addlEffect,
-          oldmovedata.target,
-          oldmovedata.priority,
-          oldmovedata.flags,
-          0, # No contest type defined
-          oldrecord[3]]
-     end
-     pbCheckWord(record[3],_INTL("Function code"))
-     pbCheckByte(record[4],_INTL("Base damage"))
-     if record[6]==2 && record[4]!=0
-       raise _INTL("Status moves must have a base damage of 0, use either Physical or Special\r\n{1}",FileLineData.linereport)
-     end
-     if record[6]!=2 && record[4]==0
-       print _INTL("Warning: Physical and special moves can't have a base damage of 0, changing to a Status move\r\n{1}",FileLineData.linereport)
-       record[6]=2
-     end
-     pbCheckByte(record[7],_INTL("Accuracy"))
-     pbCheckByte(record[8],_INTL("Total PP"))
-     pbCheckByte(record[9],_INTL("Additional Effect"))
-     pbCheckWord(record[10],_INTL("Target"))
-     pbCheckSignedByte(record[11],_INTL("Priority"))
-     maxValue=[maxValue,record[0]].max
-     movedata[record[0]]=[
-        record[3],  # Function code
-        record[4],  # Damage
-        record[5],  # Type
-        record[6],  # Category
-        record[7],  # Accuracy
-        record[8],  # Total PP
-        record[9],  # Effect chance
-        record[10], # Target
-        record[11], # Priority
-        flags,      # Flags
-        0           # Dummy value, used to be contest type
-     ].pack("vCCCCCCvCvC")
-     movenames[record[0]]=record[2]  # Name
-     movedescs[record[0]]=record[13] # Description
-     records.push(record)
+    thisline = line.clone
+    record = []
+    flags = 0
+    begin
+      record = pbGetCsvRecord(line,lineno,[0,"vnsxueeuuuxiss",
+         nil,nil,nil,nil,nil,PBTypes,["Physical","Special","Status"],
+         nil,nil,nil,nil,nil,nil,nil
+      ])
+      pbCheckWord(record[3],_INTL("Function code"))
+      flags |= 0x1 if record[12][/a/]
+      flags |= 0x2 if record[12][/b/]
+      flags |= 0x4 if record[12][/c/]
+      flags |= 0x8 if record[12][/d/]
+      flags |= 0x10 if record[12][/e/]
+      flags |= 0x20 if record[12][/f/]
+      flags |= 0x40 if record[12][/g/]
+      flags |= 0x80 if record[12][/h/]
+      flags |= 0x100 if record[12][/i/]
+      flags |= 0x200 if record[12][/j/]
+      flags |= 0x400 if record[12][/k/]
+      flags |= 0x800 if record[12][/l/]
+      flags |= 0x1000 if record[12][/m/]
+      flags |= 0x2000 if record[12][/n/]
+      flags |= 0x4000 if record[12][/o/]
+      flags |= 0x8000 if record[12][/p/]
+    rescue
+      oldmessage = $!.message
+      raise if !pbRgssExists?("Data/rsattacks.dat")
+      begin
+        oldrecord = pbGetCsvRecord(thisline,lineno,[0,"unss",nil,nil,nil,nil])
+      rescue
+        raise $!.message+"\r\n"+oldmessage
+      end
+      oldmovedata = PBMoveDataOld.new(oldrecord[0])
+      flags = oldmovedata.flags
+      record = [oldrecord[0],oldrecord[1],oldrecord[2],
+         oldmovedata.function,oldmovedata.basedamage,oldmovedata.type,
+         oldmovedata.category,oldmovedata.accuracy,oldmovedata.totalpp,
+         oldmovedata.addlEffect,oldmovedata.target,oldmovedata.priority,
+         oldmovedata.flags,0,oldrecord[3]]
+    end
+    pbCheckWord(record[3],_INTL("Function code"))
+    pbCheckByte(record[4],_INTL("Base damage"))
+    if record[6]==2 && record[4]!=0
+      raise _INTL("Status moves must have a base damage of 0, use either Physical or Special\r\n{1}",FileLineData.linereport)
+    end
+    if record[6]!=2 && record[4]==0
+      print _INTL("Warning: Physical and special moves can't have a base damage of 0, changing to a Status move\r\n{1}",FileLineData.linereport)
+      record[6] = 2
+    end
+    pbCheckByte(record[7],_INTL("Accuracy"))
+    pbCheckByte(record[8],_INTL("Total PP"))
+    pbCheckByte(record[9],_INTL("Additional Effect"))
+    pbCheckWord(record[10],_INTL("Target"))
+    pbCheckSignedByte(record[11],_INTL("Priority"))
+    maxValue = [maxValue,record[0]].max
+    movedata[record[0]] = [
+       record[3],  # Function code
+       record[4],  # Damage
+       record[5],  # Type
+       record[6],  # Category
+       record[7],  # Accuracy
+       record[8],  # Total PP
+       record[9],  # Effect chance
+       record[10], # Target
+       record[11], # Priority
+       flags,      # Flags
+       0           # Dummy value, used to be contest type
+    ].pack("vCCCCCCvCvC")
+    movenames[record[0]] = record[2]  # Name
+    movedescs[record[0]] = record[13] # Description
+    records.push(record)
   }
-  defaultdata=[0,0,0,0,0,0,0,0,0,0,0].pack("vCCCCCCvCvC")
+  defaultdata = [0,0,0,0,0,0,0,0,0,0,0].pack("vCCCCCCvCvC")
   File.open("Data/moves.dat","wb"){|file|
-     for i in 0...movedata.length
-       file.write(movedata[i] ? movedata[i] : defaultdata)
-     end
+    for i in 0...movedata.length
+      file.write((movedata[i]) ? movedata[i] : defaultdata)
+    end
   }
   MessageTypes.setMessages(MessageTypes::Moves,movenames)
   MessageTypes.setMessages(MessageTypes::MoveDescriptions,movedescs)
-  code="class PBMoves\r\n"
+  code = "class PBMoves\r\n"
   for rec in records
-    code+="#{rec[1]}=#{rec[0]}\r\n"
+    code += "#{rec[1]}=#{rec[0]}\r\n"
   end
-  code+="\r\ndef PBMoves.getName(id)\r\nreturn pbGetMessage(MessageTypes::Moves,id)\r\nend"
-  code+="\r\ndef PBMoves.getCount\r\nreturn #{records.length}\r\nend"
-  code+="\r\ndef PBMoves.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
+  code += "\r\ndef PBMoves.getName(id)\r\nreturn pbGetMessage(MessageTypes::Moves,id)\r\nend"
+  code += "\r\ndef PBMoves.getCount\r\nreturn #{records.length}\r\nend"
+  code += "\r\ndef PBMoves.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
   eval(code)
   pbAddScript(code,"PBMoves")
 end
@@ -1554,19 +1480,19 @@ end
 class ItemList
   include Enumerable
 
-  def initialize; @list=[]; end
+  def initialize; @list = []; end
   def length; @list.length; end
-  def []=(x,v); @list[x]=v; end
+  def []=(x,v); @list[x] = v; end
  
   def [](x)
     if !@list[x]
-      defrecord=SerialRecord.new
+      defrecord = SerialRecord.new
       defrecord.push(0)
       defrecord.push("????????")
       defrecord.push(0)
       defrecord.push(0)
       defrecord.push("????????")
-      @list[x]=defrecord
+      @list[x] = defrecord
       return defrecord
     end
     return @list[x]
@@ -1582,66 +1508,64 @@ end
 
 
 def readItemList(filename)
-  ret=ItemList.new
-  if !pbRgssExists?(filename)
-    return ret
-  end
+  ret = ItemList.new
+  return ret if !pbRgssExists?(filename)
   pbRgssOpen(filename,"rb"){|file|
-     numrec=file.fgetdw>>3
-     curpos=0
-     for i in 0...numrec
-       file.pos=curpos
-       offset=file.fgetdw
-       length=file.fgetdw
-       record=SerialRecord.decode(file,offset,length)
-       ret[record[0]]=record
-       curpos+=8
-     end
+    numrec = file.fgetdw>>3
+    curpos = 0
+    for i in 0...numrec
+      file.pos = curpos
+      offset = file.fgetdw
+      length = file.fgetdw
+      record = SerialRecord.decode(file,offset,length)
+      ret[record[0]] = record
+      curpos += 8
+    end
   }
   return ret
 end
 
 def pbCompileItems
-  records=[]
-  constants=""
-  itemnames=[]
-  itempluralnames=[]
-  itemdescs=[]
-  maxValue=0
+  records         = []
+  constants       = ""
+  itemnames       = []
+  itempluralnames = []
+  itemdescs       = []
+  maxValue = 0
   pbCompilerEachCommentedLine("PBS/items.txt"){|line,lineno|
-     linerecord=pbGetCsvRecord(line,lineno,[0,"vnssuusuuUN"])
-     record=SerialRecord.new
-     record[ITEMID]        = linerecord[0]
-     constant=linerecord[1]
-     constants+="#{constant}=#{record[0]}\r\n"
-     record[ITEMNAME]      = linerecord[2]
-     itemnames[record[0]]=linerecord[2]
-     record[ITEMPLURAL]    = linerecord[3]
-     itempluralnames[record[0]]=linerecord[3]
-     record[ITEMPOCKET]    = linerecord[4]
-     record[ITEMPRICE]     = linerecord[5]
-     record[ITEMDESC]      = linerecord[6]
-     itemdescs[record[0]]=linerecord[6]
-     record[ITEMUSE]       = linerecord[7]
-     record[ITEMBATTLEUSE] = linerecord[8]
-     record[ITEMTYPE]      = linerecord[9]
-     if linerecord[9]!="" && linerecord[10]
-       record[ITEMMACHINE] = parseMove(linerecord[10])
-     else
-       record[ITEMMACHINE] = 0
-     end
-     maxValue=[maxValue,record[0]].max
-     records.push(record)
+    linerecord = pbGetCsvRecord(line,lineno,[0,"vnssuusuuUN"])
+    record = SerialRecord.new
+    record[ITEMID]        = linerecord[0]
+    constant = linerecord[1]
+    constants += "#{constant}=#{record[0]}\r\n"
+    record[ITEMNAME]      = linerecord[2]
+    itemnames[record[0]] = linerecord[2]
+    record[ITEMPLURAL]    = linerecord[3]
+    itempluralnames[record[0]] = linerecord[3]
+    record[ITEMPOCKET]    = linerecord[4]
+    record[ITEMPRICE]     = linerecord[5]
+    record[ITEMDESC]      = linerecord[6]
+    itemdescs[record[0]] = linerecord[6]
+    record[ITEMUSE]       = linerecord[7]
+    record[ITEMBATTLEUSE] = linerecord[8]
+    record[ITEMTYPE]      = linerecord[9]
+    if linerecord[9]!="" && linerecord[10]
+      record[ITEMMACHINE] = parseMove(linerecord[10])
+    else
+      record[ITEMMACHINE] = 0
+    end
+    maxValue = [maxValue,record[0]].max
+    records.push(record)
   }
   MessageTypes.setMessages(MessageTypes::Items,itemnames)
   MessageTypes.setMessages(MessageTypes::ItemPlurals,itempluralnames)
   MessageTypes.setMessages(MessageTypes::ItemDescriptions,itemdescs)
   writeSerialRecords("Data/items.dat",records)
-  code="class PBItems\r\n#{constants}"
-  code+="\r\ndef PBItems.getName(id)\r\nreturn pbGetMessage(MessageTypes::Items,id)\r\nend\r\n"
-  code+="\r\ndef PBItems.getNamePlural(id)\r\nreturn pbGetMessage(MessageTypes::ItemPlurals,id)\r\nend\r\n"
-  code+="\r\ndef PBItems.getCount\r\nreturn #{records.length}\r\nend\r\n"
-  code+="\r\ndef PBItems.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
+  code = "class PBItems\r\n#{constants}"
+  code += "\r\ndef PBItems.getName(id)\r\nreturn pbGetMessage(MessageTypes::Items,id)\r\nend\r\n"
+  code += "\r\ndef PBItems.getNamePlural(id)\r\nreturn pbGetMessage(MessageTypes::ItemPlurals,id)\r\nend\r\n"
+  code += "\r\ndef PBItems.getCount\r\nreturn #{records.length}\r\nend\r\n"
+  code += "\r\ndef PBItems.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
   eval(code)
   pbAddScript(code,"PBItems")
   Graphics.update
@@ -1651,21 +1575,21 @@ end
 # Compile berry plants
 #===============================================================================
 def pbCompileBerryPlants
-  sections=[]
+  sections = []
   if File.exists?("PBS/berryplants.txt")
     pbCompilerEachCommentedLine("PBS/berryplants.txt"){|line,lineno|
-       if line[ /^([^=]+)=(.*)$/ ]
-         key=$1
-         value=$2
-         value=value.split(",")
-         for i in 0...value.length
-           value[i].sub!(/^\s*/){}
-           value[i].sub!(/\s*$/){}
-           value[i]=value[i].to_i
-         end
-         item=parseItem(key)
-         sections[item]=value
-       end
+      if line[ /^([^=]+)=(.*)$/ ]
+        key   = $1
+        value = $2
+        value = value.split(",")
+        for i in 0...value.length
+          value[i].sub!(/^\s*/){}
+          value[i].sub!(/\s*$/){}
+          value[i] = value[i].to_i
+        end
+        item = parseItem(key)
+        sections[item] = value
+      end
     }
   end
   save_data(sections,"Data/berryplants.dat")
@@ -1675,338 +1599,760 @@ end
 # Compile Pokémon
 #===============================================================================
 def pbCompilePokemonData
-  # Free bytes: 0, 1, 17, 29, 30, 37, 56-75
-  sections=[]
-  requiredtypes={
-     "Name"=>[0,"s"],
-     "Kind"=>[0,"s"],
-     "InternalName"=>[0,"c"],
-     "Pokedex"=>[0,"S"],
-     "Moves"=>[0,"*uE",nil,PBMoves],
-     "Color"=>[6,"e",PBColors],
-     "Type1"=>[8,"e",PBTypes],
-     "BaseStats"=>[10,"uuuuuu"],
-     "Rareness"=>[16,"u"],
-     "GenderRate"=>[18,"e",{"AlwaysMale"=>0,"FemaleOneEighth"=>31,
-        "Female25Percent"=>63,"Female50Percent"=>127,"Female75Percent"=>191,
-        "FemaleSevenEighths"=>223,"AlwaysFemale"=>254,"Genderless"=>255}],
-     "Happiness"=>[19,"u"],
-     "GrowthRate"=>[20,"e",{"Medium"=>0,"MediumFast"=>0,"Erratic"=>1,
-        "Fluctuating"=>2,"Parabolic"=>3,"MediumSlow"=>3,"Fast"=>4,"Slow"=>5}],
-     "StepsToHatch"=>[21,"w"],
-     "EffortPoints"=>[23,"uuuuuu"],
-     "Compatibility"=>[31,"eg",PBEggGroups,PBEggGroups],
-     "Height"=>[33,"f"],
-     "Weight"=>[35,"f"],
-     "BaseEXP"=>[38,"w"],
+  # Free bytes: 0, 1, 59-75
+  # (Some bytes are used only by forms)
+  sections = []
+  requiredtypes = {
+    "Name"          => [0,"s"],
+    "Kind"          => [0,"s"],
+    "InternalName"  => [0,"c"],
+    "Pokedex"       => [0,"S"],
+    "Moves"         => [0,"*uE",nil,PBMoves],
+    "Color"         => [6,"e",PBColors],
+    "Type1"         => [8,"e",PBTypes],
+    "BaseStats"     => [10,"uuuuuu"],
+    "Rareness"      => [16,"u"],
+    "Shape"         => [17,"u"],
+    "GenderRate"    => [18,"e",{"AlwaysMale"=>0,"FemaleOneEighth"=>31,
+                               "Female25Percent"=>63,"Female50Percent"=>127,
+                               "Female75Percent"=>191,"FemaleSevenEighths"=>223,
+                               "AlwaysFemale"=>254,"Genderless"=>255}],
+    "Happiness"     => [19,"u"],
+    "GrowthRate"    => [20,"e",{"Medium"=>0,"MediumFast"=>0,"Erratic"=>1,
+                               "Fluctuating"=>2,"Parabolic"=>3,"MediumSlow"=>3,
+                               "Fast"=>4,"Slow"=>5}],
+    "StepsToHatch"  => [21,"w"],
+    "EffortPoints"  => [23,"uuuuuu"],
+    "Compatibility" => [31,"eg",PBEggGroups,PBEggGroups],
+    "Height"        => [33,"f"],
+    "Weight"        => [35,"f"],
+    "BaseEXP"       => [38,"w"],
   }
-  optionaltypes={
-     "BattlerPlayerY"=>[0,"i"],
-     "BattlerEnemyY"=>[0,"i"],
-     "BattlerAltitude"=>[0,"i"],
-     "EggMoves"=>[0,"*E",PBMoves],
-     "FormNames"=>[0,"S"],
-     "RegionalNumbers"=>[0,"*w"],
-     "Evolutions"=>[0,"*ses",nil,PBEvolution],
-     "Abilities"=>[2,"EG",PBAbilities,PBAbilities],
-     "Habitat"=>[7,"e",["","Grassland","Forest","WatersEdge","Sea","Cave","Mountain","RoughTerrain","Urban","Rare"]],
-     "Type2"=>[9,"e",PBTypes],
-     "HiddenAbility"=>[40,"EGGG",PBAbilities,PBAbilities,PBAbilities,PBAbilities],
-     "WildItemCommon"=>[48,"E",PBItems],
-     "WildItemUncommon"=>[50,"E",PBItems],
-     "WildItemRare"=>[52,"E",PBItems],
-     "Incense"=>[54,"E",PBItems]
+  optionaltypes = {
+    "BattlerPlayerY"   => [0,"i"],
+    "BattlerEnemyY"    => [0,"i"],
+    "BattlerAltitude"  => [0,"i"],
+    "EggMoves"         => [0,"*E",PBMoves],
+    "FormName"         => [0,"S"],
+    "RegionalNumbers"  => [0,"*w"],
+    "Evolutions"       => [0,"*ses",nil,PBEvolution],
+    "Abilities"        => [2,"EG",PBAbilities,PBAbilities],
+    "Habitat"          => [7,"e",["","Grassland","Forest","WatersEdge","Sea","Cave",
+                                  "Mountain","RoughTerrain","Urban","Rare"]],
+    "Type2"            => [9,"e",PBTypes],
+    "HiddenAbility"    => [40,"EGGG",PBAbilities,PBAbilities,PBAbilities,PBAbilities],
+    "WildItemCommon"   => [48,"E",PBItems],
+    "WildItemUncommon" => [50,"E",PBItems],
+    "WildItemRare"     => [52,"E",PBItems],
+    "Incense"          => [54,"E",PBItems]
   }
-  currentmap=-1
-  dexdatas=[]
-  eggmoves=[]
-  entries=[]
-  kinds=[]
-  speciesnames=[]
-  moves=[]
-  evolutions=[]
-  regionals=[]
-  formnames=[]
-  metrics=[SignedWordArray.new,SignedWordArray.new,SignedWordArray.new]
-  constants=""
-  maxValue=0
+  currentmap = -1
+  dexdatas     = []
+  eggmoves     = []
+  entries      = []
+  kinds        = []
+  speciesnames = []
+  moves        = []
+  evolutions   = []
+  regionals    = []
+  formnames    = []
+  metrics      = [SignedWordArray.new,SignedWordArray.new,SignedWordArray.new]
+  constants = ""
+  maxValue = 0
   File.open("PBS/pokemon.txt","rb"){|f|
-     FileLineData.file="PBS/pokemon.txt"
-     pbEachFileSection(f){|lastsection,currentmap|
-        dexdata=[]
-        for i in 0...76
-          dexdata[i]=0
+    FileLineData.file = "PBS/pokemon.txt"
+    pbEachFileSection(f){|lastsection,currentmap|
+      sectionDisplay = currentmap.to_s
+      dexdata = []
+      for i in 0...76
+        dexdata[i] = 0
+      end
+      thesemoves = []
+      theseevos  = []
+      if !lastsection["Type2"] || lastsection["Type2"]==""
+        if !lastsection["Type1"] || lastsection["Type1"]==""
+          raise _INTL("No Pokémon type is defined in section {1} (PBS/pokemon.txt)",sectionDisplay)
+          next
         end
-        thesemoves=[]
-        theseevos=[]
-        if !lastsection["Type2"] || lastsection["Type2"]==""
-          if !lastsection["Type1"] || lastsection["Type1"]==""
-            raise _INTL("No Pokémon type is defined in section {2} (PBS/pokemon.txt)",key,sectionDisplay) if hash==requiredtypes
+        lastsection["Type2"] = lastsection["Type1"].clone
+      end
+      [requiredtypes,optionaltypes].each{|hash|
+        for key in hash.keys
+          FileLineData.setSection(currentmap,key,lastsection[key])
+          maxValue = [maxValue,currentmap].max
+          next if hash[key][0]<0
+          if currentmap==0
+            raise _INTL("A Pokémon species can't be numbered 0 (PBS/pokemon.txt)")
+          end
+          if !lastsection[key] || lastsection[key]==""
+            raise _INTL("Required entry {1} is missing or empty in section {2} (PBS/pokemon.txt)",key,sectionDisplay) if hash==requiredtypes
             next
           end
-          lastsection["Type2"]=lastsection["Type1"].clone
+          secvalue = lastsection[key]
+          rtschema = hash[key]
+          schema   = hash[key][1]
+          valueindex = 0
+          loop do
+            offset = 0
+            minus1 = (schema[0,1]=="*") ? -1 : 0
+            for i in 0...schema.length
+              next if schema[i,1]=="*"
+              if (schema[i,1]=="g" || schema[i,1]=="G") && secvalue==""
+                dexdata[rtschema[0]+offset] = dexdata[rtschema[0]] if key=="Compatibility"
+                break
+              end
+              case schema[i,1]
+              when "e", "g"
+                value = csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
+                bytes = 1
+              when "E", "G"
+                value = csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
+                bytes = 2
+              when "i"
+                value = csvInt!(secvalue,key)
+                bytes = 1
+              when "u"
+                value = csvPosInt!(secvalue,key)
+                bytes = 1
+              when "w"
+                value = csvPosInt!(secvalue,key)
+                bytes = 2
+              when "f"
+                value = csvFloat!(secvalue,key,sectionDisplay)
+                value = (value*10).round
+                if value<=0
+                  raise _INTL("Value '{1}' can't be less than or close to 0 (section {2}, PBS/pokemon.txt)",key,currentmap)
+                end
+                bytes = 2
+              when "c", "s"
+                value = csvfield!(secvalue)
+              when "S"
+                value = secvalue
+                secvalue = ""
+              end
+              case key
+              when "Name"
+                raise _INTL("Species name {1} is greater than 20 characters long (section {2}, PBS/pokemon.txt)",value,currentmap) if value.length>20
+                speciesnames[currentmap] = value
+              when "InternalName"
+                raise _INTL("Invalid internal name: {1} (section {2}, PBS/pokemon.txt)",value,currentmap) if !value[/^(?![0-9])\w*$/]
+                constants += "#{value}=#{currentmap}\r\n"
+              when "FormName"
+                formnames[currentmap] = value
+              when "Kind"
+                raise _INTL("Kind {1} is greater than 20 characters long (section {2}, PBS/pokemon.txt)",value,currentmap) if value.length>20
+                kinds[currentmap] = value
+              when "Pokedex"
+                entries[currentmap] = value
+              when "RegionalNumbers"
+                regionals[valueindex] = [] if !regionals[valueindex]
+                regionals[valueindex][currentmap]=value
+              when "Moves"
+                thesemoves.push(value)
+              when "EggMoves"
+                eggmoves[currentmap] = [] if !eggmoves[currentmap]
+                eggmoves[currentmap].push(value)
+              when "Evolutions"
+                theseevos.push(value)
+              when "BattlerPlayerY"
+                pbCheckSignedWord(value,key)
+                metrics[0][currentmap] = value
+              when "BattlerEnemyY"
+                pbCheckSignedWord(value,key)
+                metrics[1][currentmap] = value
+              when "BattlerAltitude"
+                pbCheckSignedWord(value,key)
+                metrics[2][currentmap] = value
+              else
+                dexdata[rtschema[0]+offset]   = value&0xFF
+                dexdata[rtschema[0]+1+offset] = (value>>8)&0xFF if bytes>1
+                offset += bytes
+              end
+              valueindex += 1
+            end
+            break if secvalue==""
+            break if schema[0,1]!="*"
+          end
         end
-        [requiredtypes,optionaltypes].each{|hash|
-           for key in hash.keys
-             FileLineData.setSection(currentmap,key,lastsection[key])
-             maxValue=[maxValue,currentmap].max
-             sectionDisplay=currentmap.to_s
-             next if hash[key][0]<0
-             if currentmap==0
-               raise _INTL("A Pokemon species can't be numbered 0 (PBS/pokemon.txt)")
-             end
-             if !lastsection[key] || lastsection[key]==""
-               raise _INTL("Required entry {1} is missing or empty in section {2} (PBS/pokemon.txt)",key,sectionDisplay) if hash==requiredtypes
-               next
-             end
-             secvalue=lastsection[key]
-             rtschema=hash[key]
-             schema=hash[key][1]
-             valueindex=0
-             loop do
-               offset=0
-               for i in 0...schema.length
-                 next if schema[i,1]=="*"
-                 minus1=(schema[0,1]=="*") ? -1 : 0
-                 if (schema[i,1]=="g" || schema[i,1]=="G") && secvalue==""
-                   if key=="Compatibility"
-                     dexdata[rtschema[0]+offset]=dexdata[rtschema[0]]
-                   end
-                   break
-                 end
-                 case schema[i,1]
-                 when "e", "g"
-                   value=csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
-                   bytes=1
-                 when "E", "G"
-                   value=csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
-                   bytes=2
-                 when "i"
-                   value=csvInt!(secvalue,key)
-                   bytes=1
-                 when "u"
-                   value=csvPosInt!(secvalue,key)
-                   bytes=1
-                 when "w"
-                   value=csvPosInt!(secvalue,key)
-                   bytes=2
-                 when "f"
-                   value=csvFloat!(secvalue,key,sectionDisplay)
-                   value=(value*10).round
-                   if value<=0
-                     raise _INTL("Value '{1}' can't be less than or close to 0 (section {2}, PBS/pokemon.txt)",key,currentmap)
-                   end
-                   bytes=2
-                 when "c", "s"
-                   value=csvfield!(secvalue)
-                 when "S"
-                   value=secvalue
-                   secvalue=""
-                 end
-                 if key=="EggMoves"
-                   eggmoves[currentmap]=[] if !eggmoves[currentmap]
-                   eggmoves[currentmap].push(value)
-                 elsif key=="Moves"
-                   thesemoves.push(value)
-                 elsif key=="RegionalNumbers"
-                   regionals[valueindex]=[] if !regionals[valueindex]
-                   regionals[valueindex][currentmap]=value
-                 elsif key=="Evolutions"
-                   theseevos.push(value)
-                 elsif key=="InternalName"
-                   raise _INTL("Invalid internal name: {1} (section {2}, PBS/pokemon.txt)",value,currentmap) if !value[/^(?![0-9])\w*$/]
-                   constants+="#{value}=#{currentmap}\r\n"
-                 elsif key=="Kind"
-                   raise _INTL("Kind {1} is greater than 20 characters long (section {2}, PBS/pokemon.txt)",value,currentmap) if value.length>20
-                   kinds[currentmap]=value
-                 elsif key=="Pokedex"
-                   entries[currentmap]=value
-                 elsif key=="BattlerPlayerY"
-                   pbCheckSignedWord(value,key)
-                   metrics[0][currentmap]=value
-                 elsif key=="BattlerEnemyY"
-                   pbCheckSignedWord(value,key)
-                   metrics[1][currentmap]=value
-                 elsif key=="BattlerAltitude"
-                   pbCheckSignedWord(value,key)
-                   metrics[2][currentmap]=value
-                 elsif key=="Name"
-                   raise _INTL("Species name {1} is greater than 20 characters long (section {2}, PBS/pokemon.txt)",value,currentmap) if value.length>20
-                   speciesnames[currentmap]=value
-                 elsif key=="FormNames"
-                   formnames[currentmap]=value
-                 else
-                   dexdata[rtschema[0]+offset]=value&0xFF
-                   dexdata[rtschema[0]+1+offset]=(value>>8)&0xFF if bytes>1
-                   offset+=bytes
-                 end
-                 valueindex+=1
-               end
-               break if secvalue==""
-               break if schema[0,1]!="*"
-             end
-           end
-        }
-        movelist=[]
-        evolist=[]
-        for i in 0...thesemoves.length/2
-          movelist.push([thesemoves[i*2],thesemoves[i*2+1],i])
-        end
-        movelist.sort!{|a,b| a[0]==b[0] ? a[2]<=>b[2] : a[0]<=>b[0]}
-        for i in movelist; i.pop; end
-        for i in 0...theseevos.length/3
-          evolist.push([theseevos[i*3],theseevos[i*3+1],theseevos[i*3+2]])
-        end
-        moves[currentmap]=movelist
-        evolutions[currentmap]=evolist
-        dexdatas[currentmap]=dexdata
-     }
+      }
+      movelist = []
+      evolist  = []
+      for i in 0...thesemoves.length/2
+        movelist.push([thesemoves[i*2],thesemoves[i*2+1],i])
+      end
+      movelist.sort!{|a,b| (a[0]==b[0]) ? a[2]<=>b[2] : a[0]<=>b[0]}
+      for i in movelist; i.pop; end
+      for i in 0...theseevos.length/3
+        evolist.push([theseevos[i*3],theseevos[i*3+1],theseevos[i*3+2]])
+      end
+      moves[currentmap]      = movelist
+      evolutions[currentmap] = evolist
+      dexdatas[currentmap]   = dexdata
+    }
   }
   if dexdatas.length==0
     raise _INTL("No Pokémon species are defined in pokemon.txt")
   end
-  count=dexdatas.compact.length
-  code="module PBSpecies\r\n#{constants}"
+  count = dexdatas.compact.length
+  code = "module PBSpecies\r\n#{constants}"
   for i in 0...speciesnames.length
-    speciesnames[i]="????????" if !speciesnames[i]
+    speciesnames[i] = "????????" if !speciesnames[i]
   end
-  code+="def PBSpecies.getName(id)\r\nreturn pbGetMessage(MessageTypes::Species,id)\r\nend\r\n"
-  code+="def PBSpecies.getCount\r\nreturn #{count}\r\nend\r\n"
-  code+="def PBSpecies.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
+  code += "def PBSpecies.getName(id)\r\nreturn pbGetMessage(MessageTypes::Species,id)\r\nend\r\n"
+  code += "def PBSpecies.getCount\r\nreturn #{count}\r\nend\r\n"
+  code += "def PBSpecies.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
   eval(code)
   pbAddScript(code,"PBSpecies")
+  File.open("Data/dexdata.dat","wb"){|f|
+    mx = [maxValue,dexdatas.length-1].max
+    for i in 1..mx
+      if dexdatas[i]
+        dexdatas[i].each {|item| f.fputb(item)}
+      else
+        76.times { f.fputb(0) }
+      end
+    end
+  }
+  File.open("Data/attacksRS.dat","wb"){|f|
+    mx     = [maxValue,moves.length-1].max
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((moves[i]) ? moves[i].length*2 : 0)
+      offset += (moves[i]) ? moves[i].length*4 : 0
+    end
+    for i in 1..mx
+      next if !moves[i]
+      for j in moves[i]
+        f.fputw(j[0])
+        f.fputw(j[1])
+      end
+    end
+  }
+  File.open("Data/eggEmerald.dat","wb"){|f|
+    mx     = [maxValue,eggmoves.length-1].max
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((eggmoves[i]) ? eggmoves[i].length : 0)
+      offset += (eggmoves[i]) ? eggmoves[i].length*2 : 0
+    end
+    for i in 1..mx
+      next if !eggmoves[i]
+      for j in eggmoves[i]
+        f.fputw(j)
+      end
+    end
+  }
   for e in 0...evolutions.length
-    evolist=evolutions[e]
+    evolist = evolutions[e]
     next if !evolist
     for i in 0...evolist.length
       FileLineData.setSection(i,"Evolutions","")
-      evonib=evolist[i][1]
-      evolist[i][0]=csvEnumField!(evolist[i][0],PBSpecies,"Evolutions",i)
+      evonib = evolist[i][1]
+      evolist[i][0] = csvEnumField!(evolist[i][0],PBSpecies,"Evolutions",i)
       case PBEvolution::EVOPARAM[evonib]
-      when 1
-        evolist[i][2]=csvPosInt!(evolist[i][2])
-      when 2
-        evolist[i][2]=csvEnumField!(evolist[i][2],PBItems,"Evolutions",i)
-      when 3
-        evolist[i][2]=csvEnumField!(evolist[i][2],PBMoves,"Evolutions",i)
-      when 4
-        evolist[i][2]=csvEnumField!(evolist[i][2],PBSpecies,"Evolutions",i)
-      when 5
-        evolist[i][2]=csvEnumField!(evolist[i][2],PBTypes,"Evolutions",i)
-      else
-        evolist[i][2]=0
+      when 1; evolist[i][2] = csvPosInt!(evolist[i][2])
+      when 2; evolist[i][2] = csvEnumField!(evolist[i][2],PBItems,"Evolutions",i)
+      when 3; evolist[i][2] = csvEnumField!(evolist[i][2],PBMoves,"Evolutions",i)
+      when 4; evolist[i][2] = csvEnumField!(evolist[i][2],PBSpecies,"Evolutions",i)
+      when 5; evolist[i][2] = csvEnumField!(evolist[i][2],PBTypes,"Evolutions",i)
+      else; evolist[i][2] = 0
       end
-      evolist[i][3]=0
+      evolist[i][3] = 0
     end
   end
-  _EVODATAMASK=0xC0
-  _EVONEXTFORM=0x00
-  _EVOPREVFORM=0x40
+  _EVODATAMASK = 0x80
+  _EVONEXTFORM = 0x00
+  _EVOPREVFORM = 0x80
   for e in 0...evolutions.length
-    evolist=evolutions[e]
+    evolist = evolutions[e]
     next if !evolist
-    parent=nil
-    child=-1
+    parent = nil
+    child  = -1
     for f in 0...evolutions.length
-      evolist=evolutions[f]
+      evolist = evolutions[f]
       next if !evolist || e==f
       for g in evolist
         if g[0]==e && (g[3]&_EVODATAMASK)==_EVONEXTFORM
-          parent=g
-          child=f
+          parent = g
+          child  = f
           break
         end
       end
       break if parent
     end
     if parent
-      evolutions[e]=[[child,parent[1],parent[2],_EVOPREVFORM]].concat(evolutions[e])
+      evolutions[e] = [[child,parent[1],parent[2],_EVOPREVFORM]].concat(evolutions[e])
     end
   end
+  File.open("Data/evolutions.dat","wb"){|f|
+    mx     = [maxValue,evolutions.length-1].max
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((evolutions[i]) ? evolutions[i].length*5 : 0)
+      offset += (evolutions[i]) ? evolutions[i].length*5 : 0
+    end
+    for i in 1..mx
+      next if !evolutions[i]
+      for j in evolutions[i]
+        f.fputb(j[3]|j[1])
+        f.fputw(j[2])
+        f.fputw(j[0])
+      end
+    end
+  }
+  File.open("Data/regionals.dat","wb"){|f|
+    f.fputw(regionals.length)
+    f.fputw(dexdatas.length)
+    for i in 0...regionals.length
+      for j in 0...dexdatas.length
+        num = regionals[i][j]
+        num = 0 if !num
+        f.fputw(num)
+      end
+    end
+  }
   metrics[0].fillNils(dexdatas.length,0) # player Y
   metrics[1].fillNils(dexdatas.length,0) # enemy Y
   metrics[2].fillNils(dexdatas.length,0) # altitude
   save_data(metrics,"Data/metrics.dat")
-  File.open("Data/regionals.dat","wb"){|f|
-     f.fputw(regionals.length)
-     f.fputw(dexdatas.length)
-     for i in 0...regionals.length
-       for j in 0...dexdatas.length
-         num=regionals[i][j]
-         num=0 if !num
-         f.fputw(num)
-       end
-     end
-  }
-  File.open("Data/evolutions.dat","wb"){|f|
-     mx=[maxValue,evolutions.length-1].max
-     offset=mx*8
-     for i in 1..mx
-       f.fputdw(offset)
-       f.fputdw(evolutions[i] ? evolutions[i].length*5 : 0)
-       offset+=evolutions[i] ? evolutions[i].length*5 : 0
-     end
-     for i in 1..mx
-       next if !evolutions[i]
-       for j in evolutions[i]
-         f.fputb(j[3]|j[1])
-         f.fputw(j[2])
-         f.fputw(j[0])
-       end
-     end
-  }
-  File.open("Data/dexdata.dat","wb"){|f|
-     mx=[maxValue,dexdatas.length-1].max
-     for i in 1..mx
-       if dexdatas[i]
-         dexdatas[i].each {|item| f.fputb(item)}
-       else
-         76.times { f.fputb(0) }
-       end
-     end
-  }
-  File.open("Data/eggEmerald.dat","wb"){|f|
-     mx=[maxValue,eggmoves.length-1].max
-     offset=mx*8
-     for i in 1..mx
-       f.fputdw(offset)
-       f.fputdw(eggmoves[i] ? eggmoves[i].length : 0)
-       offset+=eggmoves[i] ? eggmoves[i].length*2 : 0
-     end
-     for i in 1..mx
-       next if !eggmoves[i]
-       for j in eggmoves[i]
-         f.fputw(j)
-       end
-     end
-  }
   MessageTypes.setMessages(MessageTypes::Species,speciesnames)
   MessageTypes.setMessages(MessageTypes::Kinds,kinds)
   MessageTypes.setMessages(MessageTypes::Entries,entries)
   MessageTypes.setMessages(MessageTypes::FormNames,formnames)
-  File.open("Data/attacksRS.dat","wb"){|f|
-     mx=[maxValue,moves.length-1].max
-     offset=mx*8
-     for i in 1..mx
-       f.fputdw(offset)
-       f.fputdw(moves[i] ? moves[i].length*2 : 0)
-       offset+=moves[i] ? moves[i].length*4 : 0
-     end
-     for i in 1..mx
-       next if !moves[i]
-       for j in moves[i]
-         f.fputw(j[0])
-         f.fputw(j[1])
-       end
-     end
+end
+
+#===============================================================================
+# Compile Pokémon forms
+#===============================================================================
+def pbCompilePokemonForms
+  # Free bytes: 0, 1, 59-75
+  sections = []
+  requiredtypes = {
+#    "Name"          => [0,"s"],
+    "Kind"          => [0,"s"],
+#    "InternalName"  => [0,"c"],
+    "Pokedex"       => [0,"S"],
+    "Moves"         => [0,"*uE",nil,PBMoves],
+    "Color"         => [6,"e",PBColors],
+    "Type1"         => [8,"e",PBTypes],
+    "BaseStats"     => [10,"uuuuuu"],
+    "Rareness"      => [16,"u"],
+    "Shape"         => [17,"u"],
+#    "GenderRate"    => [18,"e",{"AlwaysMale"=>0,"FemaleOneEighth"=>31,
+#                       "Female25Percent"=>63,"Female50Percent"=>127,
+#                       "Female75Percent"=>191,"FemaleSevenEighths"=>223,
+#                       "AlwaysFemale"=>254,"Genderless"=>255}],
+    "Happiness"     => [19,"u"],
+#    "GrowthRate"    => [20,"e",{"Medium"=>0,"MediumFast"=>0,"Erratic"=>1,
+#                       "Fluctuating"=>2,"Parabolic"=>3,"MediumSlow"=>3,"Fast"=>4,
+#                       "Slow"=>5}],
+    "StepsToHatch"  => [21,"w"],
+    "EffortPoints"  => [23,"uuuuuu"],
+#    "Compatibility" => [31,"eg",PBEggGroups,PBEggGroups],
+    "Height"        => [33,"f"],
+    "Weight"        => [35,"f"],
+    "BaseEXP"       => [38,"w"],
   }
+  optionaltypes = {
+    "BattlerPlayerY"   => [0,"i"],
+    "BattlerEnemyY"    => [0,"i"],
+    "BattlerAltitude"  => [0,"i"],
+    "EggMoves"         => [0,"*E",PBMoves],
+    "FormName"         => [0,"S"],
+#    "RegionalNumbers"  => [0,"*w"],
+    "Evolutions"       => [0,"*ses",nil,PBEvolution],
+    "Abilities"        => [2,"EG",PBAbilities,PBAbilities],
+    "Habitat"          => [7,"e",["","Grassland","Forest","WatersEdge","Sea",
+                          "Cave","Mountain","RoughTerrain","Urban","Rare"]],
+    "Type2"            => [9,"e",PBTypes],
+    "MegaStone"        => [29,"E",PBItems],
+    "UnmegaForm"       => [37,"u"],
+    "HiddenAbility"    => [40,"EGGG",PBAbilities,PBAbilities,PBAbilities,PBAbilities],
+    "WildItemCommon"   => [48,"E",PBItems],
+    "WildItemUncommon" => [50,"E",PBItems],
+    "WildItemRare"     => [52,"E",PBItems],
+#    "Incense"          => [54,"E",PBItems]
+    "MegaMove"         => [56,"E",PBMoves],
+    "MegaMessage"      => [58,"u"]
+  }
+  currentmap = -1
+  dexdatas     = []
+  eggmoves     = []
+  entries      = []
+  kinds        = []
+  formnames    = []
+  moves        = []
+  evolutions   = []
+  metrics      = [SignedWordArray.new,SignedWordArray.new,SignedWordArray.new]
+  formtospecies = []
+  speciestoform = []
+  for i in 1..PBSpecies.maxValue
+    formtospecies[i] = [i]
+    speciestoform[i] = i
+  end
+  constants = ""
+  maxValue = PBSpecies.maxValue
+  origdexdata = nil
+  pbRgssOpen("Data/dexdata.dat","rb"){|f|
+    origdexdata = f.read
+  }
+  odexdata = StringInput.open(origdexdata)  
+  File.open("PBS/pokemonforms.txt","rb"){|f|
+    FileLineData.file = "PBS/pokemonforms.txt"
+    pbEachFileSection2(f){|lastsection,currentmap|
+      # currentmap = section name (as a string)
+      # lastsection = hash of all data from the section
+      # Split currentmap into a species number and form number
+      sectionDisplay = currentmap.to_s
+      currentmap2 = currentmap.split("-")
+      if currentmap2.length!=2
+        raise _INTL("Section name {1} is invalid (PBS/pokemonforms.txt). Expected exactly one hyphen between internal name and form number.",sectionDisplay)
+        next
+      end
+      species = parseSpecies(currentmap2[0])
+      form = csvInt!(currentmap2[1])
+      # Ensure this isn't a duplicate species/form combo
+      if form==0
+        raise _INTL("Form {1} is invalid (PBS/pokemonforms.txt). Form 0 data should be defined in \"PBS/pokemon.txt\".",sectionDisplay)
+        next
+      end
+      if formtospecies[species] && formtospecies[species][form]
+        raise _INTL("Form entry {1} is defined at least twice (PBS/pokemonforms.txt). It should only be defined once.",sectionDisplay)
+        next
+      end
+      # Record new species number in formtospecies
+      newspecies = species
+      if form>0
+        maxValue += 1
+        newspecies = maxValue
+        formtospecies[species] = [] if !formtospecies[species]
+        formtospecies[species][form] = newspecies
+        speciestoform[newspecies] = species
+      end
+      dexdata = []
+      pbDexDataOffset(odexdata,species,0)
+      for i in 0...76
+        dexdata[i] = odexdata.fgetb
+      end
+      thesemoves = []
+      theseevos  = []
+      if (!lastsection["Type2"] || lastsection["Type2"]=="") &&
+         (lastsection["Type1"] && lastsection["Type1"]!="")
+        lastsection["Type2"] = lastsection["Type1"].clone
+      end
+      # Checks for abilities, held items
+      if (lastsection["Abilities"] && lastsection["Abilities"]!="") ||
+         (lastsection["HiddenAbility"] && lastsection["HiddenAbility"]!="")
+        for i in 2...6; dexdata[i] = 0; end
+        for i in 40...48; dexdata[i] = 0; end
+      end
+      if (lastsection["WildItemCommon"] && lastsection["WildItemCommon"]!="") ||
+         (lastsection["WildItemUncommon"] && lastsection["WildItemUncommon"]!="") ||
+         (lastsection["WildItemRare"] && lastsection["WildItemRare"]!="")
+        for i in 48...54; dexdata[i] = 0; end
+      end
+      [requiredtypes,optionaltypes].each{|hash|
+        for key in hash.keys
+          FileLineData.setSection(currentmap,key,lastsection[key]) # For errors
+          next if hash[key][0]<0
+          next if !lastsection[key] || lastsection[key]==""
+          secvalue = lastsection[key] # YYY in an XXX=YYY line
+          rtschema = hash[key] # Array from hashes at top for XXX
+          schema   = hash[key][1] # Letter(s) which state how to interpret YYY
+          valueindex = 0
+          loop do
+            offset = 0
+            minus1 = (schema[0,1]=="*") ? -1 : 0 # Account for * in schema
+            for i in 0...schema.length
+              next if schema[i,1]=="*" # Ignore * in schema
+              # End if nothing else to evaluate via enum
+              if (schema[i,1]=="g" || schema[i,1]=="G") && secvalue==""
+                dexdata[rtschema[0]+offset] = dexdata[rtschema[0]] if key=="Compatibility"
+                break
+              end
+              case schema[i,1] # Check the i'th letter from schema
+              when "e", "g"
+                value = csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
+                bytes = 1
+              when "E", "G"
+                value = csvEnumField!(secvalue,rtschema[2+i+minus1],key,sectionDisplay)
+                bytes = 2
+              when "i"
+                value = csvInt!(secvalue,key)
+                bytes = 1
+              when "u"
+                value = csvPosInt!(secvalue,key)
+                bytes = 1
+              when "w"
+                value = csvPosInt!(secvalue,key)
+                bytes = 2
+              when "f"
+                value = csvFloat!(secvalue,key,sectionDisplay)
+                value = (value*10).round
+                if value<=0
+                  raise _INTL("Value '{1}' can't be less than or close to 0 (section {2}, PBS/pokemonforms.txt)",key,sectionDisplay)
+                end
+                bytes = 2
+              when "c", "s"
+                value = csvfield!(secvalue)
+              when "S"
+                value = secvalue
+                secvalue = ""
+              end
+              # value = final value of YYY
+              # bytes = number of bytes taken up in dexdata
+              case key
+              # Put values into appropriate arrays (dexdata or other)
+              when "FormName"
+                formnames[newspecies] = value
+              when "Kind"
+                raise _INTL("Kind {1} is greater than 20 characters long (section {2}, PBS/pokemonforms.txt)",value,sectionDisplay) if value.length>20
+                kinds[newspecies] = value
+              when "Pokedex"
+                entries[newspecies] = value
+              when "Moves"
+                thesemoves.push(value)
+              when "EggMoves"
+                eggmoves[newspecies] = [] if !eggmoves[newspecies]
+                eggmoves[newspecies].push(value)
+              when "Evolutions"
+                theseevos.push(value)
+              when "BattlerPlayerY"
+                pbCheckSignedWord(value,key)
+                metrics[0][newspecies] = value
+              when "BattlerEnemyY"
+                pbCheckSignedWord(value,key)
+                metrics[1][newspecies] = value
+              when "BattlerAltitude"
+                pbCheckSignedWord(value,key)
+                metrics[2][newspecies] = value
+              else
+                dexdata[rtschema[0]+offset]   = value&0xFF
+                dexdata[rtschema[0]+1+offset] = (value>>8)&0xFF if bytes>1
+                offset += bytes
+              end
+              valueindex += 1
+            end
+            break if secvalue==""
+            break if schema[0,1]!="*"
+          end
+        end
+      }
+      # Organise move/evolution data into proper forms for saving to data files
+      movelist = []
+      for i in 0...thesemoves.length/2
+        movelist.push([thesemoves[i*2],thesemoves[i*2+1],i])
+      end
+      movelist.sort!{|a,b| (a[0]==b[0]) ? a[2]<=>b[2] : a[0]<=>b[0]}
+      for i in movelist; i.pop; end
+      moves[newspecies]      = movelist if movelist.length>0
+      evolist  = []
+      for i in 0...theseevos.length/3
+        evolist.push([theseevos[i*3],theseevos[i*3+1],theseevos[i*3+2]])
+      end
+      evolutions[newspecies] = evolist if evolist.length>0
+      # Put dexdata into the main array for it
+      dexdatas[newspecies]   = dexdata
+    }
+    # End of reading a single section in pokemon.txt
+  }
+  # End of reading all of pokemon.txt
+  odexdata.close
+  count = dexdatas.compact.length
+  code = "module PBSpecies\r\n#{constants}"
+  code += "def PBSpecies.maxValueF\r\nreturn #{maxValue}\r\nend\r\nend"
+  eval(code)
+  pbAddScript(code,"PBSpecies")
+  File.open("Data/formspecies.dat","wb"){|f|
+     Marshal.dump(formtospecies,f)
+  }
+  File.open("Data/dexdata.dat","ab"){|f|
+    mx = [maxValue,dexdatas.length-1].max
+    for i in PBSpecies.maxValue+1..mx
+      if dexdatas[i]
+        dexdatas[i].each {|item| f.fputb(item)}
+      else
+        76.times { f.fputb(0) }
+      end
+    end
+  }
+  newmovelist = []
+  File.open("Data/attacksRS.dat","rb"){|f|
+    mx = [maxValue,moves.length-1].max
+    for sp in 1..mx
+      newmovelist[sp] = []
+      if moves[sp]
+        for j in 0...moves[sp].length
+          newmovelist[sp].push(moves[sp][j])
+        end
+      else
+        nsp = pbGetSpeciesFromFSpecies(sp)[0]
+        offset = f.getOffset(nsp-1)
+        length = f.getLength(nsp-1)>>1
+        f.pos = offset
+        for j in 0...length
+          alevel = f.fgetw
+          move   = f.fgetw
+          newmovelist[sp].push([alevel,move])
+        end
+      end
+    end
+  }
+  File.open("Data/attacksRS.dat","wb"){|f|
+    mx     = newmovelist.length-1
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((newmovelist[i]) ? newmovelist[i].length*2 : 0)
+      offset += (newmovelist[i]) ? newmovelist[i].length*4 : 0
+    end
+    for i in 1..mx
+      next if !newmovelist[i]
+      for j in newmovelist[i]
+        f.fputw(j[0])
+        f.fputw(j[1])
+      end
+    end
+  }
+  neweggmovelist = []
+  File.open("Data/eggEmerald.dat","rb"){|f|
+    mx = [maxValue,eggmoves.length-1].max
+    for sp in 1..mx
+      neweggmovelist[sp] = []
+      if eggmoves[sp]
+        newmovelist[sp] = eggmoves[sp]
+      else
+        nsp = pbGetSpeciesFromFSpecies(sp)[0]
+        f.pos = (nsp-1)*8
+        offset = f.fgetdw
+        length = f.fgetdw
+        f.pos = offset
+        j = 0; loop do break unless j<length
+          move = f.fgetw
+          break if move==0
+          neweggmovelist[sp].push(move) if move>0
+          j += 1
+        end
+      end
+    end
+  }
+  File.open("Data/eggEmerald.dat","wb"){|f|
+    mx = neweggmovelist.length-1
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((neweggmovelist[i]) ? neweggmovelist[i].length : 0)
+      offset += (neweggmovelist[i]) ? neweggmovelist[i].length*2 : 0
+    end
+    for i in 1..mx
+      next if !neweggmovelist[i]
+      for j in neweggmovelist[i]
+        f.fputw(j)
+      end
+    end
+  }
+  for e in 0...evolutions.length
+    evolist = evolutions[e]
+    next if !evolist
+    for i in 0...evolist.length
+      FileLineData.setSection(i,"Evolutions","")
+      evonib = evolist[i][1]
+      evolist[i][0] = csvEnumField!(evolist[i][0],PBSpecies,"Evolutions",i)
+      case PBEvolution::EVOPARAM[evonib]
+      when 1; evolist[i][2] = csvPosInt!(evolist[i][2])
+      when 2; evolist[i][2] = csvEnumField!(evolist[i][2],PBItems,"Evolutions",i)
+      when 3; evolist[i][2] = csvEnumField!(evolist[i][2],PBMoves,"Evolutions",i)
+      when 4; evolist[i][2] = csvEnumField!(evolist[i][2],PBSpecies,"Evolutions",i)
+      when 5; evolist[i][2] = csvEnumField!(evolist[i][2],PBTypes,"Evolutions",i)
+      else; evolist[i][2] = 0
+      end
+      evolist[i][3] = 0
+    end
+  end
+  newevolist = []
+  mx = [maxValue,evolutions.length-1].max
+  for sp in 1..mx
+    newevolist[sp] = []
+    if evolutions[sp]
+      for i in 0...evolutions[sp].length
+        newevolist[sp].push([evolutions[sp][i][0],evolutions[sp][i][1],evolutions[sp][i][2],0])
+      end
+    else
+      nsp = pbGetSpeciesFromFSpecies(sp)[0]
+      t = pbGetEvolvedFormData(nsp)
+      for i in 0...t.length
+        newevolist[sp].push([t[i][2],t[i][0],t[i][1],0])
+      end
+    end
+  end
+  _EVODATAMASK = 0x80
+  _EVONEXTFORM = 0x00
+  _EVOPREVFORM = 0x80
+  for e in 0...newevolist.length
+    evolist = newevolist[e]
+    next if !evolist
+    nse = speciestoform[e]
+    parent = nil
+    child = -1
+    for f in 0...newevolist.length
+      evolist = newevolist[f]
+      nsf = speciestoform[f]
+      next if !evolist || nse==nsf
+      for g in evolist
+        if g[0]==nse && (g[3]&_EVODATAMASK)==_EVONEXTFORM
+          parent = g   # Evolution
+          child = nsf   # Prevo species
+          break
+        end
+      end
+      break if parent
+    end
+    if parent   # parent[1]=method, parent[2]=level - both are useless
+      newevolist[e] = [[child,parent[1],parent[2],_EVOPREVFORM]].concat(newevolist[e])
+    end
+  end
+  File.open("Data/evolutions.dat","wb"){|f|
+    mx = newevolist.length-1
+    offset = mx*8
+    for i in 1..mx
+      f.fputdw(offset)
+      f.fputdw((newevolist[i]) ? newevolist[i].length*5 : 0)
+      offset += (newevolist[i]) ? newevolist[i].length*5 : 0
+    end
+    for i in 1..mx
+      next if !newevolist[i]
+      for j in newevolist[i]
+        f.fputb(j[3]|j[1])
+        f.fputw(j[2])
+        f.fputw(j[0])
+      end
+    end
+  }
+  metrics[0].fillNils(dexdatas.length,999) # player Y
+  metrics[1].fillNils(dexdatas.length,999) # enemy Y
+  metrics[2].fillNils(dexdatas.length,999) # altitude
+  newmetrics = load_data("Data/metrics.dat")
+  mx = [maxValue,metrics[0].length-1,metrics[1].length-1,metrics[2].length-1].max
+  for sp in 1..mx
+    nsp = pbGetSpeciesFromFSpecies(sp)[0]
+    for i in 0..2
+      newmetrics[i][sp] = (metrics[i][sp]!=999) ? metrics[i][sp] : newmetrics[i][nsp]
+    end
+  end
+  save_data(newmetrics,"Data/metrics.dat")
+  MessageTypes.addMessages(MessageTypes::FormNames,formnames)
+  MessageTypes.addMessages(MessageTypes::Kinds,kinds)
+  MessageTypes.addMessages(MessageTypes::Entries,entries)
 end
 
 #===============================================================================
 # Compile TM/TM/Move Tutor compatibilities
 #===============================================================================
 def pbTMRS   # Backup Gen 3 TM list
-  rstm=[# TMs
+  rstm = [# TMs
         :FOCUSPUNCH,:DRAGONCLAW,:WATERPULSE,:CALMMIND,:ROAR,
         :TOXIC,:HAIL,:BULKUP,:BULLETSEED,:HIDDENPOWER,
         :SUNNYDAY,:TAUNT,:ICEBEAM,:BLIZZARD,:HYPERBEAM,
@@ -2019,7 +2365,7 @@ def pbTMRS   # Backup Gen 3 TM list
         :THIEF,:STEELWING,:SKILLSWAP,:SNATCH,:OVERHEAT,
         # HMs
         :CUT,:FLY,:SURF,:STRENGTH,:FLASH,:ROCKSMASH,:WATERFALL,:DIVE]
-  ret=[]
+  ret = []
   for i in 0...rstm.length
     ret.push((parseMove(rstm.to_s) rescue 0))
   end
@@ -2027,62 +2373,58 @@ def pbTMRS   # Backup Gen 3 TM list
 end
 
 def pbCompileMachines
-  lineno=1
-  havesection=false
-  sectionname=nil
-  sections=[]
+  lineno = 1
+  havesection = false
+  sectionname = nil
+  sections    = []
   if safeExists?("PBS/tm.txt")
-    f=File.open("PBS/tm.txt","rb")
+    f = File.open("PBS/tm.txt","rb")
     FileLineData.file="PBS/tm.txt"
     f.each_line {|line|
-       if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-         line=line[3,line.length-3]
-       end
-       FileLineData.setLine(line,lineno)
-       if !line[/^\#/] && !line[/^\s*$/]
-         if line[/^\s*\[\s*(.*)\s*\]\s*$/]
-           sectionname=parseMove($~[1])
-           sections[sectionname]=WordArray.new
-           havesection=true
-         else
-           if sectionname==nil
-             raise _INTL("Expected a section at the beginning of the file. This error may also occur if the file was not saved in UTF-8.\r\n{1}",FileLineData.linereport)
-           end
-           specieslist=line.sub(/\s+$/,"").split(",")
-           for species in specieslist
-             next if !species || species==""
-             sec=sections[sectionname]
-             sec[sec.length]=parseSpecies(species)
-           end
-         end
-       end
-       lineno+=1
-       if lineno%500==0
-         Graphics.update
-       end
-       if lineno%50==0
-         Win32API.SetWindowText(_INTL("Processing line {1}",lineno))
-       end
+      if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+        line = line[3,line.length-3]
+      end
+      FileLineData.setLine(line,lineno)
+      if !line[/^\#/] && !line[/^\s*$/]
+        if line[/^\s*\[\s*(.*)\s*\]\s*$/]
+          sectionname = parseMove($~[1])
+          sections[sectionname] = WordArray.new
+          havesection = true
+        else
+          if sectionname==nil
+            raise _INTL("Expected a section at the beginning of the file. This error may also occur if the file was not saved in UTF-8.\r\n{1}",FileLineData.linereport)
+          end
+          specieslist = line.sub(/\s+$/,"").split(",")
+          for species in specieslist
+            next if !species || species==""
+            sec = sections[sectionname]
+            sec[sec.length] = parseSpecies(species)
+          end
+        end
+      end
+      lineno += 1
+      Graphics.update if lineno%500==0
+      Win32API.SetWindowText(_INTL("Processing line {1}",lineno)) if lineno%50==0
     }
     f.close
   elsif safeExists?("Data/tmRS.dat")
-    tmrs=pbTMRS()
+    tmrs = pbTMRS()
     for i in 0...58
       next if !tmrs[i] || tmrs[i]==0
-      sections[tmrs[i]]=[]
+      sections[tmrs[i]] = []
     end
     File.open("Data/tmRS.dat","rb"){|f|
-       species=1
-       while !f.eof?
-         data=f.read(8)+"\0\0\0\0\0\0\0\0"
-         for i in 0...58
-           next if !tmrs[i] || tmrs[i]==0
-           if (data[i>>3]&(1<<(i&7)))!=0
-             sections[tmrs[i]].push(species)
-           end
-         end
-         species+=1
-       end
+      species = 1
+      while !f.eof?
+        data = f.read(8)+"\0\0\0\0\0\0\0\0"
+        for i in 0...58
+          next if !tmrs[i] || tmrs[i]==0
+          if (data[i>>3]&(1<<(i&7)))!=0
+            sections[tmrs[i]].push(species)
+          end
+        end
+        species += 1
+      end
     }
   end
   save_data(sections,"Data/tm.dat")
@@ -2092,233 +2434,236 @@ end
 # Extract trainer types to PBS file, compile trainer types and individual trainers
 #===============================================================================
 def pbExtractTrainers
-  trainertypes=nil
+  trainertypes = nil
   pbRgssOpen("Data/trainertypes.dat","rb"){|f|
-     trainertypes=Marshal.load(f)
+    trainertypes = Marshal.load(f)
   }
   return if !trainertypes
   File.open("trainertypes.txt","wb"){|f|
-     f.write(0xEF.chr)
-     f.write(0xBB.chr)
-     f.write(0xBF.chr)
-     for i in 0...trainertypes.length
-       next if !trainertypes[i]
-       record=trainertypes[i]
-       begin
-         cnst=getConstantName(PBTrainers,record[0])
-       rescue
-         next
-       end
-       f.write(sprintf("%d,%s,%s,%d,%s,%s,%s,%s,%d,%s\r\n",
-          record[0],csvquote(cnst),csvquote(record[2]),
-          record[3],csvquote(record[4]),csvquote(record[5]),csvquote(record[6]),
-          record[7] ? ["Male","Female","Mixed"][record[7]] : "Mixed",
-          record[8],record[9]
-       ))
-     end
+    f.write(0xEF.chr)
+    f.write(0xBB.chr)
+    f.write(0xBF.chr)
+    for i in 0...trainertypes.length
+      next if !trainertypes[i]
+      record = trainertypes[i]
+      begin
+        cnst = getConstantName(PBTrainers,record[0])
+      rescue
+        next
+      end
+      f.write(sprintf("%d,%s,%s,%d,%s,%s,%s,%s,%d,%s\r\n",
+         record[0],csvquote(cnst),csvquote(record[2]),
+         record[3],csvquote(record[4]),csvquote(record[5]),csvquote(record[6]),
+         (record[7]) ? ["Male","Female","Mixed"][record[7]] : "Mixed",
+         record[8],record[9]
+      ))
+    end
   }
 end
 
 def pbCompileTrainers
   # Trainer types
-  records=[]
-  trainernames=[]
-  count=0
-  maxValue=0
+  records = []
+  trainernames = []
+  count = 0
+  maxValue = 0
   pbCompilerEachPreppedLine("PBS/trainertypes.txt"){|line,lineno|
-     record=pbGetCsvRecord(line,lineno,[0,"unsUSSSeUS", # ID can be 0
-        nil,nil,nil,nil,nil,nil,nil,{
-        ""=>2,"Male"=>0,"M"=>0,"0"=>0,"Female"=>1,"F"=>1,"1"=>1,"Mixed"=>2,"X"=>2,"2"=>2
-        },nil,nil]
-     )
-     if record[3] && (record[3]<0 || record[3]>255)
-       raise _INTL("Bad money amount (must be from 0 through 255)\r\n{1}",FileLineData.linereport)
-     end
-     record[3]=30 if !record[3]
-     if record[8] && (record[8]<0 || record[8]>255)
-       raise _INTL("Bad skill value (must be from 0 through 255)\r\n{1}",FileLineData.linereport)
-     end
-     record[8]=record[3] if !record[8]
-     if records[record[0]]
-       raise _INTL("Two trainer types ({1} and {2}) have the same ID ({3}), which is not allowed.\r\n{4}",
-          records[record[0]][1],record[1],record[0],FileLineData.linereport)
-     end
-     trainernames[record[0]]=record[2]
-     records[record[0]]=record
-     maxValue=[maxValue,record[0]].max
+    record=pbGetCsvRecord(line,lineno,[0,"unsUSSSeUS", # ID can be 0
+       nil,nil,nil,nil,nil,nil,nil,{
+       "" => 2,
+       "Male" => 0,"M" => 0,"0" => 0,
+       "Female" => 1,"F" => 1,"1" => 1,
+       "Mixed" => 2,"X" => 2,"2" => 2
+       },nil,nil]
+    )
+    if record[3] && (record[3]<0 || record[3]>255)
+      raise _INTL("Bad money amount (must be from 0 through 255)\r\n{1}",FileLineData.linereport)
+    end
+    record[3] = 30 if !record[3]
+    if record[8] && (record[8]<0 || record[8]>255)
+      raise _INTL("Bad skill value (must be from 0 through 255)\r\n{1}",FileLineData.linereport)
+    end
+    record[8] = record[3] if !record[8]
+    if records[record[0]]
+      raise _INTL("Two trainer types ({1} and {2}) have the same ID ({3}), which is not allowed.\r\n{4}",records[record[0]][1],record[1],record[0],FileLineData.linereport)
+    end
+    trainernames[record[0]] = record[2]
+    records[record[0]]      = record
+    maxValue = [maxValue,record[0]].max
   }
-  count=records.compact.length
+  count = records.compact.length
   MessageTypes.setMessages(MessageTypes::TrainerTypes,trainernames)
-  code="class PBTrainers\r\n"
+  code = "class PBTrainers\r\n"
   for rec in records
     next if !rec
-    code+="#{rec[1]}=#{rec[0]}\r\n"
+    code += "#{rec[1]}=#{rec[0]}\r\n"
   end
-  code+="\r\ndef self.getName(id)\r\nreturn pbGetMessage(MessageTypes::TrainerTypes,id)\r\nend"
-  code+="\r\ndef self.getCount\r\nreturn #{count}\r\nend"
-  code+="\r\ndef self.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
+  code += "\r\ndef self.getName(id)\r\nreturn pbGetMessage(MessageTypes::TrainerTypes,id)\r\nend"
+  code += "\r\ndef self.getCount\r\nreturn #{count}\r\nend"
+  code += "\r\ndef self.maxValue\r\nreturn #{maxValue}\r\nend\r\nend"
   eval(code)
   pbAddScript(code,"PBTrainers")
   File.open("Data/trainertypes.dat","wb"){|f|
-     Marshal.dump(records,f)
+    Marshal.dump(records,f)
   }
   # Individual trainers
-  lines=[]
-  linenos=[]
-  lineno=1
+  lines   = []
+  linenos = []
+  lineno  = 1
   File.open("PBS/trainers.txt","rb"){|f|
-     FileLineData.file="PBS/trainers.txt"
-     f.each_line {|line|
-        if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-          line=line[3,line.length-3]
-        end
-        line=prepline(line)
-        if line!=""
-          lines.push(line)
-          linenos.push(lineno)
-        end
-        lineno+=1
-     }
+    FileLineData.file="PBS/trainers.txt"
+    f.each_line {|line|
+      if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+        line = line[3,line.length-3]
+      end
+      line = prepline(line)
+      if line!=""
+        lines.push(line)
+        linenos.push(lineno)
+      end
+      lineno += 1
+    }
   }
-  nameoffset=0
-  trainers=[]
+  nameoffset = 0
+  trainers = []
   trainernames.clear
-  i=0; loop do break unless i<lines.length
+  i = 0; loop do break unless i<lines.length
     FileLineData.setLine(lines[i],linenos[i])
-    trainername=parseTrainer(lines[i])
+    trainername = parseTrainer(lines[i])
     FileLineData.setLine(lines[i+1],linenos[i+1])
-    nameline=strsplit(lines[i+1],/\s*,\s*/)
-    name=nameline[0]
+    nameline = strsplit(lines[i+1],/\s*,\s*/)
+    name = nameline[0]
     raise _INTL("Trainer name too long\r\n{1}",FileLineData.linereport) if name.length>=0x10000
     trainernames.push(name)
-    partyid=0
+    partyid = 0
     if nameline[1] && nameline[1]!=""
       raise _INTL("Expected a number for the trainer battle ID\r\n{1}",FileLineData.linereport) if !nameline[1][/^\d+$/]
-      partyid=nameline[1].to_i
+      partyid = nameline[1].to_i
     end
     FileLineData.setLine(lines[i+2],linenos[i+2])
-    items=strsplit(lines[i+2],/\s*,\s*/)
+    items = strsplit(lines[i+2],/\s*,\s*/)
     items[0].gsub!(/^\s+/,"")   # Number of Pokémon
     raise _INTL("Expected a number for the number of Pokémon\r\n{1}",FileLineData.linereport) if !items[0][/^\d+$/]
-    numpoke=items[0].to_i
-    realitems=[]
+    numpoke = items[0].to_i
+    realitems = []
     for j in 1...items.length   # Items held by Trainer
       realitems.push(parseItem(items[j])) if items[j] && items[j]!=""
     end
-    pkmn=[]
+    pkmn = []
     for j in 0...numpoke
       FileLineData.setLine(lines[i+j+3],linenos[i+j+3])
-      poke=strsplit(lines[i+j+3],/\s*,\s*/)
+      poke = strsplit(lines[i+j+3],/\s*,\s*/)
       begin
         # Species
-        poke[TPSPECIES]=parseSpecies(poke[TPSPECIES])
+        poke[TPSPECIES] = parseSpecies(poke[TPSPECIES])
       rescue
         raise _INTL("Expected a species name: {1}\r\n{2}",poke[0],FileLineData.linereport)
       end
       # Level
-      poke[TPLEVEL]=poke[TPLEVEL].to_i
-      raise _INTL("Bad level: {1} (must be from 1-{2})\r\n{3}",poke[TPLEVEL],
-        PBExperience::MAXLEVEL,FileLineData.linereport) if poke[TPLEVEL]<=0 || poke[TPLEVEL]>PBExperience::MAXLEVEL
+      poke[TPLEVEL] = poke[TPLEVEL].to_i
+      if poke[TPLEVEL]<=0 || poke[TPLEVEL]>PBExperience::MAXLEVEL
+        raise _INTL("Bad level: {1} (must be from 1-{2})\r\n{3}",poke[TPLEVEL],PBExperience::MAXLEVEL,FileLineData.linereport) 
+      end
       # Held item
       if !poke[TPITEM] || poke[TPITEM]==""
-        poke[TPITEM]=TPDEFAULTS[TPITEM]
+        poke[TPITEM] = TPDEFAULTS[TPITEM]
       else
-        poke[TPITEM]=parseItem(poke[TPITEM])
+        poke[TPITEM] = parseItem(poke[TPITEM])
       end
       # Moves
-      moves=[]
+      moves = []
       for j in [TPMOVE1,TPMOVE2,TPMOVE3,TPMOVE4]
         moves.push(parseMove(poke[j])) if poke[j] && poke[j]!=""
       end
       for j in 0...4
-        index=[TPMOVE1,TPMOVE2,TPMOVE3,TPMOVE4][j]
+        index = [TPMOVE1,TPMOVE2,TPMOVE3,TPMOVE4][j]
         if moves[j] && moves[j]!=0
-          poke[index]=moves[j]
+          poke[index] = moves[j]
         else
-          poke[index]=TPDEFAULTS[index]
+          poke[index] = TPDEFAULTS[index]
         end
       end
       # Ability
       if !poke[TPABILITY] || poke[TPABILITY]==""
-        poke[TPABILITY]=TPDEFAULTS[TPABILITY]
+        poke[TPABILITY] = TPDEFAULTS[TPABILITY]
       else
-        poke[TPABILITY]=poke[TPABILITY].to_i
+        poke[TPABILITY] = poke[TPABILITY].to_i
         raise _INTL("Bad abilityflag: {1} (must be 0 or 1 or 2-5)\r\n{2}",poke[TPABILITY],FileLineData.linereport) if poke[TPABILITY]<0 || poke[TPABILITY]>5
       end
       # Gender
       if !poke[TPGENDER] || poke[TPGENDER]==""
-        poke[TPGENDER]=TPDEFAULTS[TPGENDER]
+        poke[TPGENDER] = TPDEFAULTS[TPGENDER]
       else
         if poke[TPGENDER]=="M"
-          poke[TPGENDER]=0
+          poke[TPGENDER] = 0
         elsif poke[TPGENDER]=="F"
-          poke[TPGENDER]=1
+          poke[TPGENDER] = 1
         else
-          poke[TPGENDER]=poke[TPGENDER].to_i
+          poke[TPGENDER] = poke[TPGENDER].to_i
           raise _INTL("Bad genderflag: {1} (must be M or F, or 0 or 1)\r\n{2}",poke[TPGENDER],FileLineData.linereport) if poke[TPGENDER]<0 || poke[TPGENDER]>1
         end
       end
       # Form
       if !poke[TPFORM] || poke[TPFORM]==""
-        poke[TPFORM]=TPDEFAULTS[TPFORM]
+        poke[TPFORM] = TPDEFAULTS[TPFORM]
       else
-        poke[TPFORM]=poke[TPFORM].to_i
+        poke[TPFORM] = poke[TPFORM].to_i
         raise _INTL("Bad form: {1} (must be 0 or greater)\r\n{2}",poke[TPFORM],FileLineData.linereport) if poke[TPFORM]<0
       end
       # Shiny
       if !poke[TPSHINY] || poke[TPSHINY]==""
-        poke[TPSHINY]=TPDEFAULTS[TPSHINY]
+        poke[TPSHINY] = TPDEFAULTS[TPSHINY]
       elsif poke[TPSHINY]=="shiny"
-        poke[TPSHINY]=true
+        poke[TPSHINY] = true
       else
-        poke[TPSHINY]=csvBoolean!(poke[TPSHINY].clone)
+        poke[TPSHINY] = csvBoolean!(poke[TPSHINY].clone)
       end
       # Nature
       if !poke[TPNATURE] || poke[TPNATURE]==""
-        poke[TPNATURE]=TPDEFAULTS[TPNATURE]
+        poke[TPNATURE] = TPDEFAULTS[TPNATURE]
       else
-        poke[TPNATURE]=parseNature(poke[TPNATURE])
+        poke[TPNATURE] = parseNature(poke[TPNATURE])
       end
       # IVs
       if !poke[TPIV] || poke[TPIV]==""
-        poke[TPIV]=TPDEFAULTS[TPIV]
+        poke[TPIV] = TPDEFAULTS[TPIV]
       else
-        poke[TPIV]=poke[TPIV].to_i
+        poke[TPIV] = poke[TPIV].to_i
         raise _INTL("Bad IV: {1} (must be from 0-31)\r\n{2}",poke[TPIV],FileLineData.linereport) if poke[TPIV]<0 || poke[TPIV]>31
       end
       # Happiness
       if !poke[TPHAPPINESS] || poke[TPHAPPINESS]==""
-        poke[TPHAPPINESS]=TPDEFAULTS[TPHAPPINESS]
+        poke[TPHAPPINESS] = TPDEFAULTS[TPHAPPINESS]
       else
-        poke[TPHAPPINESS]=poke[TPHAPPINESS].to_i
+        poke[TPHAPPINESS] = poke[TPHAPPINESS].to_i
         raise _INTL("Bad happiness: {1} (must be from 0-255)\r\n{2}",poke[TPHAPPINESS],FileLineData.linereport) if poke[TPHAPPINESS]<0 || poke[TPHAPPINESS]>255
       end
       # Nickname
       if !poke[TPNAME] || poke[TPNAME]==""
-        poke[TPNAME]=TPDEFAULTS[TPNAME]
+        poke[TPNAME] = TPDEFAULTS[TPNAME]
       else
-        poke[TPNAME]=poke[TPNAME].to_s
+        poke[TPNAME] = poke[TPNAME].to_s
         raise _INTL("Bad nickname: {1} (must be 1-20 characters)\r\n{2}",poke[TPNAME],FileLineData.linereport) if (poke[TPNAME].to_s).length>20
       end
       # Shadow
       if !poke[TPSHADOW] || poke[TPSHADOW]==""
-        poke[TPSHADOW]=TPDEFAULTS[TPSHADOW]
+        poke[TPSHADOW] = TPDEFAULTS[TPSHADOW]
       else
-        poke[TPSHADOW]=csvBoolean!(poke[TPSHADOW].clone)
+        poke[TPSHADOW] = csvBoolean!(poke[TPSHADOW].clone)
       end
       # Ball
       if !poke[TPBALL] || poke[TPBALL]==""
-        poke[TPBALL]=TPDEFAULTS[TPBALL]
+        poke[TPBALL] = TPDEFAULTS[TPBALL]
       else
-        poke[TPBALL]=poke[TPBALL].to_i
+        poke[TPBALL] = poke[TPBALL].to_i
         raise _INTL("Bad form: {1} (must be 0 or greater)\r\n{2}",poke[TPBALL],FileLineData.linereport) if poke[TPBALL]<0
       end
       pkmn.push(poke)
     end
-    i+=3+numpoke
+    i += 3+numpoke
     MessageTypes.setMessagesAsHash(MessageTypes::TrainerNames,trainernames)
     trainers.push([trainername,name,realitems,pkmn,partyid])
-    nameoffset+=name.length
+    nameoffset += name.length
   end
   save_data(trainers,"Data/trainers.dat")
 end
@@ -2328,33 +2673,34 @@ end
 #===============================================================================
 def pbCompilePhoneData
   return if !safeExists?("PBS/phone.txt")
-  database=PhoneDatabase.new
-  sections=[]
+  database = PhoneDatabase.new
+  sections = []
   File.open("PBS/phone.txt","rb"){|f|
-     pbEachSection(f){|section,name|
-        if name=="<Generics>"
-          database.generics=section
-          sections.concat(section)
-        elsif name=="<BattleRequests>"
-          database.battleRequests=section 
-          sections.concat(section)
-        elsif name=="<GreetingsMorning>"
-          database.greetingsMorning=section 
-          sections.concat(section)
-        elsif name=="<GreetingsEvening>"
-          database.greetingsEvening=section 
-          sections.concat(section)
-        elsif name=="<Greetings>"
-          database.greetings=section
-          sections.concat(section)
-        elsif name=="<Bodies1>"
-          database.bodies1=section 
-          sections.concat(section)
-        elsif name=="<Bodies2>"
-          database.bodies2=section 
-          sections.concat(section)
-        end
-     }
+    pbEachSection(f){|section,name|
+      case name
+      when "<Generics>"
+        database.generics=section
+        sections.concat(section)
+      when "<BattleRequests>"
+        database.battleRequests=section 
+        sections.concat(section)
+      when "<GreetingsMorning>"
+        database.greetingsMorning=section 
+        sections.concat(section)
+      when "<GreetingsEvening>"
+        database.greetingsEvening=section 
+        sections.concat(section)
+      when "<Greetings>"
+        database.greetings=section
+        sections.concat(section)
+      when "<Bodies1>"
+        database.bodies1=section 
+        sections.concat(section)
+      when "<Bodies2>"
+        database.bodies2=section 
+        sections.concat(section)
+      end
+    }
   }
   MessageTypes.setMessagesAsHash(MessageTypes::PhoneMessages,sections)
   save_data(database,"Data/phone.dat")
@@ -2368,44 +2714,44 @@ class PBTrainers; end
 
 
 def pbCompileMetadata
-  sections=[]
-  currentmap=-1
+  sections = []
+  currentmap = -1
   pbCompilerEachCommentedLine("PBS/metadata.txt") {|line,lineno|
-     if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
-       sectionname=$~[1]
-       if currentmap==0
-         if sections[currentmap][MetadataHome]==nil
-           raise _INTL("The entry Home is required in metadata.txt section [{1}]",sectionname)
-         end
-         if sections[currentmap][MetadataPlayerA]==nil
-           raise _INTL("The entry PlayerA is required in metadata.txt section [{1}]",sectionname)
-         end
-       end
-       currentmap=sectionname.to_i
-       sections[currentmap]=[]
-     else
-       if currentmap<0
-         raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
-       end
-       if !line[/^\s*(\w+)\s*=\s*(.*)$/]
-         raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
-       end
-       matchData=$~
-       schema=nil
-       FileLineData.setSection(currentmap,matchData[1],matchData[2])
-       if currentmap==0
-         schema=PokemonMetadata::GlobalTypes[matchData[1]]
-       else
-         schema=PokemonMetadata::NonGlobalTypes[matchData[1]]
-       end
-       if schema
-         record=pbGetCsvRecord(matchData[2],lineno,schema)
-         sections[currentmap][schema[0]]=record
-       end
-     end
+    if line[/^\s*\[\s*(\d+)\s*\]\s*$/]
+      sectionname = $~[1]
+      if currentmap==0
+        if sections[currentmap][MetadataHome]==nil
+          raise _INTL("The entry Home is required in metadata.txt section [{1}]",sectionname)
+        end
+        if sections[currentmap][MetadataPlayerA]==nil
+          raise _INTL("The entry PlayerA is required in metadata.txt section [{1}]",sectionname)
+        end
+      end
+      currentmap = sectionname.to_i
+      sections[currentmap] = []
+    else
+      if currentmap<0
+        raise _INTL("Expected a section at the beginning of the file\r\n{1}",FileLineData.linereport)
+      end
+      if !line[/^\s*(\w+)\s*=\s*(.*)$/]
+        raise _INTL("Bad line syntax (expected syntax like XXX=YYY)\r\n{1}",FileLineData.linereport)
+      end
+      matchData = $~
+      schema = nil
+      FileLineData.setSection(currentmap,matchData[1],matchData[2])
+      if currentmap==0
+        schema = PokemonMetadata::GlobalTypes[matchData[1]]
+      else
+        schema = PokemonMetadata::NonGlobalTypes[matchData[1]]
+      end
+      if schema
+        record = pbGetCsvRecord(matchData[2],lineno,schema)
+        sections[currentmap][schema[0]] = record
+      end
+    end
   }
   File.open("Data/metadata.dat","wb"){|f|
-     Marshal.dump(sections,f)
+    Marshal.dump(sections,f)
   }
 end
 
@@ -2413,38 +2759,37 @@ end
 # Compile Battle Tower and other Cups trainers/Pokémon
 #===============================================================================
 def pbCompileBTTrainers(filename)
-  sections=[]
-  btTrainersRequiredTypes={
-     "Type"=>[0,"e",PBTrainers],
-     "Name"=>[1,"s"],
-     "BeginSpeech"=>[2,"s"],
-     "EndSpeechWin"=>[3,"s"],
-     "EndSpeechLose"=>[4,"s"],
-     "PokemonNos"=>[5,"*u"]
+  sections = []
+  requiredtypes = {
+     "Type"          => [0,"e",PBTrainers],
+     "Name"          => [1,"s"],
+     "BeginSpeech"   => [2,"s"],
+     "EndSpeechWin"  => [3,"s"],
+     "EndSpeechLose" => [4,"s"],
+     "PokemonNos"    => [5,"*u"]
   }
-  requiredtypes=btTrainersRequiredTypes
-  trainernames=[]
-  beginspeech=[]
-  endspeechwin=[]
-  endspeechlose=[]
+  trainernames  = []
+  beginspeech   = []
+  endspeechwin  = []
+  endspeechlose = []
   if safeExists?(filename)
     File.open(filename,"rb"){|f|
-       FileLineData.file=filename
-       pbEachFileSectionEx(f){|section,name|
-          rsection=[]
-          for key in section.keys
-            FileLineData.setSection(name,key,section[key])
-            schema=requiredtypes[key]
-            next if !schema
-            record=pbGetCsvRecord(section[key],0,schema)
-            rsection[schema[0]]=record  
-          end
-          trainernames.push(rsection[1]) 
-          beginspeech.push(rsection[2])
-          endspeechwin.push(rsection[3])
-          endspeechlose.push(rsection[4])
-          sections.push(rsection)
-       }
+      FileLineData.file = filename
+      pbEachFileSectionEx(f){|section,name|
+        rsection = []
+        for key in section.keys
+          FileLineData.setSection(name,key,section[key])
+          schema = requiredtypes[key]
+          next if !schema
+          record = pbGetCsvRecord(section[key],0,schema)
+          rsection[schema[0]] = record  
+        end
+        trainernames.push(rsection[1]) 
+        beginspeech.push(rsection[2])
+        endspeechwin.push(rsection[3])
+        endspeechlose.push(rsection[4])
+        sections.push(rsection)
+      }
     }
   end
   MessageTypes.addMessagesAsHash(MessageTypes::TrainerNames,trainernames)
@@ -2455,69 +2800,67 @@ def pbCompileBTTrainers(filename)
 end
 
 def pbCompileTrainerLists
-  btTrainersRequiredTypes={
-     "Trainers"=>[0,"s"],
-     "Pokemon"=>[1,"s"],
-     "Challenges"=>[2,"*s"]
+  btTrainersRequiredTypes = {
+     "Trainers"   => [0,"s"],
+     "Pokemon"    => [1,"s"],
+     "Challenges" => [2,"*s"]
   }
   if !safeExists?("PBS/trainerlists.txt")
     File.open("PBS/trainerlists.txt","wb"){|f|
-       f.write(0xEF.chr)
-       f.write(0xBB.chr)
-       f.write(0xBF.chr)
-       f.write("[DefaultTrainerList]\r\nTrainers=bttrainers.txt\r\nPokemon=btpokemon.txt\r\n")
+      f.write(0xEF.chr)
+      f.write(0xBB.chr)
+      f.write(0xBF.chr)
+      f.write("[DefaultTrainerList]\r\nTrainers=bttrainers.txt\r\nPokemon=btpokemon.txt\r\n")
     }
   end
-  database=[]
-  sections=[]
+  database = []
+  sections = []
   MessageTypes.setMessagesAsHash(MessageTypes::BeginSpeech,[])
   MessageTypes.setMessagesAsHash(MessageTypes::EndSpeechWin,[])
   MessageTypes.setMessagesAsHash(MessageTypes::EndSpeechLose,[])
   File.open("PBS/trainerlists.txt","rb"){|f|
-     FileLineData.file="PBS/trainerlists.txt"
-     pbEachFileSectionEx(f){|section,name|
-        next if name!="DefaultTrainerList" && name!="TrainerList"
-        rsection=[]
-        for key in section.keys
-          FileLineData.setSection(name,key,section[key])
-          schema=btTrainersRequiredTypes[key]
-          next if key=="Challenges" && name=="DefaultTrainerList"
-          next if !schema
-          record=pbGetCsvRecord(section[key],0,schema)
-          rsection[schema[0]]=record  
-        end
-        if !rsection[0]
-          raise _INTL("No trainer data file given in section {1}\r\n{2}",name,FileLineData.linereport)
-        end
-        if !rsection[1]
-          raise _INTL("No trainer data file given in section {1}\r\n{2}",name,FileLineData.linereport)
-        end
-        rsection[3]=rsection[0]
-        rsection[4]=rsection[1]
-        rsection[5]=(name=="DefaultTrainerList")
-        if safeExists?("PBS/"+rsection[0])
-          rsection[0]=pbCompileBTTrainers("PBS/"+rsection[0])
-        else
-          rsection[0]=[]
-        end
-        if safeExists?("PBS/"+rsection[1])
-          filename="PBS/"+rsection[1]
-          rsection[1]=[]
-          pbCompilerEachCommentedLine(filename){|line,lineno|
-             rsection[1].push(PBPokemon.fromInspected(line))
-          }
-        else
-          rsection[1]=[]
-        end
-        if !rsection[2]
-          rsection[2]=[]
-        end
-        while rsection[2].include?("")
-          rsection[2].delete("")
-        end
-        rsection[2].compact!
-        sections.push(rsection)
-     }
+    FileLineData.file="PBS/trainerlists.txt"
+    pbEachFileSectionEx(f){|section,name|
+      next if name!="DefaultTrainerList" && name!="TrainerList"
+      rsection = []
+      for key in section.keys
+        FileLineData.setSection(name,key,section[key])
+        schema = btTrainersRequiredTypes[key]
+        next if key=="Challenges" && name=="DefaultTrainerList"
+        next if !schema
+        record = pbGetCsvRecord(section[key],0,schema)
+        rsection[schema[0]] = record  
+      end
+      if !rsection[0]
+        raise _INTL("No trainer data file given in section {1}\r\n{2}",name,FileLineData.linereport)
+      end
+      if !rsection[1]
+        raise _INTL("No trainer data file given in section {1}\r\n{2}",name,FileLineData.linereport)
+      end
+      rsection[3] = rsection[0]
+      rsection[4] = rsection[1]
+      rsection[5] = (name=="DefaultTrainerList")
+      if safeExists?("PBS/"+rsection[0])
+        rsection[0] = pbCompileBTTrainers("PBS/"+rsection[0])
+      else
+        rsection[0] = []
+      end
+      if safeExists?("PBS/"+rsection[1])
+        filename = "PBS/"+rsection[1]
+        rsection[1] = []
+        pbCompilerEachCommentedLine(filename){|line,lineno|
+          rsection[1].push(PBPokemon.fromInspected(line))
+        }
+      else
+        rsection[1] = []
+      end
+      rsection[2] = [] if !rsection[2]
+      while rsection[2].include?("")
+        rsection[2].delete("")
+      end
+      rsection[2].compact!
+      sections.push(rsection)
+    }
   }
   save_data(sections,"Data/trainerlists.dat")
 end
@@ -2526,36 +2869,35 @@ end
 # Compile wild encounters
 #===============================================================================
 def pbCompileEncounters
-  lines=[]
-  linenos=[]
-  FileLineData.file="PBS/encounters.txt"
+  lines   = []
+  linenos = []
+  FileLineData.file = "PBS/encounters.txt"
   File.open("PBS/encounters.txt","rb"){|f|
-     lineno=1
-     f.each_line {|line|
-        if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
-          line=line[3,line.length-3]
-        end
-        line=prepline(line)
-        if line.length!=0
-          lines[lines.length]=line
-          linenos[linenos.length]=lineno
-        end
-        lineno+=1
-     }
+    lineno = 1
+    f.each_line {|line|
+      if lineno==1 && line[0]==0xEF && line[1]==0xBB && line[2]==0xBF
+        line = line[3,line.length-3]
+      end
+      line = prepline(line)
+      if line.length!=0
+        lines[lines.length] = line
+        linenos[linenos.length] = lineno
+      end
+      lineno += 1
+    }
   }
-  encounters={}
-  thisenc=nil
-  lastenc=-1
-  lastenclen=0
-  needdensity=false
-  lastmapid=-1
-  i=0;
-  while i<lines.length
-    line=lines[i]
+  encounters  = {}
+  thisenc     = nil
+  lastenc     = -1
+  lastenclen  = 0
+  needdensity = false
+  lastmapid   = -1
+  i = 0; while i<lines.length
+    line = lines[i]
     FileLineData.setLine(line,linenos[i])
-    mapid=line[/^\d+$/]
+    mapid = line[/^\d+$/]
     if mapid
-      lastmapid=mapid
+      lastmapid = mapid
       if thisenc && (thisenc[1][EncounterTypes::Land] ||
                      thisenc[1][EncounterTypes::LandMorning] ||
                      thisenc[1][EncounterTypes::LandDay] ||
@@ -2564,30 +2906,28 @@ def pbCompileEncounters
                      thisenc[1][EncounterTypes::Cave]
         raise _INTL("Can't define both Land and Cave encounters in the same area (map ID {1})",mapid)
       end
-      thisenc=[EncounterTypes::EnctypeDensities.clone,[]]
-      encounters[mapid.to_i]=thisenc
-      needdensity=true
-      i+=1
+      thisenc = [EncounterTypes::EnctypeDensities.clone,[]]
+      encounters[mapid.to_i] = thisenc
+      needdensity = true
+      i += 1
       next
     end
-    enc=findIndex(EncounterTypes::Names){|val| val==line}
+    enc = findIndex(EncounterTypes::Names){|val| val==line}
     if enc>=0
-      needdensity=false
-      enclines=EncounterTypes::EnctypeChances[enc].length
-      encarray=[]
-      j=i+1; k=0
-      while j<lines.length && k<enclines
-        line=lines[j]
+      needdensity = false
+      enclines = EncounterTypes::EnctypeChances[enc].length
+      encarray = []
+      j = i+1; k = 0; while j<lines.length && k<enclines
+        line = lines[j]
         FileLineData.setLine(lines[j],linenos[j])
-        splitarr=strsplit(line,/\s*,\s*/)
+        splitarr = strsplit(line,/\s*,\s*/)
         if !splitarr || splitarr.length<2
-          raise _INTL("In encounters.txt, expected a species entry line,\r\ngot \"{1}\" instead (probably too few entries in an encounter type).\r\nPlease check the format of the section numbered {2},\r\nwhich is just before this line.\r\n{3}",
-             line,lastmapid,FileLineData.linereport)
+          raise _INTL("Expected a species entry line in encounters.txt,\r\ngot \"{1}\" instead (probably too few entries in an encounter type).\r\nPlease check the format of the section numbered {2},\r\nwhich is just before this line.\r\n{3}",line,lastmapid,FileLineData.linereport)
         end
-        splitarr[2]=splitarr[1] if splitarr.length==2
-        splitarr[1]=splitarr[1].to_i
-        splitarr[2]=splitarr[2].to_i
-        maxlevel=PBExperience::MAXLEVEL
+        splitarr[2] = splitarr[1] if splitarr.length==2
+        splitarr[1] = splitarr[1].to_i
+        splitarr[2] = splitarr[2].to_i
+        maxlevel = PBExperience::MAXLEVEL
         if splitarr[1]<=0 || splitarr[1]>maxlevel
           raise _INTL("Level number is not valid: {1}\r\n{2}",splitarr[1],FileLineData.linereport)
         end
@@ -2597,35 +2937,32 @@ def pbCompileEncounters
         if splitarr[1]>splitarr[2]
           raise _INTL("Minimum level is greater than maximum level: {1}\r\n{2}",line,FileLineData.linereport)
         end
-        splitarr[0]=parseSpecies(splitarr[0])
-        linearr=splitarr
+        splitarr[0] = parseSpecies(splitarr[0])
+        linearr = splitarr
         encarray.push(linearr)
-        thisenc[1][enc]=encarray
-        j+=1
-        k+=1
+        thisenc[1][enc] = encarray
+        j += 1; k += 1
       end
       if j==lines.length && k<enclines
-         raise _INTL("Reached end of file unexpectedly. There were too few entries in the last section, expected {1} entries.\r\nPlease check the format of the section numbered {2}.\r\n{3}",
-            enclines,lastmapid,FileLineData.linereport)
+        raise _INTL("Reached end of file unexpectedly. There were too few entries in the last section, expected {1} entries.\r\nPlease check the format of the section numbered {2}.\r\n{3}",enclines,lastmapid,FileLineData.linereport)
       end
-      i=j
+      i = j
     elsif needdensity
-      needdensity=false
-      nums=strsplit(line,/,/)
+      needdensity = false
+      nums = strsplit(line,/,/)
       if nums && nums.length>=3
         for j in 0...EncounterTypes::EnctypeChances.length
           next if !EncounterTypes::EnctypeChances[j] ||
                   EncounterTypes::EnctypeChances[j].length==0
           next if EncounterTypes::EnctypeCompileDens[j]==0
-          thisenc[0][j]=nums[EncounterTypes::EnctypeCompileDens[j]-1].to_i
+          thisenc[0][j] = nums[EncounterTypes::EnctypeCompileDens[j]-1].to_i
         end
       else
         raise _INTL("Wrong syntax for densities in encounters.txt; got \"{1}\"\r\n{2}",line,FileLineData.linereport)
       end
-      i+=1
+      i += 1
     else
-      raise _INTL("Undefined encounter type {1}, expected one of the following:\r\n{2}\r\n{3}",
-         line,EncounterTypes::Names.inspect,FileLineData.linereport)
+      raise _INTL("Undefined encounter type {1}, expected one of the following:\r\n{2}\r\n{3}",line,EncounterTypes::Names.inspect,FileLineData.linereport)
     end
   end
   save_data(encounters,"Data/encounters.dat")
@@ -2635,21 +2972,21 @@ end
 # Compile Shadow moves
 #===============================================================================
 def pbCompileShadowMoves
-  sections=[]
+  sections = []
   if File.exists?("PBS/shadowmoves.txt")
     pbCompilerEachCommentedLine("PBS/shadowmoves.txt"){|line,lineno|
-       if line[ /^([^=]+)=(.*)$/ ]
-         key=$1
-         value=$2
-         value=value.split(",")
-         species=parseSpecies(key)
-         moves=[]
-         for i in 0...[4,value.length].min
-           moves.push((parseMove(value[i]) rescue nil))
-         end
-         moves.compact!
-         sections[species]=moves if moves.length>0
-       end
+      if line[ /^([^=]+)=(.*)$/ ]
+        key   = $1
+        value = $2
+        value = value.split(",")
+        species = parseSpecies(key)
+        moves = []
+        for i in 0...[4,value.length].min
+          moves.push((parseMove(value[i]) rescue nil))
+        end
+        moves.compact!
+        sections[species] = moves if moves.length>0
+      end
     }
   end
   save_data(sections,"Data/shadowmoves.dat")
@@ -2661,45 +2998,43 @@ end
 def pbCompileAnimations
   begin
     if $RPGVX
-      pbanims=load_data("Data/PkmnAnimations.rvdata")
+      pbanims = load_data("Data/PkmnAnimations.rvdata")
     else
-      pbanims=load_data("Data/PkmnAnimations.rxdata")
+      pbanims = load_data("Data/PkmnAnimations.rxdata")
     end
   rescue
-    pbanims=PBAnimations.new
+    pbanims = PBAnimations.new
   end
-  move2anim=[[],[]]
+  move2anim = [[],[]]
 =begin
   if $RPGVX
-    anims=load_data("Data/Animations.rvdata")
+    anims = load_data("Data/Animations.rvdata")
   else
-    anims=load_data("Data/Animations.rxdata")
+    anims = load_data("Data/Animations.rxdata")
   end
   for anim in anims
     next if !anim || anim.frames.length==1
-    found=false
+    found = false
     for i in 0...pbanims.length
       if pbanims[i] && pbanims[i].id==anim.id
-        found=true if pbanims[i].array.length>1
+        found = true if pbanims[i].array.length>1
         break
       end
     end
-    if !found
-      pbanims[anim.id]=pbConvertRPGAnimation(anim)
-    end
+    pbanims[anim.id] = pbConvertRPGAnimation(anim) if !found
   end
 =end
   for i in 0...pbanims.length
     next if !pbanims[i]
     if pbanims[i].name[/^OppMove\:\s*(.*)$/]
       if Kernel.hasConst?(PBMoves,$~[1])
-        moveid=PBMoves.const_get($~[1])
-        move2anim[1][moveid]=i
+        moveid = PBMoves.const_get($~[1])
+        move2anim[1][moveid] = i
       end
     elsif pbanims[i].name[/^Move\:\s*(.*)$/]
       if Kernel.hasConst?(PBMoves,$~[1])
-        moveid=PBMoves.const_get($~[1])
-        move2anim[0][moveid]=i
+        moveid = PBMoves.const_get($~[1])
+        move2anim[0][moveid] = i
       end
     end
   end
@@ -2711,44 +3046,42 @@ end
 # Generate and modify events
 #===============================================================================
 def pbGenerateMoveRoute(commands)
-  route=RPG::MoveRoute.new
-  route.repeat=false
-  route.skippable=true
+  route           = RPG::MoveRoute.new
+  route.repeat    = false
+  route.skippable = true
   route.list.clear
-  i=0; while i<commands.length
+  i = 0; while i<commands.length
     case commands[i]
     when PBMoveRoute::Wait, PBMoveRoute::SwitchOn, PBMoveRoute::SwitchOff,
          PBMoveRoute::ChangeSpeed, PBMoveRoute::ChangeFreq, PBMoveRoute::Opacity,
          PBMoveRoute::Blending, PBMoveRoute::PlaySE, PBMoveRoute::Script
       route.list.push(RPG::MoveCommand.new(commands[i],[commands[i+1]]))
-      i+=1
+      i += 1
     when PBMoveRoute::ScriptAsync
       route.list.push(RPG::MoveCommand.new(PBMoveRoute::Script,[commands[i+1]]))
       route.list.push(RPG::MoveCommand.new(PBMoveRoute::Wait,[0]))
-      i+=1
+      i += 1
     when PBMoveRoute::Jump
       route.list.push(RPG::MoveCommand.new(commands[i],[commands[i+1],commands[i+2]]))
-      i+=2
+      i += 2
     when PBMoveRoute::Graphic
       route.list.push(RPG::MoveCommand.new(commands[i],[commands[i+1],commands[i+2],commands[i+3],commands[i+4]]))
-      i+=4
+      i += 4
     else
       route.list.push(RPG::MoveCommand.new(commands[i]))
     end
-    i+=1
+    i += 1
   end
   route.list.push(RPG::MoveCommand.new(0))
   return route
 end
 
 def pbPushMoveRoute(list,character,route,indent=0)
-  if route.is_a?(Array)
-    route=pbGenerateMoveRoute(route)
-  end
+  route = pbGenerateMoveRoute(route) if route.is_a?(Array)
   for i in 0...route.list.length
     list.push(RPG::EventCommand.new(
-       i==0 ? 209 : 509,indent,
-       i==0 ? [character,route] : [route.list[i-1]]))
+       (i==0) ? 209 : 509,indent,
+       (i==0) ? [character,route] : [route.list[i-1]]))
   end
 end
 
@@ -2770,27 +3103,27 @@ def pbPushEnd(list)
 end
 
 def pbPushComment(list,cmt,indent=0)
-  textsplit2=cmt.split(/\n/)
+  textsplit2 = cmt.split(/\n/)
   for i in 0...textsplit2.length
-    list.push(RPG::EventCommand.new(i==0 ? 108 : 408,indent,[textsplit2[i].gsub(/\s+$/,"")]))
+    list.push(RPG::EventCommand.new((i==0) ? 108 : 408,indent,[textsplit2[i].gsub(/\s+$/,"")]))
   end
 end
 
 def pbPushText(list,text,indent=0)
   return if !text
-  textsplit=text.split(/\\m/)
+  textsplit = text.split(/\\m/)
   for t in textsplit
-    first=true
+    first = true
     if $RPGVX
       list.push(RPG::EventCommand.new(101,indent,["",0,0,2]))
-      first=false
+      first = false
     end
-    textsplit2=t.split(/\n/)
+    textsplit2 = t.split(/\n/)
     for i in 0...textsplit2.length
-      textchunk=textsplit2[i].gsub(/\s+$/,"")
+      textchunk = textsplit2[i].gsub(/\s+$/,"")
       if textchunk && textchunk!=""
-        list.push(RPG::EventCommand.new(first ? 101 : 401,indent,[textchunk]))
-        first=false
+        list.push(RPG::EventCommand.new((first) ? 101 : 401,indent,[textchunk]))
+        first = false
       end
     end
   end
@@ -2798,13 +3131,13 @@ end
 
 def pbPushScript(list,script,indent=0)
   return if !script
-  first=true
-  textsplit2=script.split(/\n/)
+  first = true
+  textsplit2 = script.split(/\n/)
   for i in 0...textsplit2.length
-    textchunk=textsplit2[i].gsub(/\s+$/,"")
+    textchunk = textsplit2[i].gsub(/\s+$/,"")
     if textchunk && textchunk!=""
-      list.push(RPG::EventCommand.new(first ? 355 : 655,indent,[textchunk]))
-      first=false
+      list.push(RPG::EventCommand.new((first) ? 355 : 655,indent,[textchunk]))
+      first = false
     end
   end
 end
@@ -2832,28 +3165,28 @@ def pbPushSelfSwitch(list,swtch,switchOn,indent=0)
 end
 
 def safequote(x)
-  x=x.gsub(/\"\#\'\\/){|a| "\\"+a }
-  x=x.gsub(/\t/,"\\t")
-  x=x.gsub(/\r/,"\\r")
-  x=x.gsub(/\n/,"\\n")
+  x = x.gsub(/\"\#\'\\/){|a| "\\"+a }
+  x = x.gsub(/\t/,"\\t")
+  x = x.gsub(/\r/,"\\r")
+  x = x.gsub(/\n/,"\\n")
   return x
 end
 
 def safequote2(x)
-  x=x.gsub(/\"\#\'\\/){|a| "\\"+a }
-  x=x.gsub(/\t/,"\\t")
-  x=x.gsub(/\r/,"\\r")
-  x=x.gsub(/\n/," ")
+  x = x.gsub(/\"\#\'\\/){|a| "\\"+a }
+  x = x.gsub(/\t/,"\\t")
+  x = x.gsub(/\r/,"\\r")
+  x = x.gsub(/\n/," ")
   return x
 end
 
 def pbEventId(event)
-  list=event.pages[0].list
+  list = event.pages[0].list
   return nil if list.length==0
-  codes=[]
-  i=0;while i<list.length
+  codes = []
+  i = 0; while i<list.length
     codes.push(list[i].code)
-    i+=1
+    i += 1
   end
 end
 
@@ -2861,25 +3194,23 @@ end
 
 class MapData
   def initialize
-    @mapinfos=pbLoadRxData("Data/MapInfos")
-    @system=pbLoadRxData("Data/System")
-    @tilesets=pbLoadRxData("Data/Tilesets")
-    @mapxy=[]
-    @mapWidths=[]
-    @mapHeights=[]
-    @maps=[]
-    @registeredSwitches={}
+    @mapinfos = pbLoadRxData("Data/MapInfos")
+    @system   = pbLoadRxData("Data/System")
+    @tilesets = pbLoadRxData("Data/Tilesets")
+    @mapxy      = []
+    @mapWidths  = []
+    @mapHeights = []
+    @maps       = []
+    @registeredSwitches = {}
   end
 
   def registerSwitch(switch)
-    if @registeredSwitches[switch]
-      return @registeredSwitches[switch]
-    end
+    return @registeredSwitches[switch] if @registeredSwitches[switch]
     for id in 1..5000
-      name=@system.switches[id]
+      name = @system.switches[id]
       if !name || name=="" || name==switch
-        @system.switches[id]=switch
-        @registeredSwitches[switch]=id
+        @system.switches[id] = switch
+        @registeredSwitches[switch] = id
         return id
       end
     end
@@ -2888,18 +3219,10 @@ class MapData
 
   def saveTilesets
     filename="Data/Tilesets"
-    if $RPGVX
-      filename+=".rvdata"
-    else
-      filename+=".rxdata"
-    end
+    filename += ($RPGVX) ? ".rvdata" : ".rxdata"
     save_data(@tilesets,filename)
-    filename="Data/System"
-    if $RPGVX
-      filename+=".rvdata"
-    else
-      filename+=".rxdata"
-    end
+    filename = "Data/System"
+    filename += ($RPGVX) ? ".rvdata" : ".rxdata"
     save_data(@system,filename)
   end
 
@@ -2908,40 +3231,33 @@ class MapData
   end
 
   def mapFilename(mapID)
-    filename=sprintf("Data/map%03d",mapID)
-    if $RPGVX
-      filename+=".rvdata"
-    else
-      filename+=".rxdata"
-    end
+    filename = sprintf("Data/map%03d",mapID)
+    filename += ($RPGVX) ? ".rvdata" : ".rxdata"
     return filename
   end
 
   def getMap(mapID)
-    if @maps[mapID]
+    return @maps[mapID] if @maps[mapID]
+    begin
+      @maps[mapID] = load_data(mapFilename(mapID))
       return @maps[mapID]
-    else
-      begin
-        @maps[mapID]=load_data(mapFilename(mapID))
-        return @maps[mapID]
-      rescue
-        return nil
-      end
+    rescue
+      return nil
     end
   end
 
   def isPassable?(mapID,x,y)
     if !$RPGVX
-      map=getMap(mapID)
+      map = getMap(mapID)
       return false if !map
       return false if x<0 || x>=map.width || y<0 || y>=map.height
-      passages=@tilesets[map.tileset_id].passages
-      priorities=@tilesets[map.tileset_id].priorities
+      passages   = @tilesets[map.tileset_id].passages
+      priorities = @tilesets[map.tileset_id].priorities
       for i in [2, 1, 0]
         tile_id = map.data[x, y, i]
-        return false if tile_id == nil
-        return false if passages[tile_id] & 0x0f == 0x0f
-        return true if priorities[tile_id] == 0
+        return false if tile_id==nil
+        return false if passages[tile_id]&0x0f==0x0f
+        return true if priorities[tile_id]==0
       end
     end
     return true
@@ -2949,13 +3265,13 @@ class MapData
 
   def setCounterTile(mapID,x,y)
     if !$RPGVX
-      map=getMap(mapID)
+      map = getMap(mapID)
       return if !map
-      passages=@tilesets[map.tileset_id].passages
+      passages = @tilesets[map.tileset_id].passages
       for i in [2, 1, 0]
         tile_id = map.data[x, y, i]
-        next if tile_id == 0 || tile_id==nil || !passages[tile_id]
-        passages[tile_id]|=0x80
+        next if tile_id==0 || tile_id==nil || !passages[tile_id]
+        passages[tile_id] |= 0x80
         break
       end
     end
@@ -2963,13 +3279,13 @@ class MapData
 
   def isCounterTile?(mapID,x,y)
     return false if $RPGVX
-    map=getMap(mapID)
+    map = getMap(mapID)
     return false if !map
-    passages=@tilesets[map.tileset_id].passages
+    passages = @tilesets[map.tileset_id].passages
     for i in [2, 1, 0]
       tile_id = map.data[x, y, i]
-      return false if tile_id == nil
-      return true if passages[tile_id] && passages[tile_id] & 0x80 == 0x80
+      return false if tile_id==nil
+      return true if passages[tile_id] && passages[tile_id]&0x80==0x80
     end
     return false
   end
@@ -2980,62 +3296,55 @@ class MapData
 
   def getEventFromXY(mapID,x,y)
     return nil if x<0 || y<0
-    mapPositions=@mapxy[mapID]
-    if mapPositions
-      return mapPositions[y*@mapWidths[mapID]+x]
-    else
-      map=getMap(mapID)
-      return nil if !map
-      @mapWidths[mapID]=map.width
-      @mapHeights[mapID]=map.height
-      mapPositions=[]
-      width=map.width
-      for e in map.events.values
-        mapPositions[e.y*width+e.x]=e if e
-      end
-      @mapxy[mapID]=mapPositions
-      return mapPositions[y*width+x]
+    mapPositions = @mapxy[mapID]
+    return mapPositions[y*@mapWidths[mapID]+x] if mapPositions
+    map = getMap(mapID)
+    return nil if !map
+    @mapWidths[mapID]  = map.width
+    @mapHeights[mapID] = map.height
+    mapPositions = []
+    width = map.width
+    for e in map.events.values
+      mapPositions[e.y*width+e.x] = e if e
     end
+    @mapxy[mapID] = mapPositions
+    return mapPositions[y*width+x]
   end
 
   def getEventFromID(mapID,id)
-    map=getMap(mapID)
+    map = getMap(mapID)
     return nil if !map
     return map.events[id]
   end
 
-  def mapinfos
-    return @mapinfos
-  end
+  def mapinfos; return @mapinfos; end
 end
 
 
 
 class TrainerChecker
   def initialize
-    @trainers=nil
-    @trainertypes=nil
-    @dontaskagain=false
+    @trainers     = nil
+    @trainertypes = nil
+    @dontaskagain = false
   end
 
   def pbTrainerTypeCheck(symbol)
-    ret=true
+    ret = true
     if $DEBUG  
       return if @dontaskagain
       if !hasConst?(PBTrainers,symbol)
-        ret=false
+        ret = false
       else
-        trtype=PBTrainers.const_get(symbol)
-        @trainertypes=load_data("Data/trainertypes.dat") if !@trainertypes
-        if !@trainertypes || !@trainertypes[trtype]     
-          ret=false   
-        end
+        trtype = PBTrainers.const_get(symbol)
+        @trainertypes = load_data("Data/trainertypes.dat") if !@trainertypes
+        ret = false  if !@trainertypes || !@trainertypes[trtype]     
       end  
       if !ret
         if Kernel.pbConfirmMessage(_INTL("Add new trainer named {1}?",symbol))
           pbTrainerTypeEditorNew(symbol.to_s)
-          @trainers=nil
-          @trainertypes=nil
+          @trainers     = nil
+          @trainertypes = nil
         end
 #        if pbMapInterpreter
 #          pbMapInterpreter.command_end rescue nil
@@ -3051,25 +3360,25 @@ class TrainerChecker
       if trtype.is_a?(String) || trtype.is_a?(Symbol)
         pbTrainerTypeCheck(trtype)
         return if !hasConst?(PBTrainers,trtype)
-        trtype=PBTrainers.const_get(trtype)
+        trtype = PBTrainers.const_get(trtype)
       end
-      @trainers=load_data("Data/trainers.dat") if !@trainers
+      @trainers = load_data("Data/trainers.dat") if !@trainers
       if @trainers
         for trainer in @trainers
-          name=trainer[1]
-          thistrainerid=trainer[0]
-          thispartyid=trainer[4]
+          name          = trainer[1]
+          thistrainerid = trainer[0]
+          thispartyid   = trainer[4]
           next if name!=trname || thistrainerid!=trtype || thispartyid!=trid
           return
         end
       end
-      cmd=pbMissingTrainer(trtype,trname,trid)
+      cmd = pbMissingTrainer(trtype,trname,trid)
       if cmd==2
-        @dontaskagain=true
+        @dontaskagain = true
         Graphics.update
       end
-      @trainers=nil
-      @trainertypes=nil
+      @trainers     = nil
+      @trainertypes = nil
     end
   end
 end
@@ -3077,58 +3386,54 @@ end
 
 
 def pbCompileTrainerEvents(mustcompile)
-  mapdata=MapData.new
+  mapdata = MapData.new
   t = Time.now.to_i
   Graphics.update
-  trainerChecker=TrainerChecker.new
+  trainerChecker = TrainerChecker.new
   for id in mapdata.mapinfos.keys.sort
-    changed=false
-    map=mapdata.getMap(id)
+    changed = false
+    map = mapdata.getMap(id)
     next if !map || !mapdata.mapinfos[id]
     Win32API.SetWindowText(_INTL("Processing map {1} ({2})",id,mapdata.mapinfos[id].name))
     for key in map.events.keys
-      if Time.now.to_i - t >= 5
+      if Time.now.to_i-t>=5
         Graphics.update
         t = Time.now.to_i
       end
-      newevent=pbConvertToTrainerEvent(map.events[key],trainerChecker)
+      newevent = pbConvertToTrainerEvent(map.events[key],trainerChecker)
       if newevent
-        changed=true
-        map.events[key]=newevent
+        map.events[key] = newevent; changed = true
       end
-      newevent=pbConvertToItemEvent(map.events[key])
+      newevent = pbConvertToItemEvent(map.events[key])
       if newevent
-        changed=true
-        map.events[key]=newevent
+        map.events[key] = newevent; changed = true
       end
-      newevent=pbFixEventUse(map.events[key],id,mapdata)
+      newevent = pbFixEventUse(map.events[key],id,mapdata)
       if newevent
-        changed=true
-        map.events[key]=newevent
+        map.events[key] = newevent; changed = true
       end
     end
-    if Time.now.to_i - t >= 5
+    if Time.now.to_i-t>=5
       Graphics.update
       t = Time.now.to_i
     end
-    changed=true if pbCheckCounters(map,id,mapdata)
+    changed = true if pbCheckCounters(map,id,mapdata)
     if changed
       mapdata.saveMap(id)
       mapdata.saveTilesets
     end
   end
-  changed=false
+  changed = false
   if Time.now.to_i-t>=5
     Graphics.update
-    t=Time.now.to_i
+    t = Time.now.to_i
   end
-  commonEvents=pbLoadRxData("Data/CommonEvents")
+  commonEvents = pbLoadRxData("Data/CommonEvents")
   Win32API.SetWindowText(_INTL("Processing common events"))
   for key in 0...commonEvents.length
-    newevent=pbFixEventUse(commonEvents[key],0,mapdata)
+    newevent = pbFixEventUse(commonEvents[key],0,mapdata)
     if newevent
-      changed=true
-      map.events[key]=newevent
+      map.events[key] = newevent; changed = true
     end
   end
   if changed
@@ -3138,63 +3443,59 @@ def pbCompileTrainerEvents(mustcompile)
       save_data(commonEvents,"Data/CommonEvents.rxdata")
     end
   end
-#  if !$RPGVX && $INTERNAL
-#    convertVXProject(mapdata)
-#  end
+#  convertVXProject(mapdata) if !$RPGVX && $INTERNAL
 end
 
 def isPlainEvent?(event)
   return event && event.pages.length<=1 && 
-         event.pages[0].list.length<=1 &&
-         event.pages[0].move_type==0 &&
-         event.pages[0].condition.switch1_valid==false &&
-         event.pages[0].condition.switch2_valid==false &&
-         event.pages[0].condition.variable_valid==false &&
-         event.pages[0].condition.self_switch_valid==false
+     event.pages[0].list.length<=1 &&
+     event.pages[0].move_type==0 &&
+     event.pages[0].condition.switch1_valid==false &&
+     event.pages[0].condition.switch2_valid==false &&
+     event.pages[0].condition.variable_valid==false &&
+     event.pages[0].condition.self_switch_valid==false
 end
 
 def isPlainEventOrMart?(event)
-  return event &&
-         event.pages.length<=1 && 
-         event.pages[0].move_type==0 &&
-         event.pages[0].condition.switch1_valid==false &&
-         event.pages[0].condition.switch2_valid==false &&
-         event.pages[0].condition.variable_valid==false &&
-         event.pages[0].condition.self_switch_valid==false &&
-         ((event.pages[0].list.length<=1) || (
-         event.pages[0].list.length<=12 &&
-         event.pages[0].graphic.character_name!="" &&
-         event.pages[0].list[0].code==355 &&
-         event.pages[0].list[0].parameters[0][/^pbPokemonMart/]) || (
-         event.pages[0].list.length>8 &&
-         event.pages[0].graphic.character_name!="" &&
-         event.pages[0].list[0].code==355 &&
-         event.pages[0].list[0].parameters[0][/^Kernel\.pbSetPokemonCenter/])
-         )
+  return event && event.pages.length<=1 && 
+     event.pages[0].move_type==0 &&
+     event.pages[0].condition.switch1_valid==false &&
+     event.pages[0].condition.switch2_valid==false &&
+     event.pages[0].condition.variable_valid==false &&
+     event.pages[0].condition.self_switch_valid==false &&
+     (event.pages[0].list.length<=1 || (
+     event.pages[0].list.length<=12 &&
+     event.pages[0].graphic.character_name!="" &&
+     event.pages[0].list[0].code==355 &&
+     event.pages[0].list[0].parameters[0][/^pbPokemonMart/]) || (
+     event.pages[0].list.length>8 &&
+     event.pages[0].graphic.character_name!="" &&
+     event.pages[0].list[0].code==355 &&
+     event.pages[0].list[0].parameters[0][/^Kernel\.pbSetPokemonCenter/]))
 end
 
 def applyPages(page,pages)
   for p in pages
-    p.graphic=page.graphic
-    p.walk_anime=page.walk_anime
-    p.step_anime=page.step_anime
-    p.direction_fix=page.direction_fix
-    p.through=page.through
-    p.always_on_top=page.always_on_top
+    p.graphic       = page.graphic
+    p.walk_anime    = page.walk_anime
+    p.step_anime    = page.step_anime
+    p.direction_fix = page.direction_fix
+    p.through       = page.through
+    p.always_on_top = page.always_on_top
   end
 end
 
 def isLikelyCounter?(thisEvent,otherEvent,mapID,mapdata)
   # Check whether other event is likely on a counter tile
-  yonderX=otherEvent.x+(otherEvent.x-thisEvent.x)
-  yonderY=otherEvent.y+(otherEvent.y-thisEvent.y)
+  yonderX = otherEvent.x+(otherEvent.x-thisEvent.x)
+  yonderY = otherEvent.y+(otherEvent.y-thisEvent.y)
   return true if mapdata.isCounterTile?(mapID,otherEvent.x,otherEvent.y)
   return thisEvent.pages[0].graphic.character_name!="" &&
-         otherEvent.pages[0].graphic.character_name=="" &&
-         otherEvent.pages[0].trigger==0 &&
-         mapdata.isPassable?(mapID,thisEvent.x,thisEvent.y) &&
-         !mapdata.isPassable?(mapID,otherEvent.x,otherEvent.y) &&
-         mapdata.isPassable?(mapID,yonderX,yonderY)
+     otherEvent.pages[0].graphic.character_name=="" &&
+     otherEvent.pages[0].trigger==0 &&
+     mapdata.isPassable?(mapID,thisEvent.x,thisEvent.y) &&
+     !mapdata.isPassable?(mapID,otherEvent.x,otherEvent.y) &&
+     mapdata.isPassable?(mapID,yonderX,yonderY)
 end
 
 def isLikelyPassage?(thisEvent,mapID,mapdata)
@@ -3215,15 +3516,15 @@ def isLikelyPassage?(thisEvent,mapID,mapdata)
 end
 
 def pbCheckCounters(map,mapID,mapdata)
-  todelete=[]
-  changed=false
+  todelete = []
+  changed = false
   for key in map.events.keys
-    event=map.events[key]
+    event = map.events[key]
     next if !event
-    firstCommand=event.pages[0].list[0]
+    firstCommand = event.pages[0].list[0]
     if isPlainEventOrMart?(event)
       # Empty event, check for counter events
-      neighbors=[]
+      neighbors = []
       neighbors.push(mapdata.getEventFromXY(mapID,event.x,event.y-1))
       neighbors.push(mapdata.getEventFromXY(mapID,event.x,event.y+1))
       neighbors.push(mapdata.getEventFromXY(mapID,event.x-1,event.y))
@@ -3233,11 +3534,11 @@ def pbCheckCounters(map,mapID,mapdata)
         next if isPlainEvent?(otherEvent)
         if isLikelyCounter?(event,otherEvent,mapID,mapdata)
           mapdata.setCounterTile(mapID,otherEvent.x,otherEvent.y)
-          savedPage=event.pages[0]
-          event.pages=otherEvent.pages
+          savedPage = event.pages[0]
+          event.pages = otherEvent.pages
           applyPages(savedPage,event.pages)
           todelete.push(otherEvent.id)
-          changed=true
+          changed = true
         end
       end
     end
@@ -3250,13 +3551,13 @@ end
 
 def pbAddPassageList(event,mapdata)
   return if !event || event.pages.length==0
-  page=RPG::Event::Page.new
-  page.condition.switch1_valid=true
-  page.condition.switch1_id=mapdata.registerSwitch('s:tsOff?("A")')
-  page.graphic.character_name=""
-  page.trigger=3 # Autorun
+  page                         = RPG::Event::Page.new
+  page.condition.switch1_valid = true
+  page.condition.switch1_id    = mapdata.registerSwitch('s:tsOff?("A")')
+  page.graphic.character_name  = ""
+  page.trigger                 = 3 # Autorun
   page.list.clear
-  list=page.list
+  list = page.list
   pbPushBranch(list,"get_character(0).onEvent?")
   pbPushEvent(list,208,[0],1)
   pbPushWait(list,6,1)
@@ -3269,7 +3570,7 @@ def pbAddPassageList(event,mapdata)
 end
 
 def pbUpdateDoor(event,mapdata)
-  changed=false
+  changed = false
   return false if event.is_a?(RPG::CommonEvent)
   if event.pages.length>=2 && 
      event.pages[event.pages.length-1].condition.switch1_valid &&
@@ -3278,8 +3579,8 @@ def pbUpdateDoor(event,mapdata)
      event.pages[event.pages.length-1].graphic.character_name!="" &&
      mapdata.switchName(event.pages[event.pages.length-1].condition.switch1_id)!='s:tsOff?("A")' &&
      event.pages[event.pages.length-1].list[0].code==111
-    event.pages[event.pages.length-1].condition.switch1_id=mapdata.registerSwitch('s:tsOff?("A")')
-    changed=true
+    event.pages[event.pages.length-1].condition.switch1_id = mapdata.registerSwitch('s:tsOff?("A")')
+    changed = true
   end
   if event.pages.length>=2 && 
      event.pages[event.pages.length-1].condition.switch1_valid &&
@@ -3287,12 +3588,12 @@ def pbUpdateDoor(event,mapdata)
      event.pages[event.pages.length-1].graphic.character_name!="" &&
      mapdata.switchName(event.pages[event.pages.length-1].condition.switch1_id)=='s:tsOff?("A")' &&
      event.pages[event.pages.length-1].list[0].code==111
-    list=event.pages[event.pages.length-2].list
-    transferCommand=list.find_all {|cmd| cmd.code==201 }
+    list = event.pages[event.pages.length-2].list
+    transferCommand = list.find_all {|cmd| cmd.code==201 }
     if transferCommand.length==1 && !list.any?{|cmd| cmd.code==208 }
       list.clear
       pbPushMoveRouteAndWait(list,0,[
-         PBMoveRoute::PlaySE,RPG::AudioFile.new("Entering Door"),PBMoveRoute::Wait,2,
+         PBMoveRoute::PlaySE,RPG::AudioFile.new("Door enter"),PBMoveRoute::Wait,2,
          PBMoveRoute::TurnLeft,PBMoveRoute::Wait,2,
          PBMoveRoute::TurnRight,PBMoveRoute::Wait,2,
          PBMoveRoute::TurnUp,PBMoveRoute::Wait,2])
@@ -3309,7 +3610,7 @@ def pbUpdateDoor(event,mapdata)
       pbPushEvent(list,transferCommand[0].code,transferCommand[0].parameters)
       pbPushEvent(list,223,[Tone.new(0,0,0),6])
       pbPushEnd(list)
-      list=event.pages[event.pages.length-1].list
+      list = event.pages[event.pages.length-1].list
       list.clear
       pbPushBranch(list,"get_character(0).onEvent?")
       pbPushEvent(list,208,[0],1)
@@ -3324,7 +3625,7 @@ def pbUpdateDoor(event,mapdata)
       pbPushBranchEnd(list,1)
       pbPushScript(list,"setTempSwitchOn(\"A\")")
       pbPushEnd(list)
-      changed=true
+      changed = true
     end
   end
   return changed
@@ -3350,57 +3651,55 @@ def pbEachPage(e)
 end
 
 def pbChangeScript(script,re)
-  tmp=script[0].gsub(re){ yield($~) }
+  tmp = script[0].gsub(re){ yield($~) }
   if script[0]!=tmp
-    script[0]=tmp; return true
+    script[0] = tmp; return true
   end
   return false
 end
 
 def pbChangeScripts(script)
-  changed=false
-  changed|=pbChangeScript(script,/\$game_variables\[(\d+)\](?!\s*(?:\=|\!|<|>))/){|m| "pbGet("+m[1]+")" }
-  changed|=pbChangeScript(script,/\$Trainer\.party\[\s*pbGet\((\d+)\)\s*\]/){|m| "pbGetPokemon("+m[1]+")" }
+  changed = false
+  changed |= pbChangeScript(script,/\$game_variables\[(\d+)\](?!\s*(?:\=|\!|<|>))/){|m| "pbGet("+m[1]+")" }
+  changed |= pbChangeScript(script,/\$Trainer\.party\[\s*pbGet\((\d+)\)\s*\]/){|m| "pbGetPokemon("+m[1]+")" }
   return changed
 end
 
 def pbFixEventUse(event,mapID,mapdata)
   return nil if pbEventIsEmpty?(event)
-  changed=false
-  trainerMoneyRE=/^\s*\$Trainer\.money\s*(<|<=|>|>=)\s*(\d+)\s*$/
-  itemBallRE=/^\s*(Kernel\.)?pbItemBall/
-  if pbUpdateDoor(event,mapdata)
-    changed=true
-  end
+  changed = false
+  trainerMoneyRE = /^\s*\$Trainer\.money\s*(<|<=|>|>=)\s*(\d+)\s*$/
+  itemBallRE     = /^\s*(Kernel\.)?pbItemBall/
+  changed = true if pbUpdateDoor(event,mapdata)
   pbEachPage(event) do |page|
-    i=0
-    list=page.list
+    i = 0
+    list = page.list
     while i<list.length
-      params=list[i].parameters
+      params = list[i].parameters
       if list[i].code==655
-        x=[params[0]]
-        changed|=pbChangeScripts(x)
-        params[0]=x[0]
+        x = [params[0]]
+        changed |= pbChangeScripts(x)
+        params[0] = x[0]
       elsif list[i].code==355
-        lastScript=i
+        lastScript = i
         if !params[0].is_a?(String)
-          i+=1
+          i += 1
           next
         end
-        x=[params[0]]
-        changed|=pbChangeScripts(x)
-        params[0]=x[0]
+        x = [params[0]]
+        changed |= pbChangeScripts(x)
+        params[0] = x[0]
         if params[0][0,1]!="f" && params[0][0,1]!="p" && params[0][0,1]!="K"
-          i+=1
+          i += 1
           next
         end
-        script=" "+params[0]
-        j=i+1
+        script = " "+params[0]
+        j = i+1
         while j<list.length
           break if list[j].code!=655
-          script+=list[j].parameters[0]
-          lastScript=j
-          j+=1
+          script += list[j].parameters[0]
+          lastScript = j
+          j += 1
         end
         script.gsub!(/\s+/,"")
         # Using old method of recovering
@@ -3413,7 +3712,7 @@ def pbFixEventUse(event,mapID,mapdata)
           )
           changed=true
         elsif script=="pbFadeOutIn(99999){foriin$Trainer.partyi.healend}"
-          oldIndent=list[i].indent
+          oldIndent = list[i].indent
           for j in i..lastScript
             list.delete_at(i)
           end
@@ -3424,16 +3723,16 @@ def pbFixEventUse(event,mapID,mapdata)
              RPG::EventCommand.new(223,oldIndent,[Tone.new(0,0,0),6]), # Fade to normal
              RPG::EventCommand.new(106,oldIndent,[6]) # Wait
           )
-          changed=true
+          changed = true
         end
       elsif list[i].code==108
         if params[0][/SellItem\s*\(\s*(\w+)\s*\,\s*(\d+)\s*\)/]
-          itemname=$1
-          cost=$2.to_i
+          itemname = $1
+          cost     = $2.to_i
           if hasConst?(PBItems,itemname)
-            oldIndent=list[i].indent
+            oldIndent = list[i].indent
             list.delete_at(i)
-            newEvents=[]
+            newEvents = []
             if cost==0
               pbPushBranch(newEvents,"$PokemonBag.pbCanStore?(PBItems:"+":#{itemname})",oldIndent)
               pbPushText(newEvents,_INTL("Here you go!"),oldIndent+1)
@@ -3454,94 +3753,94 @@ def pbFixEventUse(event,mapID,mapdata)
               pbPushText(newEvents,_INTL("\\GYou don't have enough money."),oldIndent+1)
               pbPushBranchEnd(newEvents,oldIndent+1)
             end
-            list[i,0]=newEvents # insert 'newEvents' at index 'i'
-            changed=true
+            list[i,0] = newEvents # insert 'newEvents' at index 'i'
+            changed = true
           end
         end
       elsif list[i].code==115 && i==list.length-2
         # Superfluous exit command
         list.delete_at(i)
-        changed=true
+        changed = true
       elsif list[i].code==201 && list.length<=8
         if params[0]==0
           # Transfer back to door
-          e=mapdata.getEventFromXY(params[1],params[2],params[3]-1)
+          e = mapdata.getEventFromXY(params[1],params[2],params[3]-1)
           if e && e.pages.length>=2 && 
              e.pages[e.pages.length-1].condition.switch1_valid &&
              e.pages[e.pages.length-1].condition.switch1_id==22 &&
              mapdata.switchName(e.pages[e.pages.length-1].condition.switch1_id)!='s:tsOff?("A")' &&
              e.pages[e.pages.length-1].list.length>5 &&
              e.pages[e.pages.length-1].list[0].code==111
-            e.pages[e.pages.length-1].condition.switch1_id=mapdata.registerSwitch('s:tsOff?("A")')
+            e.pages[e.pages.length-1].condition.switch1_id = mapdata.registerSwitch('s:tsOff?("A")')
             mapdata.saveMap(params[1])
-            changed=true
+            changed = true
           end
           if isLikelyPassage?(e,params[1],mapdata)
             pbAddPassageList(e,mapdata)
             mapdata.saveMap(params[1])
-            changed=true
+            changed = true
           end
           if e && e.pages.length>=2 && 
              e.pages[e.pages.length-1].condition.switch1_valid &&
-            mapdata.switchName(e.pages[e.pages.length-1].condition.switch1_id)=='s:tsOff?("A")'
+             mapdata.switchName(e.pages[e.pages.length-1].condition.switch1_id)=='s:tsOff?("A")'
             # If this is really a door, move transfer target to it
-            params[3]-=1
-            params[5]=1 # No fade
-            changed=true
+            params[3] -= 1
+            params[5] = 1 # No fade
+            changed = true
           end
-          deletedRoute=nil
-          deleteMoveRouteAt=proc{|list,_i|
-             arr=[]
-             if list[_i] && list[_i].code==209
-               arr.push(list[_i]);list.delete_at(_i)
-               while _i<list.length
-                 break if !list[_i] || list[_i].code!=509
-                 arr.push(list[_i]);list.delete_at(_i)     
-               end
-             end
-             next arr
+          deletedRoute = nil
+          deleteMoveRouteAt = proc{|list,_i|
+            arr = []
+            if list[_i] && list[_i].code==209
+              arr.push(list[_i]); list.delete_at(_i)
+              while _i<list.length
+                break if !list[_i] || list[_i].code!=509
+                arr.push(list[_i]); list.delete_at(_i)     
+              end
+            end
+            next arr
           }
-          insertMoveRouteAt=proc{|list,_i,route|
-             _j=route.length-1
-             while _j>=0
-               list.insert(_i,route[_j])
-               _j-=1
-             end
+          insertMoveRouteAt = proc{|list,_i,route|
+            _j = route.length-1
+            while _j>=0
+              list.insert(_i,route[_j])
+              _j -= 1
+            end
           }
           if params[4]==0 && # Retain direction
              i+1<list.length && list[i+1].code==209 && list[i+1].parameters[0]==-1
-            route=list[i+1].parameters[1]
+            route = list[i+1].parameters[1]
             if route && route.list.length<=2
               # Delete superfluous move route command if necessary
               if route.list[0].code==16 # Player/Turn Down
-                deleteMoveRouteAt.call(list,i+1); params[4]=2; changed=true
+                deleteMoveRouteAt.call(list,i+1); params[4] = 2; changed = true
               elsif route.list[0].code==17 # Left
-                deleteMoveRouteAt.call(list,i+1); params[4]=4; changed=true
+                deleteMoveRouteAt.call(list,i+1); params[4] = 4; changed = true
               elsif route.list[0].code==18 # Right
-                deleteMoveRouteAt.call(list,i+1); params[4]=6; changed=true
+                deleteMoveRouteAt.call(list,i+1); params[4] = 6; changed = true
               elsif route.list[0].code==19 # Up
-                deleteMoveRouteAt.call(list,i+1); params[4]=8; changed=true
+                deleteMoveRouteAt.call(list,i+1); params[4] = 8; changed = true
               elsif (route.list[0].code==1 || route.list[0].code==2 ||
                  route.list[0].code==3 || route.list[0].code==4) && list.length==4
-                params[4]=[0,2,4,6,8][route.list[0].code]
-                deletedRoute=deleteMoveRouteAt.call(list,i+1); changed=true
+                params[4] = [0,2,4,6,8][route.list[0].code]
+                deletedRoute = deleteMoveRouteAt.call(list,i+1); changed = true
               end
             end
           elsif params[4]==0 && i>3
             for j in 0...i
               if list[j].code==209 && list[j].parameters[0]==-1
-                route=list[j].parameters[1]
-                oldlistlength=list.length
+                route = list[j].parameters[1]
+                oldlistlength = list.length
                 if route && route.list.length<=2
                   # Delete superfluous move route command if necessary
                   if route.list[0].code==16 # Player/Turn Down
-                    deleteMoveRouteAt.call(list,j); params[4]=2; changed=true;i-=(oldlistlength-list.length)
+                    deleteMoveRouteAt.call(list,j); params[4] = 2; changed = true; i -= (oldlistlength-list.length)
                   elsif route.list[0].code==17 # Left
-                    deleteMoveRouteAt.call(list,j); params[4]=4; changed=true;i-=(oldlistlength-list.length)
+                    deleteMoveRouteAt.call(list,j); params[4] = 4; changed = true; i -= (oldlistlength-list.length)
                   elsif route.list[0].code==18 # Right
-                    deleteMoveRouteAt.call(list,j); params[4]=6; changed=true;i-=(oldlistlength-list.length)
+                    deleteMoveRouteAt.call(list,j); params[4] = 6; changed = true; i -= (oldlistlength-list.length)
                   elsif route.list[0].code==19 # Up
-                    deleteMoveRouteAt.call(list,j); params[4]=8; changed=true;i-=(oldlistlength-list.length)
+                    deleteMoveRouteAt.call(list,j); params[4] = 8; changed = true; i -= (oldlistlength-list.length)
                   end
                 end
               end
@@ -3551,26 +3850,26 @@ def pbFixEventUse(event,mapID,mapdata)
              list[i+1].code==223 &&
              list[i+2].code==209 && 
              list[i+2].parameters[0]==-1
-            route=list[i+2].parameters[1]
+            route = list[i+2].parameters[1]
             if route && route.list.length<=2
               # Delete superfluous move route command if necessary
               if route.list[0].code==16 # Player/Turn Down
-                deleteMoveRouteAt.call(list,i+2); params[4]=2; changed=true
+                deleteMoveRouteAt.call(list,i+2); params[4] = 2; changed = true
               elsif route.list[0].code==17 # Left
-                deleteMoveRouteAt.call(list,i+2); params[4]=4; changed=true
+                deleteMoveRouteAt.call(list,i+2); params[4] = 4; changed = true
               elsif route.list[0].code==18 # Right
-                deleteMoveRouteAt.call(list,i+2); params[4]=6; changed=true
+                deleteMoveRouteAt.call(list,i+2); params[4] = 6; changed = true
               elsif route.list[0].code==19 # Up
-                deleteMoveRouteAt.call(list,i+2); params[4]=8; changed=true
+                deleteMoveRouteAt.call(list,i+2); params[4] = 8; changed = true
               end
             end
           end
         end
         # If this is the only event command, convert to a full event
         if list.length==2 || (list.length==3 && (list[0].code==250 || list[1].code==250))
-          params[5]=1 # No fade
-          fullTransfer=list[i]
-          indent=list[i].indent
+          params[5] = 1 # No fade
+          fullTransfer = list[i]
+          indent = list[i].indent
           (list.length-1).times { list.delete_at(0) }
           list.insert(0,
              RPG::EventCommand.new(250,indent,[RPG::AudioFile.new("Exit Door",80,100)]), # Play SE
@@ -3579,15 +3878,15 @@ def pbFixEventUse(event,mapID,mapdata)
              fullTransfer, # Transfer event
              RPG::EventCommand.new(223,indent,[Tone.new(0,0,0),6]) # Fade to normal
           )
-          changed=true
+          changed = true
         end
         if deletedRoute
           insertMoveRouteAt.call(list,list.length-1,deletedRoute)
-          changed=true
+          changed = true
         end
       elsif list[i].code==101 
         if list[i].parameters[0][0,1]=="\\"
-          newx=list[i].parameters[0].clone
+          newx = list[i].parameters[0].clone
           newx.sub!(/^\\[Bb]\s+/,"\\b")
           newx.sub!(/^\\[Rr]\s+/,"\\r")
           newx.sub!(/^\\[Pp][Gg]\s+/,"\\pg")
@@ -3595,113 +3894,111 @@ def pbFixEventUse(event,mapID,mapdata)
           newx.sub!(/^\\[Gg]\s+/,"\\G")
           newx.sub!(/^\\[Cc][Nn]\s+/,"\\CN")
           if list[i].parameters[0]!=newx
-            list[i].parameters[0]=newx
-            changed=true
+            list[i].parameters[0] = newx
+            changed = true
           end
         end
-        lines=1
-        j=i+1; while j<list.length
+        lines = 1
+        j = i+1; while j<list.length
           break if list[j].code!=401
           if lines%4==0
-            list[j].code=101
-            changed=true
+            list[j].code = 101
+            changed = true
           end
-          lines+=1
-          j+=1
+          lines += 1
+          j += 1
         end
         if lines>=2 && list[i].parameters[0].length>0 && list[i].parameters[0].length<=20 &&
            !list[i].parameters[0][/\\n/]
           # Very short line
-          list[i].parameters[0]+="\\n"+list[i+1].parameters[0]
+          list[i].parameters[0] += "\\n"+list[i+1].parameters[0]
           list.delete_at(i+1)
-          i-=1 # revisit this text command
-          changed=true
+          i -= 1 # revisit this text command
+          changed = true
         elsif lines>=3 && list[i+lines] && list[i+lines].code==101
           # Check whether a sentence is being broken midway 
           # between two Text commands
-          lastLine=list[i+lines-1].parameters[0].sub(/\s+$/,"")
+          lastLine = list[i+lines-1].parameters[0].sub(/\s+$/,"")
           if lastLine.length>0 && !lastLine[/[\\<]/] && lastLine[/[^\.,\!\?\;\-\"]$/]
-            message=list[i].parameters[0]
-            j=i+1; while j<list.length
+            message = list[i].parameters[0]
+            j = i+1; while j<list.length
               break if list[j].code!=401
-              message+="\n"+list[j].parameters[0]
-              j+=1
+              message += "\n"+list[j].parameters[0]
+              j += 1
             end
-            punct=[message.rindex(". "),message.rindex(".\n"),
+            punct = [message.rindex(". "),message.rindex(".\n"),
                message.rindex("!"),message.rindex("?"),-1].compact.max
             if punct==-1
-              punct=[message.rindex(", "),message.rindex(",\n"),-1].compact.max
+              punct = [message.rindex(", "),message.rindex(",\n"),-1].compact.max
             end
             if punct!=-1
               # Delete old message
-              indent=list[i].indent
-              newMessage=message[0,punct+1].split("\n")
-              nextMessage=message[punct+1,message.length].sub(/^\s+/,"").split("\n")
-              list[i+lines].code=401
+              indent = list[i].indent
+              newMessage  = message[0,punct+1].split("\n")
+              nextMessage = message[punct+1,message.length].sub(/^\s+/,"").split("\n")
+              list[i+lines].code = 401
               lines.times { list.delete_at(i) }
-              j=nextMessage.length-1;while j>=0
-                list.insert(i,RPG::EventCommand.new(
-                j==0 ? 101 : 401,indent,[nextMessage[j]]))
+              j = nextMessage.length-1; while j>=0
+                list.insert(i,RPG::EventCommand.new((j==0) ? 101 : 401,indent,[nextMessage[j]]))
                 j-=1
               end
-              j=newMessage.length-1;while j>=0
-                list.insert(i,RPG::EventCommand.new(
-                j==0 ? 101 : 401,indent,[newMessage[j]]))
-                j-=1
+              j = newMessage.length-1; while j>=0
+                list.insert(i,RPG::EventCommand.new((j==0) ? 101 : 401,indent,[newMessage[j]]))
+                j -= 1
               end
-              changed=true
-              i+=1
+              changed = true
+              i += 1
               next
             end
           end
         end
       elsif list[i].code==111 && list[i].parameters[0]==12
-        x=[list[i].parameters[1]]
-        changed|=pbChangeScripts(x)
-        list[i].parameters[1]=x[0]
-        script=x[0]
+        x = [list[i].parameters[1]]
+        changed |= pbChangeScripts(x)
+        list[i].parameters[1] = x[0]
+        script = x[0]
         if script[trainerMoneyRE]
           # Checking money directly
-          operator=$1
-          amount=$2.to_i
-          params[0]=7
+          operator = $1
+          amount   = $2.to_i
+          params[0] = 7
           if operator=="<"
-            params[2]=1
-            params[1]=amount-1
+            params[2] = 1
+            params[1] = amount-1
           elsif operator=="<="
-            params[2]=1
-            params[1]=amount
+            params[2] = 1
+            params[1] = amount
           elsif operator==">"
-            params[2]=0
-            params[1]=amount+1
+            params[2] = 0
+            params[1] = amount+1
           elsif operator==">="
-            params[2]=0
-            params[1]=amount
+            params[2] = 0
+            params[1] = amount
           end
-          changed=true
+          changed = true
         elsif script[itemBallRE] && i>0
           # Using pbItemBall on non-item events
-          list[i].parameters[1]=script.sub(/pbItemBall/,"pbReceiveItem")
-          changed=true
+          list[i].parameters[1] = script.sub(/pbItemBall/,"pbReceiveItem")
+          changed = true
         elsif script[/^\s*(Kernel\.)?(pbTrainerBattle|pbDoubleTrainerBattle)/]
           # Empty trainer battle conditional branches
-          j=i+1
-          isempty=true
-          elseIndex=-1
+          j = i+1
+          isempty = true
+          elseIndex = -1
           # Check if page is empty
           while j<page.list.length
             if list[j].indent<=list[i].indent
               if list[j].code==411 # Else
-                elseIndex=j
+                elseIndex = j
               else
                 break
               end
             end
             if list[j].code!=0 && list[j].code!=411
-              isempty=false
+              isempty = false
               break
             end 
-            j+=1
+            j += 1
           end
           if isempty
             if elseIndex>=0
@@ -3715,119 +4012,116 @@ def pbFixEventUse(event,mapID,mapdata)
                  RPG::EventCommand.new(115,list[i].indent+1,[]) # Exit Event Processing
               )
             end
-            changed=true
+            changed = true
           end
         end
       end
-      i+=1
+      i += 1
     end
   end
-  return changed ? event : nil
+  return (changed) ? event : nil
 end
 
 def pbConvertToItemEvent(event)
   return nil if !event || event.pages.length==0
-  ret=RPG::Event.new(event.x,event.y)
-  name=event.name
-  ret.name=event.name
-  ret.id=event.id
-  ret.pages=[]
-  itemid=nil
-  itemname=""
-  hidden=false
+  name = event.name
+  ret       = RPG::Event.new(event.x,event.y)
+  ret.name  = event.name
+  ret.id    = event.id
+  ret.pages = []
+  itemid   = nil
+  itemname = ""
+  hidden = false
   if name[/^HiddenItem\:\s*(\w+)\s*$/]
-    itemname=$1
+    itemname = $1
     return nil if !hasConst?(PBItems,itemname)
-    itemid=PBItems.const_get(itemname)
-    ret.name="HiddenItem"
-    hidden=true
+    itemid = PBItems.const_get(itemname)
+    ret.name = "HiddenItem"
+    hidden = true
   elsif name[/^Item\:\s*(\w+)\s*$/]
-    itemname=$1
+    itemname = $1
     return nil if !hasConst?(PBItems,itemname)
-    itemid=PBItems.const_get(itemname)
-    ret.name="Item"
+    itemid = PBItems.const_get(itemname)
+    ret.name = "Item"
   else
     return nil
   end
   # Event page 1
-  page=RPG::Event::Page.new
-  if !hidden
-    page.graphic.character_name="Object ball"
-  end
-  page.list=[]
-  pbPushBranch(page.list,
-     sprintf("Kernel.pbItemBall(:%s)",itemname))
+  page = RPG::Event::Page.new
+  page.graphic.character_name = "Object ball" if !hidden
+  page.list = []
+  pbPushBranch(page.list,sprintf("Kernel.pbItemBall(:%s)",itemname))
   pbPushSelfSwitch(page.list,"A",true,1)
   pbPushElse(page.list,1)
   pbPushBranchEnd(page.list,1)
   pbPushEnd(page.list)
   ret.pages.push(page)
   # Event page 2
-  page=RPG::Event::Page.new
-  page.condition.self_switch_valid=true
-  page.condition.self_switch_ch="A"
+  page = RPG::Event::Page.new
+  page.condition.self_switch_valid = true
+  page.condition.self_switch_ch    = "A"
   ret.pages.push(page)
   return ret
 end
 
 def pbConvertToTrainerEvent(event,trainerChecker)
   return nil if !event || event.pages.length==0
-  ret=RPG::Event.new(event.x,event.y)
-  ret.name=event.name
-  ret.id=event.id
-  commands=[]
-  list=event.pages[0].list
+  ret = RPG::Event.new(event.x,event.y)
+  ret.name = event.name
+  ret.id   = event.id
+  commands = []
+  list = event.pages[0].list
   return nil if list.length<2
-  isFirstCommand=false
-  i=0; while i<list.length
+  isFirstCommand = false
+  i = 0; while i<list.length
     if list[i].code==108
-      command=list[i].parameters[0]
-      j=i+1; while j<list.length
+      command = list[i].parameters[0]
+      j = i+1; while j<list.length
         break if list[j].code!=408
-        command+="\r\n"+list[j].parameters[0]
-        j+=1
+        command += "\r\n"+list[j].parameters[0]
+        j += 1
       end
       if command[/^(Battle\:|Type\:|Name\:|EndSpeech\:|VanishIfSwitch\:|EndBattle\:|RegSpeech\:|BattleID\:|EndIfSwitch\:|DoubleBattle\:|Backdrop\:|Continue\:|Outcome\:)/i]
         commands.push(command)
-        isFirstCommand=true if i==0
+        isFirstCommand = true if i==0
       end
     end
     i+=1
   end
   return nil if commands.length==0
   if isFirstCommand && !event.name[/Trainer/]
-    ret.name="Trainer(3)"
+    ret.name = "Trainer(3)"
   elsif isFirstCommand && event.name[/^\s*Trainer\s+\((\d+)\)\s*$/]
-    ret.name="Trainer(#{$1})"
+    ret.name = "Trainer(#{$1})"
   end
-  firstpage=Marshal::load(Marshal.dump(event.pages[0]))
-  firstpage.trigger=2
-  firstpage.list=[]
-  trtype=nil
-  trname=nil
-  battles=[]
-  endbattles=[]
-  realcommands=[]
-  endspeeches=[]
-  regspeech=nil
-  backdrop=nil
-  battleid=0
-  endifswitch=[]
-  vanishifswitch=[]
-  doublebattle=false
-  continue=false
-  outcome=0
+  firstpage = Marshal::load(Marshal.dump(event.pages[0]))
+  firstpage.trigger = 2
+  firstpage.list    = []
+  trtype         = nil
+  trname         = nil
+  battles        = []
+  endbattles     = []
+  realcommands   = []
+  endspeeches    = []
+  regspeech      = nil
+  backdrop       = nil
+  battleid       = 0
+  endifswitch    = []
+  vanishifswitch = []
+  doublebattle   = false
+  continue       = false
+  outcome        = 0
   for command in commands
     if command[/^Battle\:\s*([\s\S]+)$/i]
       battles.push($~[1])
       pbPushComment(firstpage.list,command)
     end
     if command[/^Type\:\s*([\s\S]+)$/i]
-      trtype=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      trtype = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
       pbPushComment(firstpage.list,command)
     end
     if command[/^Name\:\s*([\s\S]+)$/i]
-      trname=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      trname = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
       pbPushComment(firstpage.list,command)
     end
     if command[/^EndSpeech\:\s*([\s\S]+)$/i]
@@ -3839,8 +4133,8 @@ def pbConvertToTrainerEvent(event,trainerChecker)
       pbPushComment(firstpage.list,command)
     end
     if command[/^DoubleBattle\:\s*([\s\S]+)$/i]
-      value=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
-      doublebattle=true if value.upcase=="TRUE" || value.upcase=="YES"
+      value = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      doublebattle = true if value.upcase=="TRUE" || value.upcase=="YES"
       pbPushComment(firstpage.list,command)
     end
     if command[/^VanishIfSwitch\:\s*([\s\S]+)$/i]
@@ -3848,11 +4142,11 @@ def pbConvertToTrainerEvent(event,trainerChecker)
       pbPushComment(firstpage.list,command)
     end
     if command[/^Backdrop\:\s*([\s\S]+)$/i]
-      backdrop=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      backdrop = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
       pbPushComment(firstpage.list,command)
     end
     if command[/^RegSpeech\:\s*([\s\S]+)$/i]
-      regspeech=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      regspeech = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
       pbPushComment(firstpage.list,command)
     end
     if command[/^EndBattle\:\s*([\s\S]+)$/i]
@@ -3860,34 +4154,32 @@ def pbConvertToTrainerEvent(event,trainerChecker)
       pbPushComment(firstpage.list,command)
     end
     if command[/^BattleID\:\s*(\d+)$/i]
-      battleid=$~[1].to_i
+      battleid = $~[1].to_i
       pbPushComment(firstpage.list,command)
     end
     if command[/^Continue\:\s*([\s\S]+)$/i]
-      value=$~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
-      continue=true if value.upcase=="TRUE" || value.upcase=="YES"
+      value = $~[1].gsub(/^\s+/,"").gsub(/\s+$/,"")
+      continue = true if value.upcase=="TRUE" || value.upcase=="YES"
       pbPushComment(firstpage.list,command)
     end
     if command[/^Outcome\:\s*(\d+)$/i]
-      outcome=$~[1].to_i
+      outcome = $~[1].to_i
       pbPushComment(firstpage.list,command)
     end
   end
-  if battles.length<=0
-    return nil
-  end
+  return nil if battles.length<=0
   if firstpage.graphic.character_name=="" && hasConst?(PBTrainers,trtype)
-    trainerid=getConst(PBTrainers,trtype)
+    trainerid = getConst(PBTrainers,trtype)
     if trainerid
-      filename=pbTrainerCharNameFile(trainerid)
+      filename = pbTrainerCharNameFile(trainerid)
       if FileTest.image_exist?("Graphics/Characters/"+filename)
         firstpage.graphic.character_name=sprintf(filename)
       end
     end
   end
-  safetrcombo=sprintf("PBTrainers:"+":%s,\"%s\"",trtype,safequote(trname))
-  safetrcombo2=sprintf(":%s,\"%s\"",trtype,safequote(trname))
-  introplay=sprintf("pbTrainerIntro(:%s)",trtype)
+  safetrcombo  = sprintf("PBTrainers:"+":%s,\"%s\"",trtype,safequote(trname))
+  safetrcombo2 = sprintf(":%s,\"%s\"",trtype,safequote(trname))
+  introplay    = sprintf("pbTrainerIntro(:%s)",trtype)
   pbPushScript(firstpage.list,introplay)
   pbPushScript(firstpage.list,"Kernel.pbNoticePlayer(get_character(0))")
   pbPushText(firstpage.list,battles[0])
@@ -3897,55 +4189,55 @@ def pbConvertToTrainerEvent(event,trainerChecker)
   if backdrop
     pbPushScript(firstpage.list,sprintf("$PokemonGlobal.nextBattleBack=\"%s\"",safequote(backdrop)))
   end
-  espeech=(endspeeches[0]) ? endspeeches[0] : "..."
+  espeech = (endspeeches[0]) ? endspeeches[0] : "..."
   # Run trainer check now, except in editor
   trainerChecker.pbTrainerBattleCheck(trtype,trname,battleid) if !$INEDITOR
   pbPushBranch(firstpage.list,
      sprintf("pbTrainerBattle(%s,_I(\"%s\"),%s,%d,%s,%d)",
-     safetrcombo,safequote2(espeech),
-     doublebattle ? "true" : "false",
+     safetrcombo2,safequote2(espeech),
+     (doublebattle) ? "true" : "false",
      battleid,
-     continue ? "true" : "false",
+     (continue) ? "true" : "false",
      outcome)
   )
   if battles.length>1
-    pbPushScript(firstpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo,battles.length),1)
+    pbPushScript(firstpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo2,battles.length),1)
   end
   pbPushSelfSwitch(firstpage.list,"A",true,1)
   pbPushBranchEnd(firstpage.list,1)
   pbPushScript(firstpage.list,"pbTrainerEnd",0)
   pbPushEnd(firstpage.list)
-  secondpage=Marshal::load(Marshal.dump(firstpage))
-  secondpage.list=[]
-  secondpage.trigger=0
-  secondpage.condition=firstpage.condition.clone
-  thirdpage=Marshal::load(Marshal.dump(secondpage))
-  thirdpage.list=secondpage.list.clone
-  thirdpage.condition=secondpage.condition.clone
-  secondpage.condition.self_switch_valid=true
-  secondpage.condition.self_switch_ch="A"
-  thirdpage.condition.self_switch_valid=true
-  thirdpage.condition.self_switch_ch="B"
+  secondpage = Marshal::load(Marshal.dump(firstpage))
+  secondpage.list      = []
+  secondpage.trigger   = 0
+  secondpage.condition = firstpage.condition.clone
+  secondpage.condition.self_switch_valid = true
+  secondpage.condition.self_switch_ch    = "A"
+  thirdpage = Marshal::load(Marshal.dump(secondpage))
+  thirdpage.list      = secondpage.list.clone
+  thirdpage.condition = secondpage.condition.clone
+  thirdpage.condition.self_switch_valid = true
+  thirdpage.condition.self_switch_ch    = "B"
   for i in 1...battles.length
     if endspeeches.length==0
-      espeech="..."
+      espeech = "..."
     else
-      espeech=(endspeeches[i]) ? endspeeches[i] : endspeeches[endspeeches.length-1]
+      espeech = (endspeeches[i]) ? endspeeches[i] : endspeeches[endspeeches.length-1]
     end
     if endbattles.length==0
-      ebattle=nil
+      ebattle = nil
     else
-      ebattle=(endbattles[i]) ? endbattles[i] : endbattles[endbattles.length-1]
+      ebattle = (endbattles[i]) ? endbattles[i] : endbattles[endbattles.length-1]
     end
     if i==battles.length-1
-      pbPushBranch(thirdpage.list,sprintf("pbPhoneBattleCount(%s)>=%d",safetrcombo,i))
-      pbPushBranch(secondpage.list,sprintf("pbPhoneBattleCount(%s)>%d",safetrcombo,i))
+      pbPushBranch(thirdpage.list,sprintf("pbPhoneBattleCount(%s)>=%d",safetrcombo2,i))
+      pbPushBranch(secondpage.list,sprintf("pbPhoneBattleCount(%s)>%d",safetrcombo2,i))
     else
-      pbPushBranch(thirdpage.list,sprintf("pbPhoneBattleCount(%s)==%d",safetrcombo,i))
-      pbPushBranch(secondpage.list,sprintf("pbPhoneBattleCount(%s)==%d",safetrcombo,i))
+      pbPushBranch(thirdpage.list,sprintf("pbPhoneBattleCount(%s)==%d",safetrcombo2,i))
+      pbPushBranch(secondpage.list,sprintf("pbPhoneBattleCount(%s)==%d",safetrcombo2,i))
     end
     pbPushText(secondpage.list,ebattle,1)
-    pbPushScript(secondpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo,battles.length),1)
+    pbPushScript(secondpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo2,battles.length),1)
     pbPushExit(secondpage.list,1)
     pbPushBranchEnd(secondpage.list,1)
     pbPushScript(thirdpage.list,introplay,1)
@@ -3957,14 +4249,13 @@ def pbConvertToTrainerEvent(event,trainerChecker)
     end
     pbPushBranch(thirdpage.list,
        sprintf("pbTrainerBattle(%s,_I(\"%s\"),%s,%d,%s,%d)",
-       safetrcombo,safequote2(espeech),
-       doublebattle ? "true" : "false",
+       safetrcombo2,safequote2(espeech),
+       (doublebattle) ? "true" : "false",
        battleid+i,
-       continue ? "true" : "false",
+       (continue) ? "true" : "false",
        outcome),1
     )
-    pbPushScript(thirdpage.list,
-       sprintf("pbPhoneIncrement(%s,%d)",safetrcombo,battles.length),2)
+    pbPushScript(thirdpage.list,sprintf("pbPhoneIncrement(%s,%d)",safetrcombo2,battles.length),2)
     pbPushSelfSwitch(thirdpage.list,"A",true,2)
     pbPushSelfSwitch(thirdpage.list,"B",false,2)
     pbPushScript(thirdpage.list,"pbTrainerEnd",2)
@@ -3972,49 +4263,49 @@ def pbConvertToTrainerEvent(event,trainerChecker)
     pbPushExit(thirdpage.list,1)
     pbPushBranchEnd(thirdpage.list,1)
   end
-  ebattle=(endbattles[0]) ? endbattles[0] : "..."
+  ebattle = (endbattles[0]) ? endbattles[0] : "..."
   pbPushText(secondpage.list,ebattle)
   if battles.length>1
-    pbPushScript(secondpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo,battles.length))
+    pbPushScript(secondpage.list,sprintf("pbPhoneRegisterBattle(_I(\"%s\"),get_character(0),%s,%d)",regspeech,safetrcombo2,battles.length))
   end
   pbPushEnd(secondpage.list)
   pbPushEnd(thirdpage.list)
   if battles.length==1
-    ret.pages=[firstpage,secondpage]
+    ret.pages = [firstpage,secondpage]
   else
-    ret.pages=[firstpage,thirdpage,secondpage]
+    ret.pages = [firstpage,thirdpage,secondpage]
   end
   for endswitch in endifswitch
-    ebattle=(endbattles[0]) ? endbattles[0] : "..."
-    endIfSwitchPage=Marshal::load(Marshal.dump(secondpage))
-    endIfSwitchPage.condition=secondpage.condition.clone
+    ebattle = (endbattles[0]) ? endbattles[0] : "..."
+    endIfSwitchPage = Marshal::load(Marshal.dump(secondpage))
+    endIfSwitchPage.condition = secondpage.condition.clone
     if endIfSwitchPage.condition.switch1_valid
-      endIfSwitchPage.condition.switch2_valid=true
-      endIfSwitchPage.condition.switch2_id=endswitch
+      endIfSwitchPage.condition.switch2_valid = true
+      endIfSwitchPage.condition.switch2_id    = endswitch
     else
-      endIfSwitchPage.condition.switch1_valid=true
-      endIfSwitchPage.condition.switch1_id=endswitch
+      endIfSwitchPage.condition.switch1_valid = true
+      endIfSwitchPage.condition.switch1_id    = endswitch
     end
-    endIfSwitchPage.condition.self_switch_valid=false
-    endIfSwitchPage.list=[]
+    endIfSwitchPage.condition.self_switch_valid = false
+    endIfSwitchPage.list = []
     pbPushText(endIfSwitchPage.list,ebattle)
     pbPushEnd(endIfSwitchPage.list)
     ret.pages.push(endIfSwitchPage)
   end
   for endswitch in vanishifswitch
-    ebattle=(endbattles[0]) ? endbattles[0] : "..."
-    endIfSwitchPage=Marshal::load(Marshal.dump(secondpage))
-    endIfSwitchPage.graphic.character_name="" # make blank
-    endIfSwitchPage.condition=secondpage.condition.clone
+    ebattle = (endbattles[0]) ? endbattles[0] : "..."
+    endIfSwitchPage = Marshal::load(Marshal.dump(secondpage))
+    endIfSwitchPage.graphic.character_name = "" # make blank
+    endIfSwitchPage.condition              = secondpage.condition.clone
     if endIfSwitchPage.condition.switch1_valid
-      endIfSwitchPage.condition.switch2_valid=true
-      endIfSwitchPage.condition.switch2_id=endswitch
+      endIfSwitchPage.condition.switch2_valid = true
+      endIfSwitchPage.condition.switch2_id    = endswitch
     else
-      endIfSwitchPage.condition.switch1_valid=true
-      endIfSwitchPage.condition.switch1_id=endswitch
+      endIfSwitchPage.condition.switch1_valid = true
+      endIfSwitchPage.condition.switch1_id    = endswitch
     end
-    endIfSwitchPage.condition.self_switch_valid=false
-    endIfSwitchPage.list=[]
+    endIfSwitchPage.condition.self_switch_valid = false
+    endIfSwitchPage.list = []
     pbPushEnd(endIfSwitchPage.list)
     ret.pages.push(endIfSwitchPage)
   end
@@ -4026,38 +4317,34 @@ end
 #===============================================================================
 def pbImportNewMaps
   return false if !$DEBUG
-  mapfiles={}
+  mapfiles = {}
   # Get IDs of all maps in the Data folder
   Dir.chdir("Data"){
-     mapdata=sprintf("Map*.%s","rxdata",$RPGVX ? "rvdata" : "rxdata")
-     for map in Dir.glob(mapdata)
-       if map[/map(\d+)\.rxdata/i]
-         mapfiles[$1.to_i(10)]=true
-       end
-     end
+    mapdata = sprintf("Map*.%s","rxdata",$RPGVX ? "rvdata" : "rxdata")
+    for map in Dir.glob(mapdata)
+      mapfiles[$1.to_i(10)] = true if map[/map(\d+)\.rxdata/i]
+    end
   }
-  mapinfos=pbLoadRxData("Data/MapInfos")
-  maxOrder=0
+  mapinfos = pbLoadRxData("Data/MapInfos")
+  maxOrder = 0
   # Exclude maps found in mapinfos
   for id in mapinfos.keys
     next if !mapinfos.id
-    if mapfiles[id]
-      mapfiles.delete(id)
-    end
-    maxOrder=[maxOrder,mapinfos[id].order].max
+    mapfiles.delete(id) if mapfiles[id]
+    maxOrder = [maxOrder,mapinfos[id].order].max
   end
   # Import maps not found in mapinfos
-  maxOrder+=1
-  imported=false
+  maxOrder += 1
+  imported = false
   for id in mapfiles.keys
     next if id==999 # Ignore 999 (random dungeon map)
-    mapname=sprintf("MAP%03d",id)
-    mapinfo=RPG::MapInfo.new
-    mapinfo.order=maxOrder
-    maxOrder+=1
-    mapinfo.name=mapname
-    mapinfos[id]=mapinfo
-    imported=true
+    mapname = sprintf("MAP%03d",id)
+    mapinfo = RPG::MapInfo.new
+    mapinfo.order = maxOrder
+    mapinfo.name  = mapname
+    maxOrder += 1
+    mapinfos[id] = mapinfo
+    imported = true
   end
   if imported
     if $RPGVX
@@ -4101,11 +4388,14 @@ def pbCompileAllData(mustcompile)
     yield(_INTL("Compiling berry plant data"))
     pbCompileBerryPlants
     # Depends on PBMoves, PBItems, PBTypes, PBAbilities
-    yield(_INTL("Compiling Pokemon data"))
+    yield(_INTL("Compiling Pokémon data"))
     pbCompilePokemonData
     # Depends on PBSpecies, PBMoves
     yield(_INTL("Compiling machine data"))
     pbCompileMachines
+    # Depends on PBSpecies, PBMoves
+    yield(_INTL("Compiling Pokémon forms data"))
+    pbCompilePokemonForms
     # Depends on PBSpecies, PBItems, PBMoves
     yield(_INTL("Compiling Trainer data"))
     pbCompileTrainers
@@ -4141,73 +4431,79 @@ end
 
 begin
   if $DEBUG
-    datafiles=["attacksRS.dat",
-               "berryplants.dat",
-               "connections.dat",
-               "dexdata.dat",
-               "eggEmerald.dat",
-               "encounters.dat",
-               "evolutions.dat",
-               "items.dat",
-               "metadata.dat",
-               "metrics.dat",
-               "moves.dat",
-               "phone.dat",
-               "regionals.dat",
-               "shadowmoves.dat",
-               "tm.dat",
-               "townmap.dat",
-               "trainerlists.dat",
-               "trainers.dat",
-               "trainertypes.dat",
-               "types.dat",
-               "Constants.rxdata"]
-    textfiles=["abilities.txt",
-               "berryplants.txt",
-               "connections.txt",
-               "encounters.txt",
-               "items.txt",
-               "metadata.txt",
-               "moves.txt",
-               "phone.txt",
-               "pokemon.txt",
-               "shadowmoves.txt",
-               "tm.txt",
-               "townmap.txt",
-               "trainerlists.txt",
-               "trainers.txt",
-               "trainertypes.txt",
-               "types.txt"]
-    latestdatatime=0
-    latesttexttime=0
-    mustcompile=false
-    mustcompile|=pbImportNewMaps
-    mustcompile|=!(PBSpecies.respond_to?("maxValue") rescue false)
+    datafiles = [
+       "attacksRS.dat",
+       "berryplants.dat",
+       "connections.dat",
+       "dexdata.dat",
+       "eggEmerald.dat",
+       "encounters.dat",
+       "evolutions.dat",
+       "formspecies.dat",
+       "items.dat",
+       "metadata.dat",
+       "metrics.dat",
+       "moves.dat",
+       "phone.dat",
+       "regionals.dat",
+       "shadowmoves.dat",
+       "tm.dat",
+       "townmap.dat",
+       "trainerlists.dat",
+       "trainers.dat",
+       "trainertypes.dat",
+       "types.dat",
+       "Constants.rxdata"
+    ]
+    textfiles = [
+       "abilities.txt",
+       "berryplants.txt",
+       "connections.txt",
+       "encounters.txt",
+       "items.txt",
+       "metadata.txt",
+       "moves.txt",
+       "phone.txt",
+       "pokemon.txt",
+       "pokemonforms.txt",
+       "shadowmoves.txt",
+       "tm.txt",
+       "townmap.txt",
+       "trainerlists.txt",
+       "trainers.txt",
+       "trainertypes.txt",
+       "types.txt"
+    ]
+    latestdatatime = 0
+    latesttexttime = 0
+    mustcompile = false
+    mustcompile |= pbImportNewMaps
+    mustcompile |= !(PBSpecies.respond_to?("maxValue") rescue false)
     if !safeIsDirectory?("PBS")
       Dir.mkdir("PBS") rescue nil
-      pbSaveAllData()
-      mustcompile=true
+      pbSaveAllData
+      mustcompile = true
     end
     for i in 0...datafiles.length
       begin
         File.open("Data/#{datafiles[i]}"){|file|
-           latestdatatime=[latestdatatime,file.mtime.to_i].max
+          latestdatatime = [latestdatatime,file.mtime.to_i].max
         }
       rescue SystemCallError
-        mustcompile=true
+        mustcompile = true
       end
     end
     for i in 0...textfiles.length
       begin
         File.open("PBS/#{textfiles[i]}"){|file|
-           latesttexttime=[latesttexttime,file.mtime.to_i].max
+          latesttexttime = [latesttexttime,file.mtime.to_i].max
         }
       rescue SystemCallError
       end
     end
-    mustcompile=mustcompile || (latesttexttime>=latestdatatime)
+    mustcompile |= (latesttexttime>=latestdatatime)
     Input.update
-    mustcompile=true if Input.press?(Input::CTRL)
+    mustcompile = true if Input.press?(Input::CTRL)
     if mustcompile
       for i in 0...datafiles.length
         begin
@@ -4219,7 +4515,7 @@ begin
     pbCompileAllData(mustcompile){|msg| Win32API.SetWindowText(msg) }
   end
 rescue Exception
-  e=$!
+  e = $!
   raise e if "#{e.class}"=="Reset" || e.is_a?(Reset) || e.is_a?(SystemExit)
   pbPrintException(e)
   for i in 0...datafiles.length

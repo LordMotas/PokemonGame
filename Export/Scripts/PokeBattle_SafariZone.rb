@@ -15,7 +15,8 @@ class PokeBattle_FakeBattler
   def name; @pokemon.name; end
   def totalhp; @pokemon.totalhp; end
   def owned; return @owned; end
-  def isFainted?; return false; end
+  def fainted?; return false; end
+  alias isFainted? fainted?
   def isShiny?; return @pokemon.isShiny?; end
   def isShadow?; return false; end
   def hasMega?; return false; end
@@ -111,7 +112,7 @@ class PokeBattle_SafariZone
       pbDisplayPaused(_INTL("Wild {1} appeared!",wildpoke.name))
       @scene.pbSafariStart
       dexdata=pbOpenDexData
-      pbDexDataOffset(dexdata,wildpoke.species,16)
+      pbDexDataOffset(dexdata,wildpoke.fSpecies,16)
       rareness=dexdata.fgetb # Get rareness from dexdata file
       dexdata.close
       g=(rareness*100)/1275

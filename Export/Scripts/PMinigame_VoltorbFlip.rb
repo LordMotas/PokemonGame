@@ -110,7 +110,7 @@ class VoltorbFlip
     @sprites["curtainR"].visible=false
     @sprites["curtain"].opacity=100
     if $PokemonGlobal.coins>=MAXCOINS
-      Kernel.pbMessage(_INTL("Your Coin Case has been filled."))
+      Kernel.pbMessage(_INTL("You've gathered {1} Coins. You cannot gather any more.",pbCommaNumber(MAXCOINS)))
       $PokemonGlobal.coins=MAXCOINS # As a precaution
       @quit=true
 #    elsif !Kernel.pbConfirmMessage(_INTL("Play Voltorb Flip Lv. {1}?",@level)) && $PokemonGlobal.coins<99999
@@ -221,7 +221,7 @@ class VoltorbFlip
 
   def getInput
     if Input.trigger?(Input::UP)
-      pbSEPlay("Choose")
+      pbPlayCursorSE
       if @index[1]>0
         @index[1]-=1
         @sprites["cursor"].y-=64
@@ -230,7 +230,7 @@ class VoltorbFlip
         @sprites["cursor"].y=256
       end
     elsif Input.trigger?(Input::DOWN)
-      pbSEPlay("Choose")
+      pbPlayCursorSE
       if @index[1]<4
         @index[1]+=1
         @sprites["cursor"].y+=64
@@ -239,7 +239,7 @@ class VoltorbFlip
         @sprites["cursor"].y=0
       end
     elsif Input.trigger?(Input::LEFT)
-      pbSEPlay("Choose")
+      pbPlayCursorSE
       if @index[0]>0
         @index[0]-=1
         @sprites["cursor"].x-=64
@@ -248,7 +248,7 @@ class VoltorbFlip
         @sprites["cursor"].x=256
       end
     elsif Input.trigger?(Input::RIGHT)
-      pbSEPlay("Choose")
+      pbPlayCursorSE
       if @index[0]<4
         @index[0]+=1
         @sprites["cursor"].x+=64
@@ -260,7 +260,7 @@ class VoltorbFlip
       if @cursor[0][3]==64 # If in mark mode
         for i in 0...@squares.length
           if @index[0]*64+128==@squares[i][0] && @index[1]*64==@squares[i][1] && @squares[i][3]==false
-            pbSEPlay("VoltorbFlipMark")
+            pbSEPlay("Voltorb Flip mark")
           end
         end
         for i in 0...@marks.length+1
@@ -284,7 +284,7 @@ class VoltorbFlip
             @squares[i][3]=true
             # If Voltorb (0), display all tiles on the board
             if @squares[i][2]==0
-              pbSEPlay("VoltorbFlipExplosion")
+              pbSEPlay("Voltorb Flip explosion")
               # Play explosion animation
               # Part1
               animation=[]
@@ -303,7 +303,7 @@ class VoltorbFlip
                 @sprites["animation"].bitmap.clear
               end
               # Unskippable text block, parameter 2 = wait time (corresponds to ME length)
-              Kernel.pbMessage(_INTL("\\me[Voltorb Flip Game Over]Oh no! You get 0 Coins!\\wtnp[50]"))
+              Kernel.pbMessage(_INTL("\\me[Voltorb Flip game over]Oh no! You get 0 Coins!\\wtnp[50]"))
               pbShowAndDispose
               @sprites["mark"].bitmap.clear
               if @level>1
@@ -320,7 +320,7 @@ class VoltorbFlip
                 if @level>newLevel
                   @level=newLevel
                   @level=1 if @level<1
-                  Kernel.pbMessage(_INTL("\\se[VoltorbFlipLevelDown]Dropped to Game Lv. {1}!",@level.to_s))
+                  Kernel.pbMessage(_INTL("\\se[Voltorb Flip level down]Dropped to Game Lv. {1}!",@level.to_s))
                 end
               end
               # Update level text
@@ -348,10 +348,10 @@ class VoltorbFlip
               end
               if @points==0
                 @points+=@squares[i][2]
-                pbSEPlay("VoltorbFlipPoint")
+                pbSEPlay("Voltorb Flip point")
               elsif @squares[i][2]>1
                 @points*=@squares[i][2]
-                pbSEPlay("VoltorbFlipPoint")
+                pbSEPlay("Voltorb Flip point")
               end
               break
             end
@@ -368,10 +368,10 @@ class VoltorbFlip
       # Game cleared
       if count==0
         @sprites["curtain"].opacity=100
-        Kernel.pbMessage(_INTL("\\me[Voltorb Flip Win]Board clear!\\wtnp[40]"))
+        Kernel.pbMessage(_INTL("\\me[Voltorb Flip win]Board clear!\\wtnp[40]"))
 #        Kernel.pbMessage(_INTL("You've found all of the hidden x2 and x3 cards."))
 #        Kernel.pbMessage(_INTL("This means you've found all the Coins in this game, so the game is now over."))
-        Kernel.pbMessage(_INTL("{1} received {2} Coins!",$Trainer.name,@points))
+        Kernel.pbMessage(_INTL("{1} received {2} Coins!",$Trainer.name,pbCommaNumber(@points)))
         # Update level text
         @sprites["level"].bitmap.clear
         pbDrawShadowText(@sprites["level"].bitmap,8,150,118,28,_INTL("Level {1}",@level.to_s),Color.new(60,60,60),Color.new(150,190,170),1)
@@ -400,7 +400,7 @@ class VoltorbFlip
         pbNewGame
       end
     elsif Input.trigger?(Input::CTRL)
-      pbSEPlay("Choose")
+      pbPlayDecisionSE
       @sprites["cursor"].bitmap.clear
       if @cursor[0][3]==0 # If in normal mode
         @cursor[0]=[@directory+"cursor",128,0,64,0,64,64]
@@ -414,11 +414,11 @@ class VoltorbFlip
       if @points==0
         if Kernel.pbConfirmMessage("You haven't found any Coins! Are you sure you want to quit?")
           @sprites["curtain"].opacity=0
-         pbShowAndDispose
+          pbShowAndDispose
           @quit=true
         end
-      elsif Kernel.pbConfirmMessage(_INTL("If you quit now, you will recieve {1} Coin(s). Will you quit?",@points))
-        Kernel.pbMessage(_INTL("{1} received {2} Coin(s)!",$Trainer.name,@points))
+      elsif Kernel.pbConfirmMessage(_INTL("If you quit now, you will recieve {1} Coin(s). Will you quit?",pbCommaNumber(@points)))
+        Kernel.pbMessage(_INTL("{1} received {2} Coin(s)!",$Trainer.name,pbCommaNumber(@points)))
         $PokemonGlobal.coins+=@points
         @points=0
         pbUpdateCoins
@@ -503,7 +503,7 @@ class VoltorbFlip
     end
     icons[3]=[@directory+"tiles",x,y,tile*64,0,64,64]
     pbDrawImagePositions(@sprites["icon"].bitmap,icons)
-    pbSEPlay("VoltorbFlipTile")
+    pbSEPlay("Voltorb Flip tile")
   end
 
   def pbShowAndDispose
@@ -514,7 +514,7 @@ class VoltorbFlip
       @sprites[i].bitmap.clear
       @sprites[i].z=99997
     end
-    pbSEPlay("VoltorbFlipTile")
+    pbSEPlay("Voltorb Flip tile")
     @sprites[5].visible=true
     @sprites["mark"].bitmap.clear
     pbWait(2)
@@ -528,7 +528,7 @@ class VoltorbFlip
     # "Dispose" of tiles by column
     for i in 0...5
       icons=[]
-      pbSEPlay("VoltorbFlipTile")
+      pbSEPlay("Voltorb Flip tile")
       for j in 0...5
         icons[j]=[@directory+"tiles",@squares[i+(j*5)][0],@squares[i+(j*5)][1],448+(@squares[i+(j*5)][2]*64),0,64,64]
       end
@@ -616,7 +616,7 @@ end
 
 
 def pbVoltorbFlip
-  if hasConst?(PBItems,:COINCASE) && $PokemonBag.pbQuantity(:COINCASE)<=0
+  if hasConst?(PBItems,:COINCASE) && !$PokemonBag.pbHasItem?(:COINCASE)
     Kernel.pbMessage(_INTL("You can't play unless you have a Coin Case."))
   elsif $PokemonGlobal.coins==MAXCOINS
     Kernel.pbMessage(_INTL("Your Coin Case is full!"))

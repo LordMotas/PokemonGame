@@ -35,7 +35,7 @@ class BattleSwapScene
     commands=[]
     for i in 0...list.length
       pkmn=list[i]
-      kind=pbGetMessage(MessageTypes::Kinds,pkmn.species)
+      kind=pbGetMessage(MessageTypes::Kinds,pbGetFSpeciesFromForm(pkmn.species,pkn.form))
       selected=shadowctagFromColor(Color.new(232,0,0))
       if choices.any?{|item| item==i}
         commands.push(selected+_INTL("{1} - {2} POKéMON",
@@ -86,8 +86,8 @@ class BattleSwapScene
 
   def pbSummary(list,index)
     visibleSprites=pbFadeOutAndHide(@sprites){ pbUpdate }
-    scene=PokemonSummaryScene.new
-    screen=PokemonSummary.new(scene)
+    scene=PokemonSummary_Scene.new
+    screen=PokemonSummaryScreen.new(scene)
     @sprites["list"].index=screen.pbStartScreen(list,index)
     pbFadeInAndShow(@sprites,visibleSprites){ pbUpdate }
   end

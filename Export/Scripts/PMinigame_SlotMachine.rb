@@ -189,9 +189,9 @@ class SlotMachineScene
     frame=0
     if payout>0 || @replay
       if bonus>0
-        pbMEPlay("SlotsBigWin")
+        pbMEPlay("Slots big win")
       else
-        pbMEPlay("SlotsWin")
+        pbMEPlay("Slots win")
       end
       # Show winning animation
       until frame==120 # 40 frames per seconds
@@ -310,7 +310,7 @@ class SlotMachineScene
         @sprites["window1"].setBitmap(sprintf("Graphics/Pictures/Slot Machine/stop"))
         @sprites["window1"].src_rect.set(152*((frame/10)%4),0,152,208)
         if Input.trigger?(Input::C)
-          pbSEPlay("SlotsStop")
+          pbSEPlay("Slots stop")
           if @sprites["reel1"].spinning
             @sprites["reel1"].stopSpinning(@replay)
             @sprites["button1"].visible=true
@@ -344,7 +344,7 @@ class SlotMachineScene
           @sprites["window2"].src_rect.set(152*((frame/15)%2),0,152,208)
         end
         if Input.trigger?(Input::DOWN) && @wager<3 && @sprites["credit"].score>0
-          pbSEPlay("SlotsCoin")
+          pbSEPlay("Slots coin")
           @wager+=1
           @sprites["credit"].score-=1
           if @wager>=3
@@ -402,17 +402,17 @@ end
 
 
 def pbSlotMachine(difficulty=1)
-  if hasConst?(PBItems,:COINCASE) && $PokemonBag.pbQuantity(:COINCASE)<=0
+  if hasConst?(PBItems,:COINCASE) && !$PokemonBag.pbHasItem?(:COINCASE)
     Kernel.pbMessage(_INTL("It's a Slot Machine."))
   elsif $PokemonGlobal.coins==0
     Kernel.pbMessage(_INTL("You don't have any Coins to play!"))
   elsif $PokemonGlobal.coins==MAXCOINS
     Kernel.pbMessage(_INTL("Your Coin Case is full!"))
   else
-    scene=SlotMachineScene.new
-    screen=SlotMachine.new(scene)
-    pbFadeOutIn(99999) {
-       screen.pbStartScreen(difficulty)
+    pbFadeOutIn(99999){
+      scene = SlotMachineScene.new
+      screen = SlotMachine.new(scene)
+      screen.pbStartScreen(difficulty)
     }
   end
 end

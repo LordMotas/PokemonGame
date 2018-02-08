@@ -46,68 +46,77 @@ end
 
 def pbSetUpSystem
   begin
-    trainer=nil
-    framecount=0
-    havedata=false
-    game_system=nil
-    pokemonSystem=nil
+    trainer       = nil
+    framecount    = 0
+    game_system   = nil
+    pokemonSystem = nil
+    havedata = false
     File.open(RTP.getSaveFileName("Game.rxdata")){|f|
-       trainer=Marshal.load(f)
-       framecount=Marshal.load(f)
-       game_system=Marshal.load(f)
-       pokemonSystem=Marshal.load(f)
+      trainer       = Marshal.load(f)
+      framecount    = Marshal.load(f)
+      game_system   = Marshal.load(f)
+      pokemonSystem = Marshal.load(f)
     }
     raise "Corrupted file" if !trainer.is_a?(PokeBattle_Trainer)
     raise "Corrupted file" if !framecount.is_a?(Numeric)
     raise "Corrupted file" if !game_system.is_a?(Game_System)
     raise "Corrupted file" if !pokemonSystem.is_a?(PokemonSystem)
-    havedata=true
+    havedata = true
   rescue
-    pokemonSystem=PokemonSystem.new
-    game_system=Game_System.new
+    game_system   = Game_System.new
+    pokemonSystem = PokemonSystem.new
   end
   if !$INEDITOR
-    $PokemonSystem=pokemonSystem
-    $game_system=Game_System
-    pbSetResizeFactor($PokemonSystem.screensize)
+    $game_system   = game_system
+    $PokemonSystem = pokemonSystem
+    pbSetResizeFactor([$PokemonSystem.screensize,3].min)
   else
     pbSetResizeFactor(1.0)
   end
   # Load constants
   begin
-    consts=pbSafeLoad("Data/Constants.rxdata")
-    consts=[] if !consts
+    consts = pbSafeLoad("Data/Constants.rxdata")
+    consts = [] if !consts
   rescue
-    consts=[]
+    consts = []
   end
   for script in consts
     next if !script
     eval(Zlib::Inflate.inflate(script[2]),nil,script[1])
   end
   if LANGUAGES.length>=2
-    if !havedata
-      pokemonSystem.language=pbChooseLanguage
-    end
+    pokemonSystem.language = pbChooseLanguage if !havedata
     pbLoadMessages("Data/"+LANGUAGES[pokemonSystem.language][1])
   end
 end
 
 def pbScreenCapture
-  capturefile=nil
+  capturefile = nil
   5000.times {|i|
-     filename=RTP.getSaveFileName(sprintf("capture%03d.bmp",i))
-     if !safeExists?(filename)
-       capturefile=filename
-       break
-     end
-     i+=1
+    filename = RTP.getSaveFileName(sprintf("capture%03d.bmp",i))
+    if !safeExists?(filename)
+      capturefile = filename
+      break
+    end
+    i += 1
   }
   if capturefile && safeExists?("rubyscreen.dll")
-    takescreen=Win32API.new("rubyscreen.dll","TakeScreenshot","%w(p)","i")
+    takescreen = Win32API.new("rubyscreen.dll","TakeScreenshot","%w(p)","i")
     takescreen.call(capturefile)
     if safeExists?(capturefile)
-      pbSEPlay("expfull") if FileTest.audio_exist?("Audio/SE/expfull")
+      pbSEPlay("Pkmn exp full") if FileTest.audio_exist?("Audio/SE/Pkmn exp full")
     end
+  end
+end
+
+def pbDebugF7
+  if $DEBUG
+    Console::setup_console
+    begin
+      debugBitmaps
+    rescue
+    end
+    pbSEPlay("Pkmn exp full") if FileTest.audio_exist?("Audio/SE/Pkmn exp full")
   end
 end
 
@@ -133,15 +142,4 @@ end
 
 
 
-def pbDebugF7
-  if $DEBUG
-    Console::setup_console
-    begin
-      debugBitmaps
-    rescue
-    end
-    pbSEPlay("expfull") if FileTest.audio_exist?("Audio/SE/expfull")
-  end
-end
-
-pbSetUpSystem()
+pbSetUpSystem

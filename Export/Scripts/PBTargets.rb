@@ -5,8 +5,8 @@ module PBTargets
   AllOpposing      = 0x04
   AllNonUsers      = 0x08
   User             = 0x10
-  UserSide         = 0x20
-  BothSides        = 0x40
+  BothSides        = 0x20
+  UserSide         = 0x40
   OpposingSide     = 0x80
   Partner          = 0x100
   UserOrPartner    = 0x200

@@ -65,7 +65,7 @@ class PokeBattle_Battler
     count=0
     party=@battle.pbParty(self.index)
     for i in 0...party.length
-      if party[i] && !party[i].isEgg? &&
+      if party[i] && !party[i].egg? &&
          party[i].status==status
         count+=1
       end

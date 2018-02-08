@@ -44,6 +44,15 @@ module PBTerrain
            tag==PBTerrain::DeepWater
   end
 
+  def PBTerrain.isDeepWater?(tag)
+    return tag==PBTerrain::DeepWater
+  end
+
+  def PBTerrain.isWaterfall?(tag)
+    return tag==PBTerrain::WaterfallCrest ||
+           tag==PBTerrain::Waterfall
+  end
+
   def PBTerrain.isGrass?(tag)
     return tag==PBTerrain::Grass ||
            tag==PBTerrain::TallGrass ||
@@ -76,5 +85,9 @@ module PBTerrain
   def PBTerrain.onlyWalk?(tag)
     return tag==PBTerrain::TallGrass ||
            tag==PBTerrain::Ice
+  end
+
+  def PBTerrain.isDoubleWildBattle?(tag)
+    return tag==PBTerrain::TallGrass
   end
 end

@@ -14,7 +14,7 @@
 # number using '$PokemonGlobal.hallOfFameLastNumber'.
 # 
 #===============================================================================
-class HallOfFameScene
+class HallOfFame_Scene
   # When true, all pokémon will be in one line
   # When false, all pokémon will be in two lines
   SINGLEROW = false
@@ -39,6 +39,9 @@ class HallOfFameScene
   FINALFADESPEED = 16
   # Sprites opacity value when them aren't selected
   OPACITY = 64
+  BASECOLOR   = Color.new(248,248,248)
+  SHADOWCOLOR = Color.new(0,0,0)
+
 
   def pbUpdate
     pbUpdateSpriteHash(@sprites)
@@ -190,8 +193,7 @@ class HallOfFameScene
   def saveHallEntry
     for i in 0...$Trainer.party.length
       # Clones every pokémon object
-      @hallEntry.push($Trainer.party[i].clone) if (
-        !$Trainer.party[i].isEgg? || ALLOWEGGS)
+      @hallEntry.push($Trainer.party[i].clone) if !$Trainer.party[i].egg? || ALLOWEGGS
     end
     # Update the global variables
     $PokemonGlobal.hallOfFame.push(@hallEntry)
@@ -255,6 +257,7 @@ class HallOfFameScene
       ypoint=ypointformula(i)
       pok=@hallEntry[i]
       @sprites["pokemon#{i}"]=PokemonSprite.new(@viewport)
+      @sprites["pokemon#{i}"].setOffset(PictureOrigin::TopLeft)
       @sprites["pokemon#{i}"].setPokemonBitmap(pok)
       # This method doesn't put the exact coordinates
       pbPositionPokemonSprite(@sprites["pokemon#{i}"],xpoint,ypoint)
@@ -352,9 +355,6 @@ class HallOfFameScene
         _INTL("League champion!\nCongratulations!\\^"))
   end  
 
-  BASECOLOR   = Color.new(248,248,248)
-  SHADOWCOLOR = Color.new(0,0,0)
-
   def writePokemonData(pokemon,hallNumber=-1)
     overlay=@sprites["overlay"].bitmap
     overlay.clear 
@@ -366,16 +366,15 @@ class HallOfFameScene
       speciesname+="♀"
     end
     pokename+="/"+speciesname
-    pokename=_INTL("Egg")+"/"+_INTL("Egg") if pokemon.isEgg?
-    idno=(pokemon.ot=="" || pokemon.isEgg?) ? "?????" : 
-       sprintf("%05d",pokemon.publicID)
-    dexnumber=pokemon.isEgg? ? _INTL("No. ???") : _ISPRINTF("No. {1:03d}",pokemon.species)
+    pokename=_INTL("Egg")+"/"+_INTL("Egg") if pokemon.egg?
+    idno=(pokemon.ot=="" || pokemon.egg?) ? "?????" : sprintf("%05d",pokemon.publicID)
+    dexnumber=pokemon.egg? ? _INTL("No. ???") : _ISPRINTF("No. {1:03d}",pokemon.species)
     textPositions=[
        [dexnumber,32,Graphics.height-80,0,BASECOLOR,SHADOWCOLOR],
        [pokename,Graphics.width-192,Graphics.height-80,2,BASECOLOR,SHADOWCOLOR],
-       [_INTL("Lv. {1}",pokemon.isEgg? ? "?" : pokemon.level),
+       [_INTL("Lv. {1}",pokemon.egg? ? "?" : pokemon.level),
            64,Graphics.height-48,0,BASECOLOR,SHADOWCOLOR],
-       [_INTL("IDNo.{1}",pokemon.isEgg? ? "?????" : idno),
+       [_INTL("IDNo.{1}",pokemon.egg? ? "?????" : idno),
            Graphics.width-192,Graphics.height-48,2,BASECOLOR,SHADOWCOLOR]
     ]
     if (hallNumber>-1)
@@ -466,7 +465,7 @@ class HallOfFamePC
   end
 
   def access
-    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Hall of Fame."))
+    Kernel.pbMessage(_INTL("\\se[PC access]Accessed the Hall of Fame."))
     pbHallOfFamePC
   end
 end
@@ -496,13 +495,13 @@ end
 
 
 def pbHallOfFameEntry
-  scene=HallOfFameScene.new
+  scene=HallOfFame_Scene.new
   screen=HallOfFameScreen.new(scene)
   screen.pbStartScreenEntry
 end
 
 def pbHallOfFamePC
-  scene=HallOfFameScene.new
+  scene=HallOfFame_Scene.new
   screen=HallOfFameScreen.new(scene)
   screen.pbStartScreenPC
 end

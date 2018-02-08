@@ -18,9 +18,7 @@ module PBDebug
 
   def PBDebug.flush
     if $DEBUG && $INTERNAL && @@log.length>0
-      File.open("Data/debuglog.txt", "a+b") {|f|
-         f.write("#{@@log}")
-      }
+      File.open("Data/debuglog.txt", "a+b") {|f| f.write("#{@@log}") }
     end
     @@log.clear 
   end
@@ -36,8 +34,7 @@ module PBDebug
 
   def PBDebug.dump(msg)
     if $DEBUG && $INTERNAL
-      File.open("Data/dumplog.txt", "a+b") { |f| 
-         f.write("#{msg}\r\n") }
+      File.open("Data/dumplog.txt", "a+b") { |f| f.write("#{msg}\r\n") }
     end
   end
 end
