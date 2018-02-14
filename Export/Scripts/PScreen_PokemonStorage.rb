@@ -290,7 +290,7 @@ end
 #===============================================================================
 class PokemonBoxSprite < SpriteWrapper
   attr_accessor :refreshBox
-  attr_accessor :refreshSprites
+  attr_accessor :refreshSprites
   def initialize(storage,boxnumber,viewport=nil)
     super(viewport)
     @storage = storage
