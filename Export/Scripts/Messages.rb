@@ -347,6 +347,12 @@ module InterpreterMixin
     $game_map.need_refresh = true
   end
 
+# Sets another event's self switch even on a different map
+  def pbSetSelfSwitch2(map,event,swtch,value)
+    $game_self_switches[[map,event,swtch]]=value
+    $game_map.need_refresh = true
+  end
+  
 # Must use this approach to share the methods because the methods already
 # defined in a class override those defined in an included module
   CustomEventCommands=<<_END_
