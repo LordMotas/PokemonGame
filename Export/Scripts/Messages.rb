@@ -990,6 +990,50 @@ def Kernel.pbCreateStatusWindow(viewport=nil)
 end
 
 def Kernel.pbCreateMessageWindow(viewport=nil,skin=nil)
+  if $Bubble==2 # Message window set to floating bubble.
+    if $game_player.direction==8 # Player facing up, message window top. 
+      @Restriction = Viewport.new(0, 104, Graphics.width, 280)
+      @Restriction.z = 999999
+      @Arrow = Sprite.new(@Restriction)
+      @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
+      @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
+      @Arrow.z = 999999
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
+      @Arrow.zoom_x = 2
+      @Arrow.zoom_y = 2
+      if @Arrow.x<-230
+        @Arrow.x = $game_map.events[$talkingEvent].screen_x
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+      end
+    else # Player facing left, down, right, message window bottom.
+      @Restriction = Viewport.new(0, 0, Graphics.width, 280)
+      @Restriction.z = 999999
+      @Arrow = Sprite.new(@Restriction)
+      @Arrow.x = $game_map.events[$talkingEvent].screen_x
+      @Arrow.y = $game_map.events[$talkingEvent].screen_y
+      @Arrow.z = 999999
+      @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow1")
+      if @Arrow.y>=Graphics.height-120 # Change arrow direction. 
+        @Outofrange=true
+        @Restriction.rect.y+=104
+        @Arrow.x = $game_map.events[$talkingEvent].screen_x - Graphics.width
+        @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow4")
+        @Arrow.y = ($game_map.events[$talkingEvent].screen_y - Graphics.height) - 136
+        if @Arrow.x<-250
+          @Arrow.x = $game_map.events[$talkingEvent].screen_x
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+        end
+        if @Arrow.x>=256
+          @Arrow.x-=15# = $game_map.events[$talkingEvent].screen_x-Graphics.width
+          @Arrow.bitmap = BitmapCache.load_bitmap("Graphics/Pictures/Arrow3")
+        end
+      else
+        @Outofrange=false
+      end
+      @Arrow.zoom_x = 2
+      @Arrow.zoom_y = 2
+    end
+  end
   msgwindow=Window_AdvancedTextPokemon.new("")
   if !viewport
     msgwindow.z=99999
