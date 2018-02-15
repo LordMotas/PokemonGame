@@ -11,6 +11,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 'Spruce: Ah, \PN! It''s time to get started.'
           indent: 0
           code: 101
@@ -211,6 +216,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 'Spruce: Head over into the machine on your left and '
           indent: 0
           code: 101
@@ -259,6 +269,11 @@ root: !ruby/object:RPG::Map
         through: false
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'Spruce: So, you finished the test?'
@@ -379,6 +394,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 'Spruce: Head over to the machine on the right to '
           indent: 0
           code: 101
@@ -427,6 +447,11 @@ root: !ruby/object:RPG::Map
         through: false
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'Spruce: This is the part where I tell you what to do '
@@ -498,6 +523,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - It's a machine with three Pokeballs inside.
@@ -1761,6 +1791,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - It's a machine with three Pokeballs inside.
           indent: 0
           code: 101
@@ -1804,6 +1839,11 @@ root: !ruby/object:RPG::Map
         through: false
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - It's a machine with two Pokeballs inside.
@@ -1855,6 +1895,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - It's a machine with three Pokeballs inside.
@@ -3118,6 +3163,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - It's a machine with three Pokeballs inside.
           indent: 0
           code: 101
@@ -3161,6 +3211,11 @@ root: !ruby/object:RPG::Map
         through: false
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - It's a machine with two Pokeballs inside.
@@ -3212,6 +3267,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - The door won't open.
@@ -3808,6 +3868,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 'Spruce: \PN! You can''t leave now! You''re our only '
           indent: 0
           code: 101
@@ -3952,6 +4017,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - It's locked...
@@ -4189,6 +4259,11 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - On the table is the information that you provided.
           indent: 0
           code: 101
@@ -4238,6 +4313,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'It''s a computer with a bunch of settings shown on '
@@ -4294,6 +4374,11 @@ root: !ruby/object:RPG::Map
       pages:
       - !ruby/object:RPG::Event::Page
         list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'It''s a computer with a bunch of settings shown on '

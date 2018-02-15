@@ -17,7 +17,7 @@
 #      added on to the screen height above, only if the border is turned on.
 # * Map view mode (0=original, 1=custom, 2=perspective).
 #===============================================================================
-$Bubble = 0
+$Bubble = 1 # Set this to anything except 0
 $islandCount = 0
 $evoWeather = 0
 DEFAULTSCREENWIDTH   = 512

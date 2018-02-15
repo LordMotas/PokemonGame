@@ -571,6 +571,11 @@ root: !ruby/object:RPG::Map
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbSetSelfSwitch2(4,4,"A",false)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
@@ -662,6 +667,11 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbSetSelfSwitch2(4,1,"B",true)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbSetSelfSwitch2(4,4,"A",false)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
