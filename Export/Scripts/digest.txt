@@ -202,5 +202,8 @@
 8665854     Editor_SpritePosEditor                       Editor_SpritePosEditor.rb
 44515027    Editor_BattleAnimationEditor                 Editor_BattleAnimationEditor.rb
 66443344    Compiler                                     Compiler.rb
-27847358    ================                             EMPTY
+30913346    ===CUSTOM SCRIPTS===                         EMPTY
+51428905    ItemCrafter                                  ItemCrafter.rb
+6123542     UraniumCustomMenu                            UraniumCustomMenu.rb
+16280454    =================                            EMPTY
 76067044    Main                                         Main.rb

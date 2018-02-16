@@ -14,6 +14,7 @@ class PokeBattle_Trainer
   attr_accessor(:party)
   attr_accessor(:pokedex)    # Whether the Pokédex was obtained
   attr_accessor(:pokegear)   # Whether the Pokégear was obtained
+  attr_accessor(:itemCrafter)# Whether the Item Crafter was obtained
   attr_accessor(:language)
 
   def trainerTypeName   # Name of this trainer type (localized)
@@ -283,6 +284,7 @@ class PokeBattle_Trainer
     @outfit=0
     @pokegear=false
     @pokedex=false
+    @itemcrafter=false
     clearPokedex
     @shadowcaught=[]
     for i in 1..PBSpecies.maxValue

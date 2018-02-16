@@ -119,14 +119,26 @@ class Scene_Map
 
   def call_menu
     $game_temp.menu_calling = false
+    $game_player.straighten
+    $game_map.update
+    sscene=Menu.new
+    sscreen=MenuScreen.new(sscene) 
+    sscreen.pbNewMenu
+  end
+  
+=begin
+  def call_menu
+    $game_temp.menu_calling = false
     $game_temp.in_menu = true
     $game_player.straighten
     $game_map.update
+    pbNewMenu
     sscene=PokemonPauseMenu_Scene.new
     sscreen=PokemonPauseMenu.new(sscene) 
     sscreen.pbStartPokemonMenu
     $game_temp.in_menu = false
   end
+=end
 
   def call_debug
     $game_temp.debug_calling = false
