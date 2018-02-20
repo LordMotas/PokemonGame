@@ -198,15 +198,28 @@ pbOpenMenu
       case @commands[@index]
       when "Pokedex"
         pbFadeOutIn(99999) {
-           scene=PokemonPokedexScene.new
-           screen=PokemonPokedex.new(scene)
+           scene = PokemonPokedex_Scene.new
+           screen = PokemonPokedexScreen.new(scene)
            screen.pbStartScreen
         }
       when "Pokemon"
-        sscene=PokemonScreen_Scene.new
-        sscreen=PokemonScreen.new(sscene,$Trainer.party)
+        hiddenmove = nil
+        pbFadeOutIn(99999){ 
+          sscene = PokemonParty_Scene.new
+          sscreen = PokemonPartyScreen.new(sscene,$Trainer.party)
+          hiddenmove = sscreen.pbPokemonScreen
+        }
+        if hiddenmove
+          $game_temp.in_menu = false
+          Kernel.pbUseHiddenMove(hiddenmove[0],hiddenmove[1])
+          return
+        end
+=begin
         hiddenmove=nil
-        pbFadeOutIn(99999) { 
+        pbFadeOutIn(99999) {
+           sscene = PokemonParty_Scene.new
+           sscreen = PokemonPartyScreen.new(sscene,$Trainer.party)
+           sscreen.pbPokemonScreen
            hiddenmove=sscreen.pbPokemonScreen
            if hiddenmove
              for sprite in @sprites
@@ -219,6 +232,7 @@ pbOpenMenu
           Kernel.pbUseHiddenMove(hiddenmove[0],hiddenmove[1])
           return
         end
+=end
       when "Bag"
         item=0
         scene=PokemonBag_Scene.new
@@ -238,7 +252,9 @@ pbOpenMenu
         end
       when "Craft"
         #Call the item crafter script here...
-        ItemCrafterScene.new
+        pbFadeOutIn(99999) {
+          ItemCrafterScene.new
+        }
       when "I.D."
         scene = PokemonTrainerCard_Scene.new
         screen = PokemonTrainerCardScreen.new(scene)

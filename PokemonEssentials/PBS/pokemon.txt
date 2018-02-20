@@ -19,6 +19,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=22.7
 Color=Red
+Shape=6
 Habitat=Mountain
 RegionalNumbers=1
 Kind=Coal
@@ -29,7 +30,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=EMBAH,Level,32
 
 [2]
 Name=Embah
@@ -52,6 +52,7 @@ StepsToHatch=5355
 Height=1.7
 Weight=79.4
 Color=Red
+Shape=6
 Habitat=Mountain
 RegionalNumbers=2
 Kind=Ember
@@ -62,7 +63,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [3]
 Name=Sparilla
@@ -85,6 +85,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=45.4
 Color=Black
+Shape=6
 Habitat=Mountain
 RegionalNumbers=3
 Kind=Sparring
@@ -95,7 +96,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BOMBRILLA,Level,24
 
 [4]
 Name=Bombrilla
@@ -118,6 +118,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=68
 Color=Black
+Shape=6
 Habitat=Mountain
 RegionalNumbers=4
 Kind=Bombarding
@@ -128,7 +129,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=WARILLA,Level,38
 
 [5]
 Name=Warilla
@@ -151,6 +151,7 @@ StepsToHatch=5355
 Height=2
 Weight=113.4
 Color=Black
+Shape=6
 Habitat=Mountain
 RegionalNumbers=5
 Kind=Warring
@@ -161,7 +162,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [6]
 Name=Scatt
@@ -184,17 +184,17 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=Yellow
+Shape=8
 Habitat=Mountain
 RegionalNumbers=6
 Kind=Scat
-Pokedex=Scatt remains have been found in the petrified feces of much larger animlas.
+Pokedex=Scatt remains have been found in the petrified feces of much larger animals.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SCRAVEL,Level,30
 
 [7]
 Name=Scravel
@@ -217,6 +217,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=Yellow
+Shape=8
 Habitat=Mountain
 RegionalNumbers=7
 Kind=Gravel
@@ -227,7 +228,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [8]
 Name=Ninjoth
@@ -250,6 +250,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=18.1
 Color=Black
+Shape=12
 Habitat=Forest
 RegionalNumbers=8
 Kind=Ninja
@@ -260,7 +261,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TAIJOTH,Level,20
 
 [9]
 Name=Taijoth
@@ -283,17 +283,17 @@ StepsToHatch=5355
 Height=0.9
 Weight=40.8
 Color=Black
+Shape=12
 Habitat=Forest
 RegionalNumbers=9
 Kind=Tai
-Pokedex=Out of respect for its foe, Taijoth allows its opponent the first move. It could beat any other Pokemon in speed, but it prefers a challenge.
+Pokedex=Out of respect for its foe, Taijoth allows its opponent the first move. It could beat any other Pokémon in speed, but it prefers a challenge.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CHAKROTH,Level,40
 
 [10]
 Name=Chakroth
@@ -316,6 +316,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=65.8
 Color=Black
+Shape=12
 Habitat=Forest
 RegionalNumbers=10
 Kind=Chakra
@@ -326,7 +327,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [11]
 Name=Pandim
@@ -349,6 +349,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=Black
+Shape=8
 Habitat=Cave
 RegionalNumbers=11
 Kind=Panther
@@ -359,7 +360,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PANDUSK,Level,28
 
 [12]
 Name=Pandusk
@@ -382,6 +382,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=Black
+Shape=8
 Habitat=Cave
 RegionalNumbers=12
 Kind=Dusk
@@ -392,7 +393,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [13]
 Name=Kuneak
@@ -415,6 +415,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=60.5
 Color=Black
+Shape=12
 Habitat=Urban
 RegionalNumbers=13
 Kind=Kunai
@@ -425,7 +426,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [14]
 Name=Narlez
@@ -448,6 +448,7 @@ StepsToHatch=5355
 Height=0.1
 Weight=34
 Color=Yellow
+Shape=3
 Habitat=Sea
 RegionalNumbers=14
 Kind=Swordfish
@@ -458,7 +459,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=RISPARLIN,Level,28
 
 [15]
 Name=Risparlin
@@ -481,6 +481,7 @@ StepsToHatch=5355
 Height=1.4
 Weight=45.4
 Color=Yellow
+Shape=3
 Habitat=Sea
 RegionalNumbers=15
 Kind=Fence Fish
@@ -491,7 +492,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [16]
 Name=Liohm
@@ -514,6 +514,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=Blue
+Shape=8
 Habitat=Grassland
 RegionalNumbers=16
 Kind=Lion
@@ -524,7 +525,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=LIODE,Level,28
 
 [17]
 Name=Liode
@@ -547,6 +547,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=Blue
+Shape=8
 Habitat=Grassland
 RegionalNumbers=17
 Kind=Diode
@@ -557,7 +558,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [18]
 Name=Aetheroo
@@ -580,17 +580,17 @@ StepsToHatch=5355
 Height=0.9
 Weight=12.3
 Color=Purple
+Shape=6
 Habitat=Cave
 RegionalNumbers=18
 Kind=Aether
-Pokedex=Aetheroo are one of the only known Pokemon to be able to make physical contact with Ghost Pokemon.
+Pokedex=Aetheroo are one of the only known Pokémon to be able to make physical contact with Ghost Pokémon.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SPECTEROO,Level,32
 
 [19]
 Name=Specteroo
@@ -613,6 +613,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=20.4
 Color=Purple
+Shape=6
 Habitat=Cave
 RegionalNumbers=19
 Kind=Specter
@@ -623,7 +624,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [20]
 Name=Hamplin
@@ -646,6 +646,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=0.2
 Color=Brown
+Shape=8
 Habitat=Forest
 RegionalNumbers=20
 Kind=Plain
@@ -656,7 +657,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=HAMAGE,Level,18
 
 [21]
 Name=Hamage
@@ -679,6 +679,7 @@ StepsToHatch=5355
 Height=1
 Weight=13.4
 Color=Brown
+Shape=8
 Habitat=Forest
 RegionalNumbers=21
 Kind=Hamster
@@ -689,7 +690,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [22]
 Name=Torja
@@ -712,6 +712,7 @@ StepsToHatch=5355
 Height=1
 Weight=22.5
 Color=Brown
+Shape=12
 Habitat=RoughTerrain
 RegionalNumbers=22
 Kind=Ninja Turtle
@@ -722,7 +723,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORJITSU,Level,36
 
 [23]
 Name=Torjitsu
@@ -745,6 +745,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=50.2
 Color=Brown
+Shape=12
 Habitat=RoughTerrain
 RegionalNumbers=23
 Kind=Jitsu
@@ -755,7 +756,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [24]
 Name=Kensei
@@ -778,6 +778,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=62.5
 Color=Black
+Shape=12
 Habitat=Urban
 RegionalNumbers=24
 Kind=Blade
@@ -788,7 +789,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [25]
 Name=O'Jib
@@ -811,17 +811,17 @@ StepsToHatch=5355
 Height=0.8
 Weight=12.2
 Color=Purple
+Shape=1
 Habitat=Cave
 RegionalNumbers=25
 Kind=Dreamcatcher
-Pokedex=O'Jib like to be near other pokemon as they sleep, consuming their dreams.
+Pokedex=O'Jib like to be near other Pokémon as they sleep, consuming their dreams.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ZHIBWE,Level,24
 
 [26]
 Name=Zhib'We
@@ -844,17 +844,17 @@ StepsToHatch=5355
 Height=1
 Weight=15.5
 Color=Purple
+Shape=1
 Habitat=Cave
 RegionalNumbers=26
 Kind=Nightmare
-Pokedex=Nightmares are rumored to start from the fears of Zhib'we that are near.
+Pokedex=Nightmares are rumored to start from the fears of Zhib'We that are near.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [27]
 Name=Scrawl
@@ -877,6 +877,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=30.5
 Color=White
+Shape=1
 Habitat=Cave
 RegionalNumbers=27
 Kind=Scroll
@@ -887,7 +888,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=VOYDEX,Level,35
 
 [28]
 Name=Voydex
@@ -910,6 +910,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=61
 Color=Brown
+Shape=1
 Habitat=Cave
 RegionalNumbers=28
 Kind=Codex
@@ -920,7 +921,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [29]
 Name=Psyren
@@ -943,6 +943,7 @@ StepsToHatch=5355
 Height=1
 Weight=20.2
 Color=Purple
+Shape=12
 Habitat=Cave
 RegionalNumbers=29
 Kind=Mermaid
@@ -953,7 +954,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MAGIPSY,Level,22
 
 [30]
 Name=Magipsy
@@ -976,6 +976,7 @@ StepsToHatch=5355
 Height=1.2
 Weight=30.4
 Color=Purple
+Shape=12
 Habitat=Cave
 RegionalNumbers=30
 Kind=Gypsy
@@ -986,7 +987,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PSYMYST,Level,34
 
 [31]
 Name=Psymyst
@@ -1009,17 +1009,17 @@ StepsToHatch=5355
 Height=1.4
 Weight=40.6
 Color=Purple
+Shape=12
 Habitat=Cave
 RegionalNumbers=31
 Kind=Siren
-Pokedex=Psymyst can control even the strongest of minds with its song. It can act as a hive mind and control hundreds of Pokemon at a time.
+Pokedex=Psymyst can control even the strongest of minds with its song. It can act as a hive mind and control hundreds of Pokémon at a time.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [32]
 Name=Larvance
@@ -1042,17 +1042,17 @@ StepsToHatch=5355
 Height=0.3
 Weight=2.9
 Color=Black
+Shape=14
 Habitat=Forest
 RegionalNumbers=32
 Kind=Balance
-Pokedex=Larvance is just beginning to understand the equillibrium of the universe and is easily swayed from one side to the other on a whim.
+Pokedex=Larvance is just beginning to understand the equilibrium of the universe and is easily swayed from one side to the other on a whim.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=HARMOONY,Level,15
 
 [33]
 Name=Harmoony
@@ -1075,6 +1075,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=9.9
 Color=White
+Shape=1
 Habitat=Forest
 RegionalNumbers=33
 Kind=Harmony
@@ -1085,7 +1086,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=YINLEE,LevelNight,25,YANGLEE,LevelDay,25
 
 [34]
 Name=Yinlee
@@ -1108,6 +1108,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=32
 Color=Black
+Shape=13
 Habitat=Forest
 RegionalNumbers=34
 Kind=Yin
@@ -1118,7 +1119,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [35]
 Name=Yanglee
@@ -1141,6 +1141,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=32
 Color=White
+Shape=13
 Habitat=Forest
 RegionalNumbers=35
 Kind=Yang
@@ -1151,7 +1152,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [36]
 Name=Tormage
@@ -1174,17 +1174,17 @@ StepsToHatch=5355
 Height=1
 Weight=22.5
 Color=Brown
+Shape=12
 Habitat=RoughTerrain
 RegionalNumbers=36
 Kind=Mage
-Pokedex=The mind of Tormage is contantly expanding and granting it new abilities and powers.
+Pokedex=The mind of Tormage is constantly expanding and granting it new abilities and powers.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORSAGE,Level,36
 
 [37]
 Name=Torsage
@@ -1207,17 +1207,17 @@ StepsToHatch=5355
 Height=1.6
 Weight=50.2
 Color=Brown
+Shape=12
 Habitat=RoughTerrain
 RegionalNumbers=37
 Kind=Sage
-Pokedex=Torsage are able to traverse the minds of other pokemon, either unlocking their hidden potential or driving them mad.
+Pokedex=Torsage are able to traverse the minds of other Pokémon, either unlocking their hidden potential or driving them mad.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [38]
 Name=Falcurr
@@ -1240,6 +1240,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=15
 Color=Yellow
+Shape=9
 Habitat=Mountain
 RegionalNumbers=38
 Kind=Falcon
@@ -1250,7 +1251,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=FALSURGE,Level,25
 
 [39]
 Name=Falsurge
@@ -1273,6 +1273,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=25.2
 Color=Yellow
+Shape=9
 Habitat=Mountain
 RegionalNumbers=39
 Kind=Surging
@@ -1283,7 +1284,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [40]
 Name=Electah
@@ -1306,17 +1306,17 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=Yellow
+Shape=8
 Habitat=Grassland
 RegionalNumbers=40
 Kind=Cheetah
-Pokedex=The reflexes of an Electah are extremelyquick. They have been known to dodge speeding bullets.
+Pokedex=The reflexes of an Electah are extremely quick. They have been known to dodge speeding bullets.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=WATTAH,Level,28
 
 [41]
 Name=Wattah
@@ -1339,6 +1339,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=Yellow
+Shape=8
 Habitat=Grassland
 RegionalNumbers=41
 Kind=Watt
@@ -1349,7 +1350,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [42]
 Name=Aitchray
@@ -1372,6 +1372,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=29.8
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=42
 Kind=Hydrogen
@@ -1382,7 +1383,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TWORAY,Level,20
 
 [43]
 Name=Tworay
@@ -1405,6 +1405,7 @@ StepsToHatch=5355
 Height=1.2
 Weight=37.4
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=43
 Kind=Double
@@ -1415,7 +1416,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=OHRAY,Level,34
 
 [44]
 Name=Ohray
@@ -1438,6 +1438,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=55.1
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=44
 Kind=Oxygen
@@ -1448,7 +1449,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [45]
 Name=Torling
@@ -1471,17 +1471,17 @@ StepsToHatch=20145
 Height=0.3
 Weight=12.8
 Color=White
+Shape=8
 Habitat=Rare
 RegionalNumbers=45
 Kind=Egg
-Pokedex=The origin of Torling is a mystery to many. Legend states that it was unsucceful clone of a Togepi.
+Pokedex=The origin of Torling is a mystery to many. Legend states that it was unsuccessful clone of a Togepi.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORPLOT,HighestHP,20,TORJA,HighestAtk,20,TOROOK,HighestDef,20,TORLYTE,HighestSpd,20,TORMAGE,HighestSpAtk,20,TORAITH,HighestSpDef,20
 
 [46]
 Name=Torlyte
@@ -1504,6 +1504,7 @@ StepsToHatch=5355
 Height=1
 Weight=22.5
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=46
 Kind=Acolyte
@@ -1514,7 +1515,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORVOLT,Level,36
 
 [47]
 Name=Torvolt
@@ -1537,6 +1537,7 @@ StepsToHatch=5355
 Height=1.3
 Weight=85.5
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=47
 Kind=Voltage
@@ -1547,7 +1548,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [48]
 Name=Molay
@@ -1570,6 +1570,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=25.1
 Color=Brown
+Shape=6
 Habitat=Mountain
 RegionalNumbers=48
 Kind=Clay
@@ -1580,7 +1581,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MOLIC,Level,26
 
 [49]
 Name=Molic
@@ -1603,6 +1603,7 @@ StepsToHatch=5355
 Height=0.8
 Weight=45.8
 Color=Brown
+Shape=6
 Habitat=Mountain
 RegionalNumbers=49
 Kind=Seismic
@@ -1613,7 +1614,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [50]
 Name=Tewi
@@ -1636,6 +1636,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=12.4
 Color=Brown
+Shape=5
 Habitat=RoughTerrain
 RegionalNumbers=50
 Kind=Kiwi
@@ -1646,7 +1647,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DIAWI,Level,30
 
 [51]
 Name=Diawi
@@ -1669,17 +1669,17 @@ StepsToHatch=5355
 Height=0.9
 Weight=59.1
 Color=Brown
+Shape=5
 Habitat=RoughTerrain
 RegionalNumbers=51
 Kind=Diamond Beak
-Pokedex=The maximum value on the Mohs hardness scale is now eleven. This change was made when a Daiwi shattered a diamond with it's beak.
+Pokedex=The maximum value on the Mohs hardness scale is now eleven. This change was made when a Diawi shattered a diamond with it's beak.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [52]
 Name=Tremorine
@@ -1702,6 +1702,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=84.6
 Color=Blue
+Shape=1
 Habitat=Mountain
 RegionalNumbers=52
 Kind=Tremor
@@ -1712,7 +1713,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SUBTERRA,Level,32
 
 [53]
 Name=Subterra
@@ -1735,6 +1735,7 @@ StepsToHatch=5355
 Height=2.1
 Weight=252.4
 Color=Blue
+Shape=1
 Habitat=Mountain
 RegionalNumbers=53
 Kind=Terra
@@ -1745,7 +1746,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [54]
 Name=Dustorm
@@ -1768,6 +1768,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=1.5
 Color=Brown
+Shape=1
 Habitat=Mountain
 RegionalNumbers=54
 Kind=Sandstorm
@@ -1778,7 +1779,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [55]
 Name=Torplot
@@ -1801,6 +1801,7 @@ StepsToHatch=5355
 Height=1
 Weight=22.5
 Color=Brown
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=55
 Kind=Plot
@@ -1811,7 +1812,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORPEAK,Level,20
 
 [56]
 Name=Torpeak
@@ -1834,6 +1834,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=95.2
 Color=Brown
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=56
 Kind=Peak
@@ -1844,7 +1845,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [57]
 Name=Rubbounce
@@ -1867,17 +1867,17 @@ StepsToHatch=5355
 Height=0.7
 Weight=9.1
 Color=White
+Shape=5
 Habitat=Rare
 RegionalNumbers=57
 Kind=Rubber
-Pokedex=Once thought to be a man-made Pokemon, Rubbounce is able to change it's shape at will.
+Pokedex=Once thought to be a man-made Pokémon, Rubbounce is able to change it's shape at will.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [58]
 Name=Eeland
@@ -1900,6 +1900,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=13.6
 Color=Blue
+Shape=2
 Habitat=Sea
 RegionalNumbers=58
 Kind=Vent Eel
@@ -1910,7 +1911,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CONTINEEL,Level,16
 
 [59]
 Name=Contineel
@@ -1933,6 +1933,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=27.2
 Color=Blue
+Shape=2
 Habitat=Sea
 RegionalNumbers=59
 Kind=Smoke Eel
@@ -1943,7 +1944,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PANGEEL,Level,36
 
 [60]
 Name=Pangeel
@@ -1966,6 +1966,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=40.8
 Color=Blue
+Shape=2
 Habitat=Sea
 RegionalNumbers=60
 Kind=Fire Eel
@@ -1976,7 +1977,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [61]
 Name=Sharmer
@@ -1999,6 +1999,7 @@ StepsToHatch=5355
 Height=0.8
 Weight=73.5
 Color=Gray
+Shape=3
 Habitat=Sea
 RegionalNumbers=61
 Kind=Hammerhead
@@ -2009,7 +2010,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SAWROSK,Level,28
 
 [62]
 Name=Sawrosk
@@ -2032,6 +2032,7 @@ StepsToHatch=5355
 Height=1.3
 Weight=120.6
 Color=Gray
+Shape=3
 Habitat=Sea
 RegionalNumbers=62
 Kind=Sawfish
@@ -2042,7 +2043,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [63]
 Name=Normbus
@@ -2065,6 +2065,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=0.8
 Color=White
+Shape=1
 Habitat=Mountain
 RegionalNumbers=63
 Kind=Nimbus
@@ -2075,7 +2076,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=STORMULUS,LevelRain,20,DUSTORM,LevelSandstorm,20,BLIZZAIL,LevelHail,20,NIMBLAZE,LevelSunny,20
 
 [64]
 Name=Stormulus
@@ -2098,6 +2098,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=1
 Color=Blue
+Shape=1
 Habitat=Mountain
 RegionalNumbers=64
 Kind=Cumulus
@@ -2108,7 +2109,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [65]
 Name=Dolphil
@@ -2131,6 +2131,7 @@ StepsToHatch=5355
 Height=0.8
 Weight=20.4
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=65
 Kind=Filter
@@ -2141,7 +2142,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DOLPHLOW,Level,22
 
 [66]
 Name=Dolphlow
@@ -2164,6 +2164,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=34.1
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=66
 Kind=Flow
@@ -2174,7 +2175,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DOLPHLOOD,Level,34
 
 [67]
 Name=Dolphlood
@@ -2197,6 +2197,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=46.2
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=67
 Kind=Flood
@@ -2207,7 +2208,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [68]
 Name=Krakool
@@ -2230,6 +2230,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=9.1
 Color=Red
+Shape=10
 Habitat=Sea
 RegionalNumbers=68
 Kind=Pool
@@ -2240,7 +2241,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=KRAKOND,Level,18
 
 [69]
 Name=Krakond
@@ -2263,17 +2263,17 @@ StepsToHatch=5355
 Height=0.5
 Weight=20.4
 Color=Red
+Shape=10
 Habitat=Sea
 RegionalNumbers=69
 Kind=Pond
-Pokedex=Krakond are ruthless and unrelenting in their pursuit of vessels that have passed through their domain, forgoeing sleep in order to catch their prey.
+Pokedex=Krakond are ruthless and unrelenting in their pursuit of vessels that have passed through their domain, forgoing sleep in order to catch their prey.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=KRAKOVE,Level,36
 
 [70]
 Name=Krakove
@@ -2296,17 +2296,17 @@ StepsToHatch=5355
 Height=0.7
 Weight=38.1
 Color=Red
+Shape=10
 Habitat=Sea
 RegionalNumbers=70
 Kind=Cove
-Pokedex=Krakove drag ships into the deepest parts of the ocean where it tortures and devours its victims. This Pokemon has been nicknamed the "Devil Fish."
+Pokedex=Krakove drag ships into the deepest parts of the ocean where it tortures and devours its victims. This Pokémon has been nicknamed the "Devil Fish."
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [71]
 Name=Armore
@@ -2329,6 +2329,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=56.7
 Color=Brown
+Shape=6
 Habitat=Mountain
 RegionalNumbers=71
 Kind=Ore
@@ -2339,7 +2340,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ARMINGOT,Level,22
 
 [72]
 Name=Armingot
@@ -2362,6 +2362,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=90.7
 Color=Brown
+Shape=8
 Habitat=Mountain
 RegionalNumbers=72
 Kind=Ingot
@@ -2372,7 +2373,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ARMIELD,Level,40
 
 [73]
 Name=Armield
@@ -2395,6 +2395,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=181.3
 Color=Brown
+Shape=8
 Habitat=Mountain
 RegionalNumbers=73
 Kind=Armordillo
@@ -2405,7 +2406,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [74]
 Name=Buckleth
@@ -2428,17 +2428,17 @@ StepsToHatch=5355
 Height=1.2
 Weight=1000
 Color=Brown
+Shape=8
 Habitat=Mountain
 RegionalNumbers=74
 Kind=Buckler
-Pokedex=Buckleth are reported to weigh more than even Primal Groudon, making them the heaviest known Pokemon alive.
+Pokedex=Buckleth are reported to weigh more than even Primal Groudon, making them the heaviest known Pokémon alive.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BULWARTH,Level,30
 
 [75]
 Name=Bulwarth
@@ -2461,6 +2461,7 @@ StepsToHatch=5355
 Height=2
 Weight=4300
 Color=Brown
+Shape=8
 Habitat=Mountain
 RegionalNumbers=75
 Kind=Bulwark
@@ -2471,7 +2472,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [76]
 Name=Torook
@@ -2494,6 +2494,7 @@ StepsToHatch=5355
 Height=1.2
 Weight=85
 Color=Gray
+Shape=8
 Habitat=Mountain
 RegionalNumbers=76
 Kind=Castle
@@ -2504,7 +2505,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORTRESS,Level,36
 
 [77]
 Name=Tortress
@@ -2527,6 +2527,7 @@ StepsToHatch=5355
 Height=1.7
 Weight=125.2
 Color=Gray
+Shape=8
 Habitat=Mountain
 RegionalNumbers=77
 Kind=Fortress
@@ -2537,7 +2538,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [78]
 Name=Pallock
@@ -2560,6 +2560,7 @@ StepsToHatch=5355
 Height=1.3
 Weight=72.6
 Color=Gray
+Shape=9
 Habitat=RoughTerrain
 RegionalNumbers=78
 Kind=Peacock
@@ -2570,7 +2571,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [79]
 Name=Project S.P.
@@ -2593,17 +2593,17 @@ StepsToHatch=5355
 Height=1.8
 Weight=90.7
 Color=Gray
+Shape=12
 Habitat=Urban
 RegionalNumbers=79
 Kind=Experiment
-Pokedex=Another attempt at creating a Pokemon. Project S.P. can be upgraded in order to adapt to its surroundings.
+Pokedex=Another attempt at creating a Pokémon. Project S.P. can be upgraded in order to adapt to its surroundings.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [80]
 Name=Nubice
@@ -2626,6 +2626,7 @@ StepsToHatch=5355
 Height=1
 Weight=48.5
 Color=White
+Shape=12
 Habitat=Urban
 RegionalNumbers=80
 Kind=Novice
@@ -2636,7 +2637,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ADEPTICE,Level,20
 
 [81]
 Name=Adeptice
@@ -2659,6 +2659,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=55.1
 Color=White
+Shape=12
 Habitat=Urban
 RegionalNumbers=81
 Kind=Apprentice
@@ -2669,7 +2670,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=KUNEAK,Item,CLOAK,KENSEI,Item,SWORD,SENSHIELD,Item,SHIELD,ARCHAH,Item,BOW,WIZICE,Item,STAFF
 
 [82]
 Name=Senshield
@@ -2692,6 +2692,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=91.5
 Color=Gray
+Shape=12
 Habitat=Urban
 RegionalNumbers=82
 Kind=Shield
@@ -2702,7 +2703,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [83]
 Name=Shromb
@@ -2725,6 +2725,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=11.3
 Color=Black
+Shape=1
 Habitat=Forest
 RegionalNumbers=83
 Kind=Bomb Sprout
@@ -2735,7 +2736,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SHRUBOMB,Level,16
 
 [84]
 Name=Shrubomb
@@ -2758,6 +2758,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=20.4
 Color=Black
+Shape=8
 Habitat=Forest
 RegionalNumbers=84
 Kind=Bomb Flower
@@ -2768,7 +2769,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SHRUBLAST,Level,36
 
 [85]
 Name=Shrublast
@@ -2791,6 +2791,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=37.6
 Color=Black
+Shape=8
 Habitat=Forest
 RegionalNumbers=85
 Kind=Bomb Plant
@@ -2801,7 +2802,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [86]
 Name=Zefeer
@@ -2824,6 +2824,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=15
 Color=Red
+Shape=9
 Habitat=Mountain
 RegionalNumbers=86
 Kind=Zephyr
@@ -2834,7 +2835,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ZEFIRE,Level,25
 
 [87]
 Name=Zefire
@@ -2857,6 +2857,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=25.2
 Color=Red
+Shape=9
 Habitat=Mountain
 RegionalNumbers=87
 Kind=Fire Bird
@@ -2867,7 +2868,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [88]
 Name=Tchar
@@ -2890,6 +2890,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=Red
+Shape=8
 Habitat=Grassland
 RegionalNumbers=88
 Kind=Tiger
@@ -2900,7 +2901,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TIFERNO,Level,28
 
 [89]
 Name=Tiferno
@@ -2923,17 +2923,17 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=Red
+Shape=8
 Habitat=Grassland
 RegionalNumbers=89
 Kind=Inferno
-Pokedex=Tiferno are the only big cat Pokemon that doesn't eat raw meat. Their teeth cook the meat for them as they eat it.
+Pokedex=Tiferno are the only big cat Pokémon that doesn't eat raw meat. Their teeth cook the meat for them as they eat it.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [90]
 Name=Tinderus
@@ -2956,6 +2956,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=18.1
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=90
 Kind=Tinder
@@ -2966,7 +2967,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CEREBSEAR,Level,25
 
 [91]
 Name=Cerebsear
@@ -2989,6 +2989,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=38.6
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=91
 Kind=Searing
@@ -2999,7 +3000,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=COMBUSTERUS,Level,40
 
 [92]
 Name=Combusterus
@@ -3022,6 +3022,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=54.4
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=92
 Kind=Combusting
@@ -3032,7 +3033,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [93]
 Name=Vyre
@@ -3055,6 +3055,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=15.6
 Color=Black
+Shape=12
 Habitat=Cave
 RegionalNumbers=93
 Kind=Viking
@@ -3065,7 +3066,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PYKING,Level,32
 
 [94]
 Name=Pyking
@@ -3088,6 +3088,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=31.8
 Color=Black
+Shape=12
 Habitat=Cave
 RegionalNumbers=94
 Kind=Pyre
@@ -3098,7 +3099,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [95]
 Name=Nimblaze
@@ -3121,6 +3121,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=0.8
 Color=Black
+Shape=1
 Habitat=Mountain
 RegionalNumbers=95
 Kind=Fire Storm
@@ -3131,7 +3132,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [96]
 Name=Gargur
@@ -3154,6 +3154,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=68.1
 Color=Black
+Shape=9
 Habitat=Cave
 RegionalNumbers=96
 Kind=Gargoyle
@@ -3164,7 +3165,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=GARGEFFIGY,Level,35
 
 [97]
 Name=Gargeffigy
@@ -3187,6 +3187,7 @@ StepsToHatch=5355
 Height=1.4
 Weight=102.1
 Color=Black
+Shape=9
 Habitat=Cave
 RegionalNumbers=97
 Kind=Effigy
@@ -3197,7 +3198,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [98]
 Name=Girafite
@@ -3220,6 +3220,7 @@ StepsToHatch=5355
 Height=1.6
 Weight=56.7
 Color=Brown
+Shape=12
 Habitat=Cave
 RegionalNumbers=98
 Kind=Graphite
@@ -3230,7 +3231,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=GIRAFNIGHT,Level,27
 
 [99]
 Name=Girafnight
@@ -3253,6 +3253,7 @@ StepsToHatch=5355
 Height=2.5
 Weight=104.3
 Color=Brown
+Shape=12
 Habitat=Cave
 RegionalNumbers=99
 Kind=Knight
@@ -3263,7 +3264,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [100]
 Name=Spigem
@@ -3286,6 +3286,7 @@ StepsToHatch=5355
 Height=0.2
 Weight=4.5
 Color=Brown
+Shape=14
 Habitat=Cave
 RegionalNumbers=100
 Kind=Gem
@@ -3296,7 +3297,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SPEWEL,Level,20
 
 [101]
 Name=Spewel
@@ -3319,6 +3319,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=9.1
 Color=Brown
+Shape=14
 Habitat=Cave
 RegionalNumbers=101
 Kind=Jewel
@@ -3329,7 +3330,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SPRYSTAL,Level,35
 
 [102]
 Name=Sprystal
@@ -3352,6 +3352,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=15.5
 Color=Brown
+Shape=14
 Habitat=Cave
 RegionalNumbers=102
 Kind=Crystal
@@ -3362,7 +3363,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [103]
 Name=Aegeode
@@ -3385,6 +3385,7 @@ StepsToHatch=5355
 Height=1.7
 Weight=136.1
 Color=Brown
+Shape=2
 Habitat=Rare
 RegionalNumbers=103
 Kind=Geode
@@ -3395,7 +3396,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [104]
 Name=Shrelp
@@ -3418,6 +3418,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=11.5
 Color=Brown
+Shape=6
 Habitat=WatersEdge
 RegionalNumbers=104
 Kind=Kelp Shrimp
@@ -3428,7 +3429,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PRAWLP,Level,16
 
 [105]
 Name=Prawlp
@@ -3451,6 +3451,7 @@ StepsToHatch=5355
 Height=1
 Weight=42
 Color=Brown
+Shape=6
 Habitat=WatersEdge
 RegionalNumbers=105
 Kind=Kelp Crab
@@ -3461,7 +3462,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=KRAWLP,Level,36
 
 [106]
 Name=Krawlp
@@ -3484,17 +3484,17 @@ StepsToHatch=5355
 Height=1.6
 Weight=72.5
 Color=Brown
+Shape=6
 Habitat=WatersEdge
 RegionalNumbers=106
 Kind=Kelp Lobster
-Pokedex=Krawlp pincers have been reported to snap trees in twain with ease. The plants used for camouflage now serve as warnings for other Pokemon to steer clear.
+Pokedex=Krawlp pincers have been reported to snap trees in twain with ease. The plants used for camouflage now serve as warnings for other Pokémon to steer clear.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [107]
 Name=Dandrax
@@ -3517,6 +3517,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=6.8
 Color=Green
+Shape=5
 Habitat=Forest
 RegionalNumbers=107
 Kind=Weed
@@ -3527,7 +3528,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=WARAX,Level,19
 
 [108]
 Name=Warax
@@ -3550,6 +3550,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=14.7
 Color=Green
+Shape=5
 Habitat=Forest
 RegionalNumbers=108
 Kind=Dandelion
@@ -3560,7 +3561,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TARAX,Level,33
 
 [109]
 Name=Tarax
@@ -3583,6 +3583,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=32.9
 Color=Green
+Shape=5
 Habitat=Forest
 RegionalNumbers=109
 Kind=Taraxacum
@@ -3593,7 +3594,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [110]
 Name=Cottama
@@ -3616,6 +3616,7 @@ StepsToHatch=5355
 Height=1.2
 Weight=30.4
 Color=Green
+Shape=8
 Habitat=Forest
 RegionalNumbers=110
 Kind=Llama
@@ -3626,7 +3627,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ALPATTON,Level,31
 
 [111]
 Name=Alpatton
@@ -3649,6 +3649,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=55.3
 Color=Green
+Shape=8
 Habitat=Forest
 RegionalNumbers=111
 Kind=Alpaca
@@ -3659,7 +3660,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [112]
 Name=Snadelic
@@ -3682,6 +3682,7 @@ StepsToHatch=5355
 Height=0.1
 Weight=1.4
 Color=Green
+Shape=5
 Habitat=Forest
 RegionalNumbers=112
 Kind=Snail
@@ -3692,7 +3693,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=HALUSNAIL,Level,33
 
 [113]
 Name=Halusnail
@@ -3715,6 +3715,7 @@ StepsToHatch=5355
 Height=0.2
 Weight=3.2
 Color=Green
+Shape=5
 Habitat=Forest
 RegionalNumbers=113
 Kind=Hallucination
@@ -3725,7 +3726,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [114]
 Name=Archah
@@ -3748,6 +3748,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=65.2
 Color=Green
+Shape=12
 Habitat=Urban
 RegionalNumbers=114
 Kind=Archer
@@ -3758,7 +3759,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [115]
 Name=Phantomb
@@ -3781,17 +3781,17 @@ StepsToHatch=5355
 Height=0.7
 Weight=14.9
 Color=Purple
+Shape=5
 Habitat=Cave
 RegionalNumbers=115
 Kind=Phantom
-Pokedex=Phantomb are the result of deceased Pokemon spirits possessing their gravestone after death in denial of their passing on.
+Pokedex=Phantomb are the result of deceased Pokémon spirits possessing their gravestone after death in denial of their passing on.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CRYPTOM,Level,38
 
 [116]
 Name=Cryptom
@@ -3814,17 +3814,17 @@ StepsToHatch=5355
 Height=0.8
 Weight=23.6
 Color=Purple
+Shape=5
 Habitat=Cave
 RegionalNumbers=116
 Kind=Crypt
-Pokedex=Cryptom are the reincarnation of pokemon that refused to quit battling even after death.
+Pokedex=Cryptom are the reincarnation of Pokémon that refused to quit battling even after death.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [117]
 Name=Murr
@@ -3847,6 +3847,7 @@ StepsToHatch=5355
 Height=0.2
 Weight=5.4
 Color=White
+Shape=1
 Habitat=Cave
 RegionalNumbers=117
 Kind=Chilly
@@ -3857,7 +3858,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=FROZZOR,Level,22
 
 [118]
 Name=Frozzor
@@ -3880,6 +3880,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=7.7
 Color=White
+Shape=4
 Habitat=Cave
 RegionalNumbers=118
 Kind=Mirror
@@ -3890,7 +3891,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=REFLECTIC,Level,35
 
 [119]
 Name=Reflectic
@@ -3913,6 +3913,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=8
 Color=White
+Shape=4
 Habitat=Cave
 RegionalNumbers=119
 Kind=Reflection
@@ -3923,7 +3924,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [120]
 Name=Shadelet
@@ -3946,6 +3946,7 @@ StepsToHatch=5355
 Height=0.1
 Weight=1.1
 Color=Gray
+Shape=1
 Habitat=Cave
 RegionalNumbers=120
 Kind=Bracelet
@@ -3956,7 +3957,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PHANLINK,Level,26
 
 [121]
 Name=Phanlink
@@ -3979,6 +3979,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=4.5
 Color=Gray
+Shape=4
 Habitat=Cave
 RegionalNumbers=121
 Kind=Link
@@ -3989,7 +3990,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SHACKTER,Level,40
 
 [122]
 Name=Shackter
@@ -4012,6 +4012,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=8.2
 Color=Gray
+Shape=4
 Habitat=Cave
 RegionalNumbers=122
 Kind=Shackle
@@ -4022,7 +4023,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [123]
 Name=Toraith
@@ -4045,6 +4045,7 @@ StepsToHatch=5355
 Height=1
 Weight=1
 Color=Purple
+Shape=4
 Habitat=Cave
 RegionalNumbers=123
 Kind=Wraith
@@ -4055,7 +4056,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TORSHADE,Level,36
 
 [124]
 Name=Torshade
@@ -4078,6 +4078,7 @@ StepsToHatch=5355
 Height=1.4
 Weight=20
 Color=Purple
+Shape=4
 Habitat=Cave
 RegionalNumbers=124
 Kind=Shade
@@ -4088,7 +4089,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [125]
 Name=Vermirit
@@ -4111,6 +4111,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=15.2
 Color=White
+Shape=8
 Habitat=Forest
 RegionalNumbers=125
 Kind=Vermin
@@ -4121,7 +4122,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=RODEAD,Level,18
 
 [126]
 Name=Rodead
@@ -4144,6 +4144,7 @@ StepsToHatch=5355
 Height=1
 Weight=46.8
 Color=White
+Shape=4
 Habitat=Forest
 RegionalNumbers=126
 Kind=Rodent
@@ -4154,7 +4155,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [127]
 Name=Ostrunt
@@ -4177,6 +4177,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=23.6
 Color=White
+Shape=7
 Habitat=Grassland
 RegionalNumbers=127
 Kind=Punt
@@ -4187,7 +4188,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=OSTROOT,Level,16
 
 [128]
 Name=Ostroot
@@ -4210,6 +4210,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=33.1
 Color=White
+Shape=7
 Habitat=Grassland
 RegionalNumbers=128
 Kind=Foot
@@ -4220,7 +4221,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=OSTRICK,Level,32
 
 [129]
 Name=Ostrick
@@ -4243,6 +4243,7 @@ StepsToHatch=5355
 Height=1.3
 Weight=44.9
 Color=White
+Shape=7
 Habitat=Grassland
 RegionalNumbers=129
 Kind=Kick
@@ -4253,7 +4254,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [130]
 Name=Aerosteel
@@ -4276,6 +4276,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=90.7
 Color=Gray
+Shape=1
 Habitat=Mountain
 RegionalNumbers=130
 Kind=Aero Space
@@ -4286,7 +4287,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ZEPPELED,Level,27
 
 [131]
 Name=Zeppeled
@@ -4309,6 +4309,7 @@ StepsToHatch=5355
 Height=2.1
 Weight=136.1
 Color=Gray
+Shape=1
 Habitat=Mountain
 RegionalNumbers=131
 Kind=Zepplin
@@ -4319,7 +4320,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DIRIGIBLIMP,Level,37
 
 [132]
 Name=Dirigiblimp
@@ -4342,17 +4342,17 @@ StepsToHatch=5355
 Height=2.4
 Weight=181.4
 Color=Gray
+Shape=1
 Habitat=Mountain
 RegionalNumbers=132
 Kind=Blimp
-Pokedex=Often mistaken for dark storm clouds, Dirigiblimp often carries Pokemon from one location to another in order to protect them from predators. It is said that this Pokemon was used as the Ark that saved the Pokemon world from the flood.
+Pokedex=Often mistaken for dark storm clouds, Dirigiblimp often carries Pokémon from one location to another in order to protect them from predators. It is said that this Pokémon was used as the Ark that saved the Pokémon world from the flood.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [133]
 Name=Humbolt
@@ -4375,6 +4375,7 @@ StepsToHatch=5355
 Height=0.1
 Weight=2.3
 Color=Yellow
+Shape=9
 Habitat=Forest
 RegionalNumbers=133
 Kind=Hummingbird
@@ -4385,7 +4386,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=HUMBLITZ,Level,22
 
 [134]
 Name=Humblitz
@@ -4408,6 +4408,7 @@ StepsToHatch=5355
 Height=0.2
 Weight=3.2
 Color=Yellow
+Shape=9
 Habitat=Forest
 RegionalNumbers=134
 Kind=Blitzkrieg
@@ -4418,7 +4419,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [135]
 Name=Parrowth
@@ -4441,6 +4441,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=13.2
 Color=Green
+Shape=9
 Habitat=Forest
 RegionalNumbers=135
 Kind=Parrot
@@ -4451,7 +4452,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=FLOROUCAN,Level,24
 
 [136]
 Name=Floroucan
@@ -4474,6 +4474,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=19.1
 Color=Green
+Shape=9
 Habitat=Forest
 RegionalNumbers=136
 Kind=Toucan
@@ -4484,7 +4485,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [137]
 Name=Glowl
@@ -4507,6 +4507,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=6.8
 Color=White
+Shape=9
 Habitat=Cave
 RegionalNumbers=137
 Kind=Glowing
@@ -4517,7 +4518,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ILLUMINOWL,Level,27
 
 [138]
 Name=Illuminowl
@@ -4540,9 +4540,10 @@ StepsToHatch=5355
 Height=0.7
 Weight=11.3
 Color=White
+Shape=9
 Habitat=Cave
 RegionalNumbers=138
-Kind=Illumnation
+Kind=Illumination
 Pokedex=It is said to be ten years of bad luck just seeing Illuminowl. Its piercing shriek can cause the spiritual energy in the body to try and escape, thus leaving the hearer incredibly sick.
 WildItemCommon=
 WildItemUncommon=
@@ -4550,7 +4551,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [139]
 Name=Yukitori
@@ -4573,6 +4573,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=15
 Color=Blue
+Shape=9
 Habitat=Mountain
 RegionalNumbers=139
 Kind=Snow Bird
@@ -4583,7 +4584,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BUKITORI,Level,25
 
 [140]
 Name=Bukitori
@@ -4606,6 +4606,7 @@ StepsToHatch=5355
 Height=1.1
 Weight=25.2
 Color=Blue
+Shape=9
 Habitat=Mountain
 RegionalNumbers=140
 Kind=Blizzard
@@ -4616,7 +4617,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [141]
 Name=Slurchee
@@ -4639,6 +4639,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=30
 Color=Blue
+Shape=5
 Habitat=Cave
 RegionalNumbers=141
 Kind=Icy
@@ -4649,7 +4650,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SLIGNITE,Level,30
 
 [142]
 Name=Slignite
@@ -4672,6 +4672,7 @@ StepsToHatch=5355
 Height=0.8
 Weight=45.8
 Color=Blue
+Shape=5
 Habitat=Cave
 RegionalNumbers=142
 Kind=Ignition
@@ -4682,7 +4683,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BLAZIER,Level,40
 
 [143]
 Name=Blazier
@@ -4705,17 +4705,17 @@ StepsToHatch=5355
 Height=1.4
 Weight=68.9
 Color=Blue
+Shape=5
 Habitat=Cave
 RegionalNumbers=143
 Kind=Glacier
-Pokedex=Blazier's fire melts its ice body, creating a slimey liquid that it leaves behind as it moves from place to place. This liquid causes frostbite or third-degree burns on contact.
+Pokedex=Blazier's fire melts its ice body, creating a slimy liquid that it leaves behind as it moves from place to place. This liquid causes frostbite or third-degree burns on contact.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [144]
 Name=Snowger
@@ -4738,6 +4738,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=13.6
 Color=White
+Shape=8
 Habitat=Mountain
 RegionalNumbers=144
 Kind=Snow Tiger
@@ -4748,7 +4749,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CRYOGER,Level,28
 
 [145]
 Name=Cryoger
@@ -4771,6 +4771,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=34
 Color=White
+Shape=8
 Habitat=Mountain
 RegionalNumbers=145
 Kind=Cryogenic
@@ -4781,7 +4782,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [146]
 Name=Frostee
@@ -4804,6 +4804,7 @@ StepsToHatch=5355
 Height=1
 Weight=40
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=146
 Kind=Frosty
@@ -4814,7 +4815,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MANASLEET,Level,26
 
 [147]
 Name=Manasleet
@@ -4837,6 +4837,7 @@ StepsToHatch=5355
 Height=1.3
 Weight=68.2
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=147
 Kind=Sleet
@@ -4847,7 +4848,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PERMATEE,Level,42
 
 [148]
 Name=Permatee
@@ -4870,6 +4870,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=99.8
 Color=Blue
+Shape=3
 Habitat=Sea
 RegionalNumbers=148
 Kind=Permafrost
@@ -4880,7 +4881,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [149]
 Name=Blizzail
@@ -4903,6 +4903,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=1.2
 Color=Gray
+Shape=1
 Habitat=Mountain
 RegionalNumbers=149
 Kind=Hail
@@ -4913,7 +4914,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [150]
 Name=Wizice
@@ -4936,6 +4936,7 @@ StepsToHatch=5355
 Height=1.8
 Weight=60.4
 Color=Blue
+Shape=12
 Habitat=Urban
 RegionalNumbers=150
 Kind=Wizard
@@ -4946,7 +4947,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [151]
 Name=Provox
@@ -4969,6 +4969,7 @@ StepsToHatch=5355
 Height=0.4
 Weight=3.1
 Color=Red
+Shape=14
 Habitat=Forest
 RegionalNumbers=151
 Kind=Box Elder
@@ -4979,7 +4980,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=AGGRABUG,Level,12
 
 [152]
 Name=Aggrabug
@@ -5002,6 +5002,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=59.2
 Color=Red
+Shape=14
 Habitat=Forest
 RegionalNumbers=152
 Kind=Aggravating
@@ -5012,7 +5013,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [153]
 Name=Virolt
@@ -5035,6 +5035,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=1.3
 Color=Yellow
+Shape=14
 Habitat=Cave
 RegionalNumbers=153
 Kind=Virus
@@ -5045,7 +5046,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=VERRAX,Level,30
 
 [154]
 Name=Verrax
@@ -5068,6 +5068,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=25.4
 Color=Yellow
+Shape=14
 Habitat=Cave
 RegionalNumbers=154
 Kind=Hack
@@ -5078,7 +5079,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [155]
 Name=Antrap
@@ -5101,6 +5101,7 @@ StepsToHatch=5355
 Height=1
 Weight=32.5
 Color=Brown
+Shape=14
 Habitat=RoughTerrain
 RegionalNumbers=155
 Kind=Ant
@@ -5111,7 +5112,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MANTIBLE,Level,24
 
 [156]
 Name=Mantible
@@ -5134,6 +5134,7 @@ StepsToHatch=5355
 Height=1.2
 Weight=46.8
 Color=Brown
+Shape=14
 Habitat=RoughTerrain
 RegionalNumbers=156
 Kind=Mandible
@@ -5144,7 +5145,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=JOWLION,Level,35
 
 [157]
 Name=Jowlion
@@ -5167,6 +5167,7 @@ StepsToHatch=5355
 Height=1.5
 Weight=59.4
 Color=Brown
+Shape=14
 Habitat=RoughTerrain
 RegionalNumbers=157
 Kind=Jowl
@@ -5177,7 +5178,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [158]
 Name=Clotch
@@ -5200,6 +5200,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=14.5
 Color=Green
+Shape=2
 Habitat=WatersEdge
 RegionalNumbers=158
 Kind=Clot
@@ -5210,7 +5211,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SANGUICH,Level,18
 
 [159]
 Name=Sanguich
@@ -5233,6 +5233,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=23.1
 Color=Green
+Shape=2
 Habitat=WatersEdge
 RegionalNumbers=159
 Kind=Sanguine
@@ -5243,7 +5244,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [160]
 Name=Scareub
@@ -5266,6 +5266,7 @@ StepsToHatch=5355
 Height=0.2
 Weight=4.1
 Color=Yellow
+Shape=14
 Habitat=Cave
 RegionalNumbers=160
 Kind=Scarab
@@ -5276,7 +5277,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=COFFOON,Level,20
 
 [161]
 Name=Coffoon
@@ -5299,17 +5299,17 @@ StepsToHatch=5355
 Height=0.4
 Weight=6.8
 Color=Yellow
+Shape=1
 Habitat=Cave
 RegionalNumbers=161
 Kind=Coffin
-Pokedex=Coffoon is often found in tombs of pharoahs of old. They curse any intruder with the same fate as the king they are protecting.
+Pokedex=Coffoon is often found in tombs of pharaohs of old. They curse any intruder with the same fate as the king they are protecting.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MUMMIFLY,Level,35
 
 [162]
 Name=Mummifly
@@ -5332,6 +5332,7 @@ StepsToHatch=5355
 Height=0.6
 Weight=9.5
 Color=Yellow
+Shape=13
 Habitat=Cave
 RegionalNumbers=162
 Kind=Mummified
@@ -5342,7 +5343,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [163]
 Name=Vicer
@@ -5365,6 +5365,7 @@ StepsToHatch=5355
 Height=2.7
 Weight=52.6
 Color=Purple
+Shape=2
 Habitat=Cave
 RegionalNumbers=163
 Kind=Viper
@@ -5375,7 +5376,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=VICICLE,Level,27
 
 [164]
 Name=Vicicle
@@ -5398,6 +5398,7 @@ StepsToHatch=5355
 Height=3.1
 Weight=82.3
 Color=Purple
+Shape=2
 Habitat=Cave
 RegionalNumbers=164
 Kind=Icicle
@@ -5408,7 +5409,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [165]
 Name=Tadpoi
@@ -5431,6 +5431,7 @@ StepsToHatch=5355
 Height=0.3
 Weight=12.4
 Color=Blue
+Shape=5
 Habitat=WatersEdge
 RegionalNumbers=165
 Kind=Tadpole
@@ -5442,7 +5443,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=CRIMZOG,LevelTadpoi,25,ELECTROG,LevelTadpoi,25,SAPPHROG,LevelTadpoi,25
 
 [166]
 Name=Crimzog
@@ -5465,6 +5465,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=30.5
 Color=Red
+Shape=8
 Habitat=WatersEdge
 RegionalNumbers=166
 Kind=Crimson
@@ -5475,7 +5476,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [167]
 Name=Electrog
@@ -5498,6 +5498,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=30.5
 Color=Yellow
+Shape=8
 Habitat=WatersEdge
 RegionalNumbers=167
 Kind=Electric Yellow
@@ -5508,7 +5509,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [168]
 Name=Sapphrog
@@ -5531,6 +5531,7 @@ StepsToHatch=5355
 Height=0.7
 Weight=30.5
 Color=Blue
+Shape=8
 Habitat=WatersEdge
 RegionalNumbers=168
 Kind=Sapphire
@@ -5541,7 +5542,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [169]
 Name=Dilogen
@@ -5564,6 +5564,7 @@ StepsToHatch=5355
 Height=1
 Weight=50.2
 Color=Green
+Shape=6
 Habitat=RoughTerrain
 RegionalNumbers=169
 Kind=Frill
@@ -5574,7 +5575,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DILOTHAL,Level,30
 
 [170]
 Name=Dilothal
@@ -5597,6 +5597,7 @@ StepsToHatch=5355
 Height=1.7
 Weight=84.3
 Color=Green
+Shape=6
 Habitat=RoughTerrain
 RegionalNumbers=170
 Kind=Lethal
@@ -5607,7 +5608,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [171]
 Name=Gilacid
@@ -5630,17 +5630,17 @@ StepsToHatch=5355
 Height=0.3
 Weight=4.9
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=171
 Kind=Acid
-Pokedex=Gilacid spends most of its time underground until it can sense prey above it. It surprises its prey and clamps down with a vicegrip that will never let go.
+Pokedex=Gilacid spends most of its time underground until it can sense prey above it. It surprises its prey and clamps down with a vice grip that will never let go.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TOXILA,Level,29
 
 [172]
 Name=Toxila
@@ -5663,6 +5663,7 @@ StepsToHatch=5355
 Height=0.5
 Weight=9.5
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=172
 Kind=Toxin
@@ -5673,7 +5674,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=VENOMONSTER,Level,41
 
 [173]
 Name=Venomonster
@@ -5696,17 +5696,17 @@ StepsToHatch=5355
 Height=0.7
 Weight=14.1
 Color=Red
+Shape=8
 Habitat=RoughTerrain
 RegionalNumbers=173
 Kind=Venom
-Pokedex=Once thought of as a legend, Venomonster have recently resurfaced from their subterranean dens. Though their venom is corrosive to the skin, Venomonster venom has the special property of amplifying the pain receptors in the body to increase the sufferring if its prey moments before it is eaten.
+Pokedex=Once thought of as a legend, Venomonster have recently resurfaced from their subterranean dens. Though their venom is corrosive to the skin, Venomonster venom has the special property of amplifying the pain receptors in the body to increase the suffering if its prey moments before it is eaten.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [174]
 Name=Platight
@@ -5729,17 +5729,17 @@ StepsToHatch=5355
 Height=0.7
 Weight=20.4
 Color=Purple
+Shape=8
 Habitat=WatersEdge
 RegionalNumbers=174
 Kind=Blight
-Pokedex=Even though they look harmless, Platight have a venemous bite that will incapacitate even the hardiest of foes.
+Pokedex=Even though they look harmless, Platight have a venomous bite that will incapacitate even the hardiest of foes.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=PLATISMA,Level,32
 
 [175]
 Name=Platisma
@@ -5762,6 +5762,7 @@ StepsToHatch=5355
 Height=0.9
 Weight=32.5
 Color=Purple
+Shape=8
 Habitat=WatersEdge
 RegionalNumbers=175
 Kind=Miasma
@@ -5772,7 +5773,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [176]
 Name=Drasion
@@ -5795,17 +5795,17 @@ StepsToHatch=10240
 Height=0.8
 Weight=17.1
 Color=Purple
+Shape=2
 Habitat=Rare
 RegionalNumbers=176
 Kind=Mystical Dragon
-Pokedex=Even from a young age, Drasion mimic the personalities of the Pokemon around them. Even after a few days, they can copy the form of nearly anything.
+Pokedex=Even from a young age, Drasion mimic the personalities of the Pokémon around them. Even after a few days, they can copy the form of nearly anything.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=ILLUSIGON,Level,50
 
 [177]
 Name=Illusigon
@@ -5828,17 +5828,17 @@ StepsToHatch=10240
 Height=2.2
 Weight=150.3
 Color=Purple
+Shape=2
 Habitat=Rare
 RegionalNumbers=177
 Kind=Illusion Dragon
-Pokedex=Illusigon has perfected the art of mimicry. Even other members of its specie cannot tell the difference between a mimicked Pokemon and the real one.
+Pokedex=Illusigon has perfected the art of mimicry. Even other members of its specie cannot tell the difference between a mimicked Pokémon and the real one.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [178]
 Name=Wyven
@@ -5861,6 +5861,7 @@ StepsToHatch=10240
 Height=3.5
 Weight=65.2
 Color=Black
+Shape=2
 Habitat=Rare
 RegionalNumbers=178
 Kind=Black Dragon
@@ -5871,7 +5872,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=RAVERN,Level,50
 
 [179]
 Name=Ravern
@@ -5894,6 +5894,7 @@ StepsToHatch=10240
 Height=6.5
 Weight=235.4
 Color=Black
+Shape=2
 Habitat=Rare
 RegionalNumbers=179
 Kind=Dark Dragon
@@ -5904,7 +5905,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [180]
 Name=Pedalisk
@@ -5927,17 +5927,17 @@ StepsToHatch=10240
 Height=1.8
 Weight=89.7
 Color=Yellow
+Shape=2
 Habitat=Rare
 RegionalNumbers=180
 Kind=Swarm Dragon
-Pokedex=Pedalisk is both a Pokemon and a hive mind of Pokemon. Its brain controls each body piece with optimal efficiency and constantly adapts to its surroundings.
+Pokedex=Pedalisk is both a Pokémon and a hive mind of Pokémon. Its brain controls each body piece with optimal efficiency and constantly adapts to its surroundings.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=MILLISK,Level,50
 
 [181]
 Name=Millisk
@@ -5960,6 +5960,7 @@ StepsToHatch=10240
 Height=3.7
 Weight=146.8
 Color=Yellow
+Shape=2
 Habitat=Rare
 RegionalNumbers=181
 Kind=Hive Dragon
@@ -5970,7 +5971,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [182]
 Name=Surgdra
@@ -5993,6 +5993,7 @@ StepsToHatch=10240
 Height=2.1
 Weight=6.9
 Color=Yellow
+Shape=2
 Habitat=Rare
 RegionalNumbers=182
 Kind=Lightning Dragon
@@ -6003,7 +6004,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=DRESLA,Level,50
 
 [183]
 Name=Dresla
@@ -6026,6 +6026,7 @@ StepsToHatch=10240
 Height=6.2
 Weight=162.2
 Color=Yellow
+Shape=2
 Habitat=Rare
 RegionalNumbers=183
 Kind=Energy Dragon
@@ -6036,7 +6037,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [184]
 Name=Tarroot
@@ -6059,6 +6059,7 @@ StepsToHatch=10240
 Height=1.8
 Weight=68.1
 Color=Green
+Shape=8
 Habitat=Rare
 RegionalNumbers=184
 Kind=Bark Dragon
@@ -6069,7 +6070,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=TARRAGROOT,Level,50
 
 [185]
 Name=Tarragroot
@@ -6092,6 +6092,7 @@ StepsToHatch=10240
 Height=14.9
 Weight=220.2
 Color=Green
+Shape=8
 Habitat=Rare
 RegionalNumbers=185
 Kind=Trunk Dragon
@@ -6102,7 +6103,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [186]
 Name=Drice
@@ -6125,6 +6125,7 @@ StepsToHatch=10240
 Height=1.5
 Weight=99.5
 Color=Blue
+Shape=8
 Habitat=Rare
 RegionalNumbers=186
 Kind=Ice Shard Dragon
@@ -6135,7 +6136,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BERGON,Level,50
 
 [187]
 Name=Bergon
@@ -6158,6 +6158,7 @@ StepsToHatch=10240
 Height=2.2
 Weight=505.6
 Color=Blue
+Shape=8
 Habitat=Rare
 RegionalNumbers=187
 Kind=Iceberg Dragon
@@ -6168,7 +6169,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [188]
 Name=Hydrock
@@ -6191,6 +6191,7 @@ StepsToHatch=10240
 Height=1.4
 Weight=250.4
 Color=Brown
+Shape=2
 Habitat=Rare
 RegionalNumbers=188
 Kind=Slab Hydra
@@ -6201,7 +6202,6 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=BOULDRA,Level,50
 
 [189]
 Name=Bouldra
@@ -6224,17 +6224,17 @@ StepsToHatch=10240
 Height=3.1
 Weight=512.6
 Color=Brown
+Shape=2
 Habitat=Rare
 RegionalNumbers=189
 Kind=Boulder Hydra
-Pokedex=Bouldra have been known to travel into nests of other Pokemon and clear them out with ease. Its many heads regenerate quickly and its armor is nearly impenetrable, making it a fearsome terror in battle.
+Pokedex=Bouldra have been known to travel into nests of other Pokémon and clear them out with ease. Its many heads regenerate quickly and its armor is nearly impenetrable, making it a fearsome terror in battle.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [190]
 Name=Taodra
@@ -6257,17 +6257,17 @@ StepsToHatch=10240
 Height=1.2
 Weight=47.7
 Color=Brown
+Shape=2
 Habitat=Rare
 RegionalNumbers=190
 Kind=Violent Dragon
-Pokedex=Taodra is one of the most brutal Pokemon ever to be discovered. It attacks anything it can see without warning and without reserve.
+Pokedex=Taodra is one of the most brutal Pokémon ever to be discovered. It attacks anything it can see without warning and without reserve.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=SHAOGON,Level,50
 
 [191]
 Name=Shaogon
@@ -6290,17 +6290,17 @@ StepsToHatch=10240
 Height=2.4
 Weight=140.4
 Color=Brown
+Shape=2
 Habitat=Rare
 RegionalNumbers=191
 Kind=Merciless Dragon
-Pokedex=This Pokemon's fighting strength and power is unrivaled. Shaodra will level mountains, create craters, and deforestate entire regions in an attempt to release stored energy.
+Pokedex=This Pokémon's fighting strength and power is unrivaled. Shaodra will level mountains, create craters, and deforestate entire regions in an attempt to release stored energy.
 WildItemCommon=
 WildItemUncommon=
 WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 
 [192]
 Name=Meteoros
@@ -6323,6 +6323,7 @@ StepsToHatch=10240
 Height=3.6
 Weight=380.8
 Color=White
+Shape=9
 Habitat=Rare
 RegionalNumbers=192
 Kind=Meteor Dragon
@@ -6333,5 +6334,4 @@ WildItemRare=
 BattlerPlayerY=0
 BattlerEnemyY=0
 BattlerAltitude=0
-Evolutions=
 

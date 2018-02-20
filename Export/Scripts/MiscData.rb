@@ -166,6 +166,7 @@ def pbDexDataOffset(dexdata,species,offset)
 end
 
 def pbLoadFormsData
+=begin
   $PokemonTemp = PokemonTemp.new if !$PokemonTemp
   if !$PokemonTemp.pokemonFormsData
     File.open("Data/formspecies.dat"){|f|
@@ -173,6 +174,7 @@ def pbLoadFormsData
     }
   end
   return $PokemonTemp.pokemonFormsData
+=end
 end
 
 def pbClearData

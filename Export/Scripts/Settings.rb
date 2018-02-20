@@ -121,7 +121,7 @@ BADGESBOOSTDEFENSE     = 5
 BADGESBOOSTSPEED       = 3
 BADGESBOOSTSPATK       = 7
 BADGESBOOSTSPDEF       = 7
-HIDDENMOVESCOUNTBADGES = true
+HIDDENMOVESCOUNTBADGES = false
 BADGEFORCUT            = 1
 BADGEFORFLASH          = 2
 BADGEFORROCKSMASH      = 3
@@ -188,8 +188,9 @@ STORAGEBOXES = 24
 #===============================================================================
 DEXDEPENDSONLOCATION = false
 def pbDexNames; return [
-   [_INTL("Kanto Pokédex"),0],
+   [_INTL("Korros Pokédex"),0],
    [_INTL("Johto Pokédex"),1],
+   [_INTL("Kanto Pokédex"),2],
    _INTL("National Pokédex")
 ]; end
 ALWAYSSHOWALLFORMS = false
@@ -354,9 +355,3 @@ LANGUAGES = [
 #  ["English","english.dat"],
 #  ["Deutsch","deutsch.dat"]
 ]
-
-#===============================================================================
-# * Whether names can be typed using the keyboard (true) or chosen letter by
-#      letter as in the official games (false).
-#===============================================================================
-USEKEYBOARDTEXTENTRY = true

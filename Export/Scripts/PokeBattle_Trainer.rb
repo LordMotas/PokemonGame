@@ -284,7 +284,7 @@ class PokeBattle_Trainer
     @outfit=0
     @pokegear=false
     @pokedex=false
-    @itemcrafter=false
+    @itemcrafter=true
     clearPokedex
     @shadowcaught=[]
     for i in 1..PBSpecies.maxValue

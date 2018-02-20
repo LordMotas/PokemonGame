@@ -72,7 +72,7 @@ class PokemonPokedexInfo_Scene
     @sprites["overlay"] = BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     pbSetSystemFont(@sprites["overlay"].bitmap)
     pbUpdateDummyPokemon
-    @available = pbGetAvailableForms
+    # @available = pbGetAvailableForms
     drawPage(@page)
     pbFadeInAndShow(@sprites) { pbUpdate }
   end
@@ -510,7 +510,8 @@ class PokemonPokedexInfo_Scene
         oldpage = @page
         @page -= 1
         @page = 1 if @page<1
-        @page = 3 if @page>3
+        # @page = 3 if @page>3
+        @page = 2 if @page>2
         if @page!=oldpage
           pbPlayCursorSE
           dorefresh = true
@@ -519,7 +520,8 @@ class PokemonPokedexInfo_Scene
         oldpage = @page
         @page += 1
         @page = 1 if @page<1
-        @page = 3 if @page>3
+        # @page = 3 if @page>3
+        @page = 2 if @page>2
         if @page!=oldpage
           pbPlayCursorSE
           dorefresh = true

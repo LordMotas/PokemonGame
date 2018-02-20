@@ -281,9 +281,12 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - WONDERFUL!!! sound bite here would be awesome.
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: wonderful
+            pitch: 100
           indent: 0
-          code: 108
+          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - Wonderful! I knew you could do it!
@@ -4607,6 +4610,16 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
+          - "$Trainer.pokedex=true"
+          indent: 1
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbAddPokemon(:SHROMB,5)
+          indent: 1
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - A
           - 0
           indent: 1
@@ -4713,8 +4726,8 @@ root: !ruby/object:RPG::Map
         through: false
       name: !binary |-
         UG9rw6lkZXg=
-      y: 7
-      x: 13
+      y: 5
+      x: 8
       id: 12
     13: !ruby/object:RPG::Event
       pages:

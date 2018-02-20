@@ -1927,6 +1927,7 @@ end
 #===============================================================================
 # Compile Pokémon forms
 #===============================================================================
+=begin
 def pbCompilePokemonForms
   # Free bytes: 0, 1, 59-75
   sections = []
@@ -2347,7 +2348,7 @@ def pbCompilePokemonForms
   MessageTypes.addMessages(MessageTypes::Kinds,kinds)
   MessageTypes.addMessages(MessageTypes::Entries,entries)
 end
-
+=end
 #===============================================================================
 # Compile TM/TM/Move Tutor compatibilities
 #===============================================================================
@@ -4394,8 +4395,8 @@ def pbCompileAllData(mustcompile)
     yield(_INTL("Compiling machine data"))
     pbCompileMachines
     # Depends on PBSpecies, PBMoves
-    yield(_INTL("Compiling Pokémon forms data"))
-    pbCompilePokemonForms
+    # yield(_INTL("Compiling Pokémon forms data"))
+    # pbCompilePokemonForms
     # Depends on PBSpecies, PBItems, PBMoves
     yield(_INTL("Compiling Trainer data"))
     pbCompileTrainers
@@ -4439,7 +4440,7 @@ begin
        "eggEmerald.dat",
        "encounters.dat",
        "evolutions.dat",
-       "formspecies.dat",
+       # "formspecies.dat",
        "items.dat",
        "metadata.dat",
        "metrics.dat",
@@ -4465,7 +4466,7 @@ begin
        "moves.txt",
        "phone.txt",
        "pokemon.txt",
-       "pokemonforms.txt",
+       # "pokemonforms.txt",
        "shadowmoves.txt",
        "tm.txt",
        "townmap.txt",
