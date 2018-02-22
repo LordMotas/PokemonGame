@@ -142,14 +142,9 @@ root: !ruby/object:RPG::Map
           parameters:
           - !binary |-
             SSBzdHVkeSB0ZWNobm9sb2d5IGFzIGl0IGFwcGxpZXMgdG8gdGhlIFBva8Op
-            bW9uIA==
+            bW9uIHdvcmxkLg==
           indent: 0
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - world.
-          indent: 0
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - Help Choices
@@ -665,69 +660,34 @@ root: !ruby/object:RPG::Map
           code: 404
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN, the other Pokemon regions round about Korros, "
+          - "\\PN, the other Pokemon regions round about Korros, are experiencing
+            mass chaos."
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - are experiencing mass chaos.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'They have been overrun by Team Rocket combined '
+          - They have been overrun by Team Rocket combined with the various other
+            criminal organzations found in the respective regions.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'with the various other criminal organzations found in '
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - the respective regions.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'The Korros Region alone has been relatively '
+          - The Korros Region alone has been relatively uneffected, but only for a
+            little while longer.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - uneffected, but only for a little while longer.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'The treacherous environmental conditions and '
+          - The treacherous environmental conditions and incredibly powerful Pokemon
+            have hindered the invasion of this area.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'incredibly powerful Pokemon have hindered the '
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - invasion of this area.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'We''re in the lab right now, I''ll explain the problem in '
+          - We're in the lab right now, I'll explain the problem in greater detail
+            once you've proven you're up to the task.
           indent: 0
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'greater detail once you''ve proven you''re up to the '
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - task.
-          indent: 0
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - 4

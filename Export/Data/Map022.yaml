@@ -11,17 +11,22 @@ root: !ruby/object:RPG::Map
         list:
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'It looks like an old SNES player, but it''s actually the '
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - It looks like an old SNES player, but it's actually the Battle Simulator.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Battle Simulator.
+          - In the top of the device sits a cartridge labeled "Battle Simulator."
           indent: 0
-          code: 401
+          code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Would you like to use the Battle Simulator?
+          - Would you like to turn it on?
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -49,14 +54,10 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN anxiously looked at the screen and waited for "
+          - "\\PN anxiously looked at the screen and waited for something to appear
+            on it."
           indent: 1
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - something to appear on it.
-          indent: 1
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - "..."
@@ -106,24 +107,15 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'After tapping the Battle Simulator forcefully, it seemed '
+          - "\\PN tapped the Battle Simulator forcefully, hoping something would change."
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - like something had changed.
-          indent: 3
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\PN anxiously looked at the screen and waited for "
+          - "\\PN anxiously looked at the screen and waited for something to appear
+            on it."
           indent: 3
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - something to appear on it.
-          indent: 3
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbSetSelfSwitch(2,"A",true)
@@ -167,24 +159,16 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN turned off the Battle Simulator, removed the "
+          - "\\PN turned off the Battle Simulator, removed the cartridge and blew
+            into the bottom of it."
           indent: 3
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - cartridge and blew into the bottom of it.
-          indent: 3
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\PN inserted the cartridge back into the Battle "
+          - "\\PN inserted the cartridge back into the Battle Simulator and turned
+            it on."
           indent: 3
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Simulator and turned it on once more.
-          indent: 3
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - The machine whirred as it came to life.
@@ -192,14 +176,10 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN anxously looked at the screen and waited for "
+          - "\\PN anxously looked at the screen and waited for something to appear
+            on it."
           indent: 3
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - something to appear on it.
-          indent: 3
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbSetSelfSwitch(2,"A",true)
@@ -265,34 +245,30 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'A man in a red lab coat steps up to the screen and '
+          - A man in a red lab coat steps up to the screen and addresses \PN.
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - addresses \PN.
-          indent: 4
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'Man: If you''re watching this, then you''ve been '
+          - 'Man: If you''re watching this, then you''ve been selected to help us
+            in our mission.'
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - selected to help us in our mission.
-          indent: 4
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'I will now test you on the fundamentals of Pokemon '
+          - I will now test you on the fundamentals of Pokemon Battles.
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Battles.
+          - pbAddToPartySilent(:COALAH,5)
           indent: 4
-          code: 401
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - BattleStart
+          indent: 4
+          code: 118
         - !ruby/object:RPG::EventCommand
           parameters:
           - Prepare yourself!
@@ -300,17 +276,153 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Do the Pokemon battle here.
+          - pbWildBattle(:VERMIRIT,5,63,FALSE,TRUE)
+          indent: 4
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - This means the battle was won
           indent: 4
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Man: Congratulations! You have passed the test!'
+          - 1
+          - 63
+          - 0
+          - 1
+          - 0
+          indent: 4
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Man: Congratulations! You have passed the first test!'
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - But the Korros region is much harder than that!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - The environment itself will fight you with everything it has!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Vermirit are easy prey compared to the larger creatures out there!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Try this one on for size!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbWildBattle(:RODEAD,100,63,FALSE,TRUE)
+          indent: 5
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Oh? You thought that you'd be healed after the first battle?
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Did you think you'd be fighting a fair opponent?
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - What do you think this is, the Kanto Region?
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - I'm not here to teach you that you'll win every battle you encounter.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Sometimes you'll have to know when to lose...
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Not every choice is to kill or be killed.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - But you'll learn soon enough.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Battle was lost
+          indent: 5
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Man: Too bad! It seems you''ll have to try harder than that!'
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Here's a hint for you.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Vermirit is a Ghost and Normal type Pokemon. It is unaffected by Pound...
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Coalah is a Dark and Fire type Pokemon, so it gains a same type attack
+            bonus, or STAB, by using Pursuit.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - With those tips in mind, let's try that again!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          indent: 5
+          code: 314
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - BattleStart
+          indent: 5
+          code: 119
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You training is now complete.
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - You may now leave and report on your success.
+          - You may now leave and report on the lesson you've learned.
           indent: 4
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -318,6 +430,16 @@ root: !ruby/object:RPG::Map
           - We're all counting on you!
           indent: 4
           code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.party.delete_at(0)"
+          indent: 4
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.clearPokedex"
+          indent: 4
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbSetSelfSwitch(3,"A",true)
@@ -328,6 +450,12 @@ root: !ruby/object:RPG::Map
           - pbSetSelfSwitch2(4,4,"C",true)
           indent: 4
           code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - C
+          - 0
+          indent: 4
+          code: 123
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 4
@@ -426,6 +554,51 @@ root: !ruby/object:RPG::Map
           blend_type: 0
           character_hue: 0
         walk_anime: false
+        move_speed: 3
+        through: false
+      - !ruby/object:RPG::Event::Page
+        list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - It's the Battle Simulator.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 0
+        move_type: 0
+        direction_fix: false
+        condition: !ruby/object:RPG::Event::Page::Condition
+          switch2_valid: false
+          self_switch_ch: C
+          switch1_id: 1
+          switch1_valid: false
+          variable_value: 0
+          self_switch_valid: true
+          variable_id: 1
+          variable_valid: false
+          switch2_id: 1
+        move_route: !ruby/object:RPG::MoveRoute
+          list:
+          - !ruby/object:RPG::MoveCommand
+            parameters: []
+            code: 0
+          skippable: false
+          repeat: true
+        trigger: 0
+        step_anime: false
+        move_frequency: 3
+        always_on_top: false
+        graphic: !ruby/object:RPG::Event::Page::Graphic
+          opacity: 255
+          character_name: ''
+          pattern: 0
+          tile_id: 0
+          direction: 2
+          blend_type: 0
+          character_hue: 0
+        walk_anime: true
         move_speed: 3
         through: false
       name: Battle Simulator
@@ -617,105 +790,6 @@ root: !ruby/object:RPG::Map
       y: 12
       x: 9
       id: 3
-    4: !ruby/object:RPG::Event
-      pages:
-      - !ruby/object:RPG::Event::Page
-        list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:RPG::AudioFile
-            volume: 80
-            name: Exit Door
-            pitch: 100
-          indent: 0
-          code: 250
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:Tone
-            red: -255.0
-            green: -255.0
-            blue: -255.0
-            gray: 0.0
-          - 6
-          indent: 0
-          code: 223
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 8
-          indent: 0
-          code: 106
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 0
-          - 4
-          - 6
-          - 5
-          - 2
-          - 1
-          indent: 0
-          code: 201
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - !ruby/object:Tone
-            red: 0.0
-            green: 0.0
-            blue: 0.0
-            gray: 0.0
-          - 6
-          indent: 0
-          code: 223
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbSetSelfSwitch2(4,1,"B",true)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbSetSelfSwitch2(4,4,"A",false)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 0
-        move_type: 0
-        direction_fix: false
-        condition: !ruby/object:RPG::Event::Page::Condition
-          switch2_valid: false
-          self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
-          variable_value: 0
-          self_switch_valid: false
-          variable_id: 1
-          variable_valid: false
-          switch2_id: 1
-        move_route: !ruby/object:RPG::MoveRoute
-          list:
-          - !ruby/object:RPG::MoveCommand
-            parameters: []
-            code: 0
-          skippable: false
-          repeat: true
-        trigger: 1
-        step_anime: false
-        move_frequency: 3
-        always_on_top: false
-        graphic: !ruby/object:RPG::Event::Page::Graphic
-          opacity: 255
-          character_name: ''
-          pattern: 0
-          tile_id: 1103
-          direction: 2
-          blend_type: 0
-          character_hue: 0
-        walk_anime: true
-        move_speed: 3
-        through: false
-      name: Leave the room
-      y: 12
-      x: 10
-      id: 4
   tileset_id: 3
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
