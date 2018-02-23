@@ -57,21 +57,21 @@
 
 $exit = 0  
 
-$canCraft = [true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true] 
+$canCraft = [false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false] 
                 
 
 
@@ -703,7 +703,7 @@ end
 #
 # *I know that this can probably be tidied up so please dont hate on me for that
 #===============================================================================
-
+=begin
 $exit = 0  
 
 $canCraft = [true,
@@ -1346,3 +1346,4 @@ class ItemCrafterScene
   end
     
 end
+=end

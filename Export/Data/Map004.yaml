@@ -305,39 +305,53 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'The machine on your right contains three of the most '
+          - 'So here''s what we need you to do. The Korros Region is made up of six
+            islands in total. We are on Orogen Island. It lies in the center of the
+            region and is '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'powerful Pokemon we have located in the Kallos '
+          - surrounded by the remaining five islands. Mt. Wygon lies at the center
+            of this island and is the most settled part of the archipelago.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - region.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - 'In order for you to start your journey properly, it is '
+          - 'Legends foretell of an ancient power that lies within the center of Mt.
+            Wygon. We need to harness that power in order to take back the Kanto and
+            other regions '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - only fair to give one to you.
+          - from those who hold them captive.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'You will definitely find it to be of use to you as you '
+          - Of course I'm not going to send you out there without any help. As discussed
+            before, the islands are a dangerous place.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - travel around Korros.
+          - The machine on your right contains three of the most powerful Pokemon
+            we have located in the Kallos region.
           indent: 0
-          code: 401
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - In order for you to start your journey properly, it is only fair to give
+            one to you.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You will definitely find it to be of use to you as you travel around Korros.
+            Go ahead and take one!
+          indent: 0
+          code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
           - C
@@ -413,14 +427,9 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Spruce: Head over to the machine on the right to '
+          - 'Spruce: Head over to the machine on the right to select a Pokemon.'
           indent: 0
           code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - select a Pokemon.
-          indent: 0
-          code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbCallBub(0)
@@ -473,29 +482,92 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Spruce: This is the part where I tell you what to do '
+          - 'Spruce: The surrounding islands are the key to the power that lies within
+            Mt. Wygon. Somewhere on each of these islands rests an ancient shrine.
+            These '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - next and give you a bunch of stuff.
+          - structures are said to house a jewel of immense power.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'I need to give you the Itemizer and your first two '
+          - 'We need to activate each of the five shrines and gather all of the associated
+            jewels together. Once that has been accomplished, My. Wygon should reveal
+            its '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - recipes (for Pokeball and Potion)
+          - secrets to us.
           indent: 0
           code: 401
         - !ruby/object:RPG::EventCommand
           parameters:
-          - I need to give you a Pokedex
+          - Here are some supplies for you in order to help you succeed.
           indent: 0
           code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - This first item harvests the materials that you'll find around the various
+            islands and turns them into something that you'll find to be more useful
+            than raw materials.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received an Item Crafter!"
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.itemCrafter=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Spruce: This device requires configuration recipes in order to be effective.
+            So I''ll give you two to help start you out.'
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received ItemCrafter Recipe: Pokeball"
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$canCraft[0]=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received ItemCrafter Recipe: Potion"
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$canCraft[3]=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Preface to the pokedex
+          indent: 0
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !binary |-
+            XFBOIHJlY2VpdmVkIGEgUG9rw6lkZXgh
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.pokedex=true"
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbCallBub(0)
@@ -5696,17 +5768,17 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 1813
-    - 1814
-    - 1814
-    - 1814
-    - 1814
+    - 0
+    - 0
+    - 0
+    - 0
     - 1830
     - 1835
     - 1813
-    - 1814
-    - 1814
-    - 1814
-    - 1814
+    - 0
+    - 0
+    - 0
+    - 0
     - 1830
     - 0
     - 0
@@ -5716,17 +5788,17 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 1821
-    - 1822
-    - 1822
-    - 1822
-    - 1822
+    - 0
+    - 0
+    - 0
+    - 0
     - 1838
     - 1820
     - 1821
-    - 1822
-    - 1822
-    - 1822
-    - 1822
+    - 0
+    - 0
+    - 0
+    - 0
     - 1838
     - 0
     - 0
@@ -5996,6 +6068,17 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
+    - 1814
+    - 1814
+    - 1814
+    - 1814
+    - 0
+    - 0
+    - 0
+    - 1814
+    - 1814
+    - 1814
+    - 1814
     - 0
     - 0
     - 0
@@ -6005,28 +6088,17 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1822
+    - 1822
+    - 1822
+    - 1822
     - 1695
     - 0
     - 1695
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1822
+    - 1822
+    - 1822
+    - 1822
     - 0
     - 0
     - 0

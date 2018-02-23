@@ -320,17 +320,17 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
+          - $PokemonGlobal.nextBattleBGM="006-Boss02"
+          indent: 5
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - pbWildBattle(:RODEAD,100,63,FALSE,TRUE)
           indent: 5
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Oh? You thought that you'd be healed after the first battle?
-          indent: 5
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Did you think you'd be fighting a fair opponent?
+          - What? Did you think you'd be fighting a fair opponent?
           indent: 5
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -341,16 +341,6 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - I'm not here to teach you that you'll win every battle you encounter.
-          indent: 5
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Sometimes you'll have to know when to lose...
-          indent: 5
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Not every choice is to kill or be killed.
           indent: 5
           code: 101
         - !ruby/object:RPG::EventCommand
