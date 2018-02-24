@@ -1822,6 +1822,8 @@ class PokeBattle_Battle
             end
           end
         end
+		#Item Drop
+        pbDropItem(i)
         # Now clear the participants array
         @battlers[i].participants=[]
       end
@@ -4032,5 +4034,24 @@ class PokeBattle_Battle
       i.belch=false
     end
     return @decision
+  end
+  
+  ### Wild pokemon drops item if defeated (50% chance)
+  def pbDropItem (i)
+    if @battlers[i].item!=0 && !@opponent
+      $PokemonBag.pbStoreItem(@battlers[i].item)
+	  pbDisplay(_INTL("{1} picked up {2} from the Pokemon!", $Trainer.name, PBItems.getName(@battlers[i].item)))
+	elsif rand(100)>50
+	  $PokemonBag.pbStoreItem(PBItems::GOLDBERRY)
+	  pbDisplay(_INTL("{1} picked up a Gold Berry from the Pokemon!", $Trainer.name))
+	else
+	  if rand(2)==1
+	    $PokemonBag.pbStoreItem(PBItems::ORANBERRY)
+	    pbDisplay(_INTL("{1} picked up an Oran Berry from the Pokemon!", $Trainer.name))
+	  else
+	    $PokemonBag.pbStoreItem(PBItems::LUMBERRY)
+	    pbDisplay(_INTL("{1} picked up a Lum Berry from the Pokemon!", $Trainer.name))
+	  end
+	end     
   end
 end

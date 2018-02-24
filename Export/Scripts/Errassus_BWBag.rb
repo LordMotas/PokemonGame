@@ -489,8 +489,10 @@ class PokemonBagScreen
           @scene.pbDisplay(_INTL("The {1} can't be held.",itemname))
         else
           pbFadeOutIn(99999){
-            sscene=PokemonScreen_Scene.new
-            sscreen=PokemonScreen.new(sscene,$Trainer.party)
+            sscene = PokemonParty_Scene.new
+            sscreen = PokemonPartyScreen.new(sscene,$Trainer.party)
+            #sscene=PokemonScreen_Scene.new
+            #sscreen=PokemonScreen.new(sscene,$Trainer.party)
             if sscreen.pbPokemonGiveScreen(item)
               # If the item was held, delete the item from storage
               if !storage.pbDeleteItem(item,1)
@@ -587,8 +589,10 @@ class PokemonBagScreen
         else
           # Give item to a Pokémon
           pbFadeOutIn(99999){
-            sscene=PokemonScreen_Scene.new
-            sscreen=PokemonScreen.new(sscene,$Trainer.party)
+            sscene = PokemonParty_Scene.new
+            sscreen = PokemonPartyScreen.new(sscene,$Trainer.party)
+            #sscene=PokemonScreen_Scene.new
+            #sscreen=PokemonScreen.new(sscene,$Trainer.party)
             sscreen.pbPokemonGiveScreen(item)
             @scene.pbRefresh
           }
