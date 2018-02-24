@@ -58,7 +58,7 @@ end
 
 class PokemonSave_Scene
   def pbStartScreen
-    @viewport=Viewport.new(150,200,Graphics.width,Graphics.height)
+    @viewport=Viewport.new(135,112.5,Graphics.width,Graphics.height)
     @viewport.z=99999
     @sprites={}
     totalsec = Graphics.frame_count / Graphics.frame_rate

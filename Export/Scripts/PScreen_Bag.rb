@@ -1,3 +1,4 @@
+=begin
 class Window_PokemonBag < Window_DrawableCommand
   attr_reader :pocket
   attr_accessor :sorting
@@ -432,7 +433,6 @@ class PokemonBag_Scene
 end
 
 
-
 #===============================================================================
 # Bag mechanics
 #===============================================================================
@@ -703,3 +703,4 @@ class PokemonBagScreen
     @scene.pbEndScene
   end
 end
+=end

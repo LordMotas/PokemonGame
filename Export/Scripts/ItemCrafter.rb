@@ -6,6 +6,9 @@
 # *In order to unlock an item recipe use $canCraft[x]=true  where x is the 
 #  element of the @item array
 #
+# * EDIT: It should actually now be $Trainer.iccancraft[x]=true where x is
+#   the element of the @item array
+#
 # *to add an item of your own just add it to the @items array
 #  Then add its required materials to the @materials array
 #  under *case @item* add another *when x* where x is the next number
@@ -80,6 +83,9 @@ class ItemCrafterScene
 
   
   def initialize
+    for i in 0...$Trainer.iccancraft.length
+      $canCraft[i]=$Trainer.iccancraft[i]
+    end
     @close = $exit
     @select=1
     @item=0
@@ -546,11 +552,30 @@ class ItemCrafterScene
           end
           self.text
         end
-        if Input.trigger?(Input::RIGHT)  && @item <14
+        #14 is the last item in the array
+        if Input.trigger?(Input::RIGHT) && @item <=14
           @item+=1
+          if @item == 15
+            @item=0
+          end
+          while not $canCraft[@item]
+            if @item == 15
+              @item=-1
+            end
+            @item+=1
+          end
         end
-        if Input.trigger?(Input::LEFT) && @item >0
+        if Input.trigger?(Input::LEFT) && @item >=0
           @item-=1
+          if @item == -1
+            @item=14
+          end
+          while not $canCraft[@item]
+            if @item == -1
+              @item=14
+            end
+            @item-=1
+          end
         end
       end    
       
@@ -565,7 +590,7 @@ class ItemCrafterScene
         case @select
         when 2 
           if $canCraft[@item]
-            if $PokemonBag.pbQuantity(@materials[@mat2])<@cost1 || $PokemonBag.pbQuantity(@materials[@mat1]) <@cost2
+            if $PokemonBag.pbQuantity(@materials[@mat1])<@cost1 || $PokemonBag.pbQuantity(@materials[@mat2]) <@cost2
               Kernel.pbMessage(_INTL("Unable to craft item, you do not have the required materials"))
             else
               $PokemonBag.pbStoreItem(@items[@item],@amount)

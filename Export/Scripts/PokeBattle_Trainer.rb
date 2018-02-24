@@ -15,6 +15,8 @@ class PokeBattle_Trainer
   attr_accessor(:pokedex)    # Whether the Pokédex was obtained
   attr_accessor(:pokegear)   # Whether the Pokégear was obtained
   attr_accessor(:itemCrafter)# Whether the Item Crafter was obtained
+  attr_accessor(:iccancraft) # The array that holds the Item Crafter recipes
+  attr_accessor(:shrines) # The array that holds the number of shrines visited
   attr_accessor(:language)
 
   def trainerTypeName   # Name of this trainer type (localized)
@@ -109,6 +111,14 @@ class PokeBattle_Trainer
     ret=0
     for i in 0...@badges.length
       ret+=1 if @badges[i]
+    end
+    return ret
+  end
+  
+  def numshrines # Number of shrines
+    ret=0
+    for i in 0..@shrines.length
+      ret+=1 if @shrines[i]
     end
     return ret
   end
@@ -285,6 +295,10 @@ class PokeBattle_Trainer
     @pokegear=false
     @pokedex=false
     @itemcrafter=true
+    @iccancraft=[]
+    for i in 0...14
+      @iccancraft[i]=false
+    end
     clearPokedex
     @shadowcaught=[]
     for i in 1..PBSpecies.maxValue
@@ -293,6 +307,10 @@ class PokeBattle_Trainer
     @badges=[]
     for i in 0...8
       @badges[i]=false
+    end
+    @shrines=[]
+    for i in 0...5
+      @shrines[i]=false
     end
     @money=INITIALMONEY
     @party=[]

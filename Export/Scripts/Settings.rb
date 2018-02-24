@@ -143,8 +143,8 @@ def pbPocketNames; return ["",
    _INTL("Items"),
    _INTL("Medicine"),
    _INTL("Poké Balls"),
-   _INTL("TMs & HMs"),
-   _INTL("Berries"),
+   _INTL("TMs"),
+   _INTL("Raw Materials"),
    _INTL("Mail"),
    _INTL("Battle Items"),
    _INTL("Key Items")
@@ -202,7 +202,7 @@ DEXINDEXOFFSETS    = []
 # * The maximum number of Game Corner coins the player can have.
 # * The maximum length, in characters, that the player's name can be.
 #===============================================================================
-INITIALMONEY    = 3000
+INITIALMONEY    = 0
 MAXMONEY        = 999999
 MAXCOINS        = 99999
 PLAYERNAMELIMIT = 10

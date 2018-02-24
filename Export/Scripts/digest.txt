@@ -203,7 +203,16 @@
 44515027    Editor_BattleAnimationEditor                 Editor_BattleAnimationEditor.rb
 66443344    Compiler                                     Compiler.rb
 30913346    ===CUSTOM SCRIPTS===                         EMPTY
+10488910    AutomaticTM/HMIcons                          AutomaticTM_HMIcons.rb
 51428905    ItemCrafter                                  ItemCrafter.rb
 6123542     UraniumCustomMenu                            UraniumCustomMenu.rb
+24216588    SkyInverseBattle                             SkyInverseBattle.rb
+51398100    ChallengeModes                               ChallengeModes.rb
+28946912    ChallengeSelection                           ChallengeSelection.rb
+99152027    ChallengeSelectionAbility                    ChallengeSelectionAbility.rb
+26541381    ChallengeSelectionMoves                      ChallengeSelectionMoves.rb
+21463195    ChallengeSelectionItems                      ChallengeSelectionItems.rb
+7309917     HeaingBallGraphics                           HeaingBallGraphics.rb
+56201428    Errassus_BWBag                               Errassus_BWBag.rb
 16280454    =================                            EMPTY
 76067044    Main                                         Main.rb

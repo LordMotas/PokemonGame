@@ -305,39 +305,72 @@ root: !ruby/object:RPG::Map
           code: 108
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'So here''s what we need you to do. The Korros Region is made up of six
-            islands in total. We are on Orogen Island. It lies in the center of the
-            region and is '
+          - 'So here''s what we need you to do. '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - surrounded by the remaining five islands. Mt. Wygon lies at the center
-            of this island and is the most settled part of the archipelago.
+          - 'The Korros Region is made up of six islands in total. '
           indent: 0
-          code: 401
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'We are on Orogen Island. '
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - It lies in the center of the region and is surrounded by the remaining
+            five islands.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Mt. Wygon lies at the center of this island and is the most settled part
+            of the archipelago.
+          indent: 0
+          code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'Legends foretell of an ancient power that lies within the center of Mt.
-            Wygon. We need to harness that power in order to take back the Kanto and
-            other regions '
+            Wygon. '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - from those who hold them captive.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Of course I'm not going to send you out there without any help. As discussed
-            before, the islands are a dangerous place.
+          - We need to discover that power and use it to free the Kanto and other
+            regions from those who hold them captive.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - The machine on your right contains three of the most powerful Pokemon
-            we have located in the Kallos region.
+          - I need you to accomplish this task, you are the most capable.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Other expedition teams have been sent out, but none have returned.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - We can only assume the worst...
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Of course I''m not going to send you out there without any help. '
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - As discussed before, the islands are a dangerous place.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - The machine on the right contains three of the most powerful Pokemon we
+            have located in the Korros region.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -349,7 +382,11 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters:
           - You will definitely find it to be of use to you as you travel around Korros.
-            Go ahead and take one!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Go ahead and take one!
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -482,40 +519,51 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Spruce: The surrounding islands are the key to the power that lies within
-            Mt. Wygon. Somewhere on each of these islands rests an ancient shrine.
-            These '
+          - 'Spruce: The surrounding islands are key to the power that lies within
+            Mt. Wygon. '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - structures are said to house a jewel of immense power.
+          - 'Somewhere on each of these islands rests an ancient shrine. '
           indent: 0
-          code: 401
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - These structures are said to house a jewel of immense power.
+          indent: 0
+          code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
           - 'We need to activate each of the five shrines and gather all of the associated
-            jewels together. Once that has been accomplished, My. Wygon should reveal
-            its '
+            jewels together. '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - secrets to us.
-          indent: 0
-          code: 401
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Here are some supplies for you in order to help you succeed.
+          - Once that has been accomplished, My. Wygon should open.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - This first item harvests the materials that you'll find around the various
-            islands and turns them into something that you'll find to be more useful
-            than raw materials.
+          - Before you leave, here are some supplies for you in order to help you
+            succeed.
           indent: 0
           code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - This first item combines raw materials that you find around the various
+            islands and turns them usable tools.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: ItemGet
+            pitch: 100
+          indent: 0
+          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - "\\PN received an Item Crafter!"
@@ -528,35 +576,110 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Spruce: This device requires configuration recipes in order to be effective.
-            So I''ll give you two to help start you out.'
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "\\PN received ItemCrafter Recipe: Pokeball"
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$canCraft[0]=true"
+          - pbCallBub(1)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "\\PN received ItemCrafter Recipe: Potion"
+          - 'Spruce: This device requires configuration recipes in order to be effective. '
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - "$canCraft[3]=true"
+          - So I'll give you two to help start you out.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
           indent: 0
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Preface to the pokedex
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: ItemGet
+            pitch: 100
           indent: 0
-          code: 108
+          code: 250
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received Recipe: Pokeball!"
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.iccancraft[0]=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: ItemGet
+            pitch: 100
+          indent: 0
+          code: 250
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received Recipe: Potion!"
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.iccancraft[3]=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Spruce: What good would it be to give you the recipes without being able
+            to use them? '
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Here are the necessary materials to begin crafting.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:REDAPRICORN,10)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:WHTAPRICORN,10)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:ORANBERRY,10)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Since the surrounding islands are a mystery to us, I need you to document
+            the Pokemon that you encounter out there in this.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: ItemGet
+            pitch: 100
+          indent: 0
+          code: 250
         - !ruby/object:RPG::EventCommand
           parameters:
           - !binary |-
@@ -568,6 +691,42 @@ root: !ruby/object:RPG::Map
           - "$Trainer.pokedex=true"
           indent: 0
           code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Spruce: This is a Pokedex. '
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - It will automatically log every Pokemon that you catch and see in the
+            wild.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Now go and succeed where the other expedition teams could not!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - D
+          - 1
+          indent: 0
+          code: 123
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 2
+          - 2
+          - 0
+          - 0
+          - 1
+          indent: 0
+          code: 122
         - !ruby/object:RPG::EventCommand
           parameters:
           - pbCallBub(0)
@@ -588,6 +747,71 @@ root: !ruby/object:RPG::Map
           self_switch_valid: true
           variable_id: 1
           variable_valid: false
+          switch2_id: 1
+        move_route: !ruby/object:RPG::MoveRoute
+          list:
+          - !ruby/object:RPG::MoveCommand
+            parameters: []
+            code: 0
+          skippable: false
+          repeat: true
+        trigger: 0
+        step_anime: false
+        move_frequency: 3
+        always_on_top: false
+        graphic: !ruby/object:RPG::Event::Page::Graphic
+          opacity: 255
+          character_name: spruce
+          pattern: 0
+          tile_id: 0
+          direction: 2
+          blend_type: 0
+          character_hue: 0
+        walk_anime: true
+        move_speed: 3
+        through: false
+      - !ruby/object:RPG::Event::Page
+        list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 'Spruce: Great! You are now ready to face the dangers of the Korros Region!'
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Good luck!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbSetSelfSwitch(5,"A",true)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 0
+        move_type: 0
+        direction_fix: false
+        condition: !ruby/object:RPG::Event::Page::Condition
+          switch2_valid: false
+          self_switch_ch: A
+          switch1_id: 3
+          switch1_valid: false
+          variable_value: 1
+          self_switch_valid: false
+          variable_id: 2
+          variable_valid: true
           switch2_id: 1
         move_route: !ruby/object:RPG::MoveRoute
           list:
@@ -1318,6 +1542,15 @@ root: !ruby/object:RPG::Map
           indent: 5
           code: 355
         - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 1
+          - 0
+          - 0
+          - 1
+          indent: 5
+          code: 122
+        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 5
           code: 113
@@ -1489,6 +1722,15 @@ root: !ruby/object:RPG::Map
           indent: 5
           code: 355
         - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 1
+          - 0
+          - 0
+          - 2
+          indent: 5
+          code: 122
+        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 5
           code: 113
@@ -1659,6 +1901,15 @@ root: !ruby/object:RPG::Map
           - pbAddPokemon(:SHROMB,5)
           indent: 5
           code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 1
+          - 0
+          - 0
+          - 3
+          indent: 5
+          code: 122
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 5
@@ -4692,27 +4943,6 @@ root: !ruby/object:RPG::Map
           code: 111
         - !ruby/object:RPG::EventCommand
           parameters:
-          - !binary |-
-            XFBOIHJlY2VpdmVkIGEgUG9rw6lkZXgh
-          indent: 1
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$Trainer.itemCrafter=true"
-          indent: 1
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - "$Trainer.pokedex=true"
-          indent: 1
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbAddPokemon(:SHROMB,5)
-          indent: 1
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
           - A
           - 0
           indent: 1
@@ -4739,6 +4969,16 @@ root: !ruby/object:RPG::Map
           parameters: []
           indent: 0
           code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.iccancraft[0]=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.iccancraft[4]=true"
+          indent: 0
+          code: 355
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
@@ -4819,8 +5059,8 @@ root: !ruby/object:RPG::Map
         through: false
       name: !binary |-
         UG9rw6lkZXg=
-      y: 5
-      x: 8
+      y: 7
+      x: 13
       id: 12
     13: !ruby/object:RPG::Event
       pages:
