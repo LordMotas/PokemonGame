@@ -58,7 +58,12 @@ end
 
 class PokemonSave_Scene
   def pbStartScreen
-    @viewport=Viewport.new(135,112.5,Graphics.width,Graphics.height)
+    #Player is facing up
+    if $game_player.direction==8
+      @viewport=Viewport.new(135,125,Graphics.width,Graphics.height)
+    else
+      @viewport=Viewport.new(135,60,Graphics.width,Graphics.height)
+    end
     @viewport.z=99999
     @sprites={}
     totalsec = Graphics.frame_count / Graphics.frame_rate
@@ -69,7 +74,7 @@ class PokemonSave_Scene
     loctext=_INTL("<ac><c2=06644bd2>{1}</c2></ac>",mapname)
     loctext+=_INTL("Player<r><c3={1}>{2}</c3><br>",textColor,$Trainer.name)
     loctext+=_ISPRINTF("Time<r><c3={1:s}>{2:02d}:{3:02d}</c3><br>",textColor,hour,min)
-    loctext+=_INTL("Badges<r><c3={1}>{2}</c3><br>",textColor,$Trainer.numbadges)
+    loctext+=_INTL("Shrines<r><c3={1}>{2}</c3><br>",textColor,$Trainer.numbadges)
     if $Trainer.pokedex
       loctext+=_INTL("Pokédex<r><c3={1}>{2}/{3}</c3>",textColor,$Trainer.pokedexOwned,$Trainer.pokedexSeen)
     end

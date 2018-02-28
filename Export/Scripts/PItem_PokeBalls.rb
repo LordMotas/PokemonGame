@@ -129,6 +129,18 @@ BallHandlers::OnCatch.add(:HEALBALL,proc{|ball,battle,pokemon|
    pokemon.heal
 })
 
+BallHandlers::OnCatch.add(:POKEBALL,proc{|ball,battle,pokemon|
+   pokemon.heal
+})
+
+BallHandlers::OnCatch.add(:GREATBALL,proc{|ball,battle,pokemon|
+   pokemon.heal
+})
+
+BallHandlers::OnCatch.add(:ULTRABALL,proc{|ball,battle,pokemon|
+   pokemon.heal
+})
+
 BallHandlers::ModifyCatchRate.add(:QUICKBALL,proc{|ball,catchRate,battle,battler|
    catchRate*=5 if battle.turncount<=1
    next catchRate
