@@ -4447,8 +4447,8 @@ root: !ruby/object:RPG::Map
           parameters:
           - 0
           - 2
-          - 18
-          - 13
+          - 25
+          - 8
           - 0
           - 1
           indent: 0

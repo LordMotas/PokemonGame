@@ -736,6 +736,11 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
+          - "$PokemonGlobal.runningShoes=true"
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
           - 0
           - 4
           - 0
