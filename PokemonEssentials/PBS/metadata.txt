@@ -29,78 +29,78 @@ MapPosition=0,13,12
 ShowArea=false
 #-------------------------------
 [005]
-# Route 1
+# Turbide Town
 MapPosition=0,13,11
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [006]
-# Kurt's house
+# Secret Tunnel
 MapPosition=0,13,11
 #-------------------------------
 [007]
-# Cedolan City
+# MAP007
 MapSize=2,11
 MapPosition=0,13,10
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [008]
-# Daisy's house
+# MAP008
 MapPosition=0,13,12
 #-------------------------------
 [009]
-# Cedolan City Poké Center
+# MAP009
 MapPosition=0,14,10
 HealingSpot=8,17,11
 #-------------------------------
 [010]
-# Cedolan Gym
+# MAP010
 BattleBack=IndoorB
 MapPosition=0,13,10
 #-------------------------------
 [011]
-# Pokémon Institute
+# MAP011
 MapPosition=0,14,10
 #-------------------------------
 [012]
-# Cedolan City Condo
+# MAP012
 MapPosition=0,14,10
 #-------------------------------
 [013]
-# Game Corner
+# MAP013
 MapPosition=0,14,10
 #-------------------------------
 [014]
-# Cedolan Dept. 1F
+# MAP014
 MapPosition=0,13,10
 #-------------------------------
 [015]
-# Cedolan Dept. 2F
+# MAP015
 MapPosition=0,13,10
 #-------------------------------
 [016]
-# Cedolan Dept. 3F
+# MAP016
 MapPosition=0,13,10
 #-------------------------------
 [017]
-# Cedolan Dept. 4F
+# MAP017
 MapPosition=0,13,10
 #-------------------------------
 [018]
-# Cedolan Dept. 5F
+# MAP018
 MapPosition=0,13,10
 #-------------------------------
 [019]
-# Cedolan Dept. Rooftop
+# MAP019
 MapPosition=0,13,10
 #-------------------------------
 [020]
-# Cedolan Dept. Elevator
+# MAP020
 MapPosition=0,13,10
 #-------------------------------
 [021]
-# Route 2
+# MAP021
 MapSize=1,11
 Weather=Rain,50
 MapPosition=0,14,8
@@ -108,93 +108,93 @@ Outdoor=true
 ShowArea=true
 #-------------------------------
 [023]
-# Lerucean Town
+# MAP023
 MapPosition=0,15,8
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [024]
-# Lerucean Town Poké Center
+# MAP024
 MapPosition=0,15,8
 HealingSpot=23,11,15
 #-------------------------------
 [025]
-# Lerucean Town Mart
+# MAP025
 MapPosition=0,15,8
 #-------------------------------
 [026]
-# Pokémon Fan Club
+# MAP026
 MapPosition=0,15,8
 #-------------------------------
 [027]
-# Pokémon Day Care
+# MAP027
 MapPosition=0,15,8
 #-------------------------------
 [028]
-# Natural Park
+# MAP028
 BattleBack=Forest
 MapPosition=0,16,8
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [029]
-# Natural Park Entrance
+# MAP029
 Bicycle=true
 MapPosition=0,16,8
 #-------------------------------
 [030]
-# Natural Park Pavillion
+# MAP030
 MapPosition=0,16,8
 #-------------------------------
 [031]
-# Route 3
+# MAP031
 MapSize=2,1101
 MapPosition=0,14,6
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [034]
-# Ice Cave
+# MAP034
 BattleBack=IndoorC
 Bicycle=true
 MapPosition=0,15,6
 #-------------------------------
 [035]
-# Ingido Plateau
+# MAP035
 MapPosition=0,13,6
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [036]
-# Pokémon League
+# MAP036
 MapPosition=0,13,6
 HealingSpot=35,17,7
 #-------------------------------
 [037]
-# Pokémon League
+# MAP037
 BattleBack=EliteA
 MapPosition=0,13,6
 #-------------------------------
 [038]
-# Hall of Fame
+# MAP038
 MapPosition=0,13,6
 #-------------------------------
 [039]
-# Route 4
+# MAP039
 MapSize=2,11
 MapPosition=0,11,6
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [040]
-# Route 4
+# MAP040
 MapPosition=0,11,6
 Outdoor=true
 BicycleAlways=true
 ShowArea=true
 #-------------------------------
 [041]
-# Route 5
+# MAP041
 MapSize=1,111
 MapPosition=0,11,7
 Outdoor=true
@@ -210,26 +210,26 @@ Outdoor=true
 ShowArea=true
 #-------------------------------
 [044]
-# Route 6
+# MAP044
 MapSize=2,11
 MapPosition=0,11,10
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [045]
-# Route 6
+# MAP045
 MapPosition=0,11,10
 Outdoor=true
 BicycleAlways=true
 ShowArea=true
 #-------------------------------
 [046]
-# Cycling Road gate
+# MAP046
 Bicycle=true
 MapPosition=0,12,6
 #-------------------------------
 [047]
-# Route 7
+# MAP047
 MapSize=2,11
 BattleBack=Mountain
 Weather=Rain,0
@@ -238,99 +238,99 @@ Outdoor=true
 ShowArea=true
 #-------------------------------
 [049]
-# Rock Cave
+# MAP049
 Bicycle=true
 MapPosition=0,16,10
 #-------------------------------
 [050]
-# Rock Cave
+# MAP050
 BattleBack=CaveDark
 Bicycle=true
 MapPosition=0,16,10
 DarkMap=true
 #-------------------------------
 [051]
-# Dungeon
+# MAP051
 Bicycle=true
 Dungeon=true
 MapPosition=0,16,10
 #-------------------------------
 [052]
-# Battle Frontier
+# MAP052
 MapPosition=0,17,10
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [053]
-# Battle Frontier Poké Center
+# MAP053
 MapPosition=0,17,10
 HealingSpot=52,17,14
 #-------------------------------
 [054]
-# Battle Frontier Mart
+# MAP054
 MapPosition=0,17,10
 #-------------------------------
 [055]
-# Battle Tower
+# MAP055
 MapPosition=0,17,10
 HealingSpot=52,30,10
 #-------------------------------
 [056]
-# Battle Tower arena
+# MAP056
 BattleBack=EliteA
 MapPosition=0,17,10
 #-------------------------------
 [057]
-# Stadium Cup lobby
+# MAP057
 MapPosition=0,17,10
 #-------------------------------
 [058]
-# Battle Palace
+# MAP058
 MapPosition=0,17,10
 #-------------------------------
 [059]
-# Battle Palace arena
+# MAP059
 BattleBack=EliteD
 MapPosition=0,17,10
 #-------------------------------
 [060]
-# Battle Arena
+# MAP060
 MapPosition=0,17,10
 #-------------------------------
 [061]
-# Battle Arena arena
+# MAP061
 BattleBack=EliteB
 MapPosition=0,17,10
 #-------------------------------
 [062]
-# Battle Factory
+# MAP062
 MapPosition=0,17,10
 #-------------------------------
 [063]
-# Battle Factory intro corridor
+# MAP063
 MapPosition=0,17,10
 #-------------------------------
 [064]
-# Battle Factory arena
+# MAP064
 BattleBack=EliteC
 MapPosition=0,17,10
 #-------------------------------
 [065]
-# Battle Factory corridor
+# MAP065
 MapPosition=0,17,10
 #-------------------------------
 [066]
-# Safari Zone
+# MAP066
 MapPosition=0,12,12
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [067]
-# Safari Zone gate
+# MAP067
 MapPosition=0,12,12
 #-------------------------------
 [068]
-# Safari Zone
+# MAP068
 BattleBack=Forest
 MapPosition=0,12,12
 SafariMap=true
@@ -338,39 +338,39 @@ Outdoor=true
 ShowArea=true
 #-------------------------------
 [069]
-# Route 8
+# MAP069
 DiveMap=70
 MapPosition=0,13,13
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [070]
-# Underwater
+# MAP070
 MapPosition=0,13,13
 #-------------------------------
 [071]
-# Harbour
+# MAP071
 MapPosition=0,13,13
 #-------------------------------
 [072]
-# Berth Island
+# MAP072
 Weather=Storm,50
 MapPosition=0,18,17
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [073]
-# Faraday Island
+# MAP073
 MapPosition=0,22,16
 Outdoor=true
 ShowArea=true
 #-------------------------------
 [074]
-# Cycling Road gate
+# MAP074
 Bicycle=true
 MapPosition=0,12,10
 #-------------------------------
 [075]
-# Tiall Region
+# MAP075
 MapPosition=1,13,16
 Outdoor=true

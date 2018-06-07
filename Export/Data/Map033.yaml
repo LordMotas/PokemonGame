@@ -37,7 +37,7 @@ root: !ruby/object:RPG::Map
           - 0
           - 2
           - 11
-          - 31
+          - 41
           - 0
           - 1
           indent: 0
