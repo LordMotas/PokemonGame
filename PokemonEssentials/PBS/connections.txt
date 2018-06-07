@@ -1,4 +1,4 @@
-# Water Path (42) - Turbide Town (5)
-42,West,0,5,East,10
-# Water Path (42) - Orogen Town (2)
-42,East,0,2,West,10
+# Water Path (9) - Orogen Town (2)
+9,East,0,2,West,6
+# Turbide Town (10) - Water Path (9)
+10,East,0,9,West,0

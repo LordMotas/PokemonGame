@@ -1,18 +1,10 @@
 ﻿#-------------------------------
-[000]
-PlayerA=POKEMONTRAINER_Red,trchar000,boy_bike,boy_surf_offset,boy_run,boy_dive_offset,boy_fish_offset,boy_fishsurf_offset
-PlayerB=POKEMONTRAINER_Leaf,trchar001,girl_bike,girl_surf_offset,girl_run,girl_dive_offset,girl_fish_offset,girl_fishsurf_offset
-TrainerBattleBGM=005-Boss01.mid
-SurfBGM=Ship.mid
-BicycleBGM=Airship.mid
-Home=3,7,5,8
-WildBattleBGM=002-Battle02.mid
-#-------------------------------
 [001]
 # Intro
 #-------------------------------
 [002]
 # Orogen Town
+Bicycle=true
 MapPosition=0,13,12
 Outdoor=true
 ShowArea=true
@@ -24,353 +16,39 @@ MapPosition=0,13,12
 HealingSpot=2,8,8
 #-------------------------------
 [004]
-# Pokémon Lab
+# Pokemon Lab
 MapPosition=0,13,12
 ShowArea=false
 #-------------------------------
 [005]
-# Turbide Town
+# Battle Simulator
 MapPosition=0,13,11
-Outdoor=true
-ShowArea=true
 #-------------------------------
 [006]
-# Secret Tunnel
-MapPosition=0,13,11
+# Lab Roof
+MapSize=0,
+Bicycle=false
+MapPosition=0,13,10
+Outdoor=true
+ShowArea=false
 #-------------------------------
 [007]
-# MAP007
-MapSize=2,11
-MapPosition=0,13,10
-Outdoor=true
-ShowArea=true
+# Orogen Town Poke Center
 #-------------------------------
 [008]
-# MAP008
-MapPosition=0,13,12
+# Secret Tunnel
+Bicycle=true
 #-------------------------------
 [009]
-# MAP009
-MapPosition=0,14,10
-HealingSpot=8,17,11
+# Water Path
+Bicycle=true
+Outdoor=true
+ShowArea=true
 #-------------------------------
 [010]
-# MAP010
-BattleBack=IndoorB
-MapPosition=0,13,10
-#-------------------------------
-[011]
-# MAP011
-MapPosition=0,14,10
-#-------------------------------
-[012]
-# MAP012
-MapPosition=0,14,10
-#-------------------------------
-[013]
-# MAP013
-MapPosition=0,14,10
-#-------------------------------
-[014]
-# MAP014
-MapPosition=0,13,10
-#-------------------------------
-[015]
-# MAP015
-MapPosition=0,13,10
-#-------------------------------
-[016]
-# MAP016
-MapPosition=0,13,10
-#-------------------------------
-[017]
-# MAP017
-MapPosition=0,13,10
-#-------------------------------
-[018]
-# MAP018
-MapPosition=0,13,10
-#-------------------------------
-[019]
-# MAP019
-MapPosition=0,13,10
-#-------------------------------
-[020]
-# MAP020
-MapPosition=0,13,10
-#-------------------------------
-[021]
-# MAP021
-MapSize=1,11
-Weather=Rain,50
-MapPosition=0,14,8
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[023]
-# MAP023
-MapPosition=0,15,8
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[024]
-# MAP024
-MapPosition=0,15,8
-HealingSpot=23,11,15
-#-------------------------------
-[025]
-# MAP025
-MapPosition=0,15,8
-#-------------------------------
-[026]
-# MAP026
-MapPosition=0,15,8
-#-------------------------------
-[027]
-# MAP027
-MapPosition=0,15,8
-#-------------------------------
-[028]
-# MAP028
-BattleBack=Forest
-MapPosition=0,16,8
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[029]
-# MAP029
+# Turbide Town
+SnapEdges=false
 Bicycle=true
-MapPosition=0,16,8
-#-------------------------------
-[030]
-# MAP030
-MapPosition=0,16,8
-#-------------------------------
-[031]
-# MAP031
-MapSize=2,1101
-MapPosition=0,14,6
+SafariMap=false
 Outdoor=true
 ShowArea=true
-#-------------------------------
-[034]
-# MAP034
-BattleBack=IndoorC
-Bicycle=true
-MapPosition=0,15,6
-#-------------------------------
-[035]
-# MAP035
-MapPosition=0,13,6
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[036]
-# MAP036
-MapPosition=0,13,6
-HealingSpot=35,17,7
-#-------------------------------
-[037]
-# MAP037
-BattleBack=EliteA
-MapPosition=0,13,6
-#-------------------------------
-[038]
-# MAP038
-MapPosition=0,13,6
-#-------------------------------
-[039]
-# MAP039
-MapSize=2,11
-MapPosition=0,11,6
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[040]
-# MAP040
-MapPosition=0,11,6
-Outdoor=true
-BicycleAlways=true
-ShowArea=true
-#-------------------------------
-[041]
-# MAP041
-MapSize=1,111
-MapPosition=0,11,7
-Outdoor=true
-BicycleAlways=true
-ShowArea=true
-#-------------------------------
-[042]
-# Water Path
-MapSize=0,
-Bicycle=true
-MapPosition=0,13,10
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[044]
-# MAP044
-MapSize=2,11
-MapPosition=0,11,10
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[045]
-# MAP045
-MapPosition=0,11,10
-Outdoor=true
-BicycleAlways=true
-ShowArea=true
-#-------------------------------
-[046]
-# MAP046
-Bicycle=true
-MapPosition=0,12,6
-#-------------------------------
-[047]
-# MAP047
-MapSize=2,11
-BattleBack=Mountain
-Weather=Rain,0
-MapPosition=0,15,10
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[049]
-# MAP049
-Bicycle=true
-MapPosition=0,16,10
-#-------------------------------
-[050]
-# MAP050
-BattleBack=CaveDark
-Bicycle=true
-MapPosition=0,16,10
-DarkMap=true
-#-------------------------------
-[051]
-# MAP051
-Bicycle=true
-Dungeon=true
-MapPosition=0,16,10
-#-------------------------------
-[052]
-# MAP052
-MapPosition=0,17,10
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[053]
-# MAP053
-MapPosition=0,17,10
-HealingSpot=52,17,14
-#-------------------------------
-[054]
-# MAP054
-MapPosition=0,17,10
-#-------------------------------
-[055]
-# MAP055
-MapPosition=0,17,10
-HealingSpot=52,30,10
-#-------------------------------
-[056]
-# MAP056
-BattleBack=EliteA
-MapPosition=0,17,10
-#-------------------------------
-[057]
-# MAP057
-MapPosition=0,17,10
-#-------------------------------
-[058]
-# MAP058
-MapPosition=0,17,10
-#-------------------------------
-[059]
-# MAP059
-BattleBack=EliteD
-MapPosition=0,17,10
-#-------------------------------
-[060]
-# MAP060
-MapPosition=0,17,10
-#-------------------------------
-[061]
-# MAP061
-BattleBack=EliteB
-MapPosition=0,17,10
-#-------------------------------
-[062]
-# MAP062
-MapPosition=0,17,10
-#-------------------------------
-[063]
-# MAP063
-MapPosition=0,17,10
-#-------------------------------
-[064]
-# MAP064
-BattleBack=EliteC
-MapPosition=0,17,10
-#-------------------------------
-[065]
-# MAP065
-MapPosition=0,17,10
-#-------------------------------
-[066]
-# MAP066
-MapPosition=0,12,12
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[067]
-# MAP067
-MapPosition=0,12,12
-#-------------------------------
-[068]
-# MAP068
-BattleBack=Forest
-MapPosition=0,12,12
-SafariMap=true
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[069]
-# MAP069
-DiveMap=70
-MapPosition=0,13,13
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[070]
-# MAP070
-MapPosition=0,13,13
-#-------------------------------
-[071]
-# MAP071
-MapPosition=0,13,13
-#-------------------------------
-[072]
-# MAP072
-Weather=Storm,50
-MapPosition=0,18,17
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[073]
-# MAP073
-MapPosition=0,22,16
-Outdoor=true
-ShowArea=true
-#-------------------------------
-[074]
-# MAP074
-Bicycle=true
-MapPosition=0,12,10
-#-------------------------------
-[075]
-# MAP075
-MapPosition=1,13,16
-Outdoor=true

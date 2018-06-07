@@ -541,7 +541,7 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Once that has been accomplished, My. Wygon should open.
+          - Once that has been accomplished, Mt. Wygon should open.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand

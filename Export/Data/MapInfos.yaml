@@ -10,9 +10,9 @@ root: !ruby/object:Hash
   2: !ruby/object:RPG::MapInfo
     scroll_x: 800
     name: Orogen Town
-    expanded: true
+    expanded: false
     order: 2
-    scroll_y: 662
+    scroll_y: 1156
     parent_id: 0
   3: !ruby/object:RPG::MapInfo
     scroll_x: 496
@@ -23,52 +23,50 @@ root: !ruby/object:Hash
     parent_id: 2
   4: !ruby/object:RPG::MapInfo
     scroll_x: 320
-    name: !binary |-
-      UG9rw6ltb24gTGFi
+    name: Pokemon Lab
     expanded: false
     order: 4
     scroll_y: 240
     parent_id: 2
   5: !ruby/object:RPG::MapInfo
-    scroll_x: 640
-    name: Turbide Town
+    scroll_x: 320
+    name: Battle Simulator
     expanded: false
-    order: 10
-    scroll_y: 640
-    parent_id: 0
+    order: 5
+    scroll_y: 240
+    parent_id: 4
   6: !ruby/object:RPG::MapInfo
+    scroll_x: 512
+    name: Lab Roof
+    expanded: false
+    order: 6
+    scroll_y: 320
+    parent_id: 4
+  7: !ruby/object:RPG::MapInfo
+    scroll_x: 320
+    name: Orogen Town Poke Center
+    expanded: false
+    order: 7
+    scroll_y: 240
+    parent_id: 2
+  8: !ruby/object:RPG::MapInfo
     scroll_x: 320
     name: Secret Tunnel
     expanded: false
     order: 8
     scroll_y: 240
     parent_id: 2
-  22: !ruby/object:RPG::MapInfo
-    scroll_x: 320
-    name: Battle Simulator
-    expanded: false
-    order: 6
-    scroll_y: 240
-    parent_id: 4
-  32: !ruby/object:RPG::MapInfo
-    scroll_x: 512
-    name: Lab Roof
-    expanded: false
-    order: 5
-    scroll_y: 320
-    parent_id: 4
-  33: !ruby/object:RPG::MapInfo
-    scroll_x: 320
-    name: !binary |-
-      T3JvZ2VuIFRvd24gUG9rw6kgQ2VudGVy
-    expanded: false
-    order: 7
-    scroll_y: 240
-    parent_id: 2
-  42: !ruby/object:RPG::MapInfo
+  9: !ruby/object:RPG::MapInfo
     scroll_x: 960
     name: Water Path
     expanded: false
     order: 9
-    scroll_y: 544
+    scroll_y: 640
+    parent_id: 0
+  10: !ruby/object:RPG::MapInfo
+    scroll_x: 688
+    name: Turbide Town
+    expanded: false
+    order: 10
+    scroll_y: 640
     parent_id: 0

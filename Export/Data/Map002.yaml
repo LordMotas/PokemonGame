@@ -1734,7 +1734,7 @@ root: !ruby/object:RPG::Map
         through: false
       name: Lab door
       y: 33
-      x: 21
+      x: 20
       id: 5
     6: !ruby/object:RPG::Event
       pages:
