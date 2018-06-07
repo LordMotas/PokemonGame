@@ -186,6 +186,11 @@ root: !ruby/object:RPG::Map
           indent: 0
           code: 404
         - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 0
           code: 0
@@ -339,6 +344,643 @@ root: !ruby/object:RPG::Map
       y: 28
       x: 13
       id: 3
+    4: !ruby/object:RPG::Event
+      pages:
+      - !ruby/object:RPG::Event::Page
+        list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(4)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Hello! I have the greatest fishing rods ever created!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$PokemonBag.pbHasItem?(:OLDROD)"
+          indent: 0
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$PokemonBag.pbHasItem?(:GOODROD)"
+          indent: 1
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$PokemonBag.pbHasItem?(:SUPERROD)"
+          indent: 2
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$PokemonBag.pbHasItem?(:MEGAROD)"
+          indent: 3
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Would you like to purchase a Mega Rod?
+          indent: 4
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - - 'Yes [Cost: 9999]'
+            - 'No'
+          - 2
+          indent: 4
+          code: 102
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 'Yes [Cost: 9999]'
+          indent: 4
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 7
+          - 9999
+          - 0
+          indent: 5
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Fabulous!
+          indent: 6
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 0
+          - 9999
+          indent: 6
+          code: 125
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:MEGAROD)
+          indent: 6
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 6
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You don't have enough money!
+          indent: 6
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 6
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 'No'
+          indent: 4
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Well that's too bad...maybe another time.
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 404
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Would you like to purchase a Super Rod?
+          indent: 3
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - - 'Yes [Cost: 1000]'
+            - 'No'
+          - 2
+          indent: 3
+          code: 102
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 'Yes [Cost: 1000]'
+          indent: 3
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 7
+          - 1000
+          - 0
+          indent: 4
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Fabulous!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 0
+          - 1000
+          indent: 5
+          code: 125
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:SUPERROD)
+          indent: 5
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You don't have enough money!
+          indent: 5
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 5
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 'No'
+          indent: 3
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Well that's too bad...maybe another time.
+          indent: 4
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 404
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Would you like to purchase a Good Rod?
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - - 'Yes [Cost: 500]'
+            - 'No'
+          - 2
+          indent: 2
+          code: 102
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 'Yes [Cost: 500]'
+          indent: 2
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 7
+          - 500
+          - 0
+          indent: 3
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Fabulous!
+          indent: 4
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 0
+          - 500
+          indent: 4
+          code: 125
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:GOODROD)
+          indent: 4
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You don't have enough money!
+          indent: 4
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 4
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 'No'
+          indent: 2
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Well that's too bad...maybe another time.
+          indent: 3
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 3
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 404
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Would you like to purchase an Old Rod?
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - - 'Yes [Cost: 0]'
+            - 'No'
+          - 2
+          indent: 1
+          code: 102
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 'Yes [Cost: 0]'
+          indent: 1
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Fabulous! It's rather old, so you can have it for free!
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:OLDROD)
+          indent: 2
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 'No'
+          indent: 1
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Well that's too bad...maybe another time.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 404
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 0
+        move_type: 0
+        direction_fix: false
+        condition: !ruby/object:RPG::Event::Page::Condition
+          switch2_valid: false
+          self_switch_ch: A
+          switch1_id: 1
+          switch1_valid: false
+          variable_value: 0
+          self_switch_valid: false
+          variable_id: 1
+          variable_valid: false
+          switch2_id: 1
+        move_route: !ruby/object:RPG::MoveRoute
+          list:
+          - !ruby/object:RPG::MoveCommand
+            parameters: []
+            code: 0
+          skippable: false
+          repeat: true
+        trigger: 0
+        step_anime: false
+        move_frequency: 3
+        always_on_top: false
+        graphic: !ruby/object:RPG::Event::Page::Graphic
+          opacity: 255
+          character_name: NPC 06
+          pattern: 0
+          tile_id: 0
+          direction: 2
+          blend_type: 0
+          character_hue: 0
+        walk_anime: true
+        move_speed: 3
+        through: false
+      name: Fishing Rod Vendor
+      y: 11
+      x: 19
+      id: 4
+    5: !ruby/object:RPG::Event
+      pages:
+      - !ruby/object:RPG::Event::Page
+        list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(5)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Hello there! I make recipes for the Item Crafter.
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$Trainer.itemCrafter"
+          indent: 0
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 12
+          - "$Trainer.iccancraft[10]"
+          indent: 1
+          code: 111
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - I've already given you what you need to survive Relic Island.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - I'll update your Item Crafter with the recipe needed to explore Relic
+            Island.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Water, Ground, Electric = Paralyze Heal
+          indent: 2
+          code: 108
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 2
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:RPG::AudioFile
+            volume: 80
+            name: ItemGet
+            pitch: 100
+          indent: 2
+          code: 250
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "\\PN received Recipe: Paralyz Heal!"
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - "$Trainer.iccancraft[10] = true"
+          indent: 2
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(5)
+          indent: 2
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - To make a Paralyz Heal, you'll need a single Cheri Berry.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - I'll help you get started.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Kernel.pbReceiveItem(:CHERIBERRY,5)
+          indent: 2
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Cheri Berries should be prevalent on Relic Island if you run out.
+          indent: 2
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 2
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 411
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You don't have one...
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 412
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Good luck out there!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 0
+        move_type: 0
+        direction_fix: false
+        condition: !ruby/object:RPG::Event::Page::Condition
+          switch2_valid: false
+          self_switch_ch: A
+          switch1_id: 1
+          switch1_valid: false
+          variable_value: 0
+          self_switch_valid: false
+          variable_id: 1
+          variable_valid: false
+          switch2_id: 1
+        move_route: !ruby/object:RPG::MoveRoute
+          list:
+          - !ruby/object:RPG::MoveCommand
+            parameters: []
+            code: 0
+          skippable: false
+          repeat: true
+        trigger: 0
+        step_anime: false
+        move_frequency: 3
+        always_on_top: false
+        graphic: !ruby/object:RPG::Event::Page::Graphic
+          opacity: 255
+          character_name: NPC 06
+          pattern: 0
+          tile_id: 0
+          direction: 2
+          blend_type: 0
+          character_hue: 0
+        walk_anime: true
+        move_speed: 3
+        through: false
+      name: Pokeball Recipes Vendor
+      y: 27
+      x: 15
+      id: 5
   tileset_id: 1
   bgs: !ruby/object:RPG::AudioFile
     volume: 80
@@ -2432,11 +3074,11 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1348
+    - 1349
+    - 1348
+    - 1349
+    - 1348
     - 0
     - 0
     - 0
@@ -2620,11 +3262,11 @@ root: !ruby/object:RPG::Map
     - 1223
     - 0
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1341
+    - 1340
+    - 1341
+    - 1340
+    - 1341
     - 0
     - 0
     - 0
@@ -3159,12 +3801,12 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 1359
+    - 1359
+    - 1359
+    - 1359
+    - 1359
+    - 1359
     - 0
     - 0
     - 0
