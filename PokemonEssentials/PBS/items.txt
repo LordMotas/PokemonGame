@@ -604,3 +604,4 @@
 604,SHIELD,Shield,Shields,1,2100,"A shield. It looks like it could be used by a particular Pokemon...",1,0,0,
 605,STAFF,Staff,Staves,1,2100,"A staff. It looks like it could be used by a particular Pokemon...",1,0,0,
 606,GOLDBERRY,Gold Berry,Gold Berries,5,200,"A golden berry. Local merchants seek after it.",0,0,0,
+607,MEGAROD,Mega Rod,Mega Rods,8,0,"The most advanced fishing rod. Use it by any body of water to fish for wild aquatic Pokémon.",2,0,6,

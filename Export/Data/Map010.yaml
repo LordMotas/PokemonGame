@@ -16,7 +16,7 @@ root: !ruby/object:RPG::Map
           code: 355
         - !ruby/object:RPG::EventCommand
           parameters:
-          - Hello there! You look like an adventurous sort.
+          - Hello there! You look like a capable Trainer!
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -31,19 +31,18 @@ root: !ruby/object:RPG::Map
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: I''m about to head out of town to the nearest island, but
-            I''m looking for an escort.'
+          - I'm about to head out to Relic island, but I'm looking for an escort.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: Though my ship is a beauty, she can''t withstand the brutality
-            of some of the Water Pokemon that live out there in the open seas.'
+          - My ship is fast, but she can't withstand the attacks of some of the Water
+            Pokemon that live in the open seas.
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: Will you protect me and my ship?'
+          - Will you protect me and my ship?
           indent: 0
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -61,12 +60,17 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: Great! Hop aboard!'
+          - Great! Hop aboard!
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: Onward to Relic Island!'
+          - Onward to Relic Island!
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Be sure to protect the ship if something happens!
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -110,6 +114,10 @@ root: !ruby/object:RPG::Map
           - *3
           indent: 1
           code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 210
         - !ruby/object:RPG::EventCommand
           parameters:
           - -1
@@ -159,6 +167,51 @@ root: !ruby/object:RPG::Map
         - !ruby/object:RPG::EventCommand
           parameters: []
           indent: 1
+          code: 210
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:Tone
+            red: -255.0
+            green: -255.0
+            blue: -255.0
+            gray: 0.0
+          - 6
+          indent: 1
+          code: 223
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 8
+          indent: 1
+          code: 106
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - A
+          - 0
+          indent: 1
+          code: 123
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 9
+          - 17
+          - 20
+          - 8
+          - 0
+          indent: 1
+          code: 201
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:Tone
+            red: 0.0
+            green: 0.0
+            blue: 0.0
+            gray: 0.0
+          - 6
+          indent: 1
+          code: 223
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
           code: 0
         - !ruby/object:RPG::EventCommand
           parameters:
@@ -168,13 +221,13 @@ root: !ruby/object:RPG::Map
           code: 402
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: That''s a shame. You let me know if you change your mind.'
+          - That's a shame. You let me know if you change your mind.
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
           parameters:
-          - 'Capt. Rex: This is the only ship heading out to Relic Island from the
-            mainland you know...'
+          - This is the only ship heading out to Relic Island from the mainland you
+            know...
           indent: 1
           code: 101
         - !ruby/object:RPG::EventCommand
@@ -228,122 +281,257 @@ root: !ruby/object:RPG::Map
         walk_anime: true
         move_speed: 3
         through: false
+      - !ruby/object:RPG::Event::Page
+        list:
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(1)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Hello again!
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - You traveling back to Relic Island?
+          indent: 0
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - - 'Yes'
+            - 'No'
+          - 2
+          indent: 0
+          code: 102
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 'Yes'
+          indent: 0
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Great! Hop aboard!
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Onward to Relic Island!
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - Be sure to protect the ship if something happens!
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - !ruby/object:RPG::MoveRoute
+            list:
+            - &8 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 19
+            - &9 !ruby/object:RPG::MoveCommand
+              parameters:
+              - 4
+              code: 15
+            - &10 !ruby/object:RPG::MoveCommand
+              parameters:
+              - ''
+              - 0
+              - 2
+              - 0
+              code: 41
+            - !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 0
+            skippable: false
+            repeat: false
+          indent: 1
+          code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *8
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *9
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *10
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 210
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - -1
+          - !ruby/object:RPG::MoveRoute
+            list:
+            - &11 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 19
+            - &12 !ruby/object:RPG::MoveCommand
+              parameters:
+              - 4
+              code: 15
+            - &13 !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 4
+            - &14 !ruby/object:RPG::MoveCommand
+              parameters:
+              - 4
+              code: 15
+            - !ruby/object:RPG::MoveCommand
+              parameters: []
+              code: 0
+            skippable: false
+            repeat: false
+          indent: 1
+          code: 209
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *11
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *12
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *13
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - *14
+          indent: 1
+          code: 509
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 210
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:Tone
+            red: -255.0
+            green: -255.0
+            blue: -255.0
+            gray: 0.0
+          - 6
+          indent: 1
+          code: 223
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 8
+          indent: 1
+          code: 106
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 0
+          - 9
+          - 17
+          - 20
+          - 8
+          - 0
+          indent: 1
+          code: 201
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - !ruby/object:Tone
+            red: 0.0
+            green: 0.0
+            blue: 0.0
+            gray: 0.0
+          - 6
+          indent: 1
+          code: 223
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - 1
+          - 'No'
+          indent: 0
+          code: 402
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - That's a shame. You let me know if you change your mind.
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - This is the only ship heading out to Relic Island from the mainland you
+            know...
+          indent: 1
+          code: 101
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 1
+          code: 0
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 404
+        - !ruby/object:RPG::EventCommand
+          parameters:
+          - pbCallBub(0)
+          indent: 0
+          code: 355
+        - !ruby/object:RPG::EventCommand
+          parameters: []
+          indent: 0
+          code: 0
+        move_type: 0
+        direction_fix: false
+        condition: !ruby/object:RPG::Event::Page::Condition
+          switch2_valid: false
+          self_switch_ch: A
+          switch1_id: 1
+          switch1_valid: false
+          variable_value: 0
+          self_switch_valid: true
+          variable_id: 1
+          variable_valid: false
+          switch2_id: 1
+        move_route: !ruby/object:RPG::MoveRoute
+          list:
+          - !ruby/object:RPG::MoveCommand
+            parameters: []
+            code: 0
+          skippable: false
+          repeat: true
+        trigger: 0
+        step_anime: false
+        move_frequency: 3
+        always_on_top: false
+        graphic: !ruby/object:RPG::Event::Page::Graphic
+          opacity: 255
+          character_name: NPC 12
+          pattern: 0
+          tile_id: 0
+          direction: 2
+          blend_type: 0
+          character_hue: 0
+        walk_anime: true
+        move_speed: 3
+        through: false
       name: Relic Island
       y: 19
       x: 10
       id: 1
-    2: !ruby/object:RPG::Event
-      pages:
-      - !ruby/object:RPG::Event::Page
-        list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbCallBub(0)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Upgrades for the magnificent S.P.
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 0
-        move_type: 0
-        direction_fix: false
-        condition: !ruby/object:RPG::Event::Page::Condition
-          switch2_valid: false
-          self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
-          variable_value: 0
-          self_switch_valid: false
-          variable_id: 1
-          variable_valid: false
-          switch2_id: 1
-        move_route: !ruby/object:RPG::MoveRoute
-          list:
-          - !ruby/object:RPG::MoveCommand
-            parameters: []
-            code: 0
-          skippable: false
-          repeat: true
-        trigger: 0
-        step_anime: false
-        move_frequency: 3
-        always_on_top: false
-        graphic: !ruby/object:RPG::Event::Page::Graphic
-          opacity: 255
-          character_name: ''
-          pattern: 0
-          tile_id: 0
-          direction: 2
-          blend_type: 0
-          character_hue: 0
-        walk_anime: true
-        move_speed: 3
-        through: false
-      name: EV002
-      y: 28
-      x: 18
-      id: 2
-    3: !ruby/object:RPG::Event
-      pages:
-      - !ruby/object:RPG::Event::Page
-        list:
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - pbCallBub(0)
-          indent: 0
-          code: 355
-        - !ruby/object:RPG::EventCommand
-          parameters:
-          - Pokeball Recipes
-          indent: 0
-          code: 101
-        - !ruby/object:RPG::EventCommand
-          parameters: []
-          indent: 0
-          code: 0
-        move_type: 0
-        direction_fix: false
-        condition: !ruby/object:RPG::Event::Page::Condition
-          switch2_valid: false
-          self_switch_ch: A
-          switch1_id: 1
-          switch1_valid: false
-          variable_value: 0
-          self_switch_valid: false
-          variable_id: 1
-          variable_valid: false
-          switch2_id: 1
-        move_route: !ruby/object:RPG::MoveRoute
-          list:
-          - !ruby/object:RPG::MoveCommand
-            parameters: []
-            code: 0
-          skippable: false
-          repeat: true
-        trigger: 0
-        step_anime: false
-        move_frequency: 3
-        always_on_top: false
-        graphic: !ruby/object:RPG::Event::Page::Graphic
-          opacity: 255
-          character_name: ''
-          pattern: 0
-          tile_id: 0
-          direction: 2
-          blend_type: 0
-          character_hue: 0
-        walk_anime: true
-        move_speed: 3
-        through: false
-      name: EV003
-      y: 28
-      x: 13
-      id: 3
     4: !ruby/object:RPG::Event
       pages:
       - !ruby/object:RPG::Event::Page
@@ -3262,11 +3450,11 @@ root: !ruby/object:RPG::Map
     - 1223
     - 0
     - 0
-    - 1341
-    - 1340
-    - 1341
-    - 1340
-    - 1341
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
     - 0
     - 0
     - 0
@@ -3305,11 +3493,11 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1340
-    - 1387
-    - 1388
-    - 1389
-    - 1340
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
     - 0
     - 0
     - 0
@@ -3348,11 +3536,11 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1341
-    - 1395
-    - 1396
-    - 1397
-    - 1341
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
     - 0
     - 0
     - 0
@@ -3391,11 +3579,11 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1340
-    - 1403
     - 0
-    - 1405
-    - 1340
+    - 0
+    - 0
+    - 0
+    - 0
     - 0
     - 0
     - 0
@@ -3434,11 +3622,11 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1341
-    - 1340
     - 0
-    - 1340
-    - 1341
+    - 1207
+    - 0
+    - 0
+    - 0
     - 0
     - 0
     - 0
@@ -3806,7 +3994,7 @@ root: !ruby/object:RPG::Map
     - 1359
     - 1359
     - 1359
-    - 1359
+    - 0
     - 0
     - 0
     - 0
@@ -3847,9 +4035,9 @@ root: !ruby/object:RPG::Map
     - 1359
     - 1392
     - 1393
-    - 1393
     - 1394
     - 1359
+    - 0
     - 0
     - 0
     - 0
@@ -3890,9 +4078,9 @@ root: !ruby/object:RPG::Map
     - 1351
     - 1400
     - 0
-    - 0
     - 1402
     - 1351
+    - 0
     - 0
     - 0
     - 0
@@ -3933,9 +4121,9 @@ root: !ruby/object:RPG::Map
     - 1351
     - 1359
     - 0
-    - 0
     - 1359
     - 1351
+    - 0
     - 0
     - 0
     - 0
@@ -5650,12 +5838,12 @@ root: !ruby/object:RPG::Map
     - 0
     - 0
     - 0
-    - 1363
     - 0
     - 0
     - 0
     - 0
-    - 1363
+    - 0
+    - 0
     - 0
     - 0
     - 0

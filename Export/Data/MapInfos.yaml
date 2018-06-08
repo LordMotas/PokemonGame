@@ -12,7 +12,7 @@ root: !ruby/object:Hash
     name: Orogen Town
     expanded: true
     order: 2
-    scroll_y: 1156
+    scroll_y: 808
     parent_id: 0
   3: !ruby/object:RPG::MapInfo
     scroll_x: 496
