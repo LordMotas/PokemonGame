@@ -1,3 +1,5 @@
+# Turbide Town (10) - Relic Island Port (11)
+10,West,0,11,East,0
 # Water Path (9) - Orogen Town (2)
 9,East,0,2,West,6
 # Turbide Town (10) - Water Path (9)

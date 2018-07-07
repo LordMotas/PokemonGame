@@ -52,3 +52,9 @@ Bicycle=true
 SafariMap=false
 Outdoor=true
 ShowArea=true
+#-------------------------------
+[011]
+# Relic Island Port
+Bicycle=true
+Outdoor=true
+ShowArea=true
