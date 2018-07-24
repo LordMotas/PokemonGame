@@ -58,3 +58,10 @@ ShowArea=true
 Bicycle=true
 Outdoor=true
 ShowArea=true
+#-------------------------------
+[012]
+# Flooded Plains
+Weather=Rain,100
+Bicycle=true
+Outdoor=true
+ShowArea=true

@@ -59,7 +59,7 @@ root: !ruby/object:Hash
   9: !ruby/object:RPG::MapInfo
     scroll_x: 960
     name: Water Path
-    expanded: true
+    expanded: false
     order: 9
     scroll_y: 640
     parent_id: 0
@@ -73,7 +73,7 @@ root: !ruby/object:Hash
   11: !ruby/object:RPG::MapInfo
     scroll_x: 640
     name: Relic Island Port
-    expanded: true
+    expanded: false
     order: 11
     scroll_y: 640
     parent_id: 0
@@ -82,5 +82,5 @@ root: !ruby/object:Hash
     name: Flooded Plains
     expanded: false
     order: 12
-    scroll_y: 646
+    scroll_y: 1874
     parent_id: 0

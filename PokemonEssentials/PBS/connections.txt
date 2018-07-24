@@ -1,3 +1,5 @@
+# Flooded Plains (12) - Relic Island Port (11)
+12,East,60,11,West,0
 # Turbide Town (10) - Relic Island Port (11)
 10,West,0,11,East,0
 # Water Path (9) - Orogen Town (2)
